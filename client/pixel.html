@@ -1,0 +1,37 @@
+<head>
+  <title>CommunEvent</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+</head>
+
+<template name="camera-page">
+  {{> camera}}
+</template>
+
+<template name="layout">
+  {{#ionBody}}
+  {{> ionNavBar class="bar-dark"}}
+
+  {{#ionNavView}}
+  {{> yield}}
+  {{/ionNavView}}
+
+  {{#if currentUser}}
+  {{#ionTabs class="tabs-dark tabs-icon-only"}}
+  {{> ionTab title=_events path="listEvents" iconOff="calendar" iconOn="calendar"}}
+  {{/ionTabs}}
+  {{/if}}
+
+  {{> meteorStatus lang=langChoix}}
+
+  {{/ionBody}}
+</template>
+
+<template name="loading">
+  {{#ionView hide-nav-bar="true"}}
+    {{#ionContent class="rubyonic-pane"}}
+      <div class="logo">
+    <img src="/logoL.jpg" class="animated infinite jello" alt="">
+</div>
+{{/ionContent}}
+{{/ionView}}
+</template>
