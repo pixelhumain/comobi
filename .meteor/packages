@@ -1,0 +1,80 @@
+# Meteor packages used by this project, one per line.
+# Check this file (and the other files in this directory) into your repository.
+#
+# 'meteor add' and 'meteor remove' will edit this file for you,
+# but you can also edit it by hand.
+
+meteor-base             # Packages every Meteor app needs to have
+mobile-experience       # Packages for a great mobile UX
+mongo                   # The database Meteor supports right now
+blaze-html-templates    # Compile .html files into Meteor Blaze views
+session                 # Client-side reactive dictionary for your app
+jquery                  # Helpful client-side library
+tracker                 # Meteor's client-side reactive programming library
+
+standard-minifiers      # JS/CSS minifiers run for production mode
+es5-shim                # ECMAScript 5 compatibility for older browsers.
+ecmascript              # Enable ECMAScript2015+ syntax in app code
+#browser-policy
+
+accounts-ui
+
+iron:router
+#jparker:crypto-sha256
+
+logging
+reload
+random
+ejson
+spacebars
+check
+mrt:moment
+mdg:reload-on-resume
+copleykj:livestamp
+meteorhacks:async
+multiply:iron-router-progress
+mrt:profile-online
+http
+outatime:geolib
+meteoric:ionic
+255kb:meteor-status
+reywood:publish-composite
+cfs:gridfs
+cfs:s3
+mrt:graphicsmagick
+cfs:standard-packages
+cfs:ejson-file
+aldeed:simple-schema
+alanning:roles
+aldeed:collection2
+raix:handlebar-helpers
+dburles:collection-helpers
+aldeed:autoform@5.5.1
+djedi:sanitize-html
+rzymek:moment-locale-fr
+mirrorcell:geolocation-plus
+cfs:graphicsmagick
+#useraccounts:ionic
+#useraccounts:iron-routing
+webapp
+tap:i18n
+tap:i18n-ui
+gwendall:simple-schema-i18n
+utilities:avatar
+meteoric:camera
+fourseven:scss
+crosswalk
+raix:push@2.6.4
+webtempest:animate
+meteoric:autoform-ionic
+reactive-dict
+bevanhunt:leaflet
+meteorhacks:subs-manager
+sha
+sergeyt:typeahead
+meteorhacks:npm
+
+
+npm-container
+meteorhacks:kadira
+dschulz:jquery-qrcode

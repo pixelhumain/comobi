@@ -1,0 +1,12 @@
+<template name="autoformTypeahead">
+  
+    <input class="form-control typeahead" autocomplete="off" spellcheck="off" type="text"
+           data-template="typeahead-result" {{atts}}/>
+  
+</template>
+
+<template name="typeahead-result">
+    {{#ionItem class="suggest-result"}}
+        {{value}}
+    {{/ionItem}}
+</template>

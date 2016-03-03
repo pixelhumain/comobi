@@ -1,0 +1,54 @@
+<template name="newsDetail">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "news"}}</h1>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list card">
+    {{#with scope.new}}
+    <div class="item">
+      <h2>{{#if name}}{{name}}{{else}}{{authorNews.name}}{{/if}}</h2>
+      <p><i class="icon ion-clock"></i> {{livestamp created}} <i class="icon ion-person"></i>  {{authorNews.name}}</p>
+    </div>
+    {{#if docNews.photoNews}}
+    <div class="item item-body">
+      {{#each docNews.photoNews}}
+      <img src="{{this.url store='photosLarge' uploading='/default.png' storing='/default.png'}}" class="full-image"  />
+      {{/each}}
+    </div>
+    {{/if}}
+    {{#if text}}
+    <div class="item item-body">
+      {{text}}
+    </div>
+    {{/if}}
+    <div class="item tabs tabs-secondary tabs-icon-left">
+      <a class="tab-item like-photo" href="#">
+        <i class="icon ion-thumbsup"></i>
+        {{likesCount}} {{_ "like"}}
+      </a>
+      {{#if isAuthor}}
+      <a class="tab-item delete-photo" href="#">
+        <i class="icon ion-trash-a"></i>
+        {{_ "delete"}}
+      </a>
+      <a class="tab-item" href="{{pathFor "newsEdit" _id=scope._id._str newsId=_id._str scope=type}}">
+        <i class="icon ion-edit"></i>
+        {{_ "edit"}}
+      </a>
+      {{/if}}
+    </div>
+      {{/with}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+</template>

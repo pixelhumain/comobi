@@ -1,0 +1,5 @@
+// project-root/project-tap.i18n
+{
+    "supported_languages": ["en","fr"],
+    "i18n_files_route": "/i18n"
+}

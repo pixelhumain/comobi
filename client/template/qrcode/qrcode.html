@@ -1,0 +1,18 @@
+<template name="qrcode">
+<div class="list card">
+<div id="qrcode" class="item item-image"></div>
+</div>
+</template>
+
+
+<template name="_qrcode">
+  {{#ionModal customTemplate=true}}
+      <div class="bar bar-header bar-stable">
+        <button data-dismiss="modal" type="button" class="button button-clear">Annuler</button>
+        <h2 class="title">QR code</h2>
+      </div>
+      <div class="content has-header overflow-scroll">
+ {{> qrcode}}
+  </div>
+  {{/ionModal}}
+</template>

@@ -1,0 +1,191 @@
+<template name="newsList">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "news"}}</h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+  <button class="button button-clear" data-ion-modal="_qrcode">{{> ionIcon icon="ios-barcode"}}</button>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+
+  {{> Template.dynamic template=scopeCardTemplate data=scope}}
+
+  <div class="list padding">
+    <div class="item item-divider homestead">
+    <i class="ion ion-social-rss"></i>  {{_ "news"}} {{name}} <span class="badge badge-dark">{{scope.countNews}}</span>
+    </div>
+    {{#each scope.news}}
+    <a href="{{pathFor 'newsDetail' _id=scope._id._str newsId=_id._str scope=type}}" class="item animated in {{#if docNews.objId}}item-thumbnail-left{{/if}}">
+
+      {{#each docNews.photoNews}}
+      <img src="{{this.url store='photosThumb' uploading='/default.png' storing='/default.png'}}"  />
+      {{/each}}
+
+      <h2>{{#if name}}{{cutString name 50}}{{/if}}</h2>
+      {{#if text}}<p>{{cutString text 140}}</p>{{/if}}
+      {{#each tags}}
+      <span class=""><i class="icon ion-pound"></i> {{this}}</span>
+      {{/each}}
+      <p>{{_ "author"}} : {{authorNews.name}}</p>
+      <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
+    </a>
+    {{/each}}
+
+  </div>
+  {{#if isLimit scope.countNews}}
+  <div class="padding">
+    <button class="button  button-block button-dark give-me-more">
+      {{_ "more"}}...
+    </button>
+  </div>
+  {{/if}}
+
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+<template name="newsAdd">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "post a news"}}</h1>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "post a news"}}
+    </div>
+    {{#autoForm id="addNew" collection="News" type="insert" template="ionic" class="padding form-rb-plain"}}
+    {{> newsFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "publish"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+
+<template name="newsEdit">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "news"}}</h1>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "edit a news"}}
+    </div>
+    {{#autoForm id="editNew" collection="News" doc=new type="update" template="ionic" class="padding form-rb-plain"}}
+    {{> newsFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+<template name="newsFields">
+	{{> afQuickField name='name' label=_name}}
+  {{> afQuickField name='text' label=_text rows=8}}
+</template>
+
+<template name="listCard">
+  <div class="card">
+    <div class="item">
+      <h2 class="homestead">{{name}}</h2>
+    </div>
+    <div class="item item-text-wrap">
+      <p>{{description}}</p>
+      <p>{{address.postalCode}} {{address.addressLocality}}</p>
+      <p>{{_ "creator"}} : {{creatorProfile.name}}</p>
+      <p>
+        {{#if startDate}}<i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>{{/if}}
+        {{#if endDate}}<i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>{{/if}}
+        {{#if endDate}}<i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>{{/if}}
+        {{#if geo}}<i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}}{{/if}}
+      </p>
+    </div>
+  </div>
+</template>
+
+<template name="boutonCard">
+  <div class="padding">
+    <div class="button-bar bar-positive">
+      {{#if isAttendees}}
+      <button class="button button-small photo-link">{{> ionIcon icon="camera"}}</button>
+      <a href="{{pathFor 'newsAdd' _id=_id._str scope=($.Session.get 'scope')}}" class="button button-small">{{> ionIcon icon="compose"}}</a>
+      {{else}}
+      <button class="button button-small saveattendees-link">{{> ionIcon icon="person-add"}}</button>
+      {{/if}}
+    </div>
+  </div>
+</template>
+
+<template name="listCardevents">
+{{> listCard}}
+{{> boutonCard}}
+</template>
+
+<template name="listNews">
+  <div class="list padding">
+    <div class="item item-divider homestead">
+      {{_ "news"}} {{name}} <span class="badge badge-dark">{{scope.countNews}}</span>
+    </div>
+    {{#transition in="zoomIn" out="bounceOut"}}
+    {{#each scope.news}}
+    <a href="{{pathFor 'newsDetail' _id=scope._id._str newsId=_id._str scope=type}}" class="item animated out {{#if docNews.objId}}item-thumbnail-left{{/if}}">
+
+      {{#each docNews.photoNews}}
+      <img src="{{this.url store='photosThumb' uploading='/default.png' storing='/default.png'}}"  />
+      {{/each}}
+
+      <h2>{{name}}</h2>
+      <p>{{text}}</p>
+      {{#each tags}}
+      <span class=""><i class="icon ion-pound"></i> {{this}}</span>
+      {{/each}}
+      <p>{{_ "author"}} : {{authorNews.name}}</p>
+      <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
+    </a>
+    {{/each}}
+    {{/transition}}
+  </div>
+  {{#if isLimit scope.countNews}}
+  <div class="padding">
+    <button class="button  button-block button-dark give-me-more">
+      {{_ "more"}}...
+    </button>
+  </div>
+  {{/if}}
+</template>

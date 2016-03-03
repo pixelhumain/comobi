@@ -1,0 +1,134 @@
+
+<template name="login">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">Communecter</h1>
+  {{/contentFor}}
+  {{#ionView}}
+  {{#ionContent class="rubyonic-pane"}}
+
+  <div class="logo">
+    <img src="/logoL.jpg" alt="" class="animated jello">
+  </div>
+  <div class="animated fadeInLeft text-center">
+    <img src="/byPH.png" class="bypixel"/>
+  </div>
+
+  <form class="login-form">
+    <div class="padding form-rb-plain">
+      {{#if error}}
+      <div class="card">
+        <div class="item item-text-wrap animated shake homestead text-center">
+          {{_ error}}
+        </div>
+      </div>
+      {{/if}}
+      <div class="animated fadeInLeft list">
+        <label class="item item-input">
+          <span class="input-label">
+            <i class="icon ion-email"></i>
+          </span>
+          <input type="email" id="email" placeholder="{{_ "email"}}">
+        </label>
+        <label class="item item-input">
+          <div class="input-label">
+            <i class="icon ion-locked"></i>
+          </div>
+          <input type="password" id="password" placeholder="{{_ "password"}}">
+        </label>
+      </div>
+      <div class="animated fadeInUp padding">
+        <button type="submit" class="button button-block button-positive {{#if loadingLogging}}animated infinite jello{{/if}}">{{_ "loggin"}}</button>
+      </div>
+      <div class="animated fadeInUp padding homestead text-center">{{_ "create an account"}} <a href="{{pathFor 'signin'}}" class="homestead dark">{{_ "signin"}}</a>.</div>
+    </div>
+  </form>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+
+<template name="signin">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">Communecter</h1>
+  {{/contentFor}}
+  {{#ionView}}
+  {{#ionContent class="rubyonic-pane"}}
+
+  <div class="logo">
+    <img src="/logoL.jpg" alt="" class="animated jello">
+  </div>
+  <div class="animated fadeInRight text-center">
+    <img src="/byPH.png" class="bypixel"/>
+  </div>
+
+  <form class="signup-form">
+    <div class="padding form-rb-plain">
+      {{#if error}}
+      <div class="card">
+        <div class="item item-text-wrap animated shake homestead text-center">
+          {{_ error}}
+        </div>
+      </div>
+      {{/if}}
+      <div class="animated fadeInRight list">
+        <label class="item item-input">
+          <div class="input-label">
+            <i class="icon ion-person"></i>
+          </div>
+          <input type="text" id="name" placeholder="{{_ "name"}}">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">
+            <i class="icon ion-email"></i>
+          </span>
+          <input type="email" id="email" placeholder="{{_ "email"}}">
+        </label>
+        <label class="item item-input">
+          <div class="input-label">
+            <i class="icon ion-person"></i>
+          </div>
+          <input type="text" id="username" placeholder="{{_ "username"}}">
+        </label>
+        <label class="item item-input">
+          <div class="input-label">
+            <i class="icon ion-locked"></i>
+          </div>
+          <input type="password" id="password" placeholder="{{_ "password"}}">
+        </label>
+        <label class="item item-input">
+          <div class="input-label">
+            <i class="icon ion-locked"></i>
+          </div>
+          <input type="password" id="repassword" placeholder="{{_ "repassword"}}">
+        </label>
+        <label class="item item-input">
+          <div class="input-label">
+            <i class="icon ion-home"></i>
+          </div>
+          <input type="text" id="codepostal" placeholder="{{_ "postcode"}}">
+        </label>
+        {{#if city}}
+        <label class="item item-input item-select">
+          <div class="input-label">
+            <i class="icon ion-location"></i>
+          </div>
+          <select name="city" id="city">
+          {{#each city}}
+            <option value="{{insee}}">{{name}}</option>
+          {{/each}}
+          </select>
+        </label>
+        {{/if}}
+      </div>
+      {{#if city}}
+      <div class="animated fadeInUp padding">
+        <button type="submit" class="button button-block button-positive {{#if loadingLogging}}animated infinite jello{{/if}}">
+          {{_ "signin"}}</button>
+      </div>
+      {{/if}}
+      <div class="animated fadeInUp padding homestead text-center">{{_ "already have an account"}} <a href="{{pathFor 'login'}}" class="homestead dark">{{_ "loggin"}}.</a></div>
+    </div>
+  </form>
+  {{/ionContent}}
+  {{/ionView}}
+</template>

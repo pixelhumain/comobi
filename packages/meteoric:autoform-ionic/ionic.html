@@ -1,0 +1,339 @@
+<template name="autoForm_ionic">
+  {{#unless afDestroyUpdateForm}}
+    <form {{atts}}>
+      <div class="list">
+        {{#with innerContext ..}}
+          {{> UI.contentBlock this}}
+        {{/with}}
+      </div>
+    </form>
+  {{/unless}}
+</template>
+
+<template name="quickForm_ionic">
+  {{#autoForm this.qfAutoFormContext}}
+    {{> afQuickFields}}
+    {{#if qfShouldRenderButton}}
+      <div class="padding">
+        <button type="submit" {{submitButtonAtts}}>
+          {{#with ../atts.buttonContent}}
+            {{this}}
+          {{else}}
+            Submit
+          {{/with}}
+        </button>
+      </div>
+    {{/if}}
+  {{/autoForm}}
+</template>
+
+<template name="afQuickField_ionic">
+  {{#if isGroup atts=this}}
+    {{> afObjectField_ionic}}
+  {{else}}
+    {{#if isFieldArray atts=this}}
+      {{> afArrayField_ionic}}
+    {{else}}
+      {{> afFormGroup_ionic groupAtts}}
+    {{/if}}
+  {{/if}}
+</template>
+
+<template name="afFormGroup_ionic">
+  {{#if skipLabel}}
+    {{> afFieldInput this.afFieldInputAtts}}
+  {{else}}
+    <label {{ionicFieldLabelAtts}}>
+      {{#unless ionicFieldLabelAtts.placeholderOnly}}
+        <span class="input-label">{{#if this.labelText}}{{this.labelText}}{{else}}{{afFieldLabelText name=this.name}}{{/if}}</span>
+      {{/unless}}
+      {{> afFieldInput this.afFieldInputAtts}}
+    </label>
+  {{/if}}
+  {{#if afFieldIsInvalid name=this.name}}
+    <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{{afFieldMessage name=this.name}}}</div>
+  {{/if}}
+</template>
+
+<template name="afObjectField_ionic">
+  {{#with afFieldLabelText name=this.name}}
+    <div class="item item-divider">
+      {{this}}
+    </div>
+  {{/with}}
+  {{#if afFieldIsInvalid name=this.name}}
+    <div class="assertive">{{{afFieldMessage name=this.name}}}</div>
+  {{/if}}
+  {{> afQuickFields name=this.name}}
+</template>
+
+<template name="afArrayField_ionic">
+  <div class="item item-divider">
+    {{afFieldLabelText name=this.atts.name}}
+
+    {{#if afArrayFieldHasLessThanMaximum name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
+      <button type="button" class="button button-clear button-small pull-right autoform-add-item" data-autoform-field="{{this.atts.name}}" data-autoform-minCount="{{this.atts.minCount}}" data-autoform-maxCount="{{this.atts.maxCount}}">
+        Add <span class="icon ion-plus"></span>
+      </button>
+    {{/if}}
+  </div>
+  {{#if afFieldIsInvalid name=this.atts.name}}
+    <div class="item item-text-wrap">
+      <span class="assertive">{{{afFieldMessage name=this.atts.name}}}</span>
+    </div>
+  {{/if}}
+  {{#afEachArrayItem name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
+    <div class="card autoform-array-item">
+      {{> afQuickField name=this.name label=false options=afOptionsFromSchema}}
+      {{#if afArrayFieldHasMoreThanMinimum name=../atts.name minCount=../atts.minCount maxCount=../atts.maxCount}}
+        <div class="item item-divider">
+          <button type="button" class="button button-clear button-small pull-right autoform-remove-item">
+            Remove <span class="icon ion-close"></span>
+          </button>
+        </div>
+      {{/if}}
+    </div>
+  {{/afEachArrayItem}}
+
+</template>
+
+<template name="afCheckbox_ionic">
+  <div class="item item-checkbox item-text-wrap">
+    <label class="checkbox">
+      <input type="checkbox" value="{{this.value}}" {{atts}} />
+    </label>
+    {{afFieldLabelText name=this.name}}
+  </div>
+</template>
+
+<template name="afCheckboxGroup_ionic">
+  <div class="af-checkbox-group" {{dsk}}>
+    <div class="item item-divider">
+      {{afFieldLabelText name=this.name}}
+    </div>
+    {{#each this.items}}
+      <div class="item item-checkbox item-text-wrap">
+        <label class="checkbox">
+          <input type="checkbox" value="{{this.value}}" {{atts}} />
+        </label>
+        {{this.label}}
+      </div>
+    {{/each}}
+  </div>
+</template>
+
+<template name="afCheckboxGroupInline_ionic">
+  <div class="af-checkbox-group" {{dsk}}>
+    {{#each this.items}}
+    <div class="item item-checkbox item-text-wrap">
+      <label class="checkbox">
+        <input type="checkbox" value="{{this.value}}" {{atts}} />
+      </label>
+      {{this.label}}
+    </div>
+    {{/each}}
+  </div>
+</template>
+
+<template name="afRadio_ionic">
+  <label class="item item-radio item-text-wrap">
+    <input type="radio" value="{{this.value}}" {{atts}} />
+    <div class="item-content disable-pointer-events">
+      {{afFieldLabelText name=this.name}}
+    </div>
+    <i class="radio-icon ion-checkmark disable-pointer-events"></i>
+  </label>
+</template>
+
+<template name="afRadioGroup_ionic">
+  <div class="af-radio-group" {{dsk}}>
+    <div class="item item-divider">
+      {{afFieldLabelText name=this.name}}
+    </div>
+    {{#each this.items}}
+      <label class="item item-radio item-text-wrap">
+        <input type="radio" value="{{this.value}}" {{atts}} />
+        <div class="item-content disable-pointer-events">
+          {{this.label}}
+        </div>
+        <i class="radio-icon ion-checkmark disable-pointer-events"></i>
+      </label>
+    {{/each}}
+  </div>
+</template>
+
+<template name="afRadioGroupInline_ionic">
+  <div class="af-radio-group" {{dsk}}>
+    {{#each this.items}}
+      <label class="item item-radio item-text-wrap">
+        <input type="radio" value="{{this.value}}" {{atts}} />
+        <div class="item-content disable-pointer-events">
+          {{afFieldLabelText name=this.name}}
+        </div>
+        <i class="radio-icon ion-checkmark disable-pointer-events"></i>
+      </label>
+    {{/each}}
+  </div>
+</template>
+
+<template name="afBooleanRadioGroup_ionic">
+  <div {{dsk}}>
+    <label class="item item-radio item-text-wrap">
+      <input type="radio" value="false" name="{{this.name}}" {{falseAtts}} />
+      <div class="item-content disable-pointer-events">
+        {{#with this.atts.falseLabel}}{{this}}{{else}}False{{/with}}
+      </div>
+      <i class="radio-icon ion-checkmark disable-pointer-events"></i>
+    </label>
+    <label class="item item-radio item-text-wrap">
+      <input type="radio" value="true" name="{{this.name}}" {{trueAtts}} />
+      <div class="item-content disable-pointer-events">
+        {{#with this.atts.trueLabel}}{{this}}{{else}}True{{/with}}
+      </div>
+      <i class="radio-icon ion-checkmark disable-pointer-events"></i>
+    </label>
+  </div>
+</template>
+
+<template name="afSelect_ionic">
+  <label class="item item-input item-select item-text-wrap">
+    <div class="input-label">
+      {{afFieldLabelText name=this.name}}
+    </div>
+    <select {{atts}}>
+      {{#each this.items}}
+        {{#if this.optgroup}}
+          <optgroup label="{{this.optgroup}}">
+            {{#each this.items}}
+            <option {{optionAtts}}>{{this.label}}</option>
+            {{/each}}
+          </optgroup>
+        {{else}}
+          <option {{optionAtts}}>{{this.label}}</option>
+        {{/if}}
+      {{/each}}
+    </select>
+  </label>
+</template>
+
+<template name="afBooleanSelect_ionic">
+  <label class="item item-input item-select item-text-wrap">
+    <div class="input-label">
+      {{afFieldLabelText name=this.name}}
+    </div>
+    <select {{atts}}>
+      {{#each this.items}}
+        <option {{optionAtts}}>{{this.label}}</option>
+      {{/each}}
+    </select>
+  </label>
+</template>
+
+<template name="afSelectMultiple_ionic">
+  <label class="item item-input item-select item-text-wrap">
+    <div class="input-label">
+      {{afFieldLabelText name=this.name}}
+    </div>
+    <select {{atts}} multiple>
+      {{#each this.items}}
+        {{#if this.optgroup}}
+          <optgroup label="{{this.optgroup}}">
+            {{#each this.items}}
+              <option {{optionAtts}}>{{this.label}}</option>
+            {{/each}}
+          </optgroup>
+        {{else}}
+          <option {{optionAtts}}>{{this.label}}</option>
+        {{/if}}
+      {{/each}}
+    </select>
+  </label>
+</template>
+
+<template name="afToggle">
+  <div class="item item-toggle item-text-wrap">
+    {{afFieldLabelText name=this.name}}
+    <label class="toggle">
+      <input type="checkbox" value="true" {{atts}} />
+      <div class="track">
+        <div class="handle"></div>
+      </div>
+    </label>
+  </div>
+</template>
+
+<template name="afTextarea_ionic">
+  <textarea {{atts}}>{{this.value}}</textarea>
+</template>
+
+<template name="afInputText_ionic">
+  <input type="text" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputPassword_ionic">
+  <input type="password" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputButton_ionic">
+  <input type="button" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputSubmit_ionic">
+  <input type="submit" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputReset_ionic">
+  <input type="reset" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputDateTime_ionic">
+  <input type="datetime" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputDateTimeLocal_ionic">
+  <input type="datetime-local" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputDate_ionic">
+  <input type="date" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputMonth_ionic">
+  <input type="month" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputTime_ionic">
+  <input type="time" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputWeek_ionic">
+  <input type="week" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputNumber_ionic">
+  <input type="number" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputRange_ionic">
+  <input type="range" value="{{this.value}}" {{this.atts}}/>
+</template>
+
+<template name="afInputEmail_ionic">
+  <input type="email" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputUrl_ionic">
+  <input type="url" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputSearch_ionic">
+  <input type="search" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputTel_ionic">
+  <input type="tel" value="{{this.value}}" {{atts}}/>
+</template>
+
+<template name="afInputColor_ionic">
+  <input type="color" value="{{this.value}}" {{atts}}/>
+</template>
