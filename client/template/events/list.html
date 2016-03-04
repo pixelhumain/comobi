@@ -31,12 +31,13 @@
           {{#if isStart}}
           <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
           <i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>
-          <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}
+          <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
           {{else}}
           <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
           <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
           {{/if}}
-          <i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}}
+          <a class="button button-clear" href="{{pathFor 'mapWithEvent' _id=_id._str}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a>
+
         </p>
         {{#if currentUser}}
         {{#if isCreator}}

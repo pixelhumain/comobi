@@ -52,16 +52,16 @@ Meteor.publish('citoyenEvents', function(latlng,radius) {
 		//selector startDate endDate sort et limit
 		var inputDate = new Date();
 		//console.log(inputDate);
-		/*console.log(JSON.stringify(Events.find({'geoPosition': {
+		console.log(JSON.stringify(Events.find({'geoPosition': {
 			$nearSphere: {
 				$geometry: {
 					type: "Point",
 					coordinates: [latlng.longitude, latlng.latitude]
 				},
 				$maxDistance: radius
-			}}},{_disableOplog: true}).fetch()));*/
+			}}},{_disableOplog: true}).fetch()));
 
-		return Events.find({startDate:{$lte:inputDate},endDate:{$gte:inputDate},'geoPosition': {
+		return Events.find({'geoPosition': {
 			$nearSphere: {
 				$geometry: {
 					type: "Point",

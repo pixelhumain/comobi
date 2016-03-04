@@ -3,10 +3,10 @@ pageSession = new ReactiveDict('pageEvents');
 Template.listEvents.helpers({
   events () {
       var inputDate = new Date();
-      return Events.find({startDate:{$lte:inputDate},endDate:{$gte:inputDate}});
+      return Events.find({});
   },
   countEvents () {
       var inputDate = new Date();
-      return Events.find({startDate:{$lte:inputDate},endDate:{$gte:inputDate}}).count();
+      return Events.find({}).count();
   },
 });

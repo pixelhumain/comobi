@@ -68,7 +68,7 @@ raix:push@2.6.4
 webtempest:animate
 meteoric:autoform-ionic
 reactive-dict
-bevanhunt:leaflet
+#bevanhunt:leaflet
 meteorhacks:subs-manager
 sha
 sergeyt:typeahead
@@ -78,3 +78,4 @@ meteorhacks:npm
 npm-container
 meteorhacks:kadira
 dschulz:jquery-qrcode
+pauloborges:mapbox@2.2.3_2

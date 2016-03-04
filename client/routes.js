@@ -28,10 +28,43 @@ Router.map(function() {
       let geo = Location.getReactivePosition();
       if(geo && geo.latitude){
       let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
-      let radius = 13000;
+      let radius = 50000;
       Meteor.subscribe('citoyenEvents',latlng,radius);
     }
     }
+  });
+
+  this.route("mapEvents", {
+    path: '/mapevents',
+    template: "mapEvents",
+    loadingTemplate: 'loading',
+    waitOn: function() {
+      Meteor.subscribe('citoyen');
+      let geo = Location.getReactivePosition();
+      if(geo && geo.latitude){
+      let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
+      let radius = 50000;
+      Meteor.subscribe('citoyenEvents',latlng,radius);
+    }
+    }
+  });
+
+  this.route("mapWithEvent", {
+      template: "mapEvents",
+      loadingTemplate: 'loading',
+      path: 'mapevents/:_id',
+      waitOn: function() {
+        Meteor.subscribe('citoyen');
+        let geo = Location.getReactivePosition();
+        if(geo && geo.latitude){
+        let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
+        let radius = 50000;
+        Meteor.subscribe('citoyenEvents',latlng,radius);
+      }
+    },
+      data: function() {
+          Session.set("currentEvent", this.params._id);
+      }
   });
 
   this.route("eventsAdd", {

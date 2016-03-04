@@ -203,10 +203,14 @@ this.Schemas.Events = new SimpleSchema({
       return this.creator === Meteor.userId();
     },
     isAttendees (){
-    let attendees = _.filter(this.links.attendees, function(attendees,key){
-       return key === Meteor.userId();
-     });
-      return this.links && this.links.attendees && attendees;
+      if(this.links && this.links.attendees){
+        let attendees = _.filter(this.links.attendees, function(attendees,key){
+           return key === Meteor.userId();
+         });
+          return this.links && this.links.attendees && attendees;
+      } else{
+        return false;
+      }
     },
     countAttendees () {
       return this.links && this.links.attendees && _.size(this.links.attendees);
