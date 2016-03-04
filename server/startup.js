@@ -15,4 +15,6 @@ Events.update({_id:c._id}, {$set: {'geoPosition': {
 }
 });*/
 
+
+
 });

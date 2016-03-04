@@ -130,16 +130,16 @@ Template.registerHelper("Schemas", Schemas);
 });
 
 Tracker.autorun(function() {
-  if (Meteor.userId()) {
-    //Meteor.subscribe('users');
-    /*var params = {
-      "name" : "test"
-    }
-    Meteor.call("postPixel","organization","savenew",params,function (error, result) {
-      console.log(error);
-      console.log(result);
-    } );*/
-  }
+    if (Meteor.userId() && Meteor.user()) {
+        let GPSstart = Session.get('GPSstart');
+        if(GPSstart){
+Location.startWatching(function(pos){
+   console.log("Got a position!", pos);
+}, function(err){
+   //console.log("Oops! There was an error", err);
+});
+        }
+      }
 });
 
 Tracker.autorun(function() {
