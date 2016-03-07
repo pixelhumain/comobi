@@ -45,6 +45,17 @@
         <i class="icon ion-edit"></i>
         {{_ "edit"}}
       </a>
+      {{else}}
+      {{#if scope.isAdmin}}
+      <a class="tab-item delete-photo" href="#">
+        <i class="icon ion-trash-a"></i>
+        {{_ "delete"}}
+      </a>
+      <a class="tab-item" href="{{pathFor "newsEdit" _id=scope._id._str newsId=_id._str scope=type}}">
+        <i class="icon ion-edit"></i>
+        {{_ "edit"}}
+      </a>
+      {{/if}}
       {{/if}}
     </div>
       {{/with}}

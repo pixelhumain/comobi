@@ -64,7 +64,7 @@ utilities:avatar
 meteoric:camera
 fourseven:scss
 crosswalk
-raix:push@2.6.4
+raix:push@=2.6.8
 webtempest:animate
 meteoric:autoform-ionic
 reactive-dict

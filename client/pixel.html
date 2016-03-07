@@ -17,7 +17,9 @@
 
   {{#if currentUser}}
   {{#ionTabs class="tabs-dark tabs-icon-only"}}
-  {{> ionTab title=_events path="listEvents" iconOff="calendar" iconOn="calendar"}}
+  {{> ionTab title=_events path="listEvents" iconOff="navicon-round" iconOn="navicon-round"}}
+  {{> ionTab title=_cartes path="mapEvents" iconOff="android-pin" iconOn="android-pin"}}
+  {{> ionTab title=_reglages path="settings" iconOff="gear-b" iconOn="gear-b"}}
   {{/ionTabs}}
   {{/if}}
 

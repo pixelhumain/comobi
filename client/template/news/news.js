@@ -95,6 +95,7 @@ Template.newsList.events({
               if (!error) {
                 //Meteor.call('push',selfresult.str);
                 console.log('result',result);
+                Meteor.call('pushNewNewsAttendees',self._id._str,newsId._str);
                 Router.go('newsList', {_id:self._id._str,scope:scope});
               }else{
                 console.log('error',error);
@@ -164,8 +165,8 @@ AutoForm.addHooks(['addNew', 'editNew'], {
 
                   Documents.insert(insertDoc, function(error, result) {
                       if (!error) {
-                        //Meteor.call('push',selfresult.str);
                         console.log('result',result);
+
                         Router.go('newsList', {_id:scopeId,scope:scope});
                       }else{
                         console.log('error',error);
@@ -178,6 +179,10 @@ AutoForm.addHooks(['addNew', 'editNew'], {
               //Meteor.call('push',selfresult.str);
               Router.go('newsListEvents', {_id:eventId});
             }*/
+            console.log(scopeId);
+            console.log(selfresult._str);
+            Meteor.call('pushNewNewsAttendees',scopeId,selfresult._str);
+            Router.go('newsList', {_id: Session.get('scopeId'),scope:Session.get('scope')});
           }
         },
         update(error, result) {

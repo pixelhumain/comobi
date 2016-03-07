@@ -31,7 +31,7 @@ Accounts.registerLoginHandler(function(loginRequest) {
     {$push: {'services.resume.loginTokens': stampedToken}}
   );
   this.setUserId(userId);
-
+  console.log(userId);
   return {
     userId: userId,
     token: stampedToken.token

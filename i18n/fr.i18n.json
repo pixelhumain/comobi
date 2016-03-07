@@ -43,5 +43,8 @@
   "Name is Too short":"Votre nom est trop court",
   "Password is Too short":"Votre mot de passe est trop court",
   "Not the same password":"Vous n'avez pas saisis le même mot de passe",
-  "are you sure you want to delete":"Etes-vous sûr que vous voulez supprimer ?"
+  "are you sure you want to delete":"Etes-vous sûr que vous voulez supprimer ?",
+  "Current":"En cours",
+  "Upcoming":"A venir",
+  "History":"Passé"
 }

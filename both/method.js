@@ -8,11 +8,11 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
-    if (Meteor.users.update({
-      _id: this.userId
+    if (Citoyen.update({
+      _id: new Mongo.ObjectID(this.userId)
     }, {
       $set: {
-        'profile.loc': {
+        'geoPosition': {
           type: "Point",
           'coordinates': [parseFloat(geo.longitude), parseFloat(geo.latitude)]
         }

@@ -1,0 +1,53 @@
+<template name="listAttendees">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "attendees"}}</h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+
+  <div class="padding">
+    <div class="list">
+      <div class="item item-divider">
+        <i class="ion-ios-people"></i> {{_ "attendees"}} <span class="badge badge-dark">{{events.countAttendees}}</span>
+      </div>
+      {{#transition in="zoomIn" out="bounceOut"}}
+      {{#each events.listAttendees}}
+
+        {{#if isFollowsAttendees _id._str}}
+        {{#if onlineAttendees}}
+        <div class="item animated out">
+          {{name}}
+        <span class="badge badge-balanced">{{_ "online"}}</span>
+        </div>
+        {{else}}
+        <div class="item animated out">
+          {{name}}
+        <span class="badge badge-assertive">{{_ "offline"}}</span>
+        </div>
+        {{/if}}
+        {{else}}
+        <div class="item item-button-right animated out">
+          {{name}}
+        <button class="button button-positive">
+          <i class="icon ion-person-add"></i>
+        </button>
+        </div>
+        {{/if}}
+
+      {{/each}}
+      {{/transition}}
+    </div>
+  </div>
+
+  {{/ionContent}}
+  {{/ionView}}
+</template>
