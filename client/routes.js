@@ -26,9 +26,9 @@ Router.map(function() {
     waitOn: function() {
       Meteor.subscribe('citoyen');
       let geo = Location.getReactivePosition();
+      let radius = Session.get('radius');
       if(geo && geo.latitude){
       let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
-      let radius = 50000;
       Meteor.subscribe('citoyenEvents',latlng,radius);
     }
     }
@@ -41,9 +41,9 @@ Router.map(function() {
     waitOn: function() {
       Meteor.subscribe('citoyen');
       let geo = Location.getReactivePosition();
+      let radius = Session.get('radius');
       if(geo && geo.latitude){
       let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
-      let radius = 50000;
       Meteor.subscribe('citoyenEvents',latlng,radius);
     }
     }
@@ -56,9 +56,9 @@ Router.map(function() {
       waitOn: function() {
         Meteor.subscribe('citoyen');
         let geo = Location.getReactivePosition();
+        let radius = Session.get('radius');
         if(geo && geo.latitude){
         let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
-        let radius = 50000;
         Meteor.subscribe('citoyenEvents',latlng,radius);
       }
     },
@@ -91,7 +91,7 @@ Router.map(function() {
 
   this.route("newsList", {
     template: "newsList",
-    path: 'news/:scope/:_id',
+    path: ':scope/news/:_id',
     loadingTemplate: 'loading',
     data: function() {
       Session.set('scopeId', this.params._id);
@@ -104,10 +104,23 @@ Router.map(function() {
     }
   });
 
+  this.route("listAttendees", {
+    template: "listAttendees",
+    path: 'events/attendees/:_id',
+    loadingTemplate: 'loading',
+    data: function() {
+      Session.set('scopeId', this.params._id);
+      return null;
+    },
+    waitOn: function() {
+      return Meteor.subscribe('listAttendees', this.params._id);
+    }
+  });
+
 
   this.route("newsDetail", {
     template: "newsDetail",
-    path: 'news/:scope/:_id/new/:newsId',
+    path: ':scope/news/:_id/new/:newsId',
     data: function() {
       Session.set('scopeId', this.params._id);
       Session.set('scope', this.params.scope);
@@ -121,7 +134,7 @@ Router.map(function() {
 
   this.route("newsAdd", {
     template: "newsAdd",
-    path: 'news/:scope/:_id/add',
+    path: ':scope/news/:_id/add',
     data: function() {
       Session.set('scopeId', this.params._id);
       Session.set('scope', this.params.scope);
@@ -133,7 +146,7 @@ Router.map(function() {
 
   this.route("newsEdit", {
     template: "newsEdit",
-    path: 'news/:scope/:_id/edit/:newsId',
+    path: ':scope/news/:_id/edit/:newsId',
     data: function() {
       Session.set('scopeId', this.params._id);
       Session.set('scope', this.params.scope);
@@ -143,6 +156,11 @@ Router.map(function() {
       Meteor.subscribe('scopeDetail', this.params.scope, this.params._id);
       return Meteor.subscribe('newsDetail', this.params.newsId);
     }
+  });
+
+  this.route('settings', {
+    template: "settings",
+      path: '/settings'
   });
 
 });

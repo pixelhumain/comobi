@@ -1,0 +1,58 @@
+<template name="settings">
+{{#contentFor "headerButtonLeft"}}
+
+{{/contentFor}}
+
+{{#contentFor "headerButtonRight"}}
+
+{{/contentFor}}
+
+{{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "Réglages"}}</h1>
+{{/contentFor}}
+
+     {{#ionView}}
+    {{#ionContent}}
+ <div class="list">
+<div class="item item-divider">
+    {{_ "Configuration"}}
+  </div>
+
+  <div class="item item-input item-select">
+    <div class="input-label">
+      {{_ "Rayon"}}
+    </div>
+    <select id="radius">
+    {{#if radius}}
+    <option value="1000" selected="{{#if isSelected radius '1000'}}selected{{/if}}">1km</option>
+    <option value="5000" selected="{{#if isSelected radius '5000'}}selected{{/if}}">5km</option>
+    <option value="10000" selected="{{#if isSelected radius '10000'}}selected{{/if}}">10km</option>
+    <option value="25000" selected="{{#if isSelected radius '25000'}}selected{{/if}}">25km</option>
+    <option value="50000" selected="{{#if isSelected radius '50000'}}selected{{/if}}">50km</option>
+    {{else}}
+    <option value="1000">1km</option>
+    <option value="5000">5km</option>
+    <option value="10000">10km</option>
+    <option value="25000" selected="selected">25km</option>
+    <option value="50000">50km</option>
+    {{/if}}
+    </select>
+  </div>
+
+  <div class="item item-toggle">
+{{_ "Geolocation"}}
+<label class="toggle toggle-balanced">
+   <input id="geolocate" type="checkbox" checked="{{#if geolocate}}checked{{/if}}">
+   <div class="track">
+     <div class="handle"></div>
+   </div>
+</label>
+</div>
+
+
+</div>
+    {{/ionContent}}
+  {{/ionView}}
+
+
+</template>

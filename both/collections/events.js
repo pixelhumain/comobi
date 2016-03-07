@@ -202,12 +202,18 @@ this.Schemas.Events = new SimpleSchema({
     isCreator () {
       return this.creator === Meteor.userId();
     },
+    isAdmin () {
+      return this.links && this.links.attendees && this.links.attendees[Meteor.userId()].isAdmin;
+    },
     isAttendees (){
+          return this.links && this.links.attendees && this.links.attendees[Meteor.userId()];
+    },
+    listAttendees (){
       if(this.links && this.links.attendees){
-        let attendees = _.filter(this.links.attendees, function(attendees,key){
-           return key === Meteor.userId();
+        let attendees = _.map(this.links.attendees, function(attendees,key){
+           return new Mongo.ObjectID(key);
          });
-          return this.links && this.links.attendees && attendees;
+          return Citoyens.find({_id:{$in:attendees}},{sort: {"name": 1} });
       } else{
         return false;
       }

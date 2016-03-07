@@ -127,6 +127,9 @@ Citoyens.attachSchema(
   }));
 
   Citoyens.helpers({
+    isFollows (followId){
+          return this.links && this.links.follows && this.links.follows[followId];
+    },
     knows () {
       //this.links.knows
       if(this && this.links && this.links.knows){

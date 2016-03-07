@@ -43,5 +43,8 @@
 "Name is Too short":"Name is Too short",
 "Password is Too short":"Password is Too short",
 "Not the same password":"Not the same password",
-"are you sure you want to delete":"Are you sure you want to delete ?"
+"are you sure you want to delete":"Are you sure you want to delete ?",
+"Current":"Current",
+"Upcoming":"Upcoming",
+"History":"Past"
 }

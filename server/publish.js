@@ -4,7 +4,6 @@ Meteor.publish('lists', function() {
 		return;
 	}
 	let lists = Lists.find({});
-	//console.log(JSON.stringify(lists.fetch()));
 	return lists;
 });
 
@@ -13,12 +12,9 @@ Meteor.publish('cities', function(cp,country) {
 	if (!this.userId) {
 		return;
 	}
-	console.log(country);
-	console.log(cp);
 	check(cp, String);
 	check(country, String);
 	let lists = Cities.find({cp:cp,country:country});
-	console.log(JSON.stringify(lists.fetch()));
 	return lists;
 });
 
@@ -29,8 +25,6 @@ Meteor.publish('citoyen', function() {
 	let objectId = new Mongo.ObjectID(this.userId);
 	let citoyen = Citoyens.find({_id:objectId},{fields:{pwd:0}});
 	var userC = Meteor.users.findOne({_id:this.userId});
-	console.log(userC);
-	//console.log(JSON.stringify(citoyen.fetch()));
 	return citoyen;
 });
 
@@ -47,20 +41,9 @@ Meteor.publish('citoyenEvents', function(latlng,radius) {
 	if (!this.userId) {
 		return;
 	}
-//console.log(latlng.longitude);
-//console.log(radius);
 		//selector startDate endDate sort et limit
 		var inputDate = new Date();
 		//console.log(inputDate);
-		console.log(JSON.stringify(Events.find({'geoPosition': {
-			$nearSphere: {
-				$geometry: {
-					type: "Point",
-					coordinates: [latlng.longitude, latlng.latitude]
-				},
-				$maxDistance: radius
-			}}},{_disableOplog: true}).fetch()));
-
 		return Events.find({'geoPosition': {
 			$nearSphere: {
 				$geometry: {
@@ -107,6 +90,47 @@ Meteor.publishComposite('scopeDetail', function(scope,scopeId) {
 			}
 		]}
 	});
+
+	Meteor.publishComposite('listAttendees', function(scopeId) {
+		check(scopeId, String);
+		if (!this.userId) {
+			return;
+		}
+		return {
+			find: function() {
+				return Events.find({_id:new Mongo.ObjectID(scopeId)});
+			},
+			children: [
+				{
+					find: function(event) {
+						let attendees = _.map(event.links.attendees, function(attendees,key){
+							 return new Mongo.ObjectID(key);
+						 });
+						return Citoyens.find({
+							_id: {$in:attendees}
+						}, {
+							fields: {
+								'name': 1,
+								'links': 1
+							}
+						});
+					},
+					children: [
+						{
+							find: function(citoyen) {
+								return Meteor.users.find({
+									_id: citoyen._id._str
+								}, {
+									fields: {
+										'profile.online': 1
+									}
+								});
+							}
+						}
+					]
+				}
+			]}
+		});
 
 	Meteor.publishComposite('newsList', function(scope,scopeId) {
 		check(scopeId, String);
@@ -173,7 +197,6 @@ Meteor.publishComposite('newsDetail', function(newsId) {
 		children: [
 			{
 				find: function(news) {
-					console.log(news.author);
 					return Citoyens.find({
 						_id: new Mongo.ObjectID(news.author)
 					}, {
@@ -235,14 +258,6 @@ Meteor.publish('citoyenOnlineProx', function(latlng,radius) {
 Citoyens._ensureIndex({
 	"geoPosition": "2dsphere"
 });
-console.log(JSON.stringify(Citoyens.find({'geoPosition': {
-	$nearSphere: {
-		$geometry: {
-			type: "Point",
-			coordinates: [latlng.longitude, latlng.latitude]
-		},
-		$maxDistance: radius
-	}}},{_disableOplog: true,fields:{pwd:0}}).fetch()));
 	return Citoyens.find({'geoPosition': {
 		$nearSphere: {
 			$geometry: {

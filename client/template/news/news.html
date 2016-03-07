@@ -18,7 +18,7 @@
 
   <div class="list padding">
     <div class="item item-divider homestead">
-    <i class="ion ion-social-rss"></i>  {{_ "news"}} {{name}} <span class="badge badge-dark">{{scope.countNews}}</span>
+    <i class="ion ion-social-rss"></i>  {{_ "news"}} {{scope.name}} <span class="badge badge-dark">{{scope.countNews}}</span>
     </div>
     {{#each scope.news}}
     <a href="{{pathFor 'newsDetail' _id=scope._id._str newsId=_id._str scope=type}}" class="item animated in {{#if docNews.objId}}item-thumbnail-left{{/if}}">
@@ -146,6 +146,7 @@
       {{#if isAttendees}}
       <button class="button button-small photo-link">{{> ionIcon icon="camera"}}</button>
       <a href="{{pathFor 'newsAdd' _id=_id._str scope=($.Session.get 'scope')}}" class="button button-small">{{> ionIcon icon="compose"}}</a>
+      <a href="{{pathFor 'listAttendees' _id=_id._str}}" class="button button-small">{{> ionIcon icon="ios-people"}}</a>
       {{else}}
       <button class="button button-small saveattendees-link">{{> ionIcon icon="person-add"}}</button>
       {{/if}}
@@ -161,7 +162,7 @@
 <template name="listNews">
   <div class="list padding">
     <div class="item item-divider homestead">
-      {{_ "news"}} {{name}} <span class="badge badge-dark">{{scope.countNews}}</span>
+      {{_ "news"}} {{scope.name}} <span class="badge badge-dark">{{scope.countNews}}</span>
     </div>
     {{#transition in="zoomIn" out="bounceOut"}}
     {{#each scope.news}}
