@@ -56,6 +56,8 @@ TAPi18n.setLanguage(language)
 });
 
 
+Schemas.EventsRest.i18n("schemas.eventsrest");
+
 
 Template.registerHelper('distance',function (coordinates) {
   let geo = Location.getReactivePosition();

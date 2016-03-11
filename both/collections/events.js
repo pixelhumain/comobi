@@ -73,7 +73,10 @@ this.Schemas.EventsRest = new SimpleSchema({
       optional:true
     },
     description : {
-      type : String
+      type : String,
+      autoform: {
+        type: "textarea"
+      }
     },
     allDay : {
       type : Boolean,
@@ -143,7 +146,10 @@ this.Schemas.Events = new SimpleSchema({
       type : GeoPosition
     },
     description : {
-      type : String
+      type : String,
+      autoform: {
+        type: "textarea"
+      }
     },
     allDay : {
       type : Boolean,

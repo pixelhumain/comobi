@@ -1,109 +1,112 @@
 News = new Meteor.Collection("news", {idGeneration : 'MONGO'});
 
-//quel sont les types ?
+this.Schemas = this.Schemas || {};
 
-News.attachSchema(
-  new SimpleSchema({
-    name : {
-      type : String,
-      optional: true
+this.Schemas.News =   new SimpleSchema({
+  name : {
+    type : String,
+    optional: true
+  },
+  text : {
+    type : String,
+    optional: true
+  },
+  date: {
+    type: Date,
+    autoValue: function() {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return {
+          $setOnInsert: new Date()
+        };
+      } else {
+        this.unset();
+      }
     },
-    text : {
-      type : String,
-      optional: true
+    denyUpdate: true
+  },
+  created: {
+    type: Date,
+    autoValue: function() {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return {
+          $setOnInsert: new Date()
+        };
+      } else {
+        this.unset();
+      }
     },
-    date: {
-      type: Date,
-      autoValue: function() {
-        if (this.isInsert) {
-          return new Date();
-        } else if (this.isUpsert) {
-          return {
-            $setOnInsert: new Date()
-          };
-        } else {
-          this.unset();
-        }
-      },
-      denyUpdate: true
+    denyUpdate: true
+  },
+  id : {
+    type: String,
+    autoValue: function() {
+      if (this.isInsert) {
+        return Meteor.userId();
+      } else if (this.isUpsert) {
+        return {
+          $setOnInsert: Meteor.userId()
+        };
+      } else {
+        this.unset();
+      }
     },
-    created: {
-      type: Date,
-      autoValue: function() {
-        if (this.isInsert) {
-          return new Date();
-        } else if (this.isUpsert) {
-          return {
-            $setOnInsert: new Date()
-          };
-        } else {
-          this.unset();
-        }
-      },
-      denyUpdate: true
+    denyUpdate: true
+  },
+  author : {
+    type: String,
+    autoValue: function() {
+      if (this.isInsert) {
+        return Meteor.userId();
+      } else if (this.isUpsert) {
+        return {
+          $setOnInsert: Meteor.userId()
+        };
+      } else {
+        this.unset();
+      }
     },
-    id : {
-      type: String,
-      autoValue: function() {
-        if (this.isInsert) {
-          return Meteor.userId();
-        } else if (this.isUpsert) {
-          return {
-            $setOnInsert: Meteor.userId()
-          };
-        } else {
-          this.unset();
-        }
-      },
-      denyUpdate: true
-    },
-    author : {
-      type: String,
-      autoValue: function() {
-        if (this.isInsert) {
-          return Meteor.userId();
-        } else if (this.isUpsert) {
-          return {
-            $setOnInsert: Meteor.userId()
-          };
-        } else {
-          this.unset();
-        }
-      },
-      denyUpdate: true
-    },
-    type : {
-      type: String
-    },
-    tags : {
-      type: [String],
-      optional: true
-    },
-    likes : {
-      type: [String],
-      optional: true
-    },
-    scope : {
-      type: Object
-    },
-    "scope.events" : {
-      type: [String],
-      optional: true
-    },
-    "scope.projects" : {
-      type: [String],
-      optional: true
-    },
-    "scope.organizations" : {
-      type: [String],
-      optional: true
-    },
-    "scope.citoyens" : {
-      type: [String],
-      optional: true
-    }
-  })
-);
+    denyUpdate: true
+  },
+  type : {
+    type: String
+  },
+  tags : {
+    type: [String],
+    optional: true
+  },
+  likes : {
+    type: [String],
+    optional: true
+  },
+  scope : {
+    type: Object
+  },
+  "scope.events" : {
+    type: [String],
+    optional: true
+  },
+  "scope.projects" : {
+    type: [String],
+    optional: true
+  },
+  "scope.organizations" : {
+    type: [String],
+    optional: true
+  },
+  "scope.citoyens" : {
+    type: [String],
+    optional: true
+  }
+});
+
+Meteor.startup(function() {
+  this.Schemas.News.i18n("schemas.news");
+  News.attachSchema(this.Schemas.News);
+});
 
 News.helpers({
   authorNews: function () {

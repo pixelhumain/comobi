@@ -36,7 +36,11 @@ Template.mapevent.onRendered(function () {
         _id: event._id._str,
         title: event.name,
         latitude : event.geo.latitude,
-        longitude : event.geo.longitude
+        longitude : event.geo.longitude,
+        icon: L.mapbox.marker.icon({
+        'marker-size': 'small',
+        'marker-color': selectColor(event)
+    })
       }).bindPopup(containerNode).on('click', function(e) {
         console.log(e.target.options._id);
         map.panTo([e.target.options.latitude, e.target.options.longitude]);
@@ -54,7 +58,11 @@ Template.mapevent.onRendered(function () {
           _id: event._id._str,
           title: event.name,
           latitude : event.geo.latitude,
-          longitude : event.geo.longitude
+          longitude : event.geo.longitude,
+          icon: L.mapbox.marker.icon({
+          'marker-size': 'small',
+          'marker-color': selectColor(event)
+      })
         }).bindPopup(containerNode).on('click', function(e) {
           console.log(e.target.options._id);
           map.panTo([e.target.options.latitude, e.target.options.longitude]);
@@ -84,18 +92,21 @@ Template.mapevent.onDestroyed(function () {
 
 var map , markers = [ ];
 
-var initialize = function(element, zoom, features) {
+const initialize = ( element, zoom, features ) => {
   let self = this;
   let geo = Location.getReactivePosition();
   if(geo && geo.latitude){
     L.mapbox.accessToken = 'pk.eyJ1IjoiY29tbXVuZWN0ZXIiLCJhIjoiY2lreWRkNzNrMDA0dXc3bTA1MHkwbXdscCJ9.NbvsJ14y2bMWWdGqucR_EQ';
     map = L.mapbox.map(element,'mapbox.streets').setView(new L.LatLng(parseFloat(geo.latitude), parseFloat(geo.longitude)), zoom);
-    var marker = L.marker(new L.LatLng(parseFloat(geo.latitude), parseFloat(geo.longitude))).bindPopup('Vous êtes ici :)');
+    var marker = L.marker(new L.LatLng(parseFloat(geo.latitude), parseFloat(geo.longitude)),{icon: L.mapbox.marker.icon({
+    'marker-size': 'small',
+    'marker-color': '#fa0'
+})}).bindPopup('Vous êtes ici :)');
     map.addLayer(marker);
   }
 }
 
-var addMarker = function(marker) {
+const addMarker = (marker) => {
   map.addLayer(marker);
   markers[marker.options._id] = marker;
   if (Session.get('currentEvent') === marker.options._id) {
@@ -104,7 +115,18 @@ var addMarker = function(marker) {
   }
 }
 
-var removeMarker = function(_id) {
+const removeMarker = (_id) => {
   var marker = markers[_id];
   if (map.hasLayer(marker)) map.removeLayer(marker);
+}
+
+const selectColor = (event) => {
+  let inputDate = new Date();
+  if(event.startDate<inputDate && event.endDate<inputDate){
+    return '#cccccc';
+  }else if(event.startDate<=inputDate && event.endDate>inputDate){
+    return '#33cd5f';
+  }else{
+    return '#324553';
+  }
 }

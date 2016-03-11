@@ -2,42 +2,42 @@ pageSession = new ReactiveDict('pageEvents');
 
 Template.listEvents.helpers({
   events () {
-      var inputDate = new Date();
-      let sortEvents= Session.get('sortEvents');
-      if(sortEvents === "Current"){
+    var inputDate = new Date();
+    let sortEvents= Session.get('sortEvents');
+    if(sortEvents === "Current"){
       return Events.find({startDate:{$lte : inputDate},endDate:{$gte : inputDate}});
-      }else if(sortEvents === "Upcoming"){
-        return Events.find({startDate:{$gte : inputDate}});
-      }else if(sortEvents === "History"){
-        return Events.find({endDate:{$lte : inputDate}});
-      }else{
-        return Events.find({});
-      }
+    }else if(sortEvents === "Upcoming"){
+      return Events.find({startDate:{$gte : inputDate}});
+    }else if(sortEvents === "History"){
+      return Events.find({endDate:{$lte : inputDate}});
+    }else{
+      return Events.find({});
+    }
   },
   countEvents () {
-      var inputDate = new Date();
-      let sortEvents= Session.get('sortEvents');
-      if(sortEvents === "Current"){
+    var inputDate = new Date();
+    let sortEvents= Session.get('sortEvents');
+    if(sortEvents === "Current"){
       return Events.find({startDate:{$lte : inputDate},endDate:{$gte : inputDate}}).count();
-      }else if(sortEvents === "Upcoming"){
-        return Events.find({startDate:{$gte : inputDate}}).count();
-      }else if(sortEvents === "History"){
-        return Events.find({endDate:{$lte : inputDate}}).count();
-      }else{
-        return Events.find({}).count();
-      }
+    }else if(sortEvents === "Upcoming"){
+      return Events.find({startDate:{$gte : inputDate}}).count();
+    }else if(sortEvents === "History"){
+      return Events.find({endDate:{$lte : inputDate}}).count();
+    }else{
+      return Events.find({}).count();
+    }
   },
   countEventsCurrent () {
-      var inputDate = new Date();
-      return Events.find({startDate:{$lte : inputDate},endDate:{$gte : inputDate}}).count();
+    var inputDate = new Date();
+    return Events.find({startDate:{$lte : inputDate},endDate:{$gte : inputDate}}).count();
   },
   countEventsUpcoming () {
-      var inputDate = new Date();
-        return Events.find({startDate:{$gte : inputDate}}).count();
+    var inputDate = new Date();
+    return Events.find({startDate:{$gte : inputDate}}).count();
   },
   countEventsHistory () {
-      var inputDate = new Date();
-        return Events.find({endDate:{$lte : inputDate}}).count();
+    var inputDate = new Date();
+    return Events.find({endDate:{$lte : inputDate}}).count();
   },
   sortEvents (){
     return Session.get('sortEvents');
@@ -45,11 +45,11 @@ Template.listEvents.helpers({
 });
 
 Template.listEvents.events({
-	'click .triEvents':function(event, template){
-		event.preventDefault();
-		Session.set('sortEvents', event.target.value);
-		console.log("sortEvents",  event.target.value);
-}
+  'click .triEvents':function(event, template){
+    event.preventDefault();
+    Session.set('sortEvents', event.target.value);
+    console.log("sortEvents",  event.target.value);
+  }
 });
 
 Template.eventsAdd.onCreated(function () {
@@ -87,7 +87,7 @@ Template.eventsEdit.helpers({
     eventEdit.postalCode = event.address.postalCode;
     eventEdit.city = event.address.codeInsee;
     if(event && event.address && event.address.streetAddress){
-    eventEdit.streetAddress = event.address.streetAddress;
+      eventEdit.streetAddress = event.address.streetAddress;
     }
     eventEdit.geoPosLatitude = event.geo.latitude;
     eventEdit.geoPosLongitude = event.geo.longitude;
@@ -133,7 +133,7 @@ Template.eventsFields.onRendered(function() {
   self.autorun(function() {
     let postalCode = pageSession.get('postalCode')  || AutoForm.getFieldValue('postalCode');
     let country = pageSession.get('country')  || AutoForm.getFieldValue('country');
-      console.log(`${postalCode} ${country}`);
+    console.log(`${postalCode} ${country}`);
     console.log('recompute');
     if (!!postalCode) {
       self.subscribe('cities',postalCode,country);
@@ -198,38 +198,38 @@ Template.eventsFields.events({
     if(event.currentTarget.value.length>5){
       /*HTTP.get( 'http://nominatim.openstreetmap.org/search?q='+request+'&format=json&polygon=0&addressdetails=1', {},
       function( error, response ) {
-        if ( error ) {
-          console.log( error );
-        } else {
-          console.log(response.data);
-          if (response.data.length > 0) {
-            pageSession.set( 'geoPosLatitude', response.data[0].lat);
-            pageSession.set( 'geoPosLongitude', response.data[0].lon);
-            console.log(response.data[0].lat);
-            console.log(response.data[0].lon);
-        }
-          return;
-        }
-      }
-    );*/
-    ///+Meteor.settings.public.googlekey
-    HTTP.get( 'https://maps.googleapis.com/maps/api/geocode/json?address=' + request + '&key='+Meteor.settings.public.googlekey, {},
-    function( error, response ) {
       if ( error ) {
-        console.log( error );
-      } else {
-        console.log(response.data);
-        if (response.data.results.length > 0 && response.data.status != "ZERO_RESULTS") {
-          pageSession.set( 'geoPosLatitude', response.data.results[0].geometry.location.lat);
-          pageSession.set( 'geoPosLongitude', response.data.results[0].geometry.location.lng);
-          console.log(response.data.results[0].geometry.location.lat);
-          console.log(response.data.results[0].geometry.location.lng);
-        }
-        return;
-      }
-    }
-  );
+      console.log( error );
+    } else {
+    console.log(response.data);
+    if (response.data.length > 0) {
+    pageSession.set( 'geoPosLatitude', response.data[0].lat);
+    pageSession.set( 'geoPosLongitude', response.data[0].lon);
+    console.log(response.data[0].lat);
+    console.log(response.data[0].lon);
   }
+  return;
+}
+}
+);*/
+///+Meteor.settings.public.googlekey
+HTTP.get( 'https://maps.googleapis.com/maps/api/geocode/json?address=' + request + '&key='+Meteor.settings.public.googlekey, {},
+function( error, response ) {
+  if ( error ) {
+    console.log( error );
+  } else {
+    console.log(response.data);
+    if (response.data.results.length > 0 && response.data.status != "ZERO_RESULTS") {
+      pageSession.set( 'geoPosLatitude', response.data.results[0].geometry.location.lat);
+      pageSession.set( 'geoPosLongitude', response.data.results[0].geometry.location.lng);
+      console.log(response.data.results[0].geometry.location.lat);
+      console.log(response.data.results[0].geometry.location.lng);
+    }
+    return;
+  }
+}
+);
+}
 }
 });
 
@@ -255,11 +255,11 @@ AutoForm.addHooks(['addEvent', 'editEvent'], {
   onError: function(formType, error) {
     let ref;
     if (error.errorType && error.errorType === 'Meteor.Error') {
-       //if ((ref = error.reason) === 'Name must be unique') {
+      //if ((ref = error.reason) === 'Name must be unique') {
       //this.addStickyValidationError('name', error.reason);
       //AutoForm.validateField(this.formId, 'name');
-    //}
-  }
+      //}
+    }
   }
 });
 
