@@ -72,10 +72,10 @@ reactive-dict
 meteorhacks:subs-manager
 sha
 sergeyt:typeahead
-meteorhacks:npm
+#meteorhacks:npm
 
 
-npm-container
+#npm-container
 meteorhacks:kadira
 dschulz:jquery-qrcode
 pauloborges:mapbox@2.2.3_2

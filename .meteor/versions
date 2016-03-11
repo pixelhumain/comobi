@@ -93,7 +93,6 @@ meteorhacks:async@1.0.0
 meteorhacks:inject-initial@1.0.3
 meteorhacks:kadira@2.26.3
 meteorhacks:meteorx@1.4.1
-meteorhacks:npm@1.5.0
 meteorhacks:subs-manager@1.6.2
 meteoric:autoform-ionic@0.1.6
 meteoric:camera@1.0.2
@@ -112,7 +111,6 @@ mrt:graphicsmagick@1.12.2
 mrt:moment@2.8.1
 mrt:profile-online@0.1.9
 multiply:iron-router-progress@1.0.2
-npm-container@1.2.0
 npm-mongo@1.4.39_1
 observe-sequence@1.0.7
 ordered-dict@1.0.4
