@@ -93,7 +93,6 @@ Template.newsList.events({
 
           Documents.insert(insertDoc, function(error, result) {
               if (!error) {
-                //Meteor.call('push',selfresult.str);
                 console.log('result',result);
                 Meteor.call('pushNewNewsAttendees',self._id._str,newsId._str);
                 Router.go('newsList', {_id:self._id._str,scope:scope});
@@ -115,14 +114,6 @@ Template.newsEdit.helpers({
   }
 });
 
-Template.newsFields.helpers({
-_name () {
-  return  TAPi18n.__('news-name');
-},
-_text () {
-  return  TAPi18n.__('news-text');
-}
-});
 
 AutoForm.addHooks(['addNew', 'editNew'], {
   after: {

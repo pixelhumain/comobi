@@ -1,9 +1,4 @@
 
-/*
-communecter/event/saveattendees
-idEvent
-attendeeId
-*/
 
 Meteor.methods({
   saveattendeesEvent : function(scope,eventId){
@@ -259,6 +254,39 @@ searchCities : function(query, options){
   var regex = new RegExp("^" + query);
   return Cities.find({name: {$regex:  regex, $options: "i"}}, options).fetch();
 },
+pushNewAttendees : function(eventId){
+  check(eventId, String);
+  if (!this.userId) {
+    throw new Meteor.Error("not-authorized");
+  }
+  let user = Citoyens.findOne({_id: new Mongo.ObjectID(this.userId)});
+  let event = Events.findOne({_id: new Mongo.ObjectID(eventId)});
+    if(news && event && event.links && event.links.attendees){
+      let attendeesIdsTmp = _.map(event.links.attendees, function(attendees,key){
+        return key;
+      });
+      let attendeesIds = _.filter(attendeesIdsTmp, function(attendees){
+        return attendees!=this.userId;
+      },this);
+      console.log(attendeesIds);
+      let title = event.name;
+      var text = user.name;
+      let payload = {};
+      payload['title'] = title;
+      payload['pushType'] = 'news';
+      payload['newsId'] = newsId;
+      payload['eventId'] = eventId;
+      payload['scope'] = 'events';
+
+      let query = {};
+      query['userId'] = {$in:attendeesIds};
+      let notId =
+      Meteor.call('pushUser',title,text,payload,query);
+
+    }else{
+      throw new Meteor.Error("not-event-news");
+    }
+    },
 pushNewNewsAttendees : function(eventId,newsId){
   check(newsId, String);
   check(eventId, String);
@@ -268,9 +296,12 @@ pushNewNewsAttendees : function(eventId,newsId){
   let news = News.findOne({_id: new Mongo.ObjectID(newsId)});
   let event = Events.findOne({_id: new Mongo.ObjectID(eventId)});
     if(news && event && event.links && event.links.attendees){
-      let attendeesIds = _.map(event.links.attendees, function(attendees,key){
+      let attendeesIdsTmp = _.map(event.links.attendees, function(attendees,key){
         return key;
       });
+      let attendeesIds = _.filter(attendeesIdsTmp, function(attendees){
+        return attendees!=this.userId;
+      },this);
       console.log(attendeesIds);
       let title = event.name;
       if(news.name){
@@ -287,14 +318,14 @@ pushNewNewsAttendees : function(eventId,newsId){
 
       let query = {};
       query['userId'] = {$in:attendeesIds};
-
+      let notId =
       Meteor.call('pushUser',title,text,payload,query);
 
     }else{
       throw new Meteor.Error("not-event-news");
     }
     },
-    pushUser : function(title,text,payload,query){
+    pushUser : function(title,text,payload,query,notId){
       check(title, String);
       check(text, String);
       check(payload, Object);
@@ -304,7 +335,8 @@ pushNewNewsAttendees : function(eventId,newsId){
         title: title,
         text: text,
         payload: payload,
-        query: query
+        query: query,
+        notId: notId
       });
     }
   });

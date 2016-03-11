@@ -35,6 +35,7 @@
   "news-text":"Message",
   "edit a news":"Editer une news",
   "edit":"Editer",
+  "create":"Publier",
   "Communecter Login Failed":"Échec de la connexion",
   "Email not valid":"Email non valide",
   "Email not unique":"Email déja présent",
@@ -46,5 +47,62 @@
   "are you sure you want to delete":"Etes-vous sûr que vous voulez supprimer ?",
   "Current":"En cours",
   "Upcoming":"A venir",
-  "History":"Passé"
+  "History":"Passé",
+  "Create a event":"Créer un évenement",
+  "Edit a event":"Modifier un évenement",
+  "Error not postal code match":"Erreur code postal non trouvé",
+  "schemas":{
+    "eventsrest" : {
+      "name":{
+        "label": "Nom"
+      },
+      "description":{
+        "label": "Description"
+      },
+      "type":{
+        "label": "Type",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+
+        }
+      },
+      "allDay":{
+        "label": "Toute la journée"
+      },
+      "startDate":{
+        "label": "Date de début"
+      },
+      "endDate":{
+        "label": "Date de fin"
+      },
+      "country":{
+        "label": "Pays",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+
+        }
+      },
+      "postalCode":{
+        "label": "Code postal"
+      },
+      "city":{
+        "label": "Code insee",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+
+        }
+      },
+      "streetAddress":{
+        "label": "Adresse"
+      }
+    },
+    "news":{
+      "name":{
+        "label": "Titre"
+      },
+      "text":{
+        "label": "Message"
+      }
+    }
+  }
 }

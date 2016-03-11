@@ -82,7 +82,7 @@
   {{#ionContent}}
   <div class="list">
     <div class="item item-divider">
-      {{_ "create a event"}}
+      {{_ "Create a event"}}
     </div>
     {{#autoForm id="addEvent" schema=Schemas.EventsRest type="method" meteormethod="insertEvent" template="ionic" class="padding"}}
     {{> eventsFields}}
@@ -115,7 +115,7 @@
   {{#ionContent}}
   <div class="list">
     <div class="item item-divider">
-      {{_ "edit a event"}}
+      {{_ "Edit a event"}}
     </div>
     {{#autoForm id="editEvent" schema=Schemas.EventsRest type="method-update" meteormethod="updateEvent" doc=event template="ionic" class="padding"}}
     {{> eventsFields}}
@@ -131,27 +131,27 @@
 </template>
 
 <template name="eventsFields">
-  {{> afQuickField name='name' label=_name}}
-  {{> afQuickField name='description' label=_description}}
-  {{> afQuickField name='type' label=_type}}
-  {{> afQuickField name='allDay' label=_allDay}}
-  {{> afQuickField name='startDate' label=_startDate}}
-  {{> afQuickField name='endDate' label=_endDate}}
-  {{> afQuickField name='country' label=_addressCountry autocomplete="off"}}
+  {{> afQuickField name='name'}}
+  {{> afQuickField name='description' rows=8}}
+  {{> afQuickField name='type'}}
+  {{> afQuickField name='allDay'}}
+  {{> afQuickField name='startDate'}}
+  {{> afQuickField name='endDate'}}
+  {{> afQuickField name='country' autocomplete="off"}}
   {{#if currentFieldValue "country"}}
-  {{> afQuickField name='postalCode' label=_postalCode autocomplete="off"}}
+  {{> afQuickField name='postalCode' autocomplete="off"}}
   {{#if currentFieldValue "postalCode"}}
   {{#if optionsInsee}}
-  {{> afQuickField name='city' label=_codeInsee options=optionsInsee}}
+  {{> afQuickField name='city' options=optionsInsee}}
   {{else}}
   <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
   {{/if}}
   {{/if}}
-  {{> afQuickField name='streetAddress' label=_streetAddress autocomplete="off"}}
+  {{> afQuickField name='streetAddress' autocomplete="off"}}
   {{#if latlng}}
   {{> map}}
   {{/if}}
-  {{> afQuickField name='geoPosLatitude' type="hidden" label=_latitude value=latitude}}
-  {{> afQuickField name='geoPosLongitude' type="hidden" label=_longitude value=longitude}}
+  {{> afQuickField name='geoPosLatitude' type="hidden" value=latitude}}
+  {{> afQuickField name='geoPosLongitude' type="hidden" value=longitude}}
   {{/if}}
 </template>
