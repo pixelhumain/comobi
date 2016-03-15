@@ -105,7 +105,7 @@
           <div class="input-label">
             <i class="icon ion-home"></i>
           </div>
-          <input type="text" id="codepostal" placeholder="{{_ "postcode"}}">
+          <input type="text" id="codepostal" value="{{codepostal}}" placeholder="{{_ "postcode"}}">
         </label>
         {{#if city}}
         <label class="item item-input item-select">
@@ -114,7 +114,7 @@
           </div>
           <select name="city" id="city">
           {{#each city}}
-            <option value="{{insee}}">{{name}}</option>
+            <option value="{{insee}}" {{citySelected}}>{{name}}</option>
           {{/each}}
           </select>
         </label>

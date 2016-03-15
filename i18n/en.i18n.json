@@ -51,7 +51,20 @@
   "Create a event":"Create a event",
   "Edit a event":"Edit a event",
   "Error not postal code match":"Error not postal code match",
+  "Invite":"Invite",
+  "Reset":"Reset",
+  "Send":"Send",
+  "Send invite":"Send an invitation",
+  "Search...":"Search...",
   "schemas":{
+    "followrest":{
+      "invitedUserName":{
+          "label": "name"
+      },
+      "invitedUserEmail":{
+          "label": "email"
+      }
+    },
     "eventsrest" : {
       "name":{
         "label": "name"

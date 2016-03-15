@@ -137,12 +137,12 @@
   {{> afQuickField name='allDay'}}
   {{> afQuickField name='startDate'}}
   {{> afQuickField name='endDate'}}
-  {{> afQuickField name='country' autocomplete="off"}}
+  {{> afQuickField name='country' autocomplete="off" value=country }}
   {{#if currentFieldValue "country"}}
-  {{> afQuickField name='postalCode' autocomplete="off"}}
+  {{> afQuickField name='postalCode' value=postalCode autocomplete="off"}}
   {{#if currentFieldValue "postalCode"}}
   {{#if optionsInsee}}
-  {{> afQuickField name='city' options=optionsInsee}}
+  {{> afQuickField name='city' options=optionsInsee value=city}}
   {{else}}
   <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
   {{/if}}

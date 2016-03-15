@@ -15,6 +15,15 @@ Template.settings.events({
       Session.set('geolocate',  false);
     }
     return;
+  },
+  'click #pushenabled': function(e, t) {
+    let state=Push.enabled();
+    if(state===false){
+      Push.enabled(true);
+    }else{
+      Push.enabled(false);
+    }
+    return;
   }
 });
 
@@ -27,5 +36,9 @@ Template.settings.helpers({
   },
   geolocate:function() {
     return Session.get("geolocate");
-  }
+  },
+  pushEnabled:function() {
+    let state=Push.enabled();
+  return state !== false;
+}
 });

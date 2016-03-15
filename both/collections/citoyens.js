@@ -1,6 +1,8 @@
 //Person
 Citoyens = new Meteor.Collection("citoyens", {idGeneration : 'MONGO'});
 
+this.Schemas = this.Schemas || {};
+
 //Social
 var socialNetwork = new SimpleSchema({
   facebook: {
@@ -52,6 +54,19 @@ var rolesCitoyen = new SimpleSchema({
     defaultValue: false
   }
 });
+
+//type : person / follow
+//invitedUserName
+//invitedUserEmail
+this.Schemas.FollowRest = new SimpleSchema({
+    invitedUserName : {
+      type : String
+    },
+    invitedUserEmail : {
+      type : String,
+      regEx: SimpleSchema.RegEx.Email
+    }
+  });
 
 //TODO recuperer l'image du profil pour avatar
 //profilImageUrl

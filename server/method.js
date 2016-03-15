@@ -1,6 +1,27 @@
 
 
 Meteor.methods({
+  followPersonExist : function(connectUserId){
+    //type : person / follows
+    //connectUserId
+    check(connectUserId, String);
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    var retour = Meteor.call("postPixel","person","follows",doc);
+    return retour;
+  },
+  followPerson : function(doc){
+    //type : person / follows
+    //invitedUserName
+    //invitedUserEmail
+    check(doc, Schemas.FollowRest);
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    var retour = Meteor.call("postPixel","person","follows",doc);
+    return retour;
+  },
   saveattendeesEvent : function(scope,eventId){
     check(scope, String);
     check(eventId, String);
@@ -15,7 +36,6 @@ Meteor.methods({
   },
   insertEvent : function(doc){
     //type : organizations / projects > organizerId
-    console.log(doc);
     check(doc, Schemas.EventsRest);
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
@@ -226,13 +246,16 @@ createUserAccount: function(user){
 },
 getcitiesbylatlng: function(latlng) {
   check(latlng, {latitude:Number,longitude:Number});
-  return Cities.find({"geoShape":
+  Cities._ensureIndex({
+  	"geoShape": "2dsphere"
+  });
+  return Cities.findOne({"geoShape":
   {$geoIntersects:
     {$geometry:{ "type" : "Point",
     "coordinates" : [ latlng.longitude, latlng.latitude ] }
   }
 }
-}).fetch();
+},{_disableOplog: true});
 },
 getcitiesbypostalcode: function(cp) {
   check(cp, String);
@@ -280,7 +303,6 @@ pushNewAttendees : function(eventId){
 
       let query = {};
       query['userId'] = {$in:attendeesIds};
-      let notId =
       Meteor.call('pushUser',title,text,payload,query);
 
     }else{
@@ -318,7 +340,6 @@ pushNewNewsAttendees : function(eventId,newsId){
 
       let query = {};
       query['userId'] = {$in:attendeesIds};
-      let notId =
       Meteor.call('pushUser',title,text,payload,query);
 
     }else{
@@ -335,8 +356,7 @@ pushNewNewsAttendees : function(eventId,newsId){
         title: title,
         text: text,
         payload: payload,
-        query: query,
-        notId: notId
+        query: query
       });
     }
   });

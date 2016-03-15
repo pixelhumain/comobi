@@ -124,12 +124,42 @@ Template.eventsFields.helpers({
   },
   latitude (){
     return pageSession.get('geoPosLatitude') || AutoForm.getFieldValue('geoPosLatitude');
+  },
+  country (){
+    return pageSession.get('country') || AutoForm.getFieldValue('country');
+  },
+  postalCode (){
+    return pageSession.get('postalCode') || AutoForm.getFieldValue('postalCode');
+  },
+  city (){
+    return pageSession.get('city') || AutoForm.getFieldValue('city');
   }
 });
 
 
 Template.eventsFields.onRendered(function() {
   var self = this;
+
+  let geolocate = Session.get('geolocate');
+  if(geolocate){
+    var onOk=IonPopup.confirm({template:TAPi18n.__('Utiliser votre position actuelle ?'),
+    onOk: function(){
+      let geo = Location.getReactivePosition();
+      if(geo && geo.latitude){
+        let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
+        Meteor.call('getcitiesbylatlng',latlng,function(error, result){
+          if(result){
+          pageSession.set('postalCode', result.cp);
+          pageSession.set('country', result.country);
+          pageSession.set('city', result.insee);
+          pageSession.set('geoPosLatitude', result.geo.latitude);
+          pageSession.set('geoPosLongitude', result.geo.longitude);
+        }
+        });
+      }
+    }});
+  }
+
   self.autorun(function() {
     let postalCode = pageSession.get('postalCode')  || AutoForm.getFieldValue('postalCode');
     let country = pageSession.get('country')  || AutoForm.getFieldValue('country');
@@ -196,40 +226,23 @@ Template.eventsFields.events({
     request = transformNominatimUrl(request);
 
     if(event.currentTarget.value.length>5){
-      /*HTTP.get( 'http://nominatim.openstreetmap.org/search?q='+request+'&format=json&polygon=0&addressdetails=1', {},
+      HTTP.get( 'https://maps.googleapis.com/maps/api/geocode/json?address=' + request + '&key='+Meteor.settings.public.googlekey, {},
       function( error, response ) {
-      if ( error ) {
-      console.log( error );
-    } else {
-    console.log(response.data);
-    if (response.data.length > 0) {
-    pageSession.set( 'geoPosLatitude', response.data[0].lat);
-    pageSession.set( 'geoPosLongitude', response.data[0].lon);
-    console.log(response.data[0].lat);
-    console.log(response.data[0].lon);
+        if ( error ) {
+          console.log( error );
+        } else {
+          console.log(response.data);
+          if (response.data.results.length > 0 && response.data.status != "ZERO_RESULTS") {
+            pageSession.set( 'geoPosLatitude', response.data.results[0].geometry.location.lat);
+            pageSession.set( 'geoPosLongitude', response.data.results[0].geometry.location.lng);
+            console.log(response.data.results[0].geometry.location.lat);
+            console.log(response.data.results[0].geometry.location.lng);
+          }
+          return;
+        }
+      }
+    );
   }
-  return;
-}
-}
-);*/
-///+Meteor.settings.public.googlekey
-HTTP.get( 'https://maps.googleapis.com/maps/api/geocode/json?address=' + request + '&key='+Meteor.settings.public.googlekey, {},
-function( error, response ) {
-  if ( error ) {
-    console.log( error );
-  } else {
-    console.log(response.data);
-    if (response.data.results.length > 0 && response.data.status != "ZERO_RESULTS") {
-      pageSession.set( 'geoPosLatitude', response.data.results[0].geometry.location.lat);
-      pageSession.set( 'geoPosLongitude', response.data.results[0].geometry.location.lng);
-      console.log(response.data.results[0].geometry.location.lat);
-      console.log(response.data.results[0].geometry.location.lng);
-    }
-    return;
-  }
-}
-);
-}
 }
 });
 

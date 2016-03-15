@@ -51,7 +51,20 @@
   "Create a event":"Créer un évenement",
   "Edit a event":"Modifier un évenement",
   "Error not postal code match":"Erreur code postal non trouvé",
+  "Invite":"Inviter",
+  "Reset":"Annuler",
+  "Send":"Envoyer",
+  "Send invite":"Envoyer invitation",
+  "Search...":"Recherche...",
   "schemas":{
+    "followrest":{
+      "invitedUserName":{
+          "label": "Nom"
+      },
+      "invitedUserEmail":{
+          "label": "Email"
+      }
+    },
     "eventsrest" : {
       "name":{
         "label": "Nom"
@@ -86,7 +99,7 @@
         "label": "Code postal"
       },
       "city":{
-        "label": "Code insee",
+        "label": "Ville",
         "placeholder": "Sélectionnez un...",
         "options": {
 

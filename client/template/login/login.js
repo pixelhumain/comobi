@@ -66,6 +66,30 @@ Template.login.onCreated(function () {
 Template.signin.onRendered(function () {
   pageSession.set( 'error', false );
   pageSession.set( 'cities', null );
+  pageSession.set('codepostal', null );
+  pageSession.set('cityselect', null );
+
+  let geolocate = Session.get('geolocate');
+  if(geolocate){
+    var onOk=IonPopup.confirm({template:TAPi18n.__('Utiliser votre position actuelle ?'),
+    onOk: function(){
+      let geo = Location.getReactivePosition();
+      if(geo && geo.latitude){
+        let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
+        Meteor.call('getcitiesbylatlng',latlng,function(error, result){
+          if(result){
+            pageSession.set('codepostal', result.cp);
+            pageSession.set('cityselect', result.insee);
+            Meteor.call('getcitiesbypostalcode',result.cp,function(error, data){
+              if(data){
+              pageSession.set( 'cities', data);
+              }
+            })
+        }
+        });
+      }
+    }});
+  }
 });
 
 Template.signin.events({
@@ -205,5 +229,13 @@ Template.signin.helpers({
   },
   city (){
     return pageSession.get( 'cities' );
+  },
+  citySelected (){
+    if(pageSession.get( 'cityselect' )==this.insee){
+      return "selected";
+    }
+  },
+  codepostal (){
+    return pageSession.get( 'codepostal' );
   }
 });
