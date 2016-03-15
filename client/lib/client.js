@@ -3,33 +3,9 @@
 Meteor.startup(function () {
 
   if (Meteor.isCordova) {
-    //contacts
-    //window.contacts = navigator.contacts;
     window.alert = navigator.notification.alert;
     window.confirm = navigator.notification.confirm;
   }
-
-  /*  if (Meteor.isCordova) {
-  var options = new ContactFindOptions();
-  options.filter = "";
-  options.multiple = true;
-  var fields = ["displayName", "name"];
-  var contacts = window.contacts.find(fields, onSuccess, onError, options);
-
-  function onSuccess(contacts) {
-  alert(JSON.stringify(contacts[0]));
-  alert(contacts.length + 'contacts'+ contacts[0].displayName);
-  for (var i = 0; i < contacts.length; i++) {
-  console.log("Display Name = " + contacts[i].displayName);
-}
-}
-
-function onError(contactError) {
-//alert("error");
-console.log('onError!');
-}
-}
-*/
 
 Session.setDefault('geolocate', true);
 Session.setDefault('radius', 25000);
@@ -57,7 +33,7 @@ TAPi18n.setLanguage(language)
 
 
 Schemas.EventsRest.i18n("schemas.eventsrest");
-
+Schemas.FollowRest.i18n("schemas.followrest");
 
 Template.registerHelper('distance',function (coordinates) {
   let geo = Location.getReactivePosition();
@@ -180,15 +156,6 @@ Tracker.autorun(function() {
   let geoError = Session.get('geoError');
   if (geoError) {
     alert(geoError);
-  }
-});
-
-Tracker.autorun(function() {
-  if(Meteor.userId()){
-    console.log(Meteor.userId())
-    let id = Push.id();
-    console.log(id);
-    Meteor.call('raix:push-setuser', id);
   }
 });
 

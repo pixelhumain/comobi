@@ -160,8 +160,15 @@ Router.map(function() {
 
   this.route('settings', {
     template: "settings",
-      path: '/settings'
+      path: '/settings',
   });
+
+
+    this.route('contacts', {
+      template: "contacts",
+        path: '/contacts',
+        loadingTemplate: 'loading',
+    });
 
 });
 

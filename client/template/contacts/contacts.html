@@ -1,0 +1,71 @@
+<template name="contacts">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "Contacts"}}</h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  {{#ionList}}
+  {{#if contacts}}
+  <div class="list list-inset">
+    <label class="item item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input id="search" type="text" placeholder="{{_ "Search..."}}">
+    </label>
+  </div>
+  <div class="item item-divider">
+    <i class="ion-send"></i> {{_ "Contacts"}} <span class="badge badge-dark">{{countContacts}}</span>
+  </div>
+  {{/if}}
+  {{#each contacts}}
+  {{#ionItem buttonRight=true}}
+  {{displayName}}
+  <p>
+    {{#each emails}}
+    <i class="icon ion-email"></i> {{value}}<br>
+    {{/each}}
+  </p>
+  <button class="button button-clear contact" data-ion-modal="_contactsUser" value="{{id}}">{{> ionIcon icon="ios-plus-empty"}}</button>
+  {{/ionItem}}
+  {{/each}}
+  {{/ionList}}
+
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+<template name="_contactsUser">
+  {{#ionModal customTemplate=true}}
+  <div class="bar bar-header bar-dark">
+    <button data-dismiss="modal" type="button" class="button button-clear">{{_ "Reset"}}</button>
+    <h2 class="title">{{_ "Invite"}}</h2>
+    <button type="submit" class="button button-positive button-clear" id="inviteNewUser">{{_ "Send"}}</button>
+  </div>
+<div class="content has-header overflow-scroll">
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "Send invite"}}
+    </div>
+    {{#with contact}}
+    {{#autoForm id="followPerson" schema=Schemas.FollowRest type="method" meteormethod="followPerson" template="ionic" class="padding"}}
+    {{> afQuickField name='invitedUserName' value=displayName}}
+    {{> afQuickField name='invitedUserEmail' type="select-radio" options=emailsOptions}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "send"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+    {{/with}}
+  </div>
+</div>
+  {{/ionModal}}
+</template>
