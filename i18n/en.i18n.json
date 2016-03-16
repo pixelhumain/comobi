@@ -56,6 +56,13 @@
   "Send":"Send",
   "Send invite":"Send an invitation",
   "Search...":"Search...",
+  "attendees":"Attendees",
+  "online":"online",
+  "offline":"offline",
+  "settings":"Settings",
+  "radius":"Radius",
+  "tracking geolocation":"Tracking geolocation",
+  "Invitations contacts":"Invitations contacts",
   "schemas":{
     "followrest":{
       "invitedUserName":{

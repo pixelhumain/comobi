@@ -56,6 +56,13 @@
   "Send":"Envoyer",
   "Send invite":"Envoyer invitation",
   "Search...":"Recherche...",
+  "attendees":"Participants",
+  "online":"en ligne",
+  "offline":"hors ligne",
+  "settings":"Réglages",
+  "radius":"Rayon",
+  "tracking geolocation":"Suivi géolocalisation",
+  "Invitations contacts":"Invitations contacts",
   "schemas":{
     "followrest":{
       "invitedUserName":{

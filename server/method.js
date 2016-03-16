@@ -8,6 +8,8 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
+    doc={};
+    doc.connectUserId=connectUserId;
     var retour = Meteor.call("postPixel","person","follows",doc);
     return retour;
   },

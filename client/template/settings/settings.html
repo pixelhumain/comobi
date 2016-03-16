@@ -8,19 +8,19 @@
 {{/contentFor}}
 
 {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "Réglages"}}</h1>
+  <h1 class="title">{{_ "settings"}}</h1>
 {{/contentFor}}
 
      {{#ionView}}
     {{#ionContent}}
  <div class="list">
 <div class="item item-divider">
-    {{_ "Configuration"}}
+    {{_ "settings"}}
   </div>
 
   <div class="item item-input item-select">
     <div class="input-label">
-      {{_ "Rayon"}}
+      {{_ "radius"}}
     </div>
     <select id="radius">
     {{#if radius}}
@@ -38,9 +38,9 @@
     {{/if}}
     </select>
   </div>
-
+{{#if isCordova}}
   <div class="item item-toggle">
-{{_ "Geolocation"}}
+{{_ "tracking geolocation"}}
 <label class="toggle toggle-balanced">
    <input id="geolocate" type="checkbox" checked="{{#if geolocate}}checked{{/if}}">
    <div class="track">
@@ -48,7 +48,6 @@
    </div>
 </label>
 </div>
-{{#if isCordova}}
 <a class="item" href="{{pathFor 'contacts'}}">{{_ "Invitations contacts"}}</a>
 {{/if}}
 
