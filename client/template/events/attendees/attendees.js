@@ -13,6 +13,13 @@ Template.listAttendees.helpers({
       let citoyen = Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())},{fields:{links:1}});
       return citoyen.links && citoyen.links.follows && citoyen.links.follows[followId];
     }
+  }
+});
 
+Template.listAttendees.events({
+  "click .followperson-link" (evt) {
+    evt.preventDefault();
+		Meteor.call('followPersonExist',this._id._str);
+	return ;
   }
 });
