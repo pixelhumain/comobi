@@ -31,9 +31,11 @@ Meteor.methods({
       throw new Meteor.Error("not-authorized");
     }
     doc={};
-    doc.eventId=eventId;
-    doc.attendeeId=this.userId;
-    var retour = Meteor.call("postPixel",scope,"saveattendees",doc);
+    doc.parentId=eventId;
+    doc.parentType=scope+'s';
+    doc.childType="citoyens";
+    doc.childId=this.userId;
+    var retour = Meteor.call("postPixel","link","connect",doc);
     return retour;
   },
   insertEvent : function(doc){
