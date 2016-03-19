@@ -1,4 +1,8 @@
 {
+  "Close":"Fermer",
+  "Add event":"Ajouter un évènement",
+  "notifications":"Notifications",
+  "not notifications":"Pas de notifications",
   "home":"Accueil",
   "events":"Evenements",
   "projects":"Projets",
@@ -56,6 +60,8 @@
   "Send":"Envoyer",
   "Send invite":"Envoyer invitation",
   "Search":"Recherche...",
+  "No Items found":"Aucun contact trouvé",
+  "Enter a search term":"Entrez un terme de recherche. 4 caractères minimum",
   "attendees":"Participants",
   "online":"en ligne",
   "offline":"hors ligne",

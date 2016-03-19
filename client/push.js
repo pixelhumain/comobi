@@ -1,39 +1,21 @@
 Meteor.startup(function () {
 
 	Push.addListener('startup', function(notification) {
-
-		if(notification.payload.pushType === 'news'){
-			Router.go('newsDetail', {
-				_id: notification.payload.eventId,
-				newsId: notification.payload.newsId,
-				scope: notification.payload.scope,
-			});
-		}
-		else if(notification.payload.pushType === 'likeNews'){
-			Router.go('newsDetail', {
-				_id: notification.payload.eventId,
-				newsId: notification.payload.newsId,
-				scope: notification.payload.scope,
-			});
-		}
+		Router.go('/notifications');
 	});
 
 	Push.addListener('message', function(notification) {
-		function alertDismissed() {
-			if(notification.payload.pushType === 'news'){
-				Router.go('newsDetail', {
-					_id: notification.payload.eventId,
-					newsId: notification.payload.newsId,
-					scope: notification.payload.scope,
-				});
-			} else if(notification.payload.pushType === 'likeNews'){
-				Router.go('newsDetail', {
-					_id: notification.payload.eventId,
-					newsId: notification.payload.newsId,
-					scope: notification.payload.scope,
-				});
-			}
+		function alertDismissed(buttonIndex) {
+			if(buttonIndex===1){
+				if(notification.payload.link){
+					Meteor.call('markRead',notification.payload.notifId);
+					Meteor.call('registerClick', notification.payload.notifId);
+					Router.go(notification.payload.link);
+				}else{
+					Router.go('/notifications');
+				}
 		}
+	}
 		window.confirm(notification.message, alertDismissed, notification.payload.title, ["Voir","fermer"]);
 	});
 });

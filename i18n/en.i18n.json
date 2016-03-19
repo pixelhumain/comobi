@@ -1,4 +1,8 @@
 {
+  "Close":"Close",
+  "Add event":"Add event",
+  "notifications":"Notifications",
+  "not notifications":"Not notifications",
   "home":"Home",
   "events":"Events",
   "projects":"Project",
@@ -56,6 +60,8 @@
   "Send":"Send",
   "Send invite":"Send an invitation",
   "Search":"Search...",
+  "No Items found":"No contact found",
+  "Enter a search term":"Enter a search term. minimum 4 characters",
   "attendees":"Attendees",
   "online":"online",
   "offline":"offline",

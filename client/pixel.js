@@ -1,3 +1,7 @@
+Template.layout.onCreated(function(){
+  Meteor.subscribe('notificationsUser');
+});
+
 Template.layout.events({
 	'click .scanner' : function(event, template){
 		event.preventDefault();
@@ -20,4 +24,17 @@ Template.layout.events({
         }
         	return ;
 }
+});
+
+Template.layout.helpers({
+  notificationsCount () {
+    return NotificationHistory.find({
+			'expiration': {
+				$gt: new Date()
+			},
+			'dismissals': {
+				$nin: [Meteor.user()._id]
+			}
+		}).count();
+  }
 });

@@ -28,9 +28,9 @@ Router.map(function() {
       let geo = Location.getReactivePosition();
       let radius = Session.get('radius');
       if(geo && geo.latitude){
-      let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
-      Meteor.subscribe('citoyenEvents',latlng,radius);
-    }
+        let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
+        Meteor.subscribe('citoyenEvents',latlng,radius);
+      }
     }
   });
 
@@ -43,28 +43,28 @@ Router.map(function() {
       let geo = Location.getReactivePosition();
       let radius = Session.get('radius');
       if(geo && geo.latitude){
-      let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
-      Meteor.subscribe('citoyenEvents',latlng,radius);
-    }
+        let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
+        Meteor.subscribe('citoyenEvents',latlng,radius);
+      }
     }
   });
 
   this.route("mapWithEvent", {
-      template: "mapEvents",
-      loadingTemplate: 'loading',
-      path: 'mapevents/:_id',
-      waitOn: function() {
-        Meteor.subscribe('citoyen');
-        let geo = Location.getReactivePosition();
-        let radius = Session.get('radius');
-        if(geo && geo.latitude){
+    template: "mapEvents",
+    loadingTemplate: 'loading',
+    path: 'mapevents/:_id',
+    waitOn: function() {
+      Meteor.subscribe('citoyen');
+      let geo = Location.getReactivePosition();
+      let radius = Session.get('radius');
+      if(geo && geo.latitude){
         let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
         Meteor.subscribe('citoyenEvents',latlng,radius);
       }
     },
-      data: function() {
-          Session.set("currentEvent", this.params._id);
-      }
+    data: function() {
+      Session.set("currentEvent", this.params._id);
+    }
   });
 
   this.route("eventsAdd", {
@@ -160,15 +160,26 @@ Router.map(function() {
 
   this.route('settings', {
     template: "settings",
-      path: '/settings',
+    path: '/settings',
   });
 
 
-    this.route('contacts', {
-      template: "contacts",
-        path: '/contacts',
-        loadingTemplate: 'loading',
-    });
+  this.route('contacts', {
+    template: "contacts",
+    path: '/contacts'
+  });
+
+
+  this.route('notifications', {
+    template: "notifications",
+    path: '/notifications',
+    data: function() {
+      return null;
+    },
+    waitOn: function() {
+      return Meteor.subscribe('notificationsUser');
+    }
+  });
 
 });
 

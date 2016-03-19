@@ -9,6 +9,61 @@
 
 <template name="layout">
   {{#ionBody}}
+
+    {{#ionSideMenuContainer}}
+
+      {{#ionSideMenus}}
+
+        {{#ionSideMenu}}
+          <div class="bar bar-header bar-dark">
+            <h1 class="title">Communecter</h1>
+          </div>
+          <div class="content has-header">
+            <div class="list">
+              <div class="item item-icon-right" data-ion-menu-close>
+                {{_ "Close"}} {{> ionIcon icon="ios-arrow-right"}}
+              </div>
+              {{#if currentUser}}
+              <a class="item item-icon-right" href="{{pathFor 'eventsAdd'}}" data-ion-menu-close>{{_ "Add event"}} {{> ionIcon icon="android-add-circle"}}</a>
+              {{#if isCordova}}
+              <a class="item item-icon-right" href="{{pathFor 'contacts'}}" data-ion-menu-close>{{_ "Invitations contacts"}} {{> ionIcon icon="android-contacts"}}</a>
+              {{/if}}
+              <a class="item item-icon-right" href="{{pathFor 'notifications'}}" data-ion-menu-close>{{_ "Notifications"}} <span class="badge badge-balanced">{{#if notificationsCount}}{{notificationsCount}}{{else}}0{{/if}}</span></a>
+
+              {{/if}}
+            </div>
+          </div>
+        {{/ionSideMenu}}
+
+      {{/ionSideMenus}}
+
+      {{#ionSideMenuContent}}
+
+        {{> ionNavBar class="bar-dark"}}
+
+        {{#ionNavView}}
+          {{> yield}}
+        {{/ionNavView}}
+
+        {{#if currentUser}}
+        {{#ionTabs class="tabs-dark tabs-icon-only"}}
+        {{> ionTab title=_events path="listEvents" iconOff="navicon-round" iconOn="navicon-round"}}
+        {{> ionTab title=_cartes path="mapEvents" iconOff="android-pin" iconOn="android-pin"}}
+        {{> ionTab title=_reglages path="settings" iconOff="gear-b" iconOn="gear-b"}}
+        {{/ionTabs}}
+        {{/if}}
+
+      {{/ionSideMenuContent}}
+
+    {{/ionSideMenuContainer}}
+
+    {{> meteorStatus lang=langChoix}}
+
+  {{/ionBody}}
+</template>
+
+<template name="layout-old">
+  {{#ionBody}}
   {{> ionNavBar class="bar-dark"}}
 
   {{#ionNavView}}

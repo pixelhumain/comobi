@@ -7,6 +7,37 @@ Meteor.publish('lists', function() {
 	return lists;
 });
 
+Meteor.publish('notificationsUser', function() {
+	if (!this.userId) {
+		return;
+	}
+	return NotificationHistory.find({
+		'expiration': {
+			$gt: new Date()
+		},
+		'dismissals': {
+			$nin: [this.userId]
+		}
+	}, {
+		sort: {
+			'addedAt': 1
+		}
+	});
+});
+
+Meteor.publish('getcitiesbylatlng', function(latlng) {
+	check(latlng, {latitude:Number,longitude:Number});
+	if (!this.userId) {
+		return;
+	}
+	return Cities.find({"geoShape":
+	{$geoIntersects:
+		{$geometry:{ "type" : "Point",
+		"coordinates" : [ latlng.longitude, latlng.latitude ] }
+	}
+}
+});
+});
 
 Meteor.publish('cities', function(cp,country) {
 	if (!this.userId) {
@@ -24,11 +55,8 @@ Meteor.publish('citoyen', function() {
 	}
 	let objectId = new Mongo.ObjectID(this.userId);
 	let citoyen = Citoyens.find({_id:objectId},{fields:{pwd:0}});
-	var userC = Meteor.users.findOne({_id:this.userId});
 	return citoyen;
 });
-
-
 
 Events._ensureIndex({
 	"geoPosition": "2dsphere"
@@ -41,114 +69,162 @@ Meteor.publish('citoyenEvents', function(latlng,radius) {
 	if (!this.userId) {
 		return;
 	}
-		//selector startDate endDate sort et limit
-		var inputDate = new Date();
-		//console.log(inputDate);
-		return Events.find({'geoPosition': {
-			$nearSphere: {
-				$geometry: {
-					type: "Point",
-					coordinates: [latlng.longitude, latlng.latitude]
-				},
-				$maxDistance: radius
-			}}},{_disableOplog: true});
-});
-
-
-Meteor.publishComposite('scopeDetail', function(scope,scopeId) {
-	check(scopeId, String);
-	check(scope, String);
-	check(scope, Match.Where(function(name) {
-		return _.contains(['events', 'projects','organizations','citoyens'], name);
-	}));
-	let collection = nameToCollection(scope);
-	if (!this.userId) {
-		return;
-	}
-	return {
-		find: function() {
-			return collection.find({_id:new Mongo.ObjectID(scopeId)});
-		},
-		children: [
-			{
-				find: function(scopeD) {
-					return Citoyens.find({
-						_id: new Mongo.ObjectID(scopeD.creator)
-					}, {
-						fields: {
-							'name': 1
-						}
-					});
-				}
+	//selector startDate endDate sort et limit
+	var inputDate = new Date();
+	//console.log(inputDate);
+	return Events.find({'geoPosition': {
+		$nearSphere: {
+			$geometry: {
+				type: "Point",
+				coordinates: [latlng.longitude, latlng.latitude]
 			},
-			{
-				find: function(scopeD) {
-					return Cities.find({
-						'cp': scopeD.address.postalCode
-					});
-				}
-			}
-		]}
+			$maxDistance: radius
+		}}},{_disableOplog: true});
 	});
 
-	Meteor.publishComposite('listAttendees', function(scopeId) {
+
+	Meteor.publishComposite('scopeDetail', function(scope,scopeId) {
 		check(scopeId, String);
+		check(scope, String);
+		check(scope, Match.Where(function(name) {
+			return _.contains(['events', 'projects','organizations','citoyens'], name);
+		}));
+		let collection = nameToCollection(scope);
 		if (!this.userId) {
 			return;
 		}
 		return {
 			find: function() {
-				return Events.find({_id:new Mongo.ObjectID(scopeId)});
+				return collection.find({_id:new Mongo.ObjectID(scopeId)});
 			},
 			children: [
 				{
-					find: function(event) {
-						let attendees = _.map(event.links.attendees, function(attendees,key){
-							 return new Mongo.ObjectID(key);
-						 });
+					find: function(scopeD) {
 						return Citoyens.find({
-							_id: {$in:attendees}
+							_id: new Mongo.ObjectID(scopeD.creator)
 						}, {
 							fields: {
-								'name': 1,
-								'links': 1
+								'name': 1
 							}
 						});
+					}
+				},
+				{
+					find: function(scopeD) {
+						return Cities.find({
+							'cp': scopeD.address.postalCode
+						});
+					}
+				}
+			]}
+		});
+
+		Meteor.publishComposite('listAttendees', function(scopeId) {
+			check(scopeId, String);
+			if (!this.userId) {
+				return;
+			}
+			return {
+				find: function() {
+					return Events.find({_id:new Mongo.ObjectID(scopeId)});
+				},
+				children: [
+					{
+						find: function(event) {
+							let attendees = _.map(event.links.attendees, function(attendees,key){
+								return new Mongo.ObjectID(key);
+							});
+							return Citoyens.find({
+								_id: {$in:attendees}
+							}, {
+								fields: {
+									'name': 1,
+									'links': 1
+								}
+							});
+						},
+						children: [
+							{
+								find: function(citoyen) {
+									return Meteor.users.find({
+										_id: citoyen._id._str
+									}, {
+										fields: {
+											'profile.online': 1
+										}
+									});
+								}
+							}
+						]
+					}
+				]}
+			});
+
+			Meteor.publishComposite('newsList', function(scope,scopeId) {
+				check(scopeId, String);
+				check(scope, String);
+				if (!this.userId) {
+					return;
+				}
+
+				return {
+					find: function() {
+						var query = {};
+						query['scope.'+scope] = {$in:[scopeId]};
+						return News.find(query);
 					},
 					children: [
 						{
-							find: function(citoyen) {
-								return Meteor.users.find({
-									_id: citoyen._id._str
+							find: function(news) {
+								/*console.log(news.author);*/
+								return Citoyens.find({
+									_id: new Mongo.ObjectID(news.author)
 								}, {
 									fields: {
-										'profile.online': 1
+										'name': 1
 									}
+								});
+							}
+						},
+						{
+							find: function(news) {
+								/*console.log(Documents.find({
+								id : news._id._str
+							}).fetch());*/
+							return Documents.find({
+								id : news._id._str
+							});
+						},
+						children: [
+							{
+								find: function(doc) {
+									/*console.log(Photosimg.find({
+									_id:doc.objId
+								}).fetch());*/
+								return Photosimg.find({
+									_id:doc.objId
 								});
 							}
 						}
 					]
 				}
-			]}
-		});
+			]
+		}
+	});
 
-	Meteor.publishComposite('newsList', function(scope,scopeId) {
-		check(scopeId, String);
-		check(scope, String);
+	Meteor.publishComposite('newsDetail', function(newsId) {
+		check(newsId, String);
 		if (!this.userId) {
 			return;
 		}
 
 		return {
 			find: function() {
-				var query = {};
-				query['scope.'+scope] = {$in:[scopeId]};
-				return News.find(query);
+				return News.find({_id:new Mongo.ObjectID(newsId)});
 			},
 			children: [
 				{
 					find: function(news) {
-						/*console.log(news.author);*/
 						return Citoyens.find({
 							_id: new Mongo.ObjectID(news.author)
 						}, {
@@ -184,54 +260,6 @@ Meteor.publishComposite('scopeDetail', function(scope,scopeId) {
 }
 });
 
-Meteor.publishComposite('newsDetail', function(newsId) {
-	check(newsId, String);
-	if (!this.userId) {
-		return;
-	}
-
-	return {
-		find: function() {
-			return News.find({_id:new Mongo.ObjectID(newsId)});
-		},
-		children: [
-			{
-				find: function(news) {
-					return Citoyens.find({
-						_id: new Mongo.ObjectID(news.author)
-					}, {
-						fields: {
-							'name': 1
-						}
-					});
-				}
-			},
-			{
-				find: function(news) {
-					/*console.log(Documents.find({
-					id : news._id._str
-				}).fetch());*/
-				return Documents.find({
-					id : news._id._str
-				});
-			},
-			children: [
-				{
-					find: function(doc) {
-						/*console.log(Photosimg.find({
-						_id:doc.objId
-					}).fetch());*/
-					return Photosimg.find({
-						_id:doc.objId
-					});
-				}
-			}
-		]
-	}
-]
-}
-});
-
 Meteor.publish('photosimg', function() {
 	if (!this.userId) {
 		return;
@@ -258,23 +286,23 @@ Meteor.publish('citoyenOnlineProx', function(latlng,radius) {
 Citoyens._ensureIndex({
 	"geoPosition": "2dsphere"
 });
-	return Citoyens.find({'geoPosition': {
-		$nearSphere: {
-			$geometry: {
-				type: "Point",
-				coordinates: [latlng.longitude, latlng.latitude]
-			},
-			$maxDistance: radius
-		}}},{_disableOplog: true,fields:{pwd:0}});
-	});
+return Citoyens.find({'geoPosition': {
+	$nearSphere: {
+		$geometry: {
+			type: "Point",
+			coordinates: [latlng.longitude, latlng.latitude]
+		},
+		$maxDistance: radius
+	}}},{_disableOplog: true,fields:{pwd:0}});
+});
 
 
-	Meteor.publish('users', function() {
-		if (!this.userId) {
-			return;
-		}
-		return [
-			Meteor.users.find({'profile.online': true}, {fields: {'profile': 1,'username': 1}}),
-			Citoyens.find({_id:new Mongo.ObjectID(this.userId)},{_disableOplog: true,fields:{pwd:0}})
-		];
-	});
+Meteor.publish('users', function() {
+	if (!this.userId) {
+		return;
+	}
+	return [
+		Meteor.users.find({'profile.online': true}, {fields: {'profile': 1,'username': 1}}),
+		Citoyens.find({_id:new Mongo.ObjectID(this.userId)},{_disableOplog: true,fields:{pwd:0}})
+	];
+});

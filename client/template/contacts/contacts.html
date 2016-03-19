@@ -14,15 +14,15 @@
   {{#ionView}}
   {{#ionContent}}
   {{#ionList}}
-  {{#if contacts}}
   <div class="list list-inset">
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
       <input id="search" type="text" placeholder="{{_ "Search..."}}">
     </label>
   </div>
+  {{#if contacts}}
   <div class="item item-divider">
-    <i class="ion-send"></i> {{_ "Contacts"}} <span class="badge badge-dark">{{countContacts}}</span>
+    <i class="icon ion-android-contacts"></i> {{_ "Contacts"}} <span class="badge badge-dark">{{countContacts}}</span>
   </div>
   {{/if}}
   {{#each contacts}}
@@ -34,6 +34,14 @@
     {{/each}}
   </p>
   <button class="button button-clear contact" data-ion-modal="_contactsUser" value="{{id}}">{{> ionIcon icon="ios-plus-empty"}}</button>
+  {{/ionItem}}
+  {{else}}
+  {{#ionItem}}
+  {{#if filter}}
+  {{_ "No Items found"}}
+  {{else}}
+  {{_ "Enter a search term"}}
+  {{/if}}
   {{/ionItem}}
   {{/each}}
   {{/ionList}}
