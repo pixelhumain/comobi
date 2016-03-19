@@ -4,7 +4,7 @@ Template.contacts.onCreated(function () {
   if(Meteor.isCordova){
     pageSession.set( 'contacts', null );
     pageSession.set( 'contact', null );
-    pageSession.set('filter', '' );
+    pageSession.set('filter', null );
   }
   });
 
@@ -29,11 +29,13 @@ Template.contacts.onRendered(function () {
       };
 
       this.autorun(function(c) {
+        if(pageSession.get("filter")){
         var options = new ContactFindOptions();
         options.filter = pageSession.get("filter");
         options.multiple = true;
         var fields       = ["displayName", "name", "emails"];
         var contactsFind = navigator.contacts.find(fields, onSuccess, onError, options);
+      }
       });
     }else{
       pageSession.set( 'contacts', aidecontacts );
@@ -46,16 +48,16 @@ Template.contacts.onRendered(function () {
     },
     countContacts: function () {
       return pageSession.get("contacts") && pageSession.get("contacts").length;
-    }
+    },
+    filter: function () {
+      return pageSession.get("filter");
+    },
   });
 
   Template.contacts.events({
     'keyup #search, change #search': function(event,template){
       if(event.currentTarget.value.length>3){
         pageSession.set( 'filter', event.currentTarget.value);
-      }else{
-        pageSession.set( 'filter', '' );
-        return;
       }
     },
     'click .contact': function(event,template){

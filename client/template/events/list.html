@@ -3,9 +3,13 @@
   <h1 class="title">{{_ "events"}}</h1>
   {{/contentFor}}
   {{#contentFor "headerButtonLeft"}}
-  {{#if currentUser}}
-  <a href="{{pathFor 'eventsAdd'}}" class="button button-clear">{{> ionIcon icon="android-add-circle"}}</a>
+  <button class="button button-clear pull-left" data-ion-menu-toggle="left">
+  {{#if isAndroid}}
+    {{> ionIcon icon='android-more-vertical'}}
+  {{else}}
+    {{> ionIcon icon='navicon'}}
   {{/if}}
+</button>
   {{/contentFor}}
 
   {{#contentFor "headerButtonRight"}}
@@ -18,6 +22,12 @@
 
   {{#ionView}}
   {{#ionContent}}
+  <div class="list list-inset">
+    <label class="item item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input id="search" type="text" placeholder="{{_ "Search..."}}" value="{{searchEvents}}">
+    </label>
+  </div>
 
   <div class="padding">
     <div class="button-bar bar-positive">

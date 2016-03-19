@@ -1,55 +1,99 @@
 pageSession = new ReactiveDict('pageEvents');
 
+Template.listEvents.onCreated(function () {
+  pageSession.set('sortEvents', null);
+  pageSession.set('searchEvents', null);
+});
+
 Template.listEvents.helpers({
   events () {
-    var inputDate = new Date();
-    let sortEvents= Session.get('sortEvents');
+    let inputDate = new Date();
+    let sortEvents= pageSession.get('sortEvents');
+    let searchEvents= pageSession.get('searchEvents');
+    let query={};
     if(sortEvents === "Current"){
-      return Events.find({startDate:{$lte : inputDate},endDate:{$gte : inputDate}});
+      query['startDate']={$lte : inputDate};
+      query['endDate']={$gte : inputDate};
     }else if(sortEvents === "Upcoming"){
-      return Events.find({startDate:{$gte : inputDate}});
+      query['startDate']={$gte : inputDate};
     }else if(sortEvents === "History"){
-      return Events.find({endDate:{$lte : inputDate}});
-    }else{
-      return Events.find({});
+      query['endDate']={$lte : inputDate};
     }
+    if(searchEvents){
+      query['name']={$regex : searchEvents, '$options' : 'i'}
+    }
+    return Events.find(query);
   },
   countEvents () {
-    var inputDate = new Date();
-    let sortEvents= Session.get('sortEvents');
+    let inputDate = new Date();
+    let sortEvents= pageSession.get('sortEvents');
+    let searchEvents= pageSession.get('searchEvents');
+    let query={};
     if(sortEvents === "Current"){
-      return Events.find({startDate:{$lte : inputDate},endDate:{$gte : inputDate}}).count();
+      query['startDate']={$lte : inputDate};
+      query['endDate']={$gte : inputDate};
     }else if(sortEvents === "Upcoming"){
-      return Events.find({startDate:{$gte : inputDate}}).count();
+      query['startDate']={$gte : inputDate};
     }else if(sortEvents === "History"){
-      return Events.find({endDate:{$lte : inputDate}}).count();
-    }else{
-      return Events.find({}).count();
+      query['endDate']={$lte : inputDate};
     }
+    if(searchEvents){
+      query['name']={$regex : searchEvents, '$options' : 'i'}
+    }
+    return Events.find(query).count();
   },
   countEventsCurrent () {
-    var inputDate = new Date();
-    return Events.find({startDate:{$lte : inputDate},endDate:{$gte : inputDate}}).count();
+    let inputDate = new Date();
+    let searchEvents= pageSession.get('searchEvents');
+    let query={};
+    query['startDate']={$lte : inputDate};
+    query['endDate']={$gte : inputDate};
+    if(searchEvents){
+      query['name']={$regex : searchEvents, '$options' : 'i'}
+    }
+    return Events.find(query).count();
   },
   countEventsUpcoming () {
-    var inputDate = new Date();
-    return Events.find({startDate:{$gte : inputDate}}).count();
+    let inputDate = new Date();
+    let searchEvents= pageSession.get('searchEvents');
+    let query={};
+    query['startDate']={$gte : inputDate};
+    if(searchEvents){
+      query['name']={$regex : searchEvents, '$options' : 'i'}
+    }
+    return Events.find(query).count();
   },
   countEventsHistory () {
     var inputDate = new Date();
-    return Events.find({endDate:{$lte : inputDate}}).count();
+    let searchEvents= pageSession.get('searchEvents');
+    let query={};
+    query['endDate']={$lte : inputDate};
+    if(searchEvents){
+      query['name']={$regex : searchEvents, '$options' : 'i'}
+    }
+    return Events.find(query).count();
   },
   sortEvents (){
-    return Session.get('sortEvents');
+    return pageSession.get('sortEvents');
+  },
+  searchEvents (){
+    return pageSession.get('searchEvents');
   }
 });
 
 Template.listEvents.events({
   'click .triEvents':function(event, template){
     event.preventDefault();
-    Session.set('sortEvents', event.target.value);
+    pageSession.set('sortEvents', event.target.value);
     console.log("sortEvents",  event.target.value);
-  }
+  },
+  'keyup #search, change #search': function(event,template){
+    if(event.currentTarget.value.length>2){
+      pageSession.set( 'searchEvents', event.currentTarget.value);
+    }else{
+      pageSession.set( 'searchEvents', null);
+    }
+  },
 });
 
 Template.eventsAdd.onCreated(function () {

@@ -31,9 +31,11 @@ Meteor.methods({
       throw new Meteor.Error("not-authorized");
     }
     doc={};
-    doc.eventId=eventId;
-    doc.attendeeId=this.userId;
-    var retour = Meteor.call("postPixel",scope,"saveattendees",doc);
+    doc.parentId=eventId;
+    doc.parentType=scope+'s';
+    doc.childType="citoyens";
+    doc.childId=this.userId;
+    var retour = Meteor.call("postPixel","link","connect",doc);
     return retour;
   },
   insertEvent : function(doc){
@@ -249,7 +251,7 @@ createUserAccount: function(user){
 getcitiesbylatlng: function(latlng) {
   check(latlng, {latitude:Number,longitude:Number});
   Cities._ensureIndex({
-  	"geoShape": "2dsphere"
+    "geoShape": "2dsphere"
   });
   return Cities.findOne({"geoShape":
   {$geoIntersects:
@@ -286,31 +288,31 @@ pushNewAttendees : function(eventId){
   }
   let user = Citoyens.findOne({_id: new Mongo.ObjectID(this.userId)});
   let event = Events.findOne({_id: new Mongo.ObjectID(eventId)});
-    if(news && event && event.links && event.links.attendees){
-      let attendeesIdsTmp = _.map(event.links.attendees, function(attendees,key){
-        return key;
-      });
-      let attendeesIds = _.filter(attendeesIdsTmp, function(attendees){
-        return attendees!=this.userId;
-      },this);
-      console.log(attendeesIds);
-      let title = event.name;
-      var text = user.name;
-      let payload = {};
-      payload['title'] = title;
-      payload['pushType'] = 'news';
-      payload['newsId'] = newsId;
-      payload['eventId'] = eventId;
-      payload['scope'] = 'events';
+  if(news && event && event.links && event.links.attendees){
+    let attendeesIdsTmp = _.map(event.links.attendees, function(attendees,key){
+      return key;
+    });
+    let attendeesIds = _.filter(attendeesIdsTmp, function(attendees){
+      return attendees!=this.userId;
+    },this);
+    console.log(attendeesIds);
+    let title = event.name;
+    var text = user.name;
+    let payload = {};
+    payload['title'] = title;
+    payload['pushType'] = 'news';
+    payload['newsId'] = newsId;
+    payload['eventId'] = eventId;
+    payload['scope'] = 'events';
 
-      let query = {};
-      query['userId'] = {$in:attendeesIds};
-      Meteor.call('pushUser',title,text,payload,query);
+    let query = {};
+    query['userId'] = {$in:attendeesIds};
+    Meteor.call('pushUser',title,text,payload,query);
 
-    }else{
-      throw new Meteor.Error("not-event-news");
-    }
-    },
+  }else{
+    throw new Meteor.Error("not-event-news");
+  }
+},
 pushNewNewsAttendees : function(eventId,newsId){
   check(newsId, String);
   check(eventId, String);
@@ -319,46 +321,109 @@ pushNewNewsAttendees : function(eventId,newsId){
   }
   let news = News.findOne({_id: new Mongo.ObjectID(newsId)});
   let event = Events.findOne({_id: new Mongo.ObjectID(eventId)});
-    if(news && event && event.links && event.links.attendees){
-      let attendeesIdsTmp = _.map(event.links.attendees, function(attendees,key){
-        return key;
-      });
-      let attendeesIds = _.filter(attendeesIdsTmp, function(attendees){
-        return attendees!=this.userId;
-      },this);
-      console.log(attendeesIds);
-      let title = event.name;
-      if(news.name){
-        var text = news.name;
-      }else{
-        var text = 'nouvelle news';
-      }
-      let payload = {};
-      payload['title'] = title;
-      payload['pushType'] = 'news';
-      payload['newsId'] = newsId;
-      payload['eventId'] = eventId;
-      payload['scope'] = 'events';
-
-      let query = {};
-      query['userId'] = {$in:attendeesIds};
-      Meteor.call('pushUser',title,text,payload,query);
-
+  if(news && event && event.links && event.links.attendees){
+    let attendeesIdsTmp = _.map(event.links.attendees, function(attendees,key){
+      return key;
+    });
+    let attendeesIds = _.filter(attendeesIdsTmp, function(attendees){
+      return attendees!=this.userId;
+    },this);
+    console.log(attendeesIds);
+    let title = event.name;
+    if(news.name){
+      var text = news.name;
     }else{
-      throw new Meteor.Error("not-event-news");
+      var text = 'nouvelle news';
     }
-    },
-    pushUser : function(title,text,payload,query,notId){
-      check(title, String);
-      check(text, String);
-      check(payload, Object);
-      check(query, Object);
-      Push.send({
-        from: 'communEvent',
-        title: title,
-        text: text,
-        payload: payload,
-        query: query
-      });
-    }
+    let link = '/events/news/'+eventId+'/new/'+newsId;
+
+
+    let payload = {};
+    payload['title'] = title;
+    payload['text'] = text;
+    payload['pushType'] = 'news';
+    payload['newsId'] = newsId;
+    payload['eventId'] = eventId;
+    payload['scope'] = 'events';
+    payload['link'] = link;
+    payload['expiration'] = event.endDate;
+    payload['addedAt'] =  new Date();
+
+    let notifId=Meteor.call('insertNotification',payload);
+    let badge=Meteor.call('alertCount');
+
+    payload['notifId'] = notifId;
+    let query = {};
+    query['userId'] = {$in:attendeesIds};
+    Meteor.call('pushUser',title,text,payload,query,badge);
+
+  }else{
+    throw new Meteor.Error("not-event-news");
+  }
+},
+pushUser : function(title,text,payload,query,badge){
+  check(title, String);
+  check(text, String);
+  check(payload, Object);
+  check(query, Object);
+  Push.send({
+    from: 'communEvent',
+    title: title,
+    text: text,
+    payload: payload,
+    query: query,
+    badge: badge
   });
+},
+'insertNotification':function(notifObj){
+  if (!this.userId) {
+    throw new Meteor.Error("not-authorized");
+  }
+  return  NotificationHistory.insert(notifObj)
+
+},
+'markRead': function(notifId) {
+  if (!this.userId) {
+    throw new Meteor.Error("not-authorized");
+  }
+  // console.log('mark as read click') // for testing
+  return NotificationHistory.update({
+    '_id': notifId
+  }, {
+    $addToSet: {
+      'dismissals': this.userId
+    }
+  })
+},
+'alertCount':function(){
+  if (!this.userId) {
+    throw new Meteor.Error("not-authorized");
+  }
+    return NotificationHistory.find({
+      'expiration': {
+        $gt: new Date()
+      },
+      'dismissals': {
+        $nin: [this.userId]
+      }
+    }, {
+      'limit': 5,
+      sort: {
+        'addedAt': 1
+      }
+    }).count();
+},
+'registerClick': function(notifId) {
+  if (!this.userId) {
+    throw new Meteor.Error("not-authorized");
+  }
+  // console.log('notification click') // for testing
+  return NotificationHistory.update({
+    '_id': notifId
+  }, {
+    $addToSet: {
+      'clicks': this.userId
+    }
+  })
+}
+});
