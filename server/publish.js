@@ -17,6 +17,9 @@ Meteor.publish('notificationsUser', function() {
 		},
 		'dismissals': {
 			$nin: [this.userId]
+		},
+		'userId': {
+			$in: [this.userId]
 		}
 	}, {
 		sort: {

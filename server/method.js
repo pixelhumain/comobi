@@ -348,14 +348,25 @@ pushNewNewsAttendees : function(eventId,newsId){
     payload['link'] = link;
     payload['expiration'] = event.endDate;
     payload['addedAt'] =  new Date();
+    payload['userId'] = attendeesIds;
 
     let notifId=Meteor.call('insertNotification',payload);
-    let badge=Meteor.call('alertCount');
-
+    //let badge=Meteor.call('alertCount',);
     payload['notifId'] = notifId;
     let query = {};
-    query['userId'] = {$in:attendeesIds};
-    Meteor.call('pushUser',title,text,payload,query,badge);
+
+    //envoie d'un coup sans badge
+    //query['userId'] = {$in:attendeesIds.map};
+    //Meteor.call('pushUser',title,text,payload,query,badge);
+
+    //envoyer user par user si je veux badger
+    _.each(attendeesIds,function(value){
+      query['userId'] = value;
+      let badge=Meteor.call('alertCount',value);
+      console.log(badge);
+      Meteor.call('pushUser',title,text,payload,query,badge);
+    },title,text,payload,query);
+
 
   }else{
     throw new Meteor.Error("not-event-news");
@@ -395,7 +406,7 @@ pushUser : function(title,text,payload,query,badge){
     }
   })
 },
-'alertCount':function(){
+'alertCount':function(attendeesId){
   if (!this.userId) {
     throw new Meteor.Error("not-authorized");
   }
@@ -404,13 +415,11 @@ pushUser : function(title,text,payload,query,badge){
         $gt: new Date()
       },
       'dismissals': {
-        $nin: [this.userId]
-      }
-    }, {
-      'limit': 5,
-      sort: {
-        'addedAt': 1
-      }
+        $nin: [attendeesId]
+      },
+  		'userId': {
+  			$in: [attendeesId]
+  		}
     }).count();
 },
 'registerClick': function(notifId) {
