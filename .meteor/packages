@@ -52,7 +52,6 @@ dburles:collection-helpers
 aldeed:autoform@5.5.1
 djedi:sanitize-html
 rzymek:moment-locale-fr
-mirrorcell:geolocation-plus
 cfs:graphicsmagick
 webapp
 tap:i18n
@@ -61,7 +60,6 @@ gwendall:simple-schema-i18n
 #utilities:avatar
 meteoric:camera
 fourseven:scss
-crosswalk
 webtempest:animate
 meteoric:autoform-ionic
 reactive-dict
@@ -74,4 +72,6 @@ meteorhacks:kadira
 dschulz:jquery-qrcode
 pauloborges:mapbox@2.2.3_2
 gwendall:autoform-i18n
-raix:push@=2.6.4
+raix:push@=2.6.8
+djabatav:geolocation-plus
+crosswalk

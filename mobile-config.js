@@ -4,8 +4,8 @@ App.info({
   description: 'communecter event',
   author: 'thomas',
   email: 'thomas.craipeau@gmail.com',
-  version: '0.0.8',
-  buildNumber: '305'
+  version: '0.0.11',
+  buildNumber: '308'
 });
 
 App.icons({
@@ -27,7 +27,7 @@ App.launchScreens({
 });
 
 App.setPreference('StatusBarOverlaysWebView', 'false');
-App.setPreference('StatusBarBackgroundColor', '#000000');
+App.setPreference('StatusBarBackgroundColor', '#324553');
 
 App.accessRule('*');
 /*App.accessRule('meteor.local/*');

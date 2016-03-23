@@ -17,33 +17,58 @@
     <div class="item item-divider">
       <i class="icon ion-speakerphone"></i> {{_ "notifications"}} <span class="badge badge-dark">{{notificationsCount}}</span>
     </div>
-    {{#transition in="zoomIn" out="bounceOut"}}
-    {{#each notifications}}
-    {{#if link}}
-    <a class="item item-button-right animated out clickGo" href="{{link}}">
-      <h2>{{title}}</h2>
-      <p>
-        {{text}}
-      </p>
-      <button class="button button-positive removeMe">
-        <i class="icon ion-android-remove-circle"></i>
-      </button>
-    </a>
-    {{else}}
-    <div class="item animated out">
-      <h2>{{title}}</h2>
-      <p>
-        {{text}}
-      </p>
-    </div>
-    {{/if}}
-    {{else}}
-    {{#ionItem}}
-    {{_ "not notifications"}}
-    {{/ionItem}}
-    {{/each}}
-    {{/transition}}
+    {{> notificationsList}}
   </div>
   {{/ionContent}}
   {{/ionView}}
+</template>
+
+<template name="notificationsList">
+{{#if Template.subscriptionsReady}}
+{{#transition in="zoomIn" out="bounceOut"}}
+{{#each notifications}}
+{{#if link}}
+<div class="item animated out clickGo" data-ion-menu-close>
+  <h2>{{title}}</h2>
+  <p>
+    {{text}}
+  </p>
+  <p><i class="icon ion-clock"></i> {{livestamp addedAt}}</p>
+  <p><i class="icon ion-person"></i> {{authorNotify.name}}</p>
+</div>
+<div class="item tabs tabs-secondary tabs-icon-left">
+  <a class="tab-item removeMe" href="#">
+    <i class="icon ion-trash-a"></i>
+    {{_ "delete"}}
+  </a>
+  {{#if news.likesCount}}
+  <a class="tab-item" href="#">
+    <i class="icon ion-thumbsup"></i>
+    {{news.likesCount}} {{_ "like"}}
+  </a>
+  {{/if}}
+</div>
+{{else}}
+<div class="item animated out">
+  <h2>{{title}}</h2>
+  <p>
+    {{text}}
+  </p>
+    <p><i class="icon ion-clock"></i> {{livestamp addedAt}}</p>
+    <p><i class="icon ion-person"></i> {{authorNotify.name}}</p>
+</div>
+<div class="item tabs tabs-secondary tabs-icon-left">
+  <a class="tab-item removeMe" href="#">
+    <i class="icon ion-trash-a"></i>
+    {{_ "delete"}}
+  </a>
+</div>
+{{/if}}
+{{else}}
+{{#ionItem}}
+{{_ "not notifications"}}
+{{/ionItem}}
+{{/each}}
+{{/transition}}
+{{/if}}
 </template>

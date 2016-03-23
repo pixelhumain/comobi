@@ -7,23 +7,53 @@ Meteor.publish('lists', function() {
 	return lists;
 });
 
-Meteor.publish('notificationsUser', function() {
+Meteor.publishComposite('notificationsUser', function() {
 	if (!this.userId) {
 		return;
 	}
-	return NotificationHistory.find({
-		'expiration': {
-			$gt: new Date()
+	return {
+		find: function() {
+			return NotificationHistory.find({
+				'expiration': {
+					$gt: new Date()
+				},
+				'dismissals': {
+					$nin: [this.userId]
+				},
+				'userId': {
+					$in: [this.userId]
+				}
+			}, {
+				sort: {
+					'addedAt': 1
+				}
+			});
 		},
-		'dismissals': {
-			$nin: [this.userId]
-		}
-	}, {
-		sort: {
-			'addedAt': 1
-		}
+		children: [
+			{
+				find: function(notify) {
+					return Citoyens.find({
+						_id: new Mongo.ObjectID(notify.author)
+					}, {
+						fields: {
+							'name': 1
+						}
+					});
+				}
+			},
+			{
+				find: function(notify) {
+					return News.find({
+						_id: new Mongo.ObjectID(notify.newsId)
+					}, {
+						fields: {
+							'likes': 1
+						}
+					});
+				}
+			}
+		]}
 	});
-});
 
 Meteor.publish('getcitiesbylatlng', function(latlng) {
 	check(latlng, {latitude:Number,longitude:Number});

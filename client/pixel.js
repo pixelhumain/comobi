@@ -28,13 +28,6 @@ Template.layout.events({
 
 Template.layout.helpers({
   notificationsCount () {
-    return NotificationHistory.find({
-			'expiration': {
-				$gt: new Date()
-			},
-			'dismissals': {
-				$nin: [Meteor.user()._id]
-			}
-		}).count();
+    return NotificationHistory.find({}).count();
   }
 });

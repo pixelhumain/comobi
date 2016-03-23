@@ -9,27 +9,24 @@
   {{else}}
     {{> ionIcon icon='navicon'}}
   {{/if}}
-</button>
+  </button>
   {{/contentFor}}
 
   {{#contentFor "headerButtonRight"}}
-  {{#if isCordova}}
-  {{#if currentUser}}
-  <button class="button button-clear scanner">{{> ionIcon icon="ios-barcode"}}</button>
-  {{/if}}
+  {{#if notificationsCount}}
+  <button class="button button-clear button-balanced pull-right" data-ion-menu-toggle="right">
+  {{> ionIcon icon='android-notifications'}} {{notificationsCount}}
+  </button>
   {{/if}}
   {{/contentFor}}
 
   {{#ionView}}
-  {{#ionContent}}
+  {{#ionContent class="scroll-bg"}}
   <div class="list list-inset">
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
       <input id="search" type="text" placeholder="{{_ "Search..."}}" value="{{searchEvents}}">
     </label>
-  </div>
-
-  <div class="padding">
     <div class="button-bar bar-positive">
       <button class="button triEvents {{#if equals "Current" sortEvents}}button-dark{{/if}}" value="Current"><i class="icon ion-android-alarm-clock"></i> {{countEventsCurrent}} {{_ "Current"}}</button>
       <button class="button triEvents {{#if equals "Upcoming" sortEvents}}button-dark{{/if}}" value="Upcoming"><i class="icon ion-android-calendar"></i> {{countEventsUpcoming}} {{_ "Upcoming"}}</button>
@@ -37,12 +34,12 @@
     </div>
   </div>
 
-  <div class="padding">
-    <div class="list">
+    <div class="list list-inset">
 
       <div class="item item-divider">
         <i class="ion-android-calendar"></i> {{_ "events"}} <span class="badge badge-dark">{{countEvents}}</span>
       </div>
+      {{#if Template.subscriptionsReady}}
       {{#transition in="zoomIn" out="bounceOut"}}
       {{#each events}}
       <a class="item animated out" href="{{pathFor 'newsList' _id=this._id._str scope="events"}}">
@@ -57,9 +54,8 @@
           <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
           <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
           {{/if}}
-          <a class="button button-clear" href="{{pathFor 'mapWithEvent' _id=_id._str}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a>
-
         </p>
+        <p><a class="positive" href="{{pathFor 'mapWithEvent' _id=_id._str}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a></p>
         {{#if currentUser}}
         {{#if isCreator}}
 
@@ -68,8 +64,8 @@
       </a>
       {{/each}}
       {{/transition}}
+      {{/if}}
     </div>
-  </div>
 
   {{/ionContent}}
   {{/ionView}}
