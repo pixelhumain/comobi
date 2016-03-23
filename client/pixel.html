@@ -16,7 +16,7 @@
 
         {{#ionSideMenu}}
           <div class="bar bar-header bar-dark">
-            <h1 class="title">Communecter</h1>
+            <img src="/images/Communecter-32x32.svg"> <h1 class="title">communEvent</h1>
           </div>
           <div class="content has-header">
             <div class="list">
@@ -29,7 +29,26 @@
               <a class="item item-icon-right" href="{{pathFor 'contacts'}}" data-ion-menu-close>{{_ "Invitations contacts"}} {{> ionIcon icon="android-contacts"}}</a>
               {{/if}}
               <a class="item item-icon-right" href="{{pathFor 'notifications'}}" data-ion-menu-close>{{_ "Notifications"}} <span class="badge badge-balanced">{{#if notificationsCount}}{{notificationsCount}}{{else}}0{{/if}}</span></a>
+              {{#if isCordova}}
+              <a class="item item-icon-right scanner" href="" data-ion-menu-close>{{_ "scanner QR"}} {{> ionIcon icon="ios-barcode"}}</a>
+              {{/if}}
+              {{> settings}}
+              {{/if}}
+            </div>
+          </div>
+        {{/ionSideMenu}}
 
+        {{#ionSideMenu side="right"}}
+          <div class="bar bar-header bar-dark">
+            <h1 class="title"><i class="icon ion-android-notifications"></i> {{_ "notifications"}}</h1>
+          </div>
+          <div class="content has-header">
+            <div class="list">
+              <div class="item item-icon-left" data-ion-menu-close>
+                {{> ionIcon icon="ios-arrow-left"}} {{_ "Close"}}
+              </div>
+              {{#if currentUser}}
+              {{> notificationsList}}
               {{/if}}
             </div>
           </div>
@@ -49,7 +68,6 @@
         {{#ionTabs class="tabs-dark tabs-icon-only"}}
         {{> ionTab title=_events path="listEvents" iconOff="navicon-round" iconOn="navicon-round"}}
         {{> ionTab title=_cartes path="mapEvents" iconOff="android-pin" iconOn="android-pin"}}
-        {{> ionTab title=_reglages path="settings" iconOff="gear-b" iconOn="gear-b"}}
         {{/ionTabs}}
         {{/if}}
 
@@ -87,7 +105,7 @@
   {{#ionView hide-nav-bar="true"}}
     {{#ionContent class="rubyonic-pane"}}
       <div class="logo">
-    <img src="/logoL.jpg" class="animated infinite jello" alt="">
+    <img src="/images/logo.png" class="animated infinite jello" alt="">
 </div>
 {{/ionContent}}
 {{/ionView}}

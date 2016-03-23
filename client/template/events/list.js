@@ -78,6 +78,20 @@ Template.listEvents.helpers({
   },
   searchEvents (){
     return pageSession.get('searchEvents');
+  },
+  notificationsCountOld (){
+    let notificationsCountOld = pageSession.get('notificationsCount');
+    pageSession.set('notificationsCount',null);
+    let notificationsCount = NotificationHistory.find({}).count();
+    if(notificationsCountOld<notificationsCount){
+    pageSession.set('notificationsCount',notificationsCount);
+    return true;
+  }else{
+    return false;
+  }
+  },
+  notificationsCount () {
+    return NotificationHistory.find({}).count()
   }
 });
 

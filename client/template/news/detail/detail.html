@@ -1,6 +1,6 @@
 <template name="newsDetail">
   {{#contentFor "headerButtonLeft"}}
-  {{>ionNavBackButton}}
+  {{>ionNavBackButton href=(urlFor 'newsList' _id=scope._id._str scope="events")}}
   {{/contentFor}}
 
   {{#contentFor "headerButtonRight"}}

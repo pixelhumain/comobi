@@ -12,13 +12,13 @@
   {{/contentFor}}
 
   {{#ionView}}
-  {{#ionContent}}
+  {{#ionContent class="scroll-bg"}}
 
   {{> Template.dynamic template=scopeCardTemplate data=scope}}
 
   <div class="list padding">
     <div class="item item-divider homestead">
-    <i class="ion ion-social-rss"></i>  {{_ "news"}} {{scope.name}} <span class="badge badge-dark">{{scope.countNews}}</span>
+      <i class="ion ion-social-rss"></i>  {{_ "news"}} {{scope.name}} <span class="badge badge-dark">{{scope.countNews}}</span>
     </div>
     {{#each scope.news}}
     <a href="{{pathFor 'newsDetail' _id=scope._id._str newsId=_id._str scope=type}}" class="item animated in {{#if docNews.objId}}item-thumbnail-left{{/if}}">
@@ -116,12 +116,12 @@
 </template>
 
 <template name="newsFields">
-	{{> afQuickField name='name'}}
+  {{> afQuickField name='name'}}
   {{> afQuickField name='text' rows=8}}
 </template>
 
 <template name="listCard">
-  <div class="card">
+  <div class="list card">
     <div class="item">
       <h2 class="homestead">{{name}}</h2>
     </div>
@@ -133,9 +133,10 @@
         {{#if startDate}}<i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>{{/if}}
         {{#if endDate}}<i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>{{/if}}
         {{#if endDate}}<i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>{{/if}}
-        {{#if geo}}<a class="button button-clear" href="{{pathFor 'mapWithEvent' _id=_id._str}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a>{{/if}}
-
       </p>
+    </div>
+    <div class="item tabs tabs-secondary tabs-icon-left">
+      {{#if geo}}<a class="tab-item" href="{{pathFor 'mapWithEvent' _id=_id._str}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a>{{/if}}
     </div>
   </div>
 </template>
@@ -155,8 +156,8 @@
 </template>
 
 <template name="listCardevents">
-{{> listCard}}
-{{> boutonCard}}
+  {{> listCard}}
+  {{> boutonCard}}
 </template>
 
 <template name="listNews">

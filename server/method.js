@@ -349,6 +349,7 @@ pushNewNewsAttendees : function(eventId,newsId){
     payload['expiration'] = event.endDate;
     payload['addedAt'] =  new Date();
     payload['userId'] = attendeesIds;
+    payload['author'] = this.userId;
 
     let notifId=Meteor.call('insertNotification',payload);
     //let badge=Meteor.call('alertCount',);
