@@ -69,6 +69,9 @@
   "radius":"Radius",
   "tracking geolocation":"Tracking geolocation",
   "Invitations contacts":"Invitations contacts",
+  "Change location":"Change location",
+  "Search a city or postal code":"Search a city or postal code",
+  "Cities":"Villes",
   "schemas":{
     "followrest":{
       "invitedUserName":{

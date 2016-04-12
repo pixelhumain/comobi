@@ -75,3 +75,5 @@ gwendall:autoform-i18n
 raix:push@=2.6.8
 djabatav:geolocation-plus
 crosswalk
+tmeasday:publish-counts
+reactive-var

@@ -2,6 +2,23 @@ News = new Meteor.Collection("news", {idGeneration : 'MONGO'});
 
 this.Schemas = this.Schemas || {};
 
+
+this.Schemas.NewsRest =   new SimpleSchema({
+  text : {
+    type : String
+  },
+  typeId : {
+    type: String
+  },
+  type : {
+    type: String
+  },
+  tags : {
+    type: [String],
+    optional: true
+  }
+});
+
 this.Schemas.News =   new SimpleSchema({
   name : {
     type : String,
@@ -43,18 +60,8 @@ this.Schemas.News =   new SimpleSchema({
   },
   id : {
     type: String,
-    autoValue: function() {
-      if (this.isInsert) {
-        return Meteor.userId();
-      } else if (this.isUpsert) {
-        return {
-          $setOnInsert: Meteor.userId()
-        };
-      } else {
-        this.unset();
-      }
-    },
-    denyUpdate: true
+    denyUpdate: true,
+    optional: true
   },
   author : {
     type: String,
@@ -104,7 +111,7 @@ this.Schemas.News =   new SimpleSchema({
 });
 
 Meteor.startup(function() {
-  this.Schemas.News.i18n("schemas.news");
+  //this.Schemas.News.i18n("schemas.news");
   News.attachSchema(this.Schemas.News);
 });
 

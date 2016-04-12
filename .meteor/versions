@@ -136,6 +136,7 @@ tap:i18n@1.7.0
 tap:i18n-ui@0.7.0
 templating@1.1.5
 templating-tools@1.0.0
+tmeasday:publish-counts@0.7.3
 tracker@1.0.9
 ui@1.0.8
 underscore@1.0.4

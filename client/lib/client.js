@@ -81,6 +81,18 @@ function() {
 }
 );
 
+Template.registerHelper('imageDoc',
+function(id) {
+  if(id){
+    console.log(id);
+    return Documents.findOne({	id : id,doctype :'image'});
+  }else{
+    return this && this._id && this._id._str && Documents.findOne({	id : this._id._str,doctype :'image'});
+  }
+}
+);
+
+
 Template.registerHelper("currentFieldValue", function (fieldName) {
   return AutoForm.getFieldValue(fieldName) || false;
 });
@@ -125,7 +137,7 @@ let failure = function () {
 }
 
 Location.getGPSState(success, failure, {
-  dialog: true
+  dialog: false
 });
 
 });
@@ -155,7 +167,7 @@ Tracker.autorun(function() {
 Tracker.autorun(function() {
   let geoError = Session.get('geoError');
   if (geoError) {
-    alert(geoError);
+    //alert(geoError);
   }
 });
 

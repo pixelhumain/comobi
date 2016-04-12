@@ -10,72 +10,78 @@
 <template name="layout">
   {{#ionBody}}
 
-    {{#ionSideMenuContainer}}
+  {{#ionSideMenuContainer}}
 
-      {{#ionSideMenus}}
+  {{#ionSideMenus}}
 
-        {{#ionSideMenu}}
-          <div class="bar bar-header bar-dark">
-            <img src="/images/Communecter-32x32.svg"> <h1 class="title">communEvent</h1>
-          </div>
-          <div class="content has-header">
-            <div class="list">
-              <div class="item item-icon-right" data-ion-menu-close>
-                {{_ "Close"}} {{> ionIcon icon="ios-arrow-right"}}
-              </div>
-              {{#if currentUser}}
-              <a class="item item-icon-right" href="{{pathFor 'eventsAdd'}}" data-ion-menu-close>{{_ "Add event"}} {{> ionIcon icon="android-add-circle"}}</a>
-              {{#if isCordova}}
-              <a class="item item-icon-right" href="{{pathFor 'contacts'}}" data-ion-menu-close>{{_ "Invitations contacts"}} {{> ionIcon icon="android-contacts"}}</a>
-              {{/if}}
-              <a class="item item-icon-right" href="{{pathFor 'notifications'}}" data-ion-menu-close>{{_ "Notifications"}} <span class="badge badge-balanced">{{#if notificationsCount}}{{notificationsCount}}{{else}}0{{/if}}</span></a>
-              {{#if isCordova}}
-              <a class="item item-icon-right scanner" href="" data-ion-menu-close>{{_ "scanner QR"}} {{> ionIcon icon="ios-barcode"}}</a>
-              {{/if}}
-              {{> settings}}
-              {{/if}}
-            </div>
-          </div>
-        {{/ionSideMenu}}
+  {{#ionSideMenu}}
+  <div class="bar bar-header bar-dark">
+    <img src="/images/Communecter-32x32.svg"> <h1 class="title">communEvent</h1>
+    <button class="button button-clear pull-right" data-ion-menu-close>
+      <i class="icon ion-ios-arrow-right"></i>
+    </button>
+  </div>
+  <div class="content has-header">
+    <div class="list">
+      {{#if currentUser}}
+      <a class="item item-dark item-icon-right" href="#" data-ion-modal="eventsAdd" data-ion-menu-close>{{_ "Add event"}} {{> ionIcon icon="android-add-circle"}}</a>
+      {{#if isCordova}}
+      <a class="item item-dark item-icon-right" href="{{pathFor 'contacts'}}" data-ion-menu-close>{{_ "Invitations contacts"}} {{> ionIcon icon="android-contacts"}}</a>
+      {{/if}}
+      <a class="item item-dark item-icon-right" href="{{pathFor 'notifications'}}" data-ion-menu-close>{{_ "Notifications"}} <span class="badge badge-balanced">{{#if notificationsCount}}{{notificationsCount}}{{else}}0{{/if}}</span></a>
+      {{#if isCordova}}
+      <a class="item item-dark item-icon-right scanner" href="" data-ion-menu-close>{{_ "scanner QR"}} {{> ionIcon icon="ios-barcode"}}</a>
+      {{/if}}
+      {{> settings}}
+      {{/if}}
+    </div>
+  </div>
+  {{/ionSideMenu}}
 
-        {{#ionSideMenu side="right"}}
-          <div class="bar bar-header bar-dark">
-            <h1 class="title"><i class="icon ion-android-notifications"></i> {{_ "notifications"}}</h1>
-          </div>
-          <div class="content has-header">
-            <div class="list">
-              <div class="item item-icon-left" data-ion-menu-close>
-                {{> ionIcon icon="ios-arrow-left"}} {{_ "Close"}}
-              </div>
-              {{#if currentUser}}
-              {{> notificationsList}}
-              {{/if}}
-            </div>
-          </div>
-        {{/ionSideMenu}}
+  {{#ionSideMenu side="right"}}
+  <div class="bar bar-header bar-dark">
+    <button class="button button-clear pull-left" data-ion-menu-close>
+      <i class="icon ion-ios-arrow-left"></i>
+    </button>
+    <h1 class="title"><i class="icon ion-android-notifications"></i> {{_ "notifications"}}</h1>
+  </div>
+  <div class="content has-header">
+    <div class="list">
+      <div class="item item-dark item-checkbox item-checkbox-right">
+        <label class="checkbox checkbox-positive all-read">
+          <input type="checkbox" checked="{{allReadChecked notificationsCount}}">
+        </label>
+        {{_ "All read"}}
+      </div>
+      {{#if currentUser}}
+      {{> notificationsList}}
+      {{/if}}
+    </div>
+  </div>
+  {{/ionSideMenu}}
 
-      {{/ionSideMenus}}
+  {{/ionSideMenus}}
 
-      {{#ionSideMenuContent}}
+  {{#ionSideMenuContent}}
 
-        {{> ionNavBar class="bar-dark"}}
+  {{> ionNavBar class="bar-dark"}}
 
-        {{#ionNavView}}
-          {{> yield}}
-        {{/ionNavView}}
+  {{#ionNavView}}
+  {{> yield}}
+  {{/ionNavView}}
 
-        {{#if currentUser}}
-        {{#ionTabs class="tabs-dark tabs-icon-only"}}
-        {{> ionTab title=_events path="listEvents" iconOff="navicon-round" iconOn="navicon-round"}}
-        {{> ionTab title=_cartes path="mapEvents" iconOff="android-pin" iconOn="android-pin"}}
-        {{/ionTabs}}
-        {{/if}}
+  {{#if currentUser}}
+  {{#ionTabs class="tabs-dark tabs-icon-only"}}
+  {{> ionTab title=_events path="listEvents" iconOff="navicon-round" iconOn="navicon-round"}}
+  {{> ionTab title=_cartes path="mapEvents" iconOff="android-pin" iconOn="android-pin"}}
+  {{/ionTabs}}
+  {{/if}}
 
-      {{/ionSideMenuContent}}
+  {{/ionSideMenuContent}}
 
-    {{/ionSideMenuContainer}}
+  {{/ionSideMenuContainer}}
 
-    {{> meteorStatus lang=langChoix}}
+  {{> meteorStatus lang=langChoix}}
 
   {{/ionBody}}
 </template>
@@ -103,10 +109,10 @@
 
 <template name="loading">
   {{#ionView hide-nav-bar="true"}}
-    {{#ionContent class="rubyonic-pane"}}
-      <div class="logo">
+  {{#ionContent class="rubyonic-pane"}}
+  <div class="logo">
     <img src="/images/logo.png" class="animated infinite jello" alt="">
-</div>
-{{/ionContent}}
-{{/ionView}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
 </template>

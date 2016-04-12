@@ -15,21 +15,21 @@ $secondary-font-src : '/fonts/Ubuntu-Light.ttf';
 $big-bg:      '/images/fabric_plaid.png';
 
 @font-face {
-    font-family: $font-family-base;
-    src: url($font-src) format('truetype');
-    font-weight: 300;
+  font-family: $font-family-base;
+  src: url($font-src) format('truetype');
+  font-weight: 300;
 }
 
 @font-face {
-    font-family: $secondary-font-family-base;
-    src: url($secondary-font-src) format('truetype');
-    font-weight: 200;
+  font-family: $secondary-font-family-base;
+  src: url($secondary-font-src) format('truetype');
+  font-weight: 200;
 }
 
 @font-face
 {
-font-family: Homestead;
-src: url('/fonts/Homestead-Regular.ttf');
+  font-family: Homestead;
+  src: url('/fonts/Homestead-Regular.ttf');
 }
 
 .homestead{font-family:"Homestead"}
@@ -38,7 +38,7 @@ src: url('/fonts/Homestead-Regular.ttf');
 @import 'ionicons';
 
 body *, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-	font-family: $font-family-base , Fallback, sans-serif;
+  font-family: $font-family-base , Fallback, sans-serif;
 }
 
 .secondary-font {
@@ -46,7 +46,7 @@ body *, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 
 input, button, select, textarea {
-	font-family: $font-family-base , Fallback, sans-serif;
+  font-family: $font-family-base , Fallback, sans-serif;
 }
 .bold {font-weight:bold;}
 .text-right {text-align: right;}
@@ -54,61 +54,61 @@ input, button, select, textarea {
 .text-center {text-align: center;}
 .uppercase {text-transform:uppercase;}
 
-	$default-screen-background : '';
-	$sidebar-profile-background : '';
-	.no-margin {margin:0;}
-	.rubyonic-pane .ruby-button-clear {border:none; background:none;}
+$default-screen-background : '';
+$sidebar-profile-background : '';
+.no-margin {margin:0;}
+.rubyonic-pane .ruby-button-clear {border:none; background:none;}
 
-  .scroll-bg {
-    background-color: #E8E8E8;
-  }
+.scroll-bg {
+  background-color: #E8E8E8;
+}
 
 .logo {padding:20px 0 0 0; text-align: center;}
 
 
 #iron-router-progress {
-    background-color : #E33551;
-    box-shadow       : 0 0 5px #E33551;
+  background-color : #E33551;
+  box-shadow       : 0 0 5px #E33551;
 }
 #iron-router-progress.spinner:before {
-    border-color : #E33551;
+  border-color : #E33551;
 }
 
 
 .meteor-status {
-	z-index:100;
+  z-index:100;
   background-color: #324553;
 }
 .avatar{
-float: left;
-margin-right: 16px;
-width: 40px;
-height: 40px;
+  float: left;
+  margin-right: 16px;
+  width: 40px;
+  height: 40px;
 }
 
 
 svg {
-    left: 0;
-    position: absolute;
-    top: 0;
-    width: 100%;
-    height: 3500px;
-    z-index: -1;
-    background-color: #ffffff;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 3500px;
+  z-index: -1;
+  background-color: #ffffff;
 }
 
 body, .view{
-    background-color: #ffffff;
+  background-color: #ffffff;
 }
 
 .dark{
-color: $dark;
+  color: $dark;
 }
 
 .bar.bar-dark .title {
-    font-family: "Homestead";
-    color: #E33551;
-		text-align: center;
+  font-family: "Homestead";
+  color: #E33551;
+  text-align: center;
 }
 
 .logo{
@@ -135,6 +135,185 @@ color: $dark;
 }
 
 #map {
-    min-height: 350px;
-    min-width: 100%;
+  min-height: 350px;
+  min-width: 100%;
+}
+
+.item {
+  &.item-image  {
+    p{
+      text-align: left;
+      background: rgba($light, 0.4);
+      padding: $content-padding;
+      color: $positive;
+      border-radius: 2%;
+      &.right-top {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
+      &.left-top { position: absolute;
+        top: 10px;
+        left: 10px;
+      }
+      &.right-bottom { position: absolute;
+        bottom: 10px;
+        right: 10px;
+      }
+      &.left-bottom { position: absolute;
+        bottom: 10px;
+        left: 10px;
+      }
+    }
   }
+}
+
+@mixin border-color-contrast($color,$method)
+{
+  // $color - the specified color
+  /*
+  $method the algorithm to find the best contrast.
+  if the color scheme doesn't go well with the
+  text color (like red background with black text).
+  Switching between "simple" and "w3c" should fix this
+  */
+  @if($method == "simple")
+  {
+    @if(lightness($color) < 51, #FFF, #000){
+    border-color : transparentize(white, 0.8);
+  };
+    @else {
+    border-color : transparentize(black, 0.8);
+    }
+  }
+
+  @if($method == "w3c")
+  {
+    $color-brightness: round((red($color) * 299) + (green($color) * 587) + (blue($color) * 114) / 1000);
+    $light-color: round((red(#ffffff) * 299) + (green(#ffffff) * 587) + (blue(#ffffff) * 114) / 1000);
+
+    @if abs($color-brightness) < ($light-color/2){
+      border-color : transparentize(white, 0.8);
+    }
+
+    @else {
+      border-color : transparentize(black, 0.8);
+    }
+  }
+
+}
+
+$brand-base-color: $positive;
+$brand-analogous-color: $positive;
+$brand-contrast-color: $dark;
+$color-algorithm : w3c;
+
+.menu-left{
+  background-color: $dark;
+}
+
+.chat-ui-screen{
+  background-color: #ccc;
+}
+  .bar{
+    &.bar-chat {
+      min-height:75px;
+      .button-clear.button-clear {}
+      .buttons {margin-top: 10px;}
+      .title {
+        text-align: left;
+        overflow:visible; margin:0;
+        .chat-bar-contact-name {
+          padding-left:70px; position:relative; padding-top:15px;
+          .contact-title{ margin-top:0; margin-bottom:0;}
+          .chat-contact-thumb {@include border-radius(500px); position:absolute; left:0; top:5px; width:60px; border:5px solid transparentize($brand-analogous-color, 0.65);}
+        }
+      }
+    }
+  }
+.chat-window {
+  margin-top: 40px;
+  .chat-message {
+    padding: 10px; border-radius: 5px;
+    overflow: hidden;
+    img {
+    	width:100%;
+    	@include border-radius(5px);
+    	@include border-color-contrast($brand-base-color,$color-algorithm);
+    	border-width:5px;
+    	border-style:solid;
+    }
+    .chat-label {font-size:10px; text-transform:uppercase; clear:both; opacity:0.7; margin:5px 0; @extend %clearfix;
+      .text-shift-right {float:right; display:inline-block;}
+    }
+    &.is-inbound {margin: 10px 50px 10px 10px; background: transparentize(darken($brand-base-color, 10%), 0.2);}
+    &.is-outbound {margin: 10px 10px 10px 50px; background: transparentize(darken($brand-base-color, 20%), 0.2);}
+  }
+}
+
+
+
+// Contact Name, Location, and Thumb
+
+// Message Bubbles
+.new-notification-bubble {
+  display: inline-block;
+  position: absolute;
+  top: 5px;
+  right: -2px;
+  border-radius: 90%;
+  z-index: 5;
+  background: $brand-base-color;
+  color: $brand-contrast-color;
+  font-size: 11px;
+  line-height: 1;
+  padding: 1px;
+  min-width: 13px;}
+
+
+
+// Message Input Section
+.chat-footer-bar {background:lighten($brand-base-color, 10%); border-top-width:1px; border-top-style:solid; border-top-color:$brand-contrast-color;}
+.chat-footer-bar, .chat-footer-bar .row {padding:0;}
+.chat-footer-bar .button {background:transparent; border:none;}
+.chat-text-input[type="text"] {
+	width:100%;
+	background:transparent;
+	// @include input-placeholder($brand-base-color, $color-algorithm);
+	// @include text-color-contrast($brand-base-color, w3c);
+}
+
+//map
+#inputs,
+#errors,
+#directions {
+    position: absolute;
+    width: 33.3333%;
+    max-width: 300px;
+    min-width: 200px;
+}
+
+#inputs {
+    z-index: 10;
+    top: 10px;
+    left: 10px;
+}
+
+#directions {
+    z-index: 99;
+    background: rgba(0,0,0,.8);
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+}
+
+#errors {
+    z-index: 8;
+    opacity: 0;
+    padding: 10px;
+    border-radius: 0 0 3px 3px;
+    background: rgba(0,0,0,.25);
+    top: 90px;
+    left: 10px;
+}

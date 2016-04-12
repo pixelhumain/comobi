@@ -50,22 +50,32 @@ Meteor.publishComposite('notificationsUser', function() {
 							'likes': 1
 						}
 					});
+				},
+				find: function(notify) {
+					return Documents.find({
+						id : notify.author
+					});
 				}
 			}
 		]}
 	});
 
-Meteor.publish('getcitiesbylatlng', function(latlng) {
-	check(latlng, {latitude:Number,longitude:Number});
-	if (!this.userId) {
-		return;
+
+
+	Meteor.publish('getcitiesbylatlng', function(latlng) {
+		check(latlng, {latitude:Number,longitude:Number});
+		if (!this.userId) {
+			return;
+		}
+		Cities._ensureIndex({
+			"geoShape": "2dsphere"
+		});
+		return Cities.find({"geoShape":
+		{$geoIntersects:
+			{$geometry:{ "type" : "Point",
+			"coordinates" : [ latlng.longitude, latlng.latitude ] }
+		}
 	}
-	return Cities.find({"geoShape":
-	{$geoIntersects:
-		{$geometry:{ "type" : "Point",
-		"coordinates" : [ latlng.longitude, latlng.latitude ] }
-	}
-}
 });
 });
 
@@ -75,7 +85,7 @@ Meteor.publish('cities', function(cp,country) {
 	}
 	check(cp, String);
 	check(country, String);
-	let lists = Cities.find({cp:cp,country:country});
+	let lists = Cities.find({'postalCodes.postalCode':cp,country:country});
 	return lists;
 });
 
@@ -92,24 +102,45 @@ Events._ensureIndex({
 	"geoPosition": "2dsphere"
 });
 
-
-Meteor.publish('citoyenEvents', function(latlng,radius) {
-	check(latlng, {latitude:Number,longitude:Number});
-	check(radius, Number);
+Meteor.publishComposite('citoyenEvents', function(latlng,radius) {
+	//check(latlng, Object);
 	if (!this.userId) {
 		return;
 	}
-	//selector startDate endDate sort et limit
-	var inputDate = new Date();
-	//console.log(inputDate);
-	return Events.find({'geoPosition': {
-		$nearSphere: {
-			$geometry: {
-				type: "Point",
-				coordinates: [latlng.longitude, latlng.latitude]
-			},
-			$maxDistance: radius
-		}}},{_disableOplog: true});
+	return {
+		find: function() {
+			if(radius){
+				return Events.find({'geoPosition': {
+					$nearSphere: {
+						$geometry: {
+							type: "Point",
+							coordinates: [latlng.longitude, latlng.latitude]
+						},
+						$maxDistance: radius
+					}}},{_disableOplog: true});
+				}else{
+					console.log("polygon");
+					return Events.find({"geoPosition": {
+						$geoIntersects: {
+							$geometry:{
+								"type" : "Polygon",
+								"coordinates" : latlng
+							}
+						}
+					}
+				},{_disableOplog: true});
+			}
+
+		},
+		children: [
+			{
+				find: function(event) {
+					return Documents.find({
+						id : event._id._str
+					});
+				}
+			}
+		]}
 	});
 
 
@@ -142,7 +173,14 @@ Meteor.publish('citoyenEvents', function(latlng,radius) {
 				{
 					find: function(scopeD) {
 						return Cities.find({
-							'cp': scopeD.address.postalCode
+							'postalCodes.postalCode': scopeD.address.postalCode
+						});
+					}
+				},
+				{
+					find: function(scopeD) {
+						return Documents.find({
+							id : scopeD._id._str
 						});
 					}
 				}
@@ -183,6 +221,11 @@ Meteor.publish('citoyenEvents', function(latlng,radius) {
 											'profile.online': 1
 										}
 									});
+								},
+								find: function(citoyen) {
+									return Documents.find({
+										id : citoyen._id._str
+									});
 								}
 							}
 						]
@@ -190,7 +233,7 @@ Meteor.publish('citoyenEvents', function(latlng,radius) {
 				]}
 			});
 
-			Meteor.publishComposite('newsList', function(scope,scopeId) {
+			Meteor.publishComposite('newsList', function(scope,scopeId,limit) {
 				check(scopeId, String);
 				check(scope, String);
 				if (!this.userId) {
@@ -200,8 +243,10 @@ Meteor.publish('citoyenEvents', function(latlng,radius) {
 				return {
 					find: function() {
 						var query = {};
-						query['scope.'+scope] = {$in:[scopeId]};
-						return News.find(query);
+						//query['scope.'+scope] = {$in:[scopeId]};
+						query['id'] = scopeId;
+						Counts.publish(this, `countNews.${scopeId}`, News.find(query));
+						return News.find(query,{sort: {"created": -1},limit:limit});
 					},
 					children: [
 						{

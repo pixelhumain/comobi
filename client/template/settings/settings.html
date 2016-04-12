@@ -1,9 +1,9 @@
 <template name="settings">
-<div class="item item-divider">
+<div class="item item-positive item-divider">
     {{_ "settings"}}
   </div>
-
-  <div class="item item-input item-select">
+  <a class="item item-dark item-icon-right" href="{{pathFor 'changePosition'}}" data-ion-menu-close>{{_ "Change location"}} {{> ionIcon icon="location"}}</a>
+  <div class="item item-dark item-input item-select">
     <div class="input-label">
       {{_ "radius"}}
     </div>
@@ -24,7 +24,7 @@
     </select>
   </div>
 {{#if isCordova}}
-  <div class="item item-toggle">
+  <div class="item item-dark item-toggle">
 {{_ "tracking geolocation"}}
 <label class="toggle toggle-balanced">
    <input id="geolocate" type="checkbox" checked="{{#if geolocate}}checked{{/if}}">

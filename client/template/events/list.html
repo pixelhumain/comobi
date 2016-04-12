@@ -1,6 +1,6 @@
 <template name="listEvents">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "events"}}</h1>
+  <h1 class="title">{{_ "events"}} {{#if city}} : {{city.name}}{{/if}}</h1>
   {{/contentFor}}
   {{#contentFor "headerButtonLeft"}}
   <button class="button button-clear pull-left" data-ion-menu-toggle="left">
@@ -13,11 +13,11 @@
   {{/contentFor}}
 
   {{#contentFor "headerButtonRight"}}
-  {{#if notificationsCount}}
-  <button class="button button-clear button-balanced pull-right" data-ion-menu-toggle="right">
-  {{> ionIcon icon='android-notifications'}} {{notificationsCount}}
+
+  <button class="button button-clear icon ion-android-notifications brand-base-text-color pull-right" data-ion-menu-toggle="right">
+   {{#if notificationsCount}}<div class="new-notification-bubble">{{notificationsCount}}</div>{{/if}}
   </button>
-  {{/if}}
+
   {{/contentFor}}
 
   {{#ionView}}
@@ -42,7 +42,10 @@
       {{#if Template.subscriptionsReady}}
       {{#transition in="zoomIn" out="bounceOut"}}
       {{#each events}}
-      <a class="item animated out" href="{{pathFor 'newsList' _id=this._id._str scope="events"}}">
+      <a class="item {{#if imageDoc}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'newsList' _id=this._id._str scope="events"}}">
+        {{#if imageDoc}}
+        {{> imgDoc imageDoc=imageDoc resized="80x80"}}
+        {{/if}}
         <h2>{{name}}</h2>
         <span class="badge {{#if isStart}}badge-balanced{{else}}badge-dark{{/if}}"><i class="icon ion-person"></i> {{countAttendees}}</span>
         <p>
@@ -62,6 +65,8 @@
         {{/if}}
         {{/if}}
       </a>
+       {{else}}
+
       {{/each}}
       {{/transition}}
       {{/if}}
@@ -72,6 +77,30 @@
 </template>
 
 <template name="eventsAdd">
+  {{#ionModal customTemplate=true}}
+  <div class="bar bar-header bar-dark">
+    <button data-dismiss="modal" type="button" class="button button-clear">{{_ "Reset"}}</button>
+    <h2 class="title">{{_ "Create a event"}}</h2>
+  </div>
+<div class="content has-header overflow-scroll">
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "Create a event"}}
+    </div>
+    {{#autoForm id="addEvent" schema=Schemas.EventsRest type="method" meteormethod="insertEvent" template="ionic" class="padding"}}
+    {{> eventsFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "create"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+</div>
+  {{/ionModal}}
+</template>
+
+<template name="eventsAddOld">
   {{#contentFor "headerButtonLeft"}}
   {{>ionNavBackButton}}
   {{/contentFor}}
@@ -149,6 +178,7 @@
   {{#if currentFieldValue "postalCode"}}
   {{#if optionsInsee}}
   {{> afQuickField name='city' options=optionsInsee value=city}}
+  {{> afQuickField name='cityName' type="hidden" value=cityName}}
   {{else}}
   <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
   {{/if}}

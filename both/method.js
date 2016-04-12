@@ -23,7 +23,7 @@ Meteor.methods({
       return false;
     }
     this.unblock();
-  },
+  },      
   cfsbase64tos3up: function(photo,str,type,idType) {
     check(photo, Match.Any);
     check(str, Match.Any);

@@ -78,9 +78,9 @@ Template.signin.onRendered(function () {
         let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
         Meteor.call('getcitiesbylatlng',latlng,function(error, result){
           if(result){
-            pageSession.set('codepostal', result.cp);
+            pageSession.set('codepostal', result.postalCodes[0].postalCode);
             pageSession.set('cityselect', result.insee);
-            Meteor.call('getcitiesbypostalcode',result.cp,function(error, data){
+            Meteor.call('getcitiesbypostalcode',result.postalCodes[0].postalCode,function(error, data){
               if(data){
               pageSession.set( 'cities', data);
               }

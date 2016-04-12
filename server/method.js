@@ -38,6 +38,50 @@ Meteor.methods({
     var retour = Meteor.call("postPixel","link","connect",doc);
     return retour;
   },
+  insertNew : function(doc){
+    //type : organizations / projects > organizerId
+    console.log(doc);
+    check(doc, Schemas.NewsRest);
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    if(!doc.type){
+      doc.type="events";
+    }
+    if(!doc.scope){
+      doc.scope="public";
+    }
+    var retour = Meteor.call("postPixel","news","save",doc);
+    return retour;
+  },
+  photoNews: function(photo,str,type,idType) {
+
+    let photoret = Meteor.call('cfsbase64tos3up',photo,str,type,idType);
+    console.log(photoret)
+
+    let insertNew = {};
+    insertNew.typeId=idType;
+    insertNew.type=type;
+    insertNew.text="photo";
+    let newsId = Meteor.call('insertNew',insertNew);
+    console.log(newsId)
+
+    let insertDoc = {};
+    insertDoc.id = newsId.data.id["$id"];
+    insertDoc.type = type;
+    insertDoc.collection = "cfs.photosimg.filerecord";
+    insertDoc.objId = photoret ;
+    insertDoc.moduleId = "meteor.communecter";
+    insertDoc.doctype = "image";
+    insertDoc.name = str;
+    insertDoc.contentKey = type+".news";
+    let docId = Documents.insert(insertDoc);
+    if(photoret && newsId && docId){
+        return {photoret:photoret,newsId:newsId.data.id["$id"],docId:docId};
+    }else{
+      throw new Meteor.Error("photoNews error");
+    }
+  },
   insertEvent : function(doc){
     //type : organizations / projects > organizerId
     check(doc, Schemas.EventsRest);
@@ -263,9 +307,10 @@ getcitiesbylatlng: function(latlng) {
 },
 getcitiesbypostalcode: function(cp) {
   check(cp, String);
-  return Cities.find({cp: cp}).fetch();
+  return Cities.find({'postalCodes.postalCode': cp}).fetch();
 },
 searchCities : function(query, options){
+    check(query, String);
   if (!query) return [];
 
   options = options || {};
@@ -279,7 +324,7 @@ searchCities : function(query, options){
 
   // TODO fix regexp to support multiple tokens
   var regex = new RegExp("^" + query);
-  return Cities.find({name: {$regex:  regex, $options: "i"}}, options).fetch();
+  return Cities.find({$or : [{name: {$regex:  regex, $options: "i"}},{'postalCodes.postalCode': {$regex:  regex}}]}, options).fetch();
 },
 pushNewAttendees : function(eventId){
   check(eventId, String);
@@ -435,5 +480,23 @@ pushUser : function(title,text,payload,query,badge){
       'clicks': this.userId
     }
   })
+},
+'allRead': function() {
+  if (!this.userId) {
+    throw new Meteor.Error("not-authorized");
+  }
+  // console.log('notification click') // for testing
+  return NotificationHistory.update({
+    'dismissals': {
+      $nin: [this.userId]
+    },
+    'userId': {
+      $in: [this.userId]
+    }
+  }, {
+    $addToSet: {
+      'dismissals': this.userId
+    }
+  },{ multi: true})
 }
 });

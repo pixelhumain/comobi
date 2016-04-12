@@ -12,8 +12,7 @@
   {{/contentFor}}
 
   {{#ionView}}
-  {{#ionContent class="scroll-bg"}}
-
+  {{#ionContent}}
   <div class="padding">
     <div class="list">
       <div class="item item-divider">
@@ -21,28 +20,25 @@
       </div>
       {{#transition in="zoomIn" out="bounceOut"}}
       {{#each events.listAttendees}}
-
-        {{#if isFollowsAttendees _id._str}}
+      {{#if isFollowsAttendees _id._str}}
+      <div class="item item-avatar animated out">
+        {{> imgDoc}}
+        <h2>{{name}}</h2>
         {{#if onlineAttendees}}
-        <div class="item animated out">
-          {{name}}
         <span class="badge badge-balanced">{{_ "online"}}</span>
-        </div>
         {{else}}
-        <div class="item animated out">
-          {{name}}
         <span class="badge badge-assertive">{{_ "offline"}}</span>
-        </div>
         {{/if}}
-        {{else}}
-        <div class="item item-button-right animated out">
-          {{name}}
+      </div>
+      {{else}}
+      <div class="item item-avatar item-button-right animated out">
+        {{> imgDoc}}
+        {{name}}
         <button class="button button-positive followperson-link">
           <i class="icon ion-person-add"></i>
         </button>
-        </div>
-        {{/if}}
-
+      </div>
+      {{/if}}
       {{/each}}
       {{/transition}}
     </div>
@@ -50,4 +46,48 @@
 
   {{/ionContent}}
   {{/ionView}}
+</template>
+
+
+<template name="chatEvents">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "Chat events"}}</h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent class="content-stable"}}
+
+  <div class="messages">
+    {{#transition in="zoomIn" out="bounceOut"}}
+    {{#each message in messages}}
+    <div class="message">
+      <span>{{ message.text }}</span>
+    </div>
+    <div class="time">{{message.time}}</div>
+    {{/each}}
+    {{/transition}}
+  </div>
+
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+<template name="imgDoc">
+  {{#with this.imageDoc}}
+  <img src="http://qa.communecter.org/communecter/document/resized/{{#if ../resized}}{{../resized}}{{else}}50x50{{/if}}/upload/{{moduleId}}/{{folder}}/{{name}}">
+  {{else}}
+  {{#with imageDoc}}
+  <img src="http://qa.communecter.org/communecter/document/resized/{{#if ../resized}}{{../resized}}{{else}}50x50{{/if}}/upload/{{moduleId}}/{{folder}}/{{name}}">
+  {{else}}
+  <img src="http://placehold.it/{{#if resized}}{{resized}}{{else}}50x50{{/if}}/848f97/cccccc?text=pas de photo">
+  {{/with}}
+  {{/with}}
 </template>
