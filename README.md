@@ -1,6 +1,6 @@
 # communEvent
 meteor mobile event application
-directly pluggued into communecter 
+directly pluggued into The ODB and also visible on Communecter 
 
 - create new Event 
 - create new User Account 
