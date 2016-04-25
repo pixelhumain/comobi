@@ -243,7 +243,7 @@ const addMarker = (marker) => {
 
 const removeMarker = (_id) => {
   var marker = markers[_id];
-  if (map.hasLayer(marker)) map.removeLayer(marker);
+  if (clusters.hasLayer(marker)) clusters.removeLayer(marker);
 }
 
 const selectColor = (event) => {
