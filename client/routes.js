@@ -97,7 +97,7 @@ Router.map(function() {
       return null;
     },
     waitOn: function() {
-      return [ Meteor.subscribe('lists') , Meteor.subscribe('scopeDetail', 'events', this.params._id) ];
+      return [ Meteor.subscribe('lists') , Meteor.subscribe('newsDetail', this.params._id) ];
     }
   });
 

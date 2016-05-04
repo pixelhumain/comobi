@@ -19,9 +19,9 @@
       <h2>{{#if name}}{{name}}{{else}}{{authorNews.name}}{{/if}}</h2>
       <p><i class="icon ion-clock"></i> {{livestamp created}} <i class="icon ion-person"></i>  {{authorNews.name}}</p>
     </div>
-    {{#if docNews.photoNews}}
+    {{#if photoNews}}
     <div class="item item-body">
-      {{#each docNews.photoNews}}
+      {{#each photoNews}}
       <img src="{{this.url store='photosLarge' uploading='/default.png' storing='/default.png'}}" class="full-image"  />
       {{/each}}
     </div>
@@ -34,7 +34,11 @@
     <div class="item tabs tabs-secondary tabs-icon-left">
       <a class="tab-item like-photo" href="#">
         <i class="icon ion-thumbsup"></i>
-        {{likesCount}} {{_ "like"}}
+        {{likesCount}}
+      </a>
+      <a class="tab-item dislike-photo" href="#">
+        <i class="icon ion-thumbsdown"></i>
+        {{dislikesCount}}
       </a>
       {{#if isAuthor}}
       <a class="tab-item delete-photo" href="#">

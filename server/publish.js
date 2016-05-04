@@ -244,7 +244,7 @@ Meteor.publishComposite('citoyenEvents', function(latlng,radius) {
 					find: function() {
 						var query = {};
 						//query['scope.'+scope] = {$in:[scopeId]};
-						query['id'] = scopeId;
+						query['target.id'] = scopeId;
 						Counts.publish(this, `countNews.${scopeId}`, News.find(query));
 						return News.find(query,{sort: {"created": -1},limit:limit});
 					},
@@ -263,25 +263,12 @@ Meteor.publishComposite('citoyenEvents', function(latlng,radius) {
 						},
 						{
 							find: function(news) {
-								/*console.log(Documents.find({
-								id : news._id._str
-							}).fetch());*/
-							return Documents.find({
-								id : news._id._str
-							});
-						},
-						children: [
-							{
-								find: function(doc) {
-									/*console.log(Photosimg.find({
-									_id:doc.objId
-								}).fetch());*/
+							if(news.media && news.media.content && news.media.content.imageId){
 								return Photosimg.find({
-									_id:doc.objId
+									_id:news.media.content.imageId
 								});
 							}
 						}
-					]
 				}
 			]
 		}
@@ -311,25 +298,12 @@ Meteor.publishComposite('citoyenEvents', function(latlng,radius) {
 				},
 				{
 					find: function(news) {
-						/*console.log(Documents.find({
-						id : news._id._str
-					}).fetch());*/
-					return Documents.find({
-						id : news._id._str
-					});
-				},
-				children: [
-					{
-						find: function(doc) {
-							/*console.log(Photosimg.find({
-							_id:doc.objId
-						}).fetch());*/
-						return Photosimg.find({
-							_id:doc.objId
-						});
-					}
+						if(news.media && news.media.content && news.media.content.imageId){
+							return Photosimg.find({
+								_id:news.media.content.imageId
+							});
+						}
 				}
-			]
 		}
 	]
 }

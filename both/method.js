@@ -23,7 +23,7 @@ Meteor.methods({
       return false;
     }
     this.unblock();
-  },      
+  },
   cfsbase64tos3up: function(photo,str,type,idType) {
     check(photo, Match.Any);
     check(str, Match.Any);
@@ -53,27 +53,66 @@ Meteor.methods({
       throw new Meteor.Error("not-authorized");
     }
 
+    let doc={};
+    doc.id=photoId;
+    doc.collection="news";
+    doc.action="voteUp";
+
     if (News.findOne({
       _id: new Mongo.ObjectID(photoId),
-      likes: {
+      voteUp: {
         $in: [this.userId]
       }
     })) {
-      News.update({
-        _id: new Mongo.ObjectID(photoId)
-      }, {
-        $pull: {
-          likes: this.userId
-        }
-      })
+      doc.unset="true";
+      Meteor.call('addAction',doc);
     } else {
-      News.update({
-        _id: new Mongo.ObjectID(photoId)
-      }, {
-        $push: {
-          likes: this.userId
+
+      if (News.findOne({
+        _id: new Mongo.ObjectID(photoId),
+        voteDown: {
+          $in: [this.userId]
         }
-      });
+      })) {
+        Meteor.call('dislikePhoto',photoId);
+
+      }
+      Meteor.call('addAction',doc);
+
+    }
+  },
+  'dislikePhoto': function(photoId) {
+    check(photoId, String);
+
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+
+    let doc={};
+    doc.id=photoId;
+    doc.collection="news";
+    doc.action="voteDown";
+
+    if (News.findOne({
+      _id: new Mongo.ObjectID(photoId),
+      voteDown: {
+        $in: [this.userId]
+      }
+    })) {
+      doc.unset="true";
+      Meteor.call('addAction',doc);
+    } else {
+
+      if (News.findOne({
+        _id: new Mongo.ObjectID(photoId),
+        voteUp: {
+          $in: [this.userId]
+        }
+      })) {
+        Meteor.call('likePhoto',photoId);
+
+      }
+      Meteor.call('addAction',doc);
 
     }
   }

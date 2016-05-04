@@ -23,9 +23,9 @@
     {{#if Template.subscriptionsReady}}
     {{#transition in="zoomIn" out="bounceOut"}}
     {{#each scope.news}}
-    <a href="{{pathFor 'newsDetail' _id=scope._id._str newsId=_id._str scope=type}}" class="item animated in {{#if docNews.objId}}item-thumbnail-left{{else}}{{#if imageDoc authorNews._id._str}}item-avatar{{/if}}{{/if}}">
+    <a href="{{pathFor 'newsDetail' _id=scope._id._str newsId=_id._str scope=target.type}}" class="item animated in {{#if photoNews}}item-thumbnail-left{{else}}{{#if imageDoc authorNews._id._str}}item-avatar{{/if}}{{/if}}">
 
-      {{#each docNews.photoNews}}
+      {{#each photoNews}}
       <img src="{{this.url store='photosThumb' uploading='/default.png' storing='/default.png'}}"  />
       {{else}}
       {{#if imageDoc}}
@@ -191,9 +191,9 @@
     </div>
     {{#transition in="zoomIn" out="bounceOut"}}
     {{#each scope.news}}
-    <a href="{{pathFor 'newsDetail' _id=scope._id._str newsId=_id._str scope=type}}" class="item animated out {{#if docNews.objId}}item-thumbnail-left{{/if}}">
+    <a href="{{pathFor 'newsDetail' _id=scope._id._str newsId=_id._str scope=target.type}}" class="item animated out {{#if photoNews}}item-thumbnail-left{{/if}}">
 
-      {{#each docNews.photoNews}}
+      {{#each photoNews}}
       <img src="{{this.url store='photosThumb' uploading='/default.png' storing='/default.png'}}"  />
       {{/each}}
 
