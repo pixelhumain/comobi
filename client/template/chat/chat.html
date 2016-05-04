@@ -1,0 +1,167 @@
+<template name="layoutChatui">
+  {{#ionBody}}
+
+    {{#ionSideMenuContainer}}
+
+      {{#ionSideMenus}}
+
+        {{#ionSideMenu}}
+          <div class="bar bar-header bar-dark">
+            <img src="/images/Communecter-32x32.svg"> <h1 class="title">communEvent</h1>
+          </div>
+          <div class="content has-header">
+            <div class="list">
+              <div class="item item-icon-right" data-ion-menu-close>
+                {{_ "Close"}} {{> ionIcon icon="ios-arrow-right"}}
+              </div>
+              {{#if currentUser}}
+
+              {{/if}}
+            </div>
+          </div>
+        {{/ionSideMenu}}
+
+        {{#ionSideMenu side="right"}}
+          <div class="bar bar-header bar-dark">
+            <h1 class="title"><i class="icon ion-android-notifications"></i> {{_ "notifications"}}</h1>
+          </div>
+          <div class="content has-header">
+            <div class="list">
+              <div class="item item-icon-left" data-ion-menu-close>
+                {{> ionIcon icon="ios-arrow-left"}} {{_ "Close"}}
+              </div>
+              {{#if currentUser}}
+
+              {{/if}}
+            </div>
+          </div>
+        {{/ionSideMenu}}
+
+      {{/ionSideMenus}}
+
+      {{#ionSideMenuContent}}
+
+        {{> ionNavBar align-title="left" class="bar-dark bar-chat"}}
+
+        {{#ionNavView}}
+          {{> yield}}
+        {{/ionNavView}}
+
+      {{/ionSideMenuContent}}
+
+    {{/ionSideMenuContainer}}
+
+    {{> meteorStatus lang=langChoix}}
+
+  {{/ionBody}}
+</template>
+
+
+<template name="chatui">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">
+    <div class="chat-bar-contact-name">
+        <img src="img/demo/profile-image.jpg" class="chat-contact-thumb">
+        <h4 class="contact-title">Salinder Mules</h4>
+        <h6 class="contact-title"><i class="ion-compass"></i> Avengers Tower, New York</h6>
+      </div>
+  </h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+  <button class="button button-clear brand-base-text-color">
+    <i class="icon ion-android-attach"></i>
+  </button>
+  {{/contentFor}}
+{{#ionView class="rubyonic-pane chat-ui-screen"}}
+
+  {{#ionContent class=""}}
+  <div class="chat-window">
+
+    <div class="chat-message is-inbound">
+    <div class="chat-label">
+      Salinder says
+      <div class="text-shift-right">2 mins ago</div>
+    </div>
+    <img src="img/demo/guitar.jpg" alt="">
+    incoming message....
+    <div class="chat-label">
+      <div class="text-shift-right"><i class="ion-checkmark-circled"></i> Read</div>
+    </div>
+    </div>
+
+    <div class="chat-message is-outbound">
+      <div class="chat-label">you</div>
+        <img src="img/demo/berry.jpg" alt="">
+        outgoing message....
+        <div>
+          <div class="chat-label">
+            <div class="text-shift-right"><i class="ion-checkmark-circled"></i> Sent</div>
+          </div>
+        </div>
+    </div>
+
+    <div class="chat-message is-inbound">
+      <div class="chat-label">
+        Salinder says
+        <div class="text-shift-right">2 mins ago</div>
+      </div>
+      incoming message....
+      <div class="chat-label">
+        <div class="text-shift-right"><i class="ion-checkmark-circled"></i> Read</div>
+      </div>
+    </div>
+
+    <div class="chat-message is-outbound">
+      <div class="chat-label">you</div>
+        outgoing message....
+        <div>
+          <div class="chat-label">
+            <div class="text-shift-right"><i class="ion-checkmark-circled"></i> Sent</div>
+          </div>
+        </div>
+    </div>
+
+    <div class="chat-message is-outbound">
+      <div class="chat-label">
+        Salinder says
+        <div class="text-shift-right">2 mins ago</div>
+      </div>
+      incoming message....
+      <div class="chat-label">
+        <div class="text-shift-right"><i class="ion-checkmark-circled"></i> Read</div>
+      </div>
+    </div>
+
+
+    <div class="chat-message is-inbound">
+      <div class="chat-label">
+        Salinder says
+        <div class="text-shift-right">2 mins ago</div>
+      </div>
+      incoming message....
+      <div class="chat-label">
+        <div class="text-shift-right"><i class="ion-checkmark-circled"></i> Read</div>
+      </div>
+    </div>
+
+  </div>
+
+  {{/ionContent}}
+
+  {{#ionFooterBar class="chat-footer-bar"}}
+    <div class="row">
+      <button class="col col-20 button"><i class="icon ion-mic-a"></i></button>
+      <div class="col col-60">
+        <input type="text" class="chat-text-input" placeholder="type your message">
+      </div>
+      <button class="col col-20 button"><i class="icon ion-paper-airplane"></i></button>
+    </div>
+  {{/ionFooterBar}}
+
+{{/ionView}}
+</template>

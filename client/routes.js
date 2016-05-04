@@ -5,7 +5,7 @@ Router.configure({
   loadingTemplate: "loading"
 });
 
-var singleSubs = new SubsManager({cacheLimit: 20, expireIn: 3});
+var singleSubs = new SubsManager();
 
 Router.map(function() {
 
@@ -23,37 +23,49 @@ Router.map(function() {
     path: '/',
     template: "listEvents",
     loadingTemplate: 'loading',
-    waitOn: function() {
+    /*waitOn: function() {
       Meteor.subscribe('citoyen');
       let geo = Location.getReactivePosition();
       let radius = Session.get('radius');
-      if(geo && geo.latitude){
+      if(radius && geo && geo.latitude){
         let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
-        Meteor.subscribe('citoyenEvents',latlng,radius);
+        singleSubs.subscribe('citoyenEvents',latlng,radius);
+      }else{
+        console.log('City');
+        let city = Session.get('city');
+        if(city && city.geoShape && city.geoShape.coordinates){
+          singleSubs.subscribe('citoyenEvents',city.geoShape.coordinates);
+        }
       }
-    }
+    }*/
   });
 
   this.route("mapEvents", {
     path: '/mapevents',
     template: "mapEvents",
     loadingTemplate: 'loading',
-    waitOn: function() {
+    /*waitOn: function() {
       Meteor.subscribe('citoyen');
       let geo = Location.getReactivePosition();
       let radius = Session.get('radius');
-      if(geo && geo.latitude){
+      if(radius && geo && geo.latitude){
         let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
         Meteor.subscribe('citoyenEvents',latlng,radius);
+      }else{
+        console.log('City');
+        let city = Session.get('city');
+        if(city && city.geoShape && city.geoShape.coordinates){
+          Meteor.subscribe('citoyenEvents',city.geoShape.coordinates);
+        }
       }
-    }
+    }*/
   });
 
   this.route("mapWithEvent", {
     template: "mapEvents",
     loadingTemplate: 'loading',
     path: 'mapevents/:_id',
-    waitOn: function() {
+    /*waitOn: function() {
       Meteor.subscribe('citoyen');
       let geo = Location.getReactivePosition();
       let radius = Session.get('radius');
@@ -61,7 +73,7 @@ Router.map(function() {
         let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
         Meteor.subscribe('citoyenEvents',latlng,radius);
       }
-    },
+    },*/
     data: function() {
       Session.set("currentEvent", this.params._id);
     }
@@ -71,7 +83,7 @@ Router.map(function() {
     template: "eventsAdd",
     path: 'events/add',
     data: function() {
-
+      return null;
     },
     waitOn: function() {
       Meteor.subscribe('lists');
@@ -85,7 +97,7 @@ Router.map(function() {
       return null;
     },
     waitOn: function() {
-      return [ Meteor.subscribe('lists') , Meteor.subscribe('scopeDetail', 'events', this.params._id) ];
+      return [ Meteor.subscribe('lists') , Meteor.subscribe('newsDetail', this.params._id) ];
     }
   });
 
@@ -99,8 +111,7 @@ Router.map(function() {
       return null;
     },
     waitOn: function() {
-      Meteor.subscribe('scopeDetail', this.params.scope, this.params._id);
-      return singleSubs.subscribe('newsList', this.params.scope, this.params._id);
+      return Meteor.subscribe('scopeDetail', this.params.scope, this.params._id);
     }
   });
 
@@ -128,7 +139,7 @@ Router.map(function() {
     },
     waitOn: function() {
       Meteor.subscribe('scopeDetail', this.params.scope, this.params._id);
-      return Meteor.subscribe('newsDetail', this.params.newsId);
+      return singleSubs.subscribe('newsDetail', this.params.newsId);
     }
   });
 
@@ -169,6 +180,23 @@ Router.map(function() {
     path: '/contacts'
   });
 
+  this.route('chatui', {
+    template: "chatui",
+    layoutTemplate:'layoutChatui',
+    path: '/chatui',
+    data: function() {
+          Session.set('hasTabs', false);
+          Session.set('hasTabsTop', false);
+      return null;
+    }
+  });
+
+  this.route('changePosition', {
+    template: "changePosition",
+    path: '/cities'
+  });
+
+
 
   this.route('notifications', {
     template: "notifications",
@@ -177,7 +205,7 @@ Router.map(function() {
       return null;
     },
     waitOn: function() {
-      return Meteor.subscribe('notificationsUser');
+      return singleSubs.subscribe('notificationsUser');
     }
   });
 

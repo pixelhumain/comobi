@@ -62,6 +62,12 @@ this.Schemas.EventsRest = new SimpleSchema({
         type: "select"
       }
     },
+    cityName: {
+      type : String,
+      autoform: {
+        type: "hidden"
+      }
+    },
     geoPosLatitude: {
       type: Number,
       decimal: true,
@@ -233,10 +239,8 @@ this.Schemas.Events = new SimpleSchema({
       return moment(start).isBefore(now); // True
     },
     news () {
-      return News.find({'scope.events':{$in:[Router.current().params._id]}},{sort: {"created": -1},limit: Session.get('limit') });
-    },
-    countNews () {
-      return News.find({'scope.events':{$in:[Router.current().params._id]}}).count();
+      console.log(JSON.stringify(News.find({'target.id':Router.current().params._id},{sort: {"created": -1},limit: Session.get('limit') }).fetch()));
+      return News.find({'target.id':Router.current().params._id},{sort: {"created": -1},limit: Session.get('limit') });
     },
     new () {
       return News.findOne({_id:new Mongo.ObjectID(Router.current().params.newsId)});

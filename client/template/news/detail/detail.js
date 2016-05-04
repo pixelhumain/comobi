@@ -23,5 +23,9 @@ Template.newsDetail.events({
   "click .like-photo" (e, t) {
     Meteor.call('likePhoto', this._id._str);
     e.preventDefault();
+  },
+  "click .dislike-photo" (e, t) {
+    Meteor.call('dislikePhoto', this._id._str);
+    e.preventDefault();
   }
 });

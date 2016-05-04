@@ -15,7 +15,7 @@ var S3optth = {
   bucket: 'pixelphotos.thumb',
   ACL:'public-read',
   transformWrite: function(fileObj, readStream, writeStream) {
-          gm(readStream, fileObj.name()).resize('80', '80').stream().pipe(writeStream);
+          gm(readStream, fileObj.name()).resize('80', '80^').gravity('Top').extent('80','80').stream().pipe(writeStream);
   }
 };
 

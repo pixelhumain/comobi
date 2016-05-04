@@ -4,7 +4,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
-  {{>ionNavBackButton}}
+  {{>ionNavBackButton href="/"}}
   {{/contentFor}}
 
   {{#contentFor "headerButtonRight"}}
@@ -18,13 +18,23 @@
 
   <div class="list padding">
     <div class="item item-divider homestead">
-      <i class="ion ion-social-rss"></i>  {{_ "news"}} {{scope.name}} <span class="badge badge-dark">{{scope.countNews}}</span>
+      <i class="ion ion-social-rss"></i>  {{_ "news"}} {{scope.name}} <span class="badge badge-dark">{{countNews}}</span>
     </div>
+    {{#if Template.subscriptionsReady}}
+    {{#transition in="zoomIn" out="bounceOut"}}
     {{#each scope.news}}
-    <a href="{{pathFor 'newsDetail' _id=scope._id._str newsId=_id._str scope=type}}" class="item animated in {{#if docNews.objId}}item-thumbnail-left{{/if}}">
+    <a href="{{pathFor 'newsDetail' _id=scope._id._str newsId=_id._str scope=target.type}}" class="item animated in {{#if photoNews}}item-thumbnail-left{{else}}{{#if imageDoc authorNews._id._str}}item-avatar{{/if}}{{/if}}">
 
-      {{#each docNews.photoNews}}
+      {{#each photoNews}}
       <img src="{{this.url store='photosThumb' uploading='/default.png' storing='/default.png'}}"  />
+      {{else}}
+      {{#if imageDoc}}
+       {{> imgDoc imageDoc=imageDoc resized="80x80"}}
+       {{else}}
+       {{#if imageDoc authorNews._id._str}}
+       {{> imgDoc imageDoc=(imageDoc authorNews._id._str) resized="80X80"}}
+       {{/if}}
+     {{/if}}
       {{/each}}
 
       <h2>{{#if name}}{{cutString name 50}}{{/if}}</h2>
@@ -36,20 +46,23 @@
       <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
     </a>
     {{/each}}
+    {{/transition}}
+    {{else}}
 
+      {{/if}}
   </div>
-  {{#if isLimit scope.countNews}}
+      {{#if Template.subscriptionsReady}}
+  {{#if isLimit countNews}}
   <div class="padding">
-    <button class="button  button-block button-dark give-me-more">
+    <button id="showMoreResults" class="button button-block button-dark give-me-more">
       {{_ "more"}}...
     </button>
   </div>
   {{/if}}
-
+      {{/if}}
   {{/ionContent}}
   {{/ionView}}
 </template>
-
 <template name="newsAdd">
   {{#contentFor "headerButtonLeft"}}
   {{>ionNavBackButton}}
@@ -69,7 +82,7 @@
     <div class="item item-divider">
       {{_ "post a news"}}
     </div>
-    {{#autoForm id="addNew" collection="News" type="insert" template="ionic" class="padding form-rb-plain"}}
+    {{#autoForm id="addNew" schema=Schemas.NewsRest type="method" meteormethod="insertNew" template="ionic" class="padding"}}
     {{> newsFields}}
     <div class="item">
       <div class="button-bar">
@@ -81,6 +94,7 @@
   {{/ionContent}}
   {{/ionView}}
 </template>
+
 
 
 <template name="newsEdit">
@@ -116,24 +130,34 @@
 </template>
 
 <template name="newsFields">
-  {{> afQuickField name='name'}}
   {{> afQuickField name='text' rows=8}}
 </template>
 
 <template name="listCard">
   <div class="list card">
-    <div class="item">
+    <div class="item item-avatar">
+       {{> imgDoc imageDoc=imageDoc resized="50x50"}}
       <h2 class="homestead">{{name}}</h2>
-    </div>
+      <p>{{_ "creator"}} : {{creatorProfile.name}}</p>
+</div>
+
+      <div class="item item-image">
+     {{> imgDoc imageDoc=imageDoc resized="340x340"}}
+        {{#if Template.subscriptionsReady}}
+        {{#transition in="slideInDown" out="slideOutUp"}}
+        <p class="right-top animated in">
+          {{#if startDate}}<i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>{{/if}}
+          {{#if endDate}}<i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>{{/if}}
+          {{#if endDate}}<i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>{{/if}}
+        </p>
+{{/transition}}
+{{/if}}
+
+   </div>
+
     <div class="item item-text-wrap">
       <p>{{description}}</p>
       <p>{{address.postalCode}} {{address.addressLocality}}</p>
-      <p>{{_ "creator"}} : {{creatorProfile.name}}</p>
-      <p>
-        {{#if startDate}}<i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>{{/if}}
-        {{#if endDate}}<i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>{{/if}}
-        {{#if endDate}}<i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>{{/if}}
-      </p>
     </div>
     <div class="item tabs tabs-secondary tabs-icon-left">
       {{#if geo}}<a class="tab-item" href="{{pathFor 'mapWithEvent' _id=_id._str}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a>{{/if}}
@@ -145,7 +169,7 @@
   <div class="padding">
     <div class="button-bar bar-positive">
       {{#if isAttendees}}
-      <button class="button button-small photo-link">{{> ionIcon icon="camera"}}</button>
+      <button class="button button-small photo-link-new">{{> ionIcon icon="camera"}}</button>
       <a href="{{pathFor 'newsAdd' _id=_id._str scope=($.Session.get 'scope')}}" class="button button-small">{{> ionIcon icon="compose"}}</a>
       <a href="{{pathFor 'listAttendees' _id=_id._str}}" class="button button-small">{{> ionIcon icon="ios-people"}}</a>
       {{else}}
@@ -167,9 +191,9 @@
     </div>
     {{#transition in="zoomIn" out="bounceOut"}}
     {{#each scope.news}}
-    <a href="{{pathFor 'newsDetail' _id=scope._id._str newsId=_id._str scope=type}}" class="item animated out {{#if docNews.objId}}item-thumbnail-left{{/if}}">
+    <a href="{{pathFor 'newsDetail' _id=scope._id._str newsId=_id._str scope=target.type}}" class="item animated out {{#if photoNews}}item-thumbnail-left{{/if}}">
 
-      {{#each docNews.photoNews}}
+      {{#each photoNews}}
       <img src="{{this.url store='photosThumb' uploading='/default.png' storing='/default.png'}}"  />
       {{/each}}
 

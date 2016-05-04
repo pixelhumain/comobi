@@ -1,9 +1,82 @@
 pageSession = new ReactiveDict('pageEvents');
 
+listEventsSubs = new SubsManager();
+
 Template.listEvents.onCreated(function () {
+  var self = this;
+  self.ready = new ReactiveVar();
   pageSession.set('sortEvents', null);
   pageSession.set('searchEvents', null);
+
+  //mettre sur layer ?
+  Meteor.subscribe('citoyen');
+
+  //sub listEvents
+  self.autorun(function(c) {
+    let geo = Location.getReactivePosition();
+    let radius = Session.get('radius');
+    if(radius && geo && geo.latitude){
+      console.log('sub list events geo radius');
+      let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
+      var handle = listEventsSubs.subscribe('citoyenEvents',latlng,radius);
+          self.ready.set(handle.ready());
+    }else{
+      console.log('sub list events city');
+      let city = Session.get('city');
+      if(city && city.geoShape && city.geoShape.coordinates){
+        var handle = listEventsSubs.subscribe('citoyenEvents',city.geoShape.coordinates);
+            self.ready.set(handle.ready());
+      }
+    }
+
+  });
+
+
+  self.autorun(function(c) {
+    let geo = Location.getReactivePosition();
+    if(geo && geo.latitude){
+      let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
+      Meteor.call('getcitiesbylatlng',latlng,function(error, result){
+        if(result){
+          console.log('call city');
+          Session.set('city', result);
+        }
+      });
+    }
+  });
+
 });
+
+Template.listEvents.onRendered(function() {
+
+  var self = this;
+
+  const testgeo = () => {
+    let geolocate = Session.get('geolocate');
+    if(!Session.get('GPSstart') && geolocate && !Location.getReactivePosition()){
+
+      IonPopup.confirm({title:TAPi18n.__('Position'),template:TAPi18n.__('Utiliser la position de votre profil'),
+      onOk: function(){
+        if(Citoyens.findOne() && Citoyens.findOne().geo && Citoyens.findOne().geo.latitude){
+          Location.setMockLocation({
+            latitude : Citoyens.findOne().geo.latitude,
+            longitude : Citoyens.findOne().geo.longitude,
+            updatedAt : new Date()
+          });
+          //clear cache
+          listEventsSubs.clear();
+        }
+      },
+      onCancel: function(){
+        Router.go('changePosition');
+      }
+    });
+  }
+}
+
+Meteor.setTimeout(testgeo, '3000');
+});
+
 
 Template.listEvents.helpers({
   events () {
@@ -20,7 +93,12 @@ Template.listEvents.helpers({
       query['endDate']={$lte : inputDate};
     }
     if(searchEvents){
-      query['name']={$regex : searchEvents, '$options' : 'i'}
+      if ( searchEvents.charAt( 0 ) == '#' ) {
+        query['name']={$regex : searchEvents, '$options' : 'i'}
+      }else{
+        query['name']={$regex : searchEvents, '$options' : 'i'}
+      }
+
     }
     return Events.find(query);
   },
@@ -84,14 +162,17 @@ Template.listEvents.helpers({
     pageSession.set('notificationsCount',null);
     let notificationsCount = NotificationHistory.find({}).count();
     if(notificationsCountOld<notificationsCount){
-    pageSession.set('notificationsCount',notificationsCount);
-    return true;
-  }else{
-    return false;
-  }
+      pageSession.set('notificationsCount',notificationsCount);
+      return true;
+    }else{
+      return false;
+    }
   },
   notificationsCount () {
     return NotificationHistory.find({}).count()
+  },
+  city (){
+    return Session.get('city');
   }
 });
 
@@ -114,14 +195,17 @@ Template.eventsAdd.onCreated(function () {
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
+  pageSession.set('cityName', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
+  this.subscribe('lists');
 });
 
 Template.eventsEdit.onCreated(function () {
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
+  pageSession.set('cityName', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 });
@@ -144,6 +228,7 @@ Template.eventsEdit.helpers({
     eventEdit.country = event.address.addressCountry;
     eventEdit.postalCode = event.address.postalCode;
     eventEdit.city = event.address.codeInsee;
+    eventEdit.cityName = event.address.addressLocality;
     if(event && event.address && event.address.streetAddress){
       eventEdit.streetAddress = event.address.streetAddress;
     }
@@ -162,7 +247,7 @@ Template.eventsFields.helpers({
     postalCode = pageSession.get('postalCode') || AutoForm.getFieldValue('postalCode');
     country = pageSession.get('country') || AutoForm.getFieldValue('country');
     if(postalCode && country){
-      let insee = Cities.find({cp:postalCode,country:country});
+      let insee = Cities.find({'postalCodes.postalCode':postalCode,country:country});
       console.log(insee.fetch());
       if(insee){
         return insee.map(function (c) {
@@ -191,12 +276,22 @@ Template.eventsFields.helpers({
   },
   city (){
     return pageSession.get('city') || AutoForm.getFieldValue('city');
+  },
+  cityName (){
+    return pageSession.get('cityName') || AutoForm.getFieldValue('cityName');
   }
 });
 
 
 Template.eventsFields.onRendered(function() {
   var self = this;
+
+  pageSession.set('postalCode', null);
+  pageSession.set('country', null);
+  pageSession.set('city', null);
+  pageSession.set('cityName', null);
+  pageSession.set('geoPosLatitude', null);
+  pageSession.set('geoPosLongitude', null);
 
   let geolocate = Session.get('geolocate');
   if(geolocate){
@@ -207,12 +302,14 @@ Template.eventsFields.onRendered(function() {
         let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
         Meteor.call('getcitiesbylatlng',latlng,function(error, result){
           if(result){
-          pageSession.set('postalCode', result.cp);
-          pageSession.set('country', result.country);
-          pageSession.set('city', result.insee);
-          pageSession.set('geoPosLatitude', result.geo.latitude);
-          pageSession.set('geoPosLongitude', result.geo.longitude);
-        }
+            console.log(result);
+            pageSession.set('postalCode', result.postalCodes[0].postalCode);
+            pageSession.set('country', result.country);
+            pageSession.set('city', result.insee);
+            pageSession.set('cityName', result.postalCodes[0].name);
+            pageSession.set('geoPosLatitude', result.geo.latitude);
+            pageSession.set('geoPosLongitude', result.geo.longitude);
+          }
         });
       }
     }});
@@ -221,10 +318,14 @@ Template.eventsFields.onRendered(function() {
   self.autorun(function() {
     let postalCode = pageSession.get('postalCode')  || AutoForm.getFieldValue('postalCode');
     let country = pageSession.get('country')  || AutoForm.getFieldValue('country');
-    console.log(`${postalCode} ${country}`);
-    console.log('recompute');
-    if (!!postalCode) {
-      self.subscribe('cities',postalCode,country);
+    let city = pageSession.get('city');
+    if (!!postalCode && !!country) {
+      if(postalCode.length>4){
+        console.log(`${postalCode} ${country}`);
+        console.log('recompute');
+        console.log('subscribs');
+        self.subscribe('cities',postalCode,country);
+      }
     }
   });
 });
@@ -247,6 +348,7 @@ Template.eventsFields.events({
     let insee = Cities.findOne({insee:tmpl.$(e.currentTarget).val()});
     pageSession.set( 'geoPosLatitude', insee.geo.latitude);
     pageSession.set( 'geoPosLongitude', insee.geo.longitude);
+    pageSession.set('cityName', e.currentTarget.options[e.currentTarget.selectedIndex].text);
     console.log(insee.geo.latitude);
     console.log(insee.geo.longitude);
   },
@@ -311,7 +413,8 @@ AutoForm.addHooks(['addEvent', 'editEvent'], {
         console.log("Insert Error:", error);
       } else {
         //console.log("Insert Result:", result);
-        Router.go('listEvents');
+        IonModal.close();
+        //Router.go('listEvents');
       }
     },
     "method-update" : function(error, result) {

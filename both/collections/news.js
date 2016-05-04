@@ -2,109 +2,109 @@ News = new Meteor.Collection("news", {idGeneration : 'MONGO'});
 
 this.Schemas = this.Schemas || {};
 
-this.Schemas.News =   new SimpleSchema({
-  name : {
-    type : String,
-    optional: true
-  },
+
+this.Schemas.NewsRest =   new SimpleSchema({
   text : {
-    type : String,
-    optional: true
+    type : String
   },
-  date: {
-    type: Date,
-    autoValue: function() {
-      if (this.isInsert) {
-        return new Date();
-      } else if (this.isUpsert) {
-        return {
-          $setOnInsert: new Date()
-        };
-      } else {
-        this.unset();
-      }
-    },
-    denyUpdate: true
+  parentId : {
+    type: String
   },
-  created: {
-    type: Date,
-    autoValue: function() {
-      if (this.isInsert) {
-        return new Date();
-      } else if (this.isUpsert) {
-        return {
-          $setOnInsert: new Date()
-        };
-      } else {
-        this.unset();
-      }
-    },
-    denyUpdate: true
-  },
-  id : {
-    type: String,
-    autoValue: function() {
-      if (this.isInsert) {
-        return Meteor.userId();
-      } else if (this.isUpsert) {
-        return {
-          $setOnInsert: Meteor.userId()
-        };
-      } else {
-        this.unset();
-      }
-    },
-    denyUpdate: true
-  },
-  author : {
-    type: String,
-    autoValue: function() {
-      if (this.isInsert) {
-        return Meteor.userId();
-      } else if (this.isUpsert) {
-        return {
-          $setOnInsert: Meteor.userId()
-        };
-      } else {
-        this.unset();
-      }
-    },
-    denyUpdate: true
-  },
-  type : {
+  parentType : {
     type: String
   },
   tags : {
     type: [String],
     optional: true
   },
-  likes : {
+  media : {
+    type: Object,
+    optional: true
+  },
+  "media.type" : {
+    type: String,
+    optional: true
+  },
+  "media.content" : {
+    type: Object,
+    optional: true
+  },
+  "media.content.type" : {
+    type: String,
+    optional: true
+  },
+  "media.content.image" : {
+    type: String,
+    optional: true
+  },
+  "media.content.imageId" : {
+    type: String,
+    optional: true
+  },
+  "media.content.imageSize" : {
+    type: String,
+    optional: true
+  },
+  "media.content.videoLink" : {
+    type: String,
+    optional: true
+  },
+  "media.content.url" : {
+    type: String,
+    optional: true
+  }
+});
+
+
+this.Schemas.News =   new SimpleSchema({
+  text : {
+    type : String,
+    optional: true
+  },
+  tags : {
     type: [String],
     optional: true
   },
-  scope : {
-    type: Object
-  },
-  "scope.events" : {
-    type: [String],
+  media : {
+    type: Object,
     optional: true
   },
-  "scope.projects" : {
-    type: [String],
+  "media.type" : {
+    type: String,
     optional: true
   },
-  "scope.organizations" : {
-    type: [String],
+  "media.content" : {
+    type: Object,
     optional: true
   },
-  "scope.citoyens" : {
-    type: [String],
+  "media.content.type" : {
+    type: String,
+    optional: true
+  },
+  "media.content.image" : {
+    type: String,
+    optional: true
+  },
+  "media.content.imageId" : {
+    type: String,
+    optional: true
+  },
+  "media.content.imageSize" : {
+    type: String,
+    optional: true
+  },
+  "media.content.videoLink" : {
+    type: String,
+    optional: true
+  },
+  "media.content.url" : {
+    type: String,
     optional: true
   }
 });
 
 Meteor.startup(function() {
-  this.Schemas.News.i18n("schemas.news");
+  //this.Schemas.News.i18n("schemas.news");
   News.attachSchema(this.Schemas.News);
 });
 
@@ -112,12 +112,20 @@ News.helpers({
   authorNews: function () {
     return Citoyens.findOne({_id:new Mongo.ObjectID(this.author)});
   },
-  docNews: function () {
-    return Documents.findOne({id:this._id._str});
+  photoNews: function () {
+    if(this.media && this.media.content && this.media.content.imageId){
+    return Photosimg.find({_id:this.media.content.imageId});
+  }
   },
   likesCount : function () {
-    if (this.likes && this.likes.length) {
-      return this.likes.length;
+    if (this.voteUp && this.voteUp.length) {
+      return this.voteUp.length;
+    }
+    return 0;
+  },
+  dislikesCount : function () {
+    if (this.voteDown && this.voteDown.length) {
+      return this.voteDown.length;
     }
     return 0;
   },

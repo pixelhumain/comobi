@@ -4,8 +4,8 @@ App.info({
   description: 'communecter event',
   author: 'thomas',
   email: 'thomas.craipeau@gmail.com',
-  version: '0.0.11',
-  buildNumber: '308'
+  version: '0.0.12',
+  buildNumber: '309'
 });
 
 App.icons({

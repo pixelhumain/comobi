@@ -50,6 +50,7 @@ ddp-rate-limiter@1.0.0
 ddp-server@1.2.2
 deps@1.0.9
 diff-sequence@1.0.1
+dispatch:url-encode-params@1.0.0
 djabatav:geolocation-plus@1.1.9
 djedi:sanitize-html@1.11.2
 dschulz:jquery-qrcode@1.0.2
@@ -136,6 +137,7 @@ tap:i18n@1.7.0
 tap:i18n-ui@0.7.0
 templating@1.1.5
 templating-tools@1.0.0
+tmeasday:publish-counts@0.7.3
 tracker@1.0.9
 ui@1.0.8
 underscore@1.0.4

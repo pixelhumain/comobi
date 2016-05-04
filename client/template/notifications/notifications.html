@@ -11,7 +11,7 @@
   <h1 class="title">{{_ "notifications"}}</h1>
   {{/contentFor}}
 
-  {{#ionView}}
+  {{#ionView hide-nav-bar="true"}}
   {{#ionContent}}
   <div class="list">
     <div class="item item-divider">
@@ -28,7 +28,8 @@
 {{#transition in="zoomIn" out="bounceOut"}}
 {{#each notifications}}
 {{#if link}}
-<div class="item animated out clickGo" data-ion-menu-close>
+<div class="item item-avatar animated out clickGo" data-ion-menu-close>
+  {{> imgDoc imageDoc=(imageDoc author)}}
   <h2>{{title}}</h2>
   <p>
     {{text}}

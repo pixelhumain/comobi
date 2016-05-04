@@ -2,6 +2,8 @@ Template.settings.events({
   "change #radius": function(e, t) {
     var value = parseInt(t.find('#radius').value);
     Session.set('radius',  value);
+    //clear cache
+    listEventsSubs.clear();
     return;
   },
   'click #clear': function(event) {
@@ -11,6 +13,8 @@ Template.settings.events({
   'click #geolocate': function(e, t) {
     if(t.find('#geolocate').checked){
       Session.set('geolocate', true);
+      //clear cache
+      listEventsSubs.clear();    
     }else{
       Session.set('geolocate',  false);
     }
