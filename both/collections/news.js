@@ -118,14 +118,14 @@ News.helpers({
   }
   },
   likesCount : function () {
-    if (this.voteUp && this.voteUp.length) {
-      return this.voteUp.length;
+    if (this.voteUp && this.voteUpCount) {
+      return this.voteUpCount;
     }
     return 0;
   },
   dislikesCount : function () {
-    if (this.voteDown && this.voteDown.length) {
-      return this.voteDown.length;
+    if (this.voteDown && this.voteDownCount) {
+      return this.voteDownCount;
     }
     return 0;
   },

@@ -4,6 +4,7 @@ Documents = new Meteor.Collection("documents", {idGeneration : 'MONGO'});
 //cfs.photosimg.filerecord
 //contentKey  ex : event.news
 //il y a quoi dans category ?
+
 Documents.attachSchema(
   new SimpleSchema({
     id : {
@@ -13,16 +14,15 @@ Documents.attachSchema(
       type : String,
       allowedValues: ['events','projects','citoyens','organizations']
     },
-    collection : {
-      type : String,
-      defaultValue : 'cfs.photosimg.filerecord'
+    folder : {
+      type : String
     },
     objId : {
       type : String
     },
     moduleId : {
       type : String,
-      defaultValue : 'meteor.communecter'
+      defaultValue : 'communevent'
     },
     doctype : {
       type : String,
@@ -32,7 +32,7 @@ Documents.attachSchema(
       type : String
     },
     size : {
-      type : String,
+      type : Number,
       optional : true
     },
     contentKey : {

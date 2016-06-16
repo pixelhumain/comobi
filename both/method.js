@@ -57,24 +57,30 @@ Meteor.methods({
     doc.id=photoId;
     doc.collection="news";
     doc.action="voteUp";
+    let voteQuery={};
+    voteQuery["_id"] = new Mongo.ObjectID(photoId);
+    voteQuery['voteUp.'+this.userId]={$exists:true};
+    console.log(voteQuery);
 
-    if (News.findOne({
-      _id: new Mongo.ObjectID(photoId),
-      voteUp: {
-        $in: [this.userId]
-      }
-    })) {
+console.log(JSON.stringify(News.findOne(voteQuery)));
+
+    if (News.findOne(voteQuery)) {
       doc.unset="true";
       Meteor.call('addAction',doc);
-    } else {
 
-      if (News.findOne({
-        _id: new Mongo.ObjectID(photoId),
-        voteDown: {
-          $in: [this.userId]
-        }
-      })) {
-        Meteor.call('dislikePhoto',photoId);
+    } else {
+      let voteQuery={};
+      voteQuery["_id"] = new Mongo.ObjectID(photoId);
+      voteQuery['voteDown.'+this.userId]={$exists:true};
+      console.log(voteQuery);
+
+      if (News.findOne(voteQuery)) {
+        let rem={};
+        rem.id=photoId;
+        rem.collection="news";
+        rem.action="voteDown";
+        rem.unset="true";
+        Meteor.call('addAction',rem);
 
       }
       Meteor.call('addAction',doc);
@@ -92,25 +98,28 @@ Meteor.methods({
     doc.id=photoId;
     doc.collection="news";
     doc.action="voteDown";
+    let voteQuery={};
+    voteQuery["_id"] = new Mongo.ObjectID(photoId);
+    voteQuery['voteDown.'+this.userId]={$exists:true};
+    console.log(voteQuery);
 
-    if (News.findOne({
-      _id: new Mongo.ObjectID(photoId),
-      voteDown: {
-        $in: [this.userId]
-      }
-    })) {
+    if (News.findOne(voteQuery)) {
       doc.unset="true";
       Meteor.call('addAction',doc);
     } else {
 
-      if (News.findOne({
-        _id: new Mongo.ObjectID(photoId),
-        voteUp: {
-          $in: [this.userId]
-        }
-      })) {
-        Meteor.call('likePhoto',photoId);
+      let voteQuery={};
+      voteQuery["_id"] = new Mongo.ObjectID(photoId);
+      voteQuery['voteUp.'+this.userId]={$exists:true};
+      console.log(voteQuery);
 
+      if (News.findOne(voteQuery)) {
+        let rem={};
+        rem.id=photoId;
+        rem.collection="news";
+        rem.action="voteUp";
+        rem.unset="true";
+        Meteor.call('addAction',rem);
       }
       Meteor.call('addAction',doc);
 
