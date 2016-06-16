@@ -28,7 +28,7 @@
 {{#transition in="zoomIn" out="bounceOut"}}
 {{#each notifications}}
 {{#if link}}
-<div class="item item-avatar animated out clickGo" data-ion-menu-close>
+<div class="item item-avatar animated out clickGo removeMe" data-ion-menu-close>
   {{> imgDoc imageDoc=(imageDoc author)}}
   <h2>{{title}}</h2>
   <p>

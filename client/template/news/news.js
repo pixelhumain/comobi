@@ -52,11 +52,24 @@ Template.newsList.helpers({
   countNews () {
     console.log(Router.current().params._id)
     return Counts.get(`countNews.${Router.current().params._id}`);
-  }
+  },
+  isVote () {
+    return  this.type == "vote";
+  },
 });
 
 
 Template.newsList.events({
+  "click .vote" (e, t) {
+    e.preventDefault();
+    var self = this;
+    doc={};
+    doc.action=e.target.dataset.action;
+    doc.id=this.survey;
+    doc.collection="surveys";
+    Meteor.call('surveyAdAction',doc);
+    return ;
+  },
   "click .saveattendees-link" (evt) {
     evt.preventDefault();
     var self = this;

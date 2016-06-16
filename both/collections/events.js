@@ -89,12 +89,10 @@ this.Schemas.EventsRest = new SimpleSchema({
       defaultValue:false
     },
     startDate : {
-      type : Date,
-      optional:true
+      type : Date
     },
     endDate : {
-      type : Date,
-      optional:true
+      type : Date
     }
   });
 

@@ -136,7 +136,8 @@ Meteor.publishComposite('citoyenEvents', function(latlng,radius) {
 			{
 				find: function(event) {
 					return Documents.find({
-						id : event._id._str
+						id : event._id._str,
+						contentKey : "profil"
 					});
 				}
 			}
@@ -180,7 +181,8 @@ Meteor.publishComposite('citoyenEvents', function(latlng,radius) {
 				{
 					find: function(scopeD) {
 						return Documents.find({
-							id : scopeD._id._str
+							id : scopeD._id._str,
+							contentKey : "profil"
 						});
 					}
 				}
@@ -224,7 +226,8 @@ Meteor.publishComposite('citoyenEvents', function(latlng,radius) {
 								},
 								find: function(citoyen) {
 									return Documents.find({
-										id : citoyen._id._str
+										id : citoyen._id._str,
+										contentKey : "profil"
 									});
 								}
 							}
