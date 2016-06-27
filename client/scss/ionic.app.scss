@@ -181,8 +181,7 @@ body, .view{
   {
     @if(lightness($color) < 51, #FFF, #000){
     border-color : transparentize(white, 0.8);
-  };
-    @else {
+  } @else {
     border-color : transparentize(black, 0.8);
     }
   }

@@ -1,11 +1,11 @@
 Package.describe({
   name: 'meteoric:camera',
   summary: 'Camera with one function call on desktop and mobile.',
-  version: '1.0.2'
+  version: '1.0.3'
 });
 
 Cordova.depends({
-  'org.apache.cordova.camera':'0.3.2'
+  'cordova-plugin-camera':'2.2.0'
 });
 
 Package.onUse(function(api) {
