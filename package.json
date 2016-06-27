@@ -1,0 +1,19 @@
+{
+  "name": "communevent",
+  "version": "0.0.12",
+  "description": "communevent",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aboire/communEvent.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aboire/communEvent/issues"
+  },
+  "homepage": "https://github.com/aboire/communEvent#readme"
+}

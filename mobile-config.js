@@ -4,33 +4,56 @@ App.info({
   description: 'communecter event',
   author: 'thomas',
   email: 'thomas.craipeau@gmail.com',
-  version: '0.0.12',
-  buildNumber: '309'
+  version: '0.0.13',
+  buildNumber: '310'
+});
+
+App.setPreference('android-targetSdkVersion', '23');
+App.setPreference('android-minSdkVersion', '19');
+
+App.configurePlugin('phonegap-plugin-push', {
+  SENDER_ID: 501293889946
 });
 
 App.icons({
-  'android_ldpi': 'ressource/android/drawable-ldpi/appicon.png',
-  'android_mdpi': 'ressource/android/drawable-mdpi/appicon.png',
-  'android_hdpi': 'ressource/android/drawable-hdpi/appicon.png',
-  'android_xhdpi': 'ressource/android/drawable-xhdpi/appicon.png'
+	'android_mdpi': 'ressource/android/mipmap-mdpi/ic_launcher.png',
+	'android_hdpi': 'ressource/android/mipmap-hdpi/ic_launcher.png',
+	'android_xhdpi': 'ressource/android/mipmap-xhdpi/ic_launcher.png',
+	'android_xxhdpi':'ressource/android/mipmap-xxhdpi/ic_launcher.png',
+	'android_xxxhdpi':'ressource/android/mipmap-xxxhdpi/ic_launcher.png',
+	'iphone_2x':'ressource/ios/AppIcon.appiconset/Icon-60@2x.png',
+	'iphone_3x':'ressource/ios/AppIcon.appiconset/Icon-60@3x.png',
+	'ipad':'ressource/ios/AppIcon.appiconset/Icon-76.png',
+	'ipad_2x':'ressource/ios/AppIcon.appiconset/Icon-76@2x.png'
+	//'ipad_pro':'ressource/ios/AppIcon.appiconset/Icon-83.5@2x.png',
+	//'ios_settings':'ressource/ios/AppIcon.appiconset/Icon-Small.png',
+	//'ios_settings_2x':'ressource/ios/AppIcon.appiconset/Icon-Small@2x.png',
+	//'ios_settings_3x':'ressource/ios/AppIcon.appiconset/Icon-Small@3x.png',
+	//'ios_spotlight':'ressource/ios/AppIcon.appiconset/Icon-40.png',
+	//'ios_spotlight_2x':'ressource/ios/AppIcon.appiconset/Icon-40@2x.png'
 });
 
 App.launchScreens({
-  'android_ldpi_portrait': 'ressource/android/drawable-ldpi/background.9.png',
-  'android_ldpi_landscape': 'ressource/android/drawable-ldpi/background.9.png',
-  'android_mdpi_portrait': 'ressource/android/drawable-mdpi/background.9.png',
-  'android_mdpi_landscape': 'ressource/android/drawable-mdpi/background.9.png',
-  'android_hdpi_portrait': 'ressource/android/drawable-hdpi/background.9.png',
-  'android_hdpi_landscape': 'ressource/android/drawable-hdpi/background.9.png',
-  'android_xhdpi_portrait': 'ressource/android/drawable-xhdpi/background.9.png',
-  'android_xhdpi_landscape': 'ressource/android/drawable-xhdpi/background.9.png'
+	'android_mdpi_portrait': 'ressource/android/mipmap-mdpi/background.9.png',
+	'android_hdpi_portrait': 'ressource/android/mipmap-hdpi/background.9.png',
+	'android_xhdpi_portrait': 'ressource/android/mipmap-xhdpi/background.9.png',
+	'android_xxhdpi_portrait':'ressource/android/mipmap-xxhdpi/background.9.png',
+	'iphone_2x':'ressource/ios/splash/Default@2x.png',
+	'iphone5':'ressource/ios/splash/Default-568h@2x.png',
+	'iphone6':'ressource/ios/splash/Default-667h@2x.png',
+	'iphone6p_portrait':'ressource/ios/splash/Default-Portrait-736h@3x.png',
+	'iphone6p_landscape':'ressource/ios/splash/Default-Landscape-736h@3x.png',
+	'ipad_portrait':'ressource/ios/splash/Default-Portrait.png',
+	'ipad_portrait_2x':'ressource/ios/splash/Default-Portrait@2x.png',
+	'ipad_landscape':'ressource/ios/splash/Default-Landscape.png',
+	'ipad_landscape_2x':'ressource/ios/splash/Default-Landscape@2x.png'
 });
 
 App.setPreference('StatusBarOverlaysWebView', 'false');
 App.setPreference('StatusBarBackgroundColor', '#324553');
 
-App.accessRule('*');
-/*App.accessRule('meteor.local/*');
-App.accessRule('*.communecter.org/*');
+//App.accessRule('*');
+App.accessRule('https://communevent.communecter.org/*');
+App.accessRule('http://localhost*');
 App.accessRule('*.openstreetmap.org/*');
-App.accessRule('*.tile.thunderforest.com/*');*/
+App.accessRule('*.tile.thunderforest.com/*');

@@ -12,7 +12,6 @@ session                 # Client-side reactive dictionary for your app
 jquery                  # Helpful client-side library
 tracker                 # Meteor's client-side reactive programming library
 
-standard-minifiers      # JS/CSS minifiers run for production mode
 es5-shim                # ECMAScript 5 compatibility for older browsers.
 ecmascript              # Enable ECMAScript2015+ syntax in app code
 #browser-policy
@@ -28,7 +27,7 @@ random
 ejson
 spacebars
 check
-mrt:moment
+momentjs:moment
 mdg:reload-on-resume
 copleykj:livestamp
 meteorhacks:async
@@ -49,7 +48,7 @@ aldeed:simple-schema
 aldeed:collection2
 raix:handlebar-helpers
 dburles:collection-helpers
-aldeed:autoform@5.5.1
+aldeed:autoform
 djedi:sanitize-html
 rzymek:moment-locale-fr
 cfs:graphicsmagick
@@ -65,16 +64,19 @@ meteoric:autoform-ionic
 reactive-dict
 meteorhacks:subs-manager
 sha
-sergeyt:typeahead
+#sergeyt:typeahead
 #meteorhacks:npm
 #npm-container
 meteorhacks:kadira
 dschulz:jquery-qrcode
 pauloborges:mapbox@2.2.3_2
 gwendall:autoform-i18n
-raix:push@=2.6.8
+raix:push@=3.0.3-rc.4
 djabatav:geolocation-plus
 tmeasday:publish-counts
 reactive-var
 crosswalk
 dispatch:url-encode-params
+standard-minifier-css
+standard-minifier-js
+force-ssl
