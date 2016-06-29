@@ -52,8 +52,14 @@ App.launchScreens({
 App.setPreference('StatusBarOverlaysWebView', 'false');
 App.setPreference('StatusBarBackgroundColor', '#324553');
 
-//App.accessRule('*');
+App.accessRule('*');
+App.accessRule('http://*');
+App.accessRule('https://*');
+App.accessRule('http://qa.communecter.org/*', { type: 'navigation' });
+App.accessRule('https://qa.communecter.org/*', { type: 'navigation' });
 App.accessRule('https://communevent.communecter.org/*');
 App.accessRule('http://localhost*');
-App.accessRule('*.openstreetmap.org/*');
-App.accessRule('*.tile.thunderforest.com/*');
+App.accessRule('*.openstreetmap.org/*', { type: 'navigation' });
+App.accessRule('*.tile.thunderforest.com/*', { type: 'navigation' });
+App.accessRule('https://api.tiles.mapbox.com/*', { type: 'navigation' });
+App.accessRule('https://placeholdit.imgix.net/*', { type: 'navigation' });

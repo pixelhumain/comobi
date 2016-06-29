@@ -3,18 +3,12 @@ import { check } from 'meteor/check';
 import { _ } from 'meteor/underscore';
 import { Push } from 'meteor/raix:push';
 import { moment } from 'meteor/momentjs:moment';
-import { FS } from 'meteor/cfs:base-package';
 
 //collection
 import { NotificationHistory } from './notification_history.js';
 import { Citoyens } from './citoyens.js';
 import { News } from './news.js'
 
-if(Meteor.isClient){
-import { Photosimg } from './client/photosimg.js';
-}else{
-import { Photosimg } from './server/photosimg.js';
-}
 
 function userName() {
   return Meteor.user().username || Meteor.user().profile.pixelhumain.name;
@@ -41,28 +35,6 @@ Meteor.methods({
       return false;
     }
     this.unblock();
-  },
-  cfsbase64tos3up: function(photo,str,type,idType) {
-    check(photo, Match.Any);
-    check(str, Match.Any);
-    if (!this.userId) {
-      throw new Meteor.Error("not-authorized");
-    }
-    var fsFile = new FS.File();
-    fsFile.attachData(photo,{'type':'image/jpeg'});
-    fsFile.extension('jpg');
-    fsFile.name(str);
-    fsFile.metadata = {owner: this.userId,type:type,id:idType};
-    fsFile.on('error', function () {
-
-    });
-    fsFile.on("uploaded", function () {
-
-    });
-
-    var photoret=Photosimg.insert(fsFile);
-
-    return photoret._id;
   },
   'likePhoto': function(photoId) {
     check(photoId, String);

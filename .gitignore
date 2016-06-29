@@ -5,3 +5,4 @@ config.push.json
 settings.json
 cordova.facebook.json
 private/*
+node_modules/
