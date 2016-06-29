@@ -242,7 +242,7 @@ $color-algorithm : w3c;
     	border-width:5px;
     	border-style:solid;
     }
-    .chat-label {font-size:10px; text-transform:uppercase; clear:both; opacity:0.7; margin:5px 0; @extend %clearfix;
+    .chat-label {font-size:10px; text-transform:uppercase; clear:both; opacity:0.7; margin:5px 0;
       .text-shift-right {float:right; display:inline-block;}
     }
     &.is-inbound {margin: 10px 50px 10px 10px; background: transparentize(darken($brand-base-color, 10%), 0.2);}

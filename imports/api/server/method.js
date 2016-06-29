@@ -191,6 +191,28 @@ Meteor.methods({
 
     return image._id;
   },
+  cfsbase64tos3up: function(photo,str,type,idType) {
+    check(photo, Match.Any);
+    check(str, Match.Any);
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    var fsFile = new FS.File();
+    fsFile.attachData(photo,{'type':'image/jpeg'});
+    fsFile.extension('jpg');
+    fsFile.name(str);
+    fsFile.metadata = {owner: this.userId,type:type,id:idType};
+    fsFile.on('error', function (error) {
+      console.log(error);
+    });
+    fsFile.on("uploaded", function () {
+      console.log(error);
+    });
+
+    var photoret=Photosimg.insert(fsFile);
+
+    return photoret._id;
+  },
   insertEvent : function(doc){
     //type : organizations / projects > organizerId
     check(doc, SchemasEventsRest);

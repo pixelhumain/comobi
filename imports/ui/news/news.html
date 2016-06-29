@@ -82,7 +82,7 @@
     <div class="item item-divider">
       {{_ "post a news"}}
     </div>
-    {{#autoForm id="addNew" schema=Schemas.NewsRest type="method" meteormethod="insertNew" template="ionic" class="padding"}}
+    {{#autoForm id="addNew" schema=SchemasNewsRest type="method" meteormethod="insertNew" template="ionic" class="padding"}}
     {{> newsFields}}
     <div class="item">
       <div class="button-bar">
