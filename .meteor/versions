@@ -93,7 +93,7 @@ mdg:validation-error@0.5.1
 meteor@1.1.16
 meteor-base@1.0.4
 meteorhacks:async@1.0.0
-meteorhacks:kadira@2.29.1
+meteorhacks:kadira@2.30.0
 meteorhacks:meteorx@1.4.1
 meteorhacks:subs-manager@1.6.4
 meteoric:autoform-ionic@0.1.6
@@ -107,7 +107,7 @@ mobile-experience@1.0.4
 mobile-status-bar@1.0.12
 modules@0.6.5
 modules-runtime@0.6.5
-momentjs:moment@2.14.1
+momentjs:moment@2.14.4
 mongo@1.1.9_1
 mongo-id@1.0.5
 mongo-livedata@1.0.12

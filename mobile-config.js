@@ -4,8 +4,8 @@ App.info({
   description: 'communecter event',
   author: 'thomas',
   email: 'thomas.craipeau@gmail.com',
-  version: '0.0.13',
-  buildNumber: '310'
+  version: '0.0.15',
+  buildNumber: '312'
 });
 
 App.setPreference('android-targetSdkVersion', '23');
@@ -51,12 +51,15 @@ App.launchScreens({
 
 App.setPreference('StatusBarOverlaysWebView', 'false');
 App.setPreference('StatusBarBackgroundColor', '#324553');
+App.setPreference('Orientation', 'portrait');
 
 App.accessRule('*');
 App.accessRule('http://*');
 App.accessRule('https://*');
 App.accessRule('http://qa.communecter.org/*', { type: 'navigation' });
 App.accessRule('https://qa.communecter.org/*', { type: 'navigation' });
+App.accessRule('http://www.communecter.org/*', { type: 'navigation' });
+App.accessRule('https://www.communecter.org/*', { type: 'navigation' });
 App.accessRule('https://communevent.communecter.org/*');
 App.accessRule('http://localhost*');
 App.accessRule('*.openstreetmap.org/*', { type: 'navigation' });

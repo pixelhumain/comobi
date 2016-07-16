@@ -42,9 +42,9 @@
       {{#if Template.subscriptionsReady}}
       {{#transition in="zoomIn" out="bounceOut"}}
       {{#each events}}
-      <a class="item {{#if imageDoc}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'newsList' _id=this._id._str scope="events"}}">
-        {{#if imageDoc}}
-        {{> imgDoc imageDoc=imageDoc resized="80x80"}}
+      <a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'newsList' _id=this._id._str scope="events"}}">
+        {{#if profilThumbImageUrl}}
+          <img src="http://qa.communecter.org{{profilThumbImageUrl}}">
         {{/if}}
         <h2>{{name}}</h2>
         <span class="badge {{#if isStart}}badge-balanced{{else}}badge-dark{{/if}}"><i class="icon ion-person"></i> {{countAttendees}}</span>
