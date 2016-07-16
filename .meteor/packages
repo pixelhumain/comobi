@@ -76,7 +76,7 @@ djabatav:geolocation-plus
 tmeasday:publish-counts
 reactive-var
 crosswalk
-dispatch:url-encode-params
+#dispatch:url-encode-params
 standard-minifier-css
 standard-minifier-js
 force-ssl

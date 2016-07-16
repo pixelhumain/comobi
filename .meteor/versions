@@ -54,7 +54,6 @@ ddp-rate-limiter@1.0.5
 ddp-server@1.2.9
 deps@1.0.12
 diff-sequence@1.0.6
-dispatch:url-encode-params@1.0.0
 djabatav:geolocation-plus@1.1.9
 djedi:sanitize-html@1.11.3
 dschulz:jquery-qrcode@1.0.2

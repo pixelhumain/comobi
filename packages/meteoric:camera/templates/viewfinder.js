@@ -1,3 +1,4 @@
+
 MeteoricCamera.stopStream = function(st) {
   if(!st) {
     return;
@@ -25,7 +26,7 @@ MeteoricCamera.initViewfinder = function () {
   var video = this.find('video');
 
   // stream webcam video to the <video> element
-  var success = function(newStream) {
+  /*var success = function(newStream) {
     MeteoricCamera.stream = newStream;
 
     if (navigator.mozGetUserMedia) {
@@ -37,32 +38,83 @@ MeteoricCamera.initViewfinder = function () {
     video.play();
 
     MeteoricCamera.waitingForPermission.set(false);
-  };
+  };*/
 
   // user declined or there was some other error
   var failure = function(err) {
     MeteoricCamera.error.set(err);
   };
 
+  var promisifiedOldGUM = function(constraints) {
+
+    var getUserMedia = (
+      navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia ||
+      navigator.msGetUserMedia
+    );
+
+    // Some browsers just don't implement it - return a rejected promise with an error
+    // to keep a consistent interface
+    if(!getUserMedia) {
+      return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
+    }
+
+    // Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
+    return new Promise(function(resolve, reject) {
+      getUserMedia.call(navigator, constraints, resolve, reject);
+    });
+
+  }
+
+  // Older browsers might not implement mediaDevices at all, so we set an empty object first
+  if(navigator.mediaDevices === undefined) {
+    navigator.mediaDevices = {};
+  }
+
+  // Some browsers partially implement mediaDevices. We can't just assign an object
+  // with getUserMedia as it would overwrite existing properties.
+  // Here, we will just add the getUserMedia property if it's missing.
+  if(navigator.mediaDevices.getUserMedia === undefined) {
+    navigator.mediaDevices.getUserMedia = promisifiedOldGUM;
+  }
+
   // tons of different browser prefixes
-  navigator.getUserMedia = (
+/*  navigator.getUserMedia = (
     navigator.getUserMedia ||
     navigator.webkitGetUserMedia ||
     navigator.mozGetUserMedia ||
     navigator.msGetUserMedia
-  );
+  );*/
 
-  if (! navigator.getUserMedia) {
+//enlever
+/*  if (! navigator.getUserMedia) {
     // no browser support, sorry
     failure('BROWSER_NOT_SUPPORTED');
     return;
-  }
+  }*/
+//enlever
 
-  // initiate request for webcam
-  navigator.getUserMedia({
-    video: true,
-    audio: false
-  }, success, failure);
+navigator.mediaDevices.getUserMedia({
+  video: true,
+  audio: false
+})
+.then(function(newStream) {
+  MeteoricCamera.stream = newStream;
+
+  /*if (navigator.mozGetUserMedia) {
+    video.mozSrcObject = MeteoricCamera.stream;
+  } else {
+    var vendorURL = window.URL || window.webkitURL;
+    video.src = vendorURL.createObjectURL(MeteoricCamera.stream);
+  }*/
+
+  video.src = window.URL.createObjectURL(MeteoricCamera.stream);
+  video.onloadedmetadata = function(e) {
+    video.play();
+  };
+
+  MeteoricCamera.waitingForPermission.set(false);
 
   // resize viewfinder to a reasonable size, not necessarily photo size
   var viewfinderWidth = 320;
@@ -76,6 +128,26 @@ MeteoricCamera.initViewfinder = function () {
       resized = true;
     }
   }, false);
+
+  //var video = document.querySelector('video');
+  //video.src = window.URL.createObjectURL(stream);
+  /*video.onloadedmetadata = function(e) {
+    video.play();
+  };*/
+})
+.catch(function(err) {
+  //console.log(err.name + ": " + err.message);
+  failure('BROWSER_NOT_SUPPORTED');
+  //return;
+});
+
+  // initiate request for webcam
+  /*navigator.getUserMedia({
+    video: true,
+    audio: false
+  }, success, failure);*/
+
+
 };
 
 Template.viewfinder.rendered = function() {

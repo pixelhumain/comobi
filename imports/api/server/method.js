@@ -3,7 +3,7 @@ import { check } from 'meteor/check';
 import { _ } from 'meteor/underscore';
 import { Push } from 'meteor/raix:push';
 import { moment } from 'meteor/momentjs:moment';
-
+import { URL } from 'meteor/url';
 //collection et schemas
 import { NotificationHistory } from '../notification_history.js';
 import { Citoyens,SchemasFollowRest } from '../citoyens.js';
@@ -15,6 +15,30 @@ import { Events,SchemasEventsRest } from '../events.js'
 
 //function api
 import { callPixelRest,authPixelRest } from './api.js';
+
+var encodeString = function(str) {
+  return encodeURIComponent(str).replace(/\*/g, "%2A");
+};
+
+// This function is copied and rewritten from here:
+// https://github.com/meteor/meteor/blob/devel/packages/url/url_common.js#L8
+//
+// It handles object and array nesting properly
+URL._encodeParams = function(params, prefix) {
+  var str = [];
+  for(var p in params) {
+    if (params.hasOwnProperty(p)) {
+      var k = prefix ? prefix + "[" + p + "]" : p, v = params[p];
+      if(typeof v === "object") {
+        str.push(this._encodeParams(v, k));
+      } else {
+        var encodedKey = encodeString(k).replace('%5B', '[').replace('%5D', ']');
+        str.push(encodedKey + "=" + encodeString(v));
+      }
+    }
+  }
+  return str.join("&").replace(/%20/g, '+');
+};
 
 Meteor.methods({
   userup: function(geo) {
