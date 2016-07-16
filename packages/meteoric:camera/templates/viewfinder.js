@@ -1,3 +1,24 @@
+MeteoricCamera.stopStream = function(st) {
+  if(!st) {
+    return;
+  }
+
+  if(st.stop) {
+    st.stop();
+    return;
+  }
+
+  if(st.getTracks) {
+    var tracks = st.getTracks();
+    for(var i = 0; i < tracks.length; i++) {
+      var track = tracks[i];
+      if(track && track.stop) {
+        track.stop();
+      }
+    }
+  }
+};
+
 MeteoricCamera.initViewfinder = function () {
   MeteoricCamera.waitingForPermission.set(true);
 
@@ -71,7 +92,8 @@ Template.viewfinder.events({
     canvas.getContext('2d').drawImage(video, 0, 0, MeteoricCamera.canvasWidth, MeteoricCamera.canvasHeight);
     var data = canvas.toDataURL('image/jpeg', MeteoricCamera.quality);
     MeteoricCamera.photo.set(data);
-    MeteoricCamera.stream.stop();
+    //MeteoricCamera.stream.stop();
+    MeteoricCamera.stopStream(MeteoricCamera.stream);
   },
 
   'click [data-action="use-photo"]': function (event, template) {
@@ -97,7 +119,8 @@ Template.viewfinder.events({
     }
 
     if (MeteoricCamera.stream) {
-      MeteoricCamera.stream.stop();
+      //MeteoricCamera.stream.stop();
+      MeteoricCamera.stopStream(MeteoricCamera.stream);
     }
   }
 });
