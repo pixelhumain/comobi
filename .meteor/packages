@@ -57,7 +57,8 @@ tap:i18n
 tap:i18n-ui
 gwendall:simple-schema-i18n
 #utilities:avatar
-meteoric:camera
+#meteoric:camera
+aboire:camera-ui
 fourseven:scss
 webtempest:animate
 meteoric:autoform-ionic
