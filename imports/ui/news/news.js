@@ -76,16 +76,6 @@ Template.newsList.helpers({
 
 
 Template.newsList.events({
-  "click .vote" (e, t) {
-    e.preventDefault();
-    var self = this;
-    doc={};
-    doc.action=e.target.dataset.action;
-    doc.id=this.survey;
-    doc.collection="surveys";
-    Meteor.call('surveyAdAction',doc);
-    return ;
-  },
   "click .saveattendees-link" (evt) {
     evt.preventDefault();
     let scopeId=Session.get('scopeId');
@@ -119,7 +109,30 @@ Template.newsList.events({
         });
       }});
 
-    }
+    },
+    "click .photo-link-event" (event, template) {
+      event.preventDefault();
+      var self = this;
+      let scopeId=Session.get('scopeId');
+      let scope=Session.get('scope');
+      let options = {
+        width: 500,
+        height: 500,
+        quality: 75
+      };
+      MeteorCameraUI.getPicture(options,function (error, data) {
+        if (! error) {
+          let str = +new Date + Math.floor((Math.random() * 100) + 1) + ".jpg";
+          Meteor.call("photoEvents",data,str,scope,self._id._str, function (error, result) {
+            if (!error) {
+              console.log('result',result);
+            }else{
+              console.log('error',error);
+            }
+          });
+        }});
+
+      }
   });
 
   Template.newsEdit.helpers({
