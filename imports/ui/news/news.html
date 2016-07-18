@@ -136,13 +136,22 @@
 <template name="listCard">
   <div class="list card">
     <div class="item item-avatar">
+      {{#if profilThumbImageUrl}}
+        <img src="http://qa.communecter.org{{profilThumbImageUrl}}">
+      {{else}}
       {{> imgDoc imageDoc=imageDoc resized="50x50"}}
+      {{/if}}
       <h2 class="homestead">{{name}}</h2>
       <p>{{_ "creator"}} : {{creatorProfile.name}}</p>
     </div>
 
     <div class="item item-image">
+      {{#if profilImageUrl}}
+        <img src="http://qa.communecter.org{{profilImageUrl}}">
+      {{else}}
       {{> imgDoc imageDoc=imageDoc resized="340x340"}}
+      {{/if}}
+
       {{#if Template.subscriptionsReady}}
       {{#transition in="slideInDown" out="slideOutUp"}}
       <p class="right-top animated in">

@@ -6,7 +6,8 @@ import { Session } from 'meteor/session';
 import { Router } from 'meteor/iron:router';
 import { $ } from 'meteor/jquery';
 import { Counts } from 'meteor/tmeasday:publish-counts';
-import { MeteoricCamera } from 'meteor/meteoric:camera';
+//import { MeteoricCamera } from 'meteor/meteoric:camera';
+import { MeteorCameraUI } from 'meteor/aboire:camera-ui';
 import { AutoForm } from 'meteor/aldeed:autoform';
 import { TAPi18n } from 'meteor/tap:i18n';
 
@@ -104,7 +105,7 @@ Template.newsList.events({
       height: 500,
       quality: 75
     };
-    MeteoricCamera.getPicture(options,function (error, data) {
+    MeteorCameraUI.getPicture(options,function (error, data) {
       if (! error) {
         let str = +new Date + Math.floor((Math.random() * 100) + 1) + ".jpg";
         Meteor.call("photoNews",data,str,scope,self._id._str, function (error, result) {
@@ -149,7 +150,7 @@ Template.newsList.events({
             IonPopup.confirm({title:TAPi18n.__('Photo'),template:TAPi18n.__('Voulez vous prendre une photo ?'),
             onOk: function(){
 
-              MeteoricCamera.getPicture(options,function (error, data) {
+              MeteorCameraUI.getPicture(options,function (error, data) {
                 // we have a picture
                 if (! error) {
 

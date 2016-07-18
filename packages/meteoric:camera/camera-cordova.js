@@ -15,10 +15,13 @@ MeteoricCamera.getPicture = function (options, callback) {
 
   navigator.camera.getPicture(success, failure,
     _.extend(options, {
-      quality: options.quality || 49,
+      quality: options.quality || 60,
       targetWidth: options.width || 640,
       targetHeight: options.height || 480,
-      destinationType: Camera.DestinationType.DATA_URL
+      destinationType: Camera.DestinationType.DATA_URL,
+      correctOrientation: true,
+      encodingType: Camera.EncodingType.JPEG,
+      allowEdit: true
     })
   );
 };

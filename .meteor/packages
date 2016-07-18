@@ -57,7 +57,8 @@ tap:i18n
 tap:i18n-ui
 gwendall:simple-schema-i18n
 #utilities:avatar
-meteoric:camera
+#meteoric:camera
+aboire:camera-ui
 fourseven:scss
 webtempest:animate
 meteoric:autoform-ionic
@@ -76,7 +77,7 @@ djabatav:geolocation-plus
 tmeasday:publish-counts
 reactive-var
 crosswalk
-dispatch:url-encode-params
+#dispatch:url-encode-params
 standard-minifier-css
 standard-minifier-js
 force-ssl

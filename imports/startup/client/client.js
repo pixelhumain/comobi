@@ -53,6 +53,7 @@ TAPi18n.setLanguage(language)
 });
 
 
+
 SchemasEventsRest.i18n("schemas.eventsrest");
 SchemasFollowRest.i18n("schemas.followrest");
 
@@ -118,6 +119,7 @@ Template.registerHelper("currentFieldValue", function (fieldName) {
   return AutoForm.getFieldValue(fieldName) || false;
 });
 
+
 Template.registerHelper("SchemasFollowRest", SchemasFollowRest);
 Template.registerHelper("SchemasNewsRest", SchemasNewsRest);
 Template.registerHelper("SchemasEventsRest", SchemasEventsRest);
@@ -164,6 +166,7 @@ Location.getGPSState(success, failure, {
 });
 
 });
+
 
 Tracker.autorun(function() {
   if (Meteor.userId() && Meteor.user()) {
