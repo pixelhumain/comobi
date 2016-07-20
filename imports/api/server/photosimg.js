@@ -3,7 +3,9 @@ import { Mongo } from 'meteor/mongo';
 import { FS } from 'meteor/cfs:base-package';
 import { gm } from "meteor/cfs:graphicsmagick";
 
+if(Meteor.isDevelopment){
 FS.debug=true;
+}
 
 const S3opt = {
   region: Meteor.settings.aws.region,

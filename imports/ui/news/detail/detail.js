@@ -33,5 +33,12 @@ Template.newsDetail.events({
   "click .dislike-photo" (e, t) {
     Meteor.call('dislikePhoto', this._id._str);
     e.preventDefault();
-  }
+  },
+  "click .photo-viewer" (event, template) {
+    event.preventDefault();
+    var self = this;
+    if(Meteor.isCordova){
+    PhotoViewer.show(this.url());
+    }
+}
 });

@@ -404,8 +404,8 @@ Meteor.methods({
     if(doc){
       Events.update({_id:new Mongo.ObjectID(idType)},{$set:{
         'profilImageUrl':'/upload/communecter/events/'+idType+'/'+retourUpload.name,
-        'profilThumbImageUrl':'/upload/communecter/events/'+idType+'/thumb/profil-resized.png',
-        'profilMarkerImageUrl':'/upload/communecter/events/'+idType+'/thumb/profil-marker.png'
+        'profilThumbImageUrl':'/upload/communecter/events/'+idType+'/thumb/profil-resized.png?='+new Date + Math.floor((Math.random() * 100) + 1),
+        'profilMarkerImageUrl':'/upload/communecter/events/'+idType+'/thumb/profil-marker.png?='+new Date + Math.floor((Math.random() * 100) + 1)
       }});
     }
   },
@@ -538,7 +538,7 @@ createUserAccount: function(user){
     let insee = Cities.findOne({insee: user.city});
 
     try {
-      var response = HTTP.call( 'POST', 'http://qa.communecter.org/communecter/person/register', {
+      var response = HTTP.call( 'POST', Meteor.settings.endpoint+'/communecter/person/register', {
         params: {
           "name": user.name,
           "email": user.email,
@@ -733,7 +733,7 @@ pushUser : function(title,text,payload,query,badge){
   check(payload, Object);
   check(query, Object);
   Push.send({
-    from: 'communEvent',
+    from: 'push',
     title: title,
     text: text,
     payload: payload,

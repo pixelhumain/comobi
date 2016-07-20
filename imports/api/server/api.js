@@ -4,7 +4,7 @@ import { request } from 'meteor/froatsnook:request';
 
 export const callPixelRest = function (token,method,controller,action,post){
   post["X-Auth-Token"] = token;
-  let responsePost = HTTP.call( method, 'http://qa.communecter.org/communecter/'+controller+'/'+action, {
+  let responsePost = HTTP.call( method, Meteor.settings.endpoint+'/communecter/'+controller+'/'+action, {
     headers:{
       'X-Auth-Token' : token,
       'Origin':"http://meteor.communecter.org"
@@ -79,7 +79,7 @@ export const callPixelUploadRest = function (token,folder,ownerId,input,dataURI,
     }
   };
 
-  let responsePost = request.postSync('http://qa.communecter.org/communecter/document/upload/dir/communecter/folder/'+folder+'/ownerId/'+ownerId+'/input/'+input, {
+  let responsePost = request.postSync(Meteor.settings.endpoint+'/communecter/document/upload/dir/communecter/folder/'+folder+'/ownerId/'+ownerId+'/input/'+input, {
     formData: formData,
     jar: true
   });
@@ -96,7 +96,7 @@ export const callPixelUploadRest = function (token,folder,ownerId,input,dataURI,
 }
 
 export const authPixelRest = function (email,pwd){
-  var response = HTTP.call( 'POST', 'http://qa.communecter.org/communecter/person/authenticate', {
+  var response = HTTP.call( 'POST', Meteor.settings.endpoint+'/communecter/person/authenticate', {
     params: {
       "pwd": pwd,
       "email": email

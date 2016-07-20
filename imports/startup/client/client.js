@@ -119,10 +119,16 @@ Template.registerHelper("currentFieldValue", function (fieldName) {
   return AutoForm.getFieldValue(fieldName) || false;
 });
 
+Template.registerHelper("urlImageCommunecter", function () {
+  return Meteor.settings.public.urlimage;
+});
+
+
 
 Template.registerHelper("SchemasFollowRest", SchemasFollowRest);
 Template.registerHelper("SchemasNewsRest", SchemasNewsRest);
 Template.registerHelper("SchemasEventsRest", SchemasEventsRest);
+
 
 let success = function (state) {
   if(state === 'Enabled') {

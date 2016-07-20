@@ -137,7 +137,7 @@
   <div class="list card">
     <div class="item item-avatar">
       {{#if profilThumbImageUrl}}
-        <img src="http://qa.communecter.org{{profilThumbImageUrl}}">
+        <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
       {{else}}
       {{> imgDoc imageDoc=imageDoc resized="50x50"}}
       {{/if}}
@@ -148,9 +148,9 @@
     <div class="item item-image">
       {{#if profilImageUrl}}
       {{#if isAdmin}}
-      <img src="http://qa.communecter.org{{profilImageUrl}}" class="photo-link-event">
+      <img src="{{urlImageCommunecter}}{{profilImageUrl}}" class="photo-link-event">
       {{else}}
-      <img src="http://qa.communecter.org{{profilImageUrl}}">
+      <img src="{{urlImageCommunecter}}{{profilImageUrl}}">
       {{/if}}
       {{else}}
       {{#if isAdmin}}

@@ -81,13 +81,17 @@
 </template>
 
 <template name="imgDoc">
+  {{#if profilThumbImageUrl}}
+    <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
+  {{else}}
   {{#with this.imageDoc}}
-  <img src="http://qa.communecter.org/communecter/document/resized/{{#if ../resized}}{{../resized}}{{else}}50x50{{/if}}/upload/{{moduleId}}/{{folder}}/{{name}}">
+  <img src="{{urlImageCommunecter}}/communecter/document/resized/{{#if ../resized}}{{../resized}}{{else}}50x50{{/if}}/upload/{{moduleId}}/{{folder}}/{{name}}">
   {{else}}
   {{#with imageDoc}}
-  <img src="http://qa.communecter.org/communecter/document/resized/{{#if ../resized}}{{../resized}}{{else}}50x50{{/if}}/upload/{{moduleId}}/{{folder}}/{{name}}">
+  <img src="{{urlImageCommunecter}}/communecter/document/resized/{{#if ../resized}}{{../resized}}{{else}}50x50{{/if}}/upload/{{moduleId}}/{{folder}}/{{name}}">
   {{else}}
   <img src="http://placehold.it/{{#if resized}}{{resized}}{{else}}50x50{{/if}}/848f97/cccccc?text=pas de photo">
   {{/with}}
   {{/with}}
+  {{/if}}
 </template>

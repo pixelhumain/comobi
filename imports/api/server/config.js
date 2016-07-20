@@ -44,6 +44,8 @@ Accounts.registerLoginHandler(function(loginRequest) {
   }
 });
 
+Push.debug = true;
+
 Push.Configure({
   apn: {
     certData: Assets.getText('apn-production/PushCommunEventCert.pem'),
