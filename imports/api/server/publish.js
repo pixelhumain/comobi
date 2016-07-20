@@ -133,7 +133,7 @@ Meteor.publishComposite('citoyenEvents', function(latlng,radius) {
 						$maxDistance: radius
 					}}},{_disableOplog: true});
 				}else{
-					console.log("polygon");
+					//console.log("polygon");
 					return Events.find({"geoPosition": {
 						$geoIntersects: {
 							$geometry:{
@@ -216,7 +216,7 @@ Meteor.publishComposite('citoyenEvents', function(latlng,radius) {
 				children: [
 					{
 						find: function(event) {
-							//console.log(event.links.attendees);
+							////console.log(event.links.attendees);
 							let attendees = _.map(event.links.attendees, function(attendees,key){
 								return new Mongo.ObjectID(key);
 							});
@@ -273,7 +273,7 @@ Meteor.publishComposite('citoyenEvents', function(latlng,radius) {
 					children: [
 						{
 							find: function(news) {
-								/*console.log(news.author);*/
+								/*////console.log(news.author);*/
 								return Citoyens.find({
 									_id: new Mongo.ObjectID(news.author)
 								}, {

@@ -27,7 +27,7 @@ Router.map(function() {
     layoutTemplate: "layout",
     onBeforeAction: function() {
       Meteor.logout();
-      console.log('logout');
+      //console.log('logout');
       this.next();
       //Router.go('/');
     }
@@ -45,7 +45,7 @@ Router.map(function() {
         let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
         singleSubs.subscribe('citoyenEvents',latlng,radius);
       }else{
-        console.log('City');
+        //console.log('City');
         let city = Session.get('city');
         if(city && city.geoShape && city.geoShape.coordinates){
           singleSubs.subscribe('citoyenEvents',city.geoShape.coordinates);
@@ -66,7 +66,7 @@ Router.map(function() {
         let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
         Meteor.subscribe('citoyenEvents',latlng,radius);
       }else{
-        console.log('City');
+        //console.log('City');
         let city = Session.get('city');
         if(city && city.geoShape && city.geoShape.coordinates){
           Meteor.subscribe('citoyenEvents',city.geoShape.coordinates);

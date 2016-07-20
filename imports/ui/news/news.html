@@ -14,7 +14,7 @@
   {{#ionView}}
   {{#ionContent class="scroll-bg"}}
 
-  {{> Template.dynamic template=scopeCardTemplate data=scope}}
+  {{> Template.dynamic template="listCardevents" data=scope}}
 
   <div class="list padding">
     <div class="item item-divider homestead">
@@ -147,9 +147,17 @@
 
     <div class="item item-image">
       {{#if profilImageUrl}}
-        <img src="http://qa.communecter.org{{profilImageUrl}}">
+      {{#if isAdmin}}
+      <img src="http://qa.communecter.org{{profilImageUrl}}" class="photo-link-event">
+      {{else}}
+      <img src="http://qa.communecter.org{{profilImageUrl}}">
+      {{/if}}
+      {{else}}
+      {{#if isAdmin}}
+      <a href="" class="photo-link-event">{{> imgDoc imageDoc=imageDoc resized="340x340"}}</a>
       {{else}}
       {{> imgDoc imageDoc=imageDoc resized="340x340"}}
+      {{/if}}
       {{/if}}
 
       {{#if Template.subscriptionsReady}}
