@@ -44,7 +44,7 @@
       {{#each events}}
       <a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'newsList' _id=this._id._str scope="events"}}">
         {{#if profilThumbImageUrl}}
-          <img src="http://qa.communecter.org{{profilThumbImageUrl}}">
+          <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
         {{/if}}
         <h2>{{name}}</h2>
         <span class="badge {{#if isStart}}badge-balanced{{else}}badge-dark{{/if}}"><i class="icon ion-person"></i> {{countAttendees}}</span>

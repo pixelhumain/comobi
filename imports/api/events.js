@@ -268,7 +268,6 @@ if(Meteor.isClient){
       return moment(start).isBefore(now); // True
     },
     news () {
-      console.log(JSON.stringify(News.find({'target.id':Router.current().params._id},{sort: {"created": -1},limit: Session.get('limit') }).fetch()));
       return News.find({'target.id':Router.current().params._id},{sort: {"created": -1},limit: Session.get('limit') });
     },
     new () {

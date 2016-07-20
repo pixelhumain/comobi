@@ -130,6 +130,18 @@ Citoyens.attachSchema(
       type : linksCitoyens,
       optional:true
     },
+    profilImageUrl : {
+      type : String,
+      optional:true
+    },
+    profilThumbImageUrl : {
+      type : String,
+      optional:true
+    },
+    profilMarkerImageUrl : {
+      type : String,
+      optional:true
+    },  
     created: {
       type: Date,
       autoValue: function() {
