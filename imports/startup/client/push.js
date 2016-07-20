@@ -10,19 +10,19 @@ Meteor.startup(function () {
 	let initNotifystart = NotificationHistory.find().observe({
     added: function(notification) {
       if(!initNotifystart) return ;
-      console.log(NotificationHistory.find({}).count());
+      //console.log(NotificationHistory.find({}).count());
       Push.setBadge(NotificationHistory.find({}).count());
     },
     changed: function(notification) {
-      console.log(NotificationHistory.find({}).count());
+      //console.log(NotificationHistory.find({}).count());
       Push.setBadge(NotificationHistory.find({}).count());
     },
     removed: function(notification) {
-      console.log(NotificationHistory.find({}).count());
+      //console.log(NotificationHistory.find({}).count());
       Push.setBadge(NotificationHistory.find({}).count());
     }
   });
-	
+
 	Push.Configure({
 	  android: {
 	    senderID: 501293889946,

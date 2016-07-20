@@ -39,7 +39,7 @@ language = language.split('-')[0];
 if (language.indexOf('_') !== -1)
 language = language.split('_')[0];
 
-//console.log(language);
+////console.log(language);
 //alert('language: ' + language + '\n');
 
 Helpers.setLanguage(language);
@@ -49,7 +49,7 @@ TAPi18n.setLanguage(language)
   //Session.set("showLoadingIndicator", false);
 })
 .fail(function (error_message) {
-  console.log(error_message);
+  //console.log(error_message);
 });
 
 
@@ -106,7 +106,7 @@ function() {
 Template.registerHelper('imageDoc',
 function(id) {
   if(id){
-    console.log(id);
+    //console.log(id);
     return Documents.findOne({	id : id,doctype :'image'});
   }else{
     return this && this._id && this._id._str && Documents.findOne({	id : this._id._str,doctype :'image'});
@@ -126,29 +126,29 @@ Template.registerHelper("SchemasEventsRest", SchemasEventsRest);
 
 let success = function (state) {
   if(state === 'Enabled') {
-    console.log("GPS Is Enabled");
+    //console.log("GPS Is Enabled");
     Session.set('GPSstart', true);
     Location.locate(function(pos){
       Session.set('geo',pos);
-      console.log(pos);
+      //console.log(pos);
     }, function(err){
-      console.log(err.message);
+      //console.log(err.message);
       Session.set('GPSstart', false);
       Session.set('geo',null);
       Session.set('geoError',err.message);
     });
   }else if(state==="Disabled"){
-    console.log("GPS Is Disabled");
+    //console.log("GPS Is Disabled");
     Session.set('GPSstart', false);
     Session.set('geo',null);
     Session.set('geoError','GPS Is Disabled');
   }else if(state=='NotDetermined' || state=='Restricted'){
-    console.log("Never asked user for auhtorization");
+    //console.log("Never asked user for auhtorization");
     Session.set('GPSstart', false);
     Session.set('geo',null);
     Session.set('geoError','Never asked user for auhtorization');
   }else if(state==='Denied'){
-    console.log("Asked User for authorization but they denied");
+    //console.log("Asked User for authorization but they denied");
     Session.set('GPSstart', false);
     Session.set('geo',null);
     Session.set('geoError','Asked User for authorization but they denied');
@@ -156,7 +156,7 @@ let success = function (state) {
 }
 
 let failure = function () {
-  console.log("Failed to get the GPS State");
+  //console.log("Failed to get the GPS State");
   Session.set('geoError','Failed to get the GPS State');
   Session.set('GPSstart', false);
 }
@@ -173,9 +173,9 @@ Tracker.autorun(function() {
     let geolocate = Session.get('geolocate');
     if(geolocate){
       Location.startWatching(function(pos){
-        console.log("Got a position!", pos);
+        //console.log("Got a position!", pos);
       }, function(err){
-        console.log("Oops! There was an error", err);
+        //console.log("Oops! There was an error", err);
       });
     }else{
       Location.stopWatching();

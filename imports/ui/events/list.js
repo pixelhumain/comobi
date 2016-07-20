@@ -39,9 +39,9 @@ Template.map.onRendered(function () {
     let city = pageSession.get('city') || AutoForm.getFieldValue('city');
     let latitude = pageSession.get('geoPosLatitude') || AutoForm.getFieldValue('geoPosLatitude');
     let longitude = pageSession.get('geoPosLongitude') || AutoForm.getFieldValue('geoPosLongitude');
-    console.log(`${city} ${latitude} ${longitude}`);
+    //console.log(`${city} ${latitude} ${longitude}`);
     if (latitude && longitude) {
-      console.log('recompute');
+      //console.log('recompute');
       map.setView(new L.LatLng(parseFloat(latitude), parseFloat(longitude)), 13);
       if(marker){
         map.removeLayer(marker);
@@ -67,12 +67,12 @@ Template.listEvents.onCreated(function () {
     let geo = Location.getReactivePosition();
     let radius = Session.get('radius');
     if(radius && geo && geo.latitude){
-      console.log('sub list events geo radius');
+      //console.log('sub list events geo radius');
       let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
       let handle = listEventsSubs.subscribe('citoyenEvents',latlng,radius);
           self.ready.set(handle.ready());
     }else{
-      console.log('sub list events city');
+      //console.log('sub list events city');
       let city = Session.get('city');
       if(city && city.geoShape && city.geoShape.coordinates){
         let handle = listEventsSubs.subscribe('citoyenEvents',city.geoShape.coordinates);
@@ -88,7 +88,7 @@ Template.listEvents.onCreated(function () {
       let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
       Meteor.call('getcitiesbylatlng',latlng,function(error, result){
         if(result){
-          console.log('call city');
+          //console.log('call city');
           Session.set('city', result);
         }
       });
@@ -228,7 +228,7 @@ Template.listEvents.events({
   'click .triEvents':function(event, template){
     event.preventDefault();
     pageSession.set('sortEvents', event.target.value);
-    console.log("sortEvents",  event.target.value);
+    //console.log("sortEvents",  event.target.value);
   },
   'keyup #search, change #search': function(event,template){
     if(event.currentTarget.value.length>2){
@@ -296,7 +296,7 @@ Template.eventsFields.helpers({
     country = pageSession.get('country') || AutoForm.getFieldValue('country');
     if(postalCode && country){
       let insee = Cities.find({'postalCodes.postalCode':postalCode,country:country});
-      console.log(insee.fetch());
+      //console.log(insee.fetch());
       if(insee){
         return insee.map(function (c) {
           return {label: c.alternateName, value: c.insee};
@@ -349,7 +349,7 @@ Template.eventsFields.onRendered(function() {
         let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
         Meteor.call('getcitiesbylatlng',latlng,function(error, result){
           if(result){
-            console.log(result);
+            //console.log(result);
             pageSession.set('postalCode', result.postalCodes[0].postalCode);
             pageSession.set('country', result.country);
             pageSession.set('city', result.insee);
@@ -368,9 +368,9 @@ Template.eventsFields.onRendered(function() {
     let city = pageSession.get('city');
     if (!!postalCode && !!country) {
       if(postalCode.length>4){
-        console.log(`${postalCode} ${country}`);
-        console.log('recompute');
-        console.log('subscribs');
+        //console.log(`${postalCode} ${country}`);
+        //console.log('recompute');
+        //console.log('subscribs');
         self.subscribe('cities',postalCode,country);
       }
     }
@@ -385,19 +385,19 @@ Template.eventsFields.events({
   },
   'change select[name="country"]': function(e, tmpl) {
     e.preventDefault();
-    console.log(tmpl.$(e.currentTarget).val());
+    //console.log(tmpl.$(e.currentTarget).val());
     pageSession.set( 'country', tmpl.$(e.currentTarget).val() );
   },
   'change select[name="city"]': function(e, tmpl) {
     e.preventDefault();
-    console.log(tmpl.$(e.currentTarget).val());
+    //console.log(tmpl.$(e.currentTarget).val());
     pageSession.set( 'city', tmpl.$(e.currentTarget).val() );
     let insee = Cities.findOne({insee:tmpl.$(e.currentTarget).val()});
     pageSession.set( 'geoPosLatitude', insee.geo.latitude);
     pageSession.set( 'geoPosLongitude', insee.geo.longitude);
     pageSession.set('cityName', e.currentTarget.options[e.currentTarget.selectedIndex].text);
-    console.log(insee.geo.latitude);
-    console.log(insee.geo.longitude);
+    //console.log(insee.geo.latitude);
+    //console.log(insee.geo.longitude);
   },
   'change input[name="streetAddress"]': function(event,template){
 
@@ -422,7 +422,7 @@ Template.eventsFields.events({
     let streetAddress = '';
     postalCode = AutoForm.getFieldValue('postalCode');
     country = template.find('select[name="country"]').options[template.find('select[name="country"]').selectedIndex].text;
-    console.log(country);
+    //console.log(country);
     streetAddress = AutoForm.getFieldValue('streetAddress');
 
     var request = "";
@@ -436,14 +436,14 @@ Template.eventsFields.events({
       HTTP.get( 'https://maps.googleapis.com/maps/api/geocode/json?address=' + request + '&key='+Meteor.settings.public.googlekey, {},
       function( error, response ) {
         if ( error ) {
-          console.log( error );
+          //console.log( error );
         } else {
-          console.log(response.data);
+          //console.log(response.data);
           if (response.data.results.length > 0 && response.data.status != "ZERO_RESULTS") {
             pageSession.set( 'geoPosLatitude', response.data.results[0].geometry.location.lat);
             pageSession.set( 'geoPosLongitude', response.data.results[0].geometry.location.lng);
-            console.log(response.data.results[0].geometry.location.lat);
-            console.log(response.data.results[0].geometry.location.lng);
+            //console.log(response.data.results[0].geometry.location.lat);
+            //console.log(response.data.results[0].geometry.location.lng);
           }
           return;
         }
@@ -457,18 +457,18 @@ AutoForm.addHooks(['addEvent', 'editEvent'], {
   after: {
     method : function(error, result) {
       if (error) {
-        console.log("Insert Error:", error);
+        //console.log("Insert Error:", error);
       } else {
-        //console.log("Insert Result:", result);
+        ////console.log("Insert Result:", result);
         IonModal.close();
         //Router.go('listEvents');
       }
     },
     "method-update" : function(error, result) {
       if (error) {
-        console.log("Update Error:", error);
+        //console.log("Update Error:", error);
       } else {
-        //console.log("Update Result:", result);
+        ////console.log("Update Result:", result);
         Router.go('listEvents');
       }
     }

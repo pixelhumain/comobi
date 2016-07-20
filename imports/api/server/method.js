@@ -205,22 +205,6 @@ Meteor.methods({
       let image = Photosimg.findOne({_id:doc.media.content.imageId});
       image.on('stored', Meteor.bindEnvironment(function() {
         News.update({_id:new Mongo.ObjectID(retour.data.id["$id"])},{$set:{'media.content.image':'https://communevent.communecter.org'+image.url()}});
-
-        /*let postUp = Meteor.call('postUploadPixel',doc.parentType,doc.parentId,'newsImage','https://communevent.communecter.org'+image.url(),image.name());
-        if(postUp){
-        let insertDoc = {};
-        insertDoc.id = doc.parentId;
-        insertDoc.type = "events";
-        insertDoc.folder = "events/"+doc.parentId+"/album";
-        insertDoc.moduleId = "communecter";
-        insertDoc.author = this.userId;
-        insertDoc.doctype = "image";
-        insertDoc.name = image.name();
-        insertDoc.size = image.size();
-        insertDoc.contentKey = "slider";
-        Meteor.call("postPixel",insertDoc.moduleId+"/document","save",insertDoc);
-        }*/
-
       }));
     }
 
@@ -267,26 +251,10 @@ Meteor.methods({
           insertDoc.name = image.name();
           insertDoc.size = image.size();
           insertDoc.contentKey = "slider";
-          console.log(insertDoc);
+          //console.log(insertDoc);
           let docId = Documents.insert(insertDoc);
-          console.log(docId);
+          //console.log(docId);
         }
-
-        /*let postUp = Meteor.call('postUploadPixel',type,idType,'newsImage','https://communevent.communecter.org'+image.url(),image.name());
-        if(postUp){
-        let insertDoc = {};
-        insertDoc.id = idType;
-        insertDoc.type = "events";
-        insertDoc.folder = "events/"+idType+"/album";
-        insertDoc.moduleId = "communecter";
-        insertDoc.author = this.userId;
-        insertDoc.doctype = "image";
-        insertDoc.name = image.name();
-        insertDoc.size = image.size();
-        insertDoc.contentKey = "slider";
-        Meteor.call("postPixel",insertDoc.moduleId+"/document","save",insertDoc);
-        }*/
-
       }));
       return {photoret:photoret,newsId:newsId.data.id["$id"]};
     }else{
@@ -313,7 +281,7 @@ Meteor.methods({
     image.on('stored', Meteor.bindEnvironment(function() {
       News.update({_id:new Mongo.ObjectID(newsId)},{$set:{'media.content.image':'https://communevent.communecter.org'+image.url()}});
 
-        if(Documents.find({objId:photoId}).count()==0){
+      if(Documents.find({objId:photoId}).count()==0){
         let insertDoc = {};
         insertDoc.id = parentId;
         insertDoc.type = "events";
@@ -325,23 +293,7 @@ Meteor.methods({
         insertDoc.size = image.size();
         insertDoc.contentKey = "slider";
         let docId = Documents.insert(insertDoc);
-        }
-
-        /*let postUp = Meteor.call('postUploadPixel',parentType,parentId,'newsImage','https://communevent.communecter.org'+image.url(),image.name());
-        if(postUp){
-        let insertDoc = {};
-        insertDoc.id = parentId;
-        insertDoc.type = "events";
-        insertDoc.folder = "events/"+parentId+"/album";
-        insertDoc.moduleId = "communecter";
-        insertDoc.author = this.userId;
-        insertDoc.doctype = "image";
-        insertDoc.name = image.name();
-        insertDoc.size = image.size();
-        insertDoc.contentKey = "slider";
-        Meteor.call("postPixel",insertDoc.moduleId+"/document","save",insertDoc);
-        }*/
-
+      }
     }));
 
     return image._id;
@@ -358,10 +310,10 @@ Meteor.methods({
     fsFile.name(str);
     fsFile.metadata = {owner: this.userId,type:type,id:idType};
     fsFile.on('error', function (error) {
-      console.log(error);
+      //console.log(error);
     });
     fsFile.on("uploaded", function () {
-      console.log(error);
+      //console.log(error);
     });
 
     var photoret=Photosimg.insert(fsFile);
@@ -411,48 +363,53 @@ Meteor.methods({
     var retour = Meteor.call("postPixel","event","update",modifier["$set"]);
     return retour;
   },
-  photoEvents: function(photo,str,type,idType) {
+  photoEvents: function(photo,str,idType) {
     check(str, String);
-    check(type, String);
     check(idType, String);
+    if (!this.userId && Events.find({_id:new Mongo.ObjectID(idType)}).isAdmin()) {
+      throw new Meteor.Error("not-authorized");
+    }
+    let retourUpload = Meteor.call('postUploadPixel','events',idType,'avatar',photo,str);
+    if(retourUpload){
+      let documentId= Meteor.call("insertDocumentProfilEvents",idType,retourUpload);
+      if(documentId){
+        return documentId;
+      }else{
+        throw new Meteor.Error("insertDocument error");
+      }
+    }else{
+      throw new Meteor.Error("postUploadPixel error");
+    }
+  },
+  insertDocumentProfilEvents : function(idType,retourUpload){
+    check(idType, String);
+    check(retourUpload, Object);
+
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
 
-    var photoret = Meteor.call('cfsbase64tos3up',photo,str,type,idType);
-
-    if(photoret){
-      let image = Photosimg.findOne({_id:photoret});
-      image.on('stored', Meteor.bindEnvironment(function() {
-
-        let postUp = Meteor.call('postUploadPixel',type,idType,'newsImage','https://communevent.communecter.org'+image.url(),image.name());
-        if(postUp){
-        let insertDoc = {};
-        insertDoc.id = idType;
-        insertDoc.type = "events";
-        insertDoc.folder = "events/"+idType;
-        insertDoc.moduleId = "communecter";
-        insertDoc.author = this.userId;
-        insertDoc.doctype = "image";
-        insertDoc.name = postUp.name;
-        insertDoc.size = image.size();
-        insertDoc.contentKey = "profil";
-        Meteor.call("postPixel",insertDoc.moduleId+"/document","save",insertDoc);
-        Events.update({_id:new Mongo.ObjectID(idType)},{$set:{
-          'profilImageUrl':'/upload/communecter/events/'+idType+'/'+postUp.name,
-          'profilThumbImageUrl':'/upload/communecter/events/'+idType+'/thumb/profil-resized.png',
-          'profilMarkerImageUrl':'/upload/communecter/events/'+idType+'/thumb/profil-marker.png'
-        }});
-
-        }
-
-      }));
-      return photoret;
-    }else{
-      throw new Meteor.Error("photoEvents error");
+    let insertDoc = {};
+    insertDoc.id = idType;
+    insertDoc.type = "events";
+    insertDoc.folder = "events/"+idType;
+    insertDoc.moduleId = "communecter";
+    insertDoc.author = this.userId;
+    insertDoc.doctype = "image";
+    insertDoc.name = retourUpload.name;
+    insertDoc.size = retourUpload.size;
+    insertDoc.contentKey = "profil";
+    let  doc = Meteor.call("postPixel","document","save",insertDoc);
+    //console.log(doc);
+    if(doc){
+      Events.update({_id:new Mongo.ObjectID(idType)},{$set:{
+        'profilImageUrl':'/upload/communecter/events/'+idType+'/'+retourUpload.name,
+        'profilThumbImageUrl':'/upload/communecter/events/'+idType+'/thumb/profil-resized.png',
+        'profilMarkerImageUrl':'/upload/communecter/events/'+idType+'/thumb/profil-marker.png'
+      }});
     }
   },
-postPixel : function(controller,action,params){
+  postPixel : function(controller,action,params){
     check(controller, String);
     check(action, String);
     check(params, Object);
@@ -462,7 +419,7 @@ postPixel : function(controller,action,params){
     var userC = Meteor.users.findOne({_id:this.userId});
     if(userC && userC.services && userC.services.resume && userC.services.resume.loginTokens && userC.services.resume.loginTokens[0] && userC.services.resume.loginTokens[0].hashedToken){
       var retour = callPixelRest(userC.services.resume.loginTokens[0].hashedToken,"POST",controller,action,params);
-      console.log(retour);
+      //console.log(retour);
       return retour;
     }else{
       throw new Meteor.Error("Error server");
@@ -472,29 +429,34 @@ postPixel : function(controller,action,params){
     throw new Meteor.Error("Error server");
   }*/
 },
-postUploadPixel : function(folder,ownerId,imageURL,name){
-    check(folder, String);
-    check(ownerId, String);
-    check(imageURL, String);
-    check(name, String);
-    if (!this.userId) {
-      throw new Meteor.Error("not-authorized");
-    }
-    var userC = Meteor.users.findOne({_id:this.userId});
-    if(userC && userC.services && userC.services.resume && userC.services.resume.loginTokens && userC.services.resume.loginTokens[0] && userC.services.resume.loginTokens[0].hashedToken){
-      var retour = callPixelUploadRest(userC.services.resume.loginTokens[0].hashedToken,folder,ownerId,imageURL,name);
-      console.log(retour);
+postUploadPixel : function(folder,ownerId,input,dataBlob,name){
+  check(folder, String);
+  check(ownerId, String);
+  check(input, String);
+  //check(dataBlob, Object);
+  check(name, String);
+  if (!this.userId) {
+    throw new Meteor.Error("not-authorized");
+  }
+  var userC = Meteor.users.findOne({_id:this.userId});
+  if(userC && userC.services && userC.services.resume && userC.services.resume.loginTokens && userC.services.resume.loginTokens[0] && userC.services.resume.loginTokens[0].hashedToken){
+    var retour = callPixelUploadRest(userC.services.resume.loginTokens[0].hashedToken,folder,ownerId,input,dataBlob,name);
+    //console.log(retour);
+    if(retour && retour.name){
       return retour;
     }else{
       throw new Meteor.Error("Error server");
     }
-    //try {
-    /*} catch(e) {
+  }else{
     throw new Meteor.Error("Error server");
-  }*/
+  }
+  //try {
+  /*} catch(e) {
+  throw new Meteor.Error("Error server");
+}*/
 },
 createUserAccount: function(user){
-  console.log(user);
+  ////console.log(user);
   check(user, Object);
   check(user.name, String);
   check(user.username, String);
@@ -546,7 +508,7 @@ createUserAccount: function(user){
     return userId;
   },
   createUserAccountRest: function(user){
-    console.log(user);
+    //console.log(user);
     check(user, Object);
     check(user.name, String);
     check(user.username, String);
@@ -588,7 +550,7 @@ createUserAccount: function(user){
           "geoPosLongitude": insee.geo.longitude
         }
       });
-      console.log(response);
+      //console.log(response);
       if(response.data.result && response.data.id){
         let userId = response.data.id;
         return userId;
@@ -620,8 +582,8 @@ createUserAccount: function(user){
       Key: photo.urlimage
     };
     s3.deleteObject(params, function(err, data) {
-    if (err) console.log(err, err.stack); // error
-    else console.log(); // deleted
+    if (err) //console.log(err, err.stack); // error
+    else //console.log(); // deleted
   })*/
   News.remove({
     _id: new Mongo.ObjectID(photoId),
@@ -687,7 +649,7 @@ pushNewAttendees : function(eventId){
     let attendeesIds = _.filter(attendeesIdsTmp, function(attendees){
       return attendees!=this.userId;
     },this);
-    console.log(attendeesIds);
+    //console.log(attendeesIds);
     let title = event.name;
     var text = user.name;
     let payload = {};
@@ -720,7 +682,7 @@ pushNewNewsAttendees : function(eventId,newsId){
     let attendeesIds = _.filter(attendeesIdsTmp, function(attendees){
       return attendees!=this.userId;
     },this);
-    console.log(attendeesIds);
+    //console.log(attendeesIds);
     let title = event.name;
     if(news.name){
       var text = news.name;
@@ -756,7 +718,7 @@ pushNewNewsAttendees : function(eventId,newsId){
     _.each(attendeesIds,function(value){
       query['userId'] = value;
       let badge=Meteor.call('alertCount',value);
-      console.log(badge);
+      //console.log(badge);
       Meteor.call('pushUser',title,text,payload,query,badge);
     },title,text,payload,query);
 
@@ -791,7 +753,7 @@ pushUser : function(title,text,payload,query,badge){
   if (!this.userId) {
     throw new Meteor.Error("not-authorized");
   }
-  // console.log('mark as read click') // for testing
+  // //console.log('mark as read click') // for testing
   return NotificationHistory.update({
     '_id': notifId
   }, {
@@ -820,7 +782,7 @@ pushUser : function(title,text,payload,query,badge){
   if (!this.userId) {
     throw new Meteor.Error("not-authorized");
   }
-  // console.log('notification click') // for testing
+  // //console.log('notification click') // for testing
   return NotificationHistory.update({
     '_id': notifId
   }, {
@@ -833,7 +795,7 @@ pushUser : function(title,text,payload,query,badge){
   if (!this.userId) {
     throw new Meteor.Error("not-authorized");
   }
-  // console.log('notification click') // for testing
+  // //console.log('notification click') // for testing
   return NotificationHistory.update({
     'dismissals': {
       $nin: [this.userId]

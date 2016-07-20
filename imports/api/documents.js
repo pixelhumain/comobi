@@ -19,7 +19,8 @@ Documents.attachSchema(
       type : String
     },
     objId : {
-      type : String
+      type : String,
+      optional : true
     },
     moduleId : {
       type : String,
@@ -95,7 +96,7 @@ Documents.deny({
   }
 });
 
- 
+
 if(Meteor.isClient){
   //collection
   import { Photosimg } from './client/photosimg.js'

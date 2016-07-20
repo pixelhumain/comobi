@@ -163,6 +163,18 @@ export const SchemasEvents = new SimpleSchema({
       type : linksEvents,
       optional:true
     },
+    profilImageUrl : {
+      type : String,
+      optional:true
+    },
+    profilThumbImageUrl : {
+      type : String,
+      optional:true
+    },
+    profilMarkerImageUrl : {
+      type : String,
+      optional:true
+    },
     creator : {
       type: String,
       autoValue: function() {
@@ -232,7 +244,7 @@ if(Meteor.isClient){
       return this.creator === Meteor.userId();
     },
     isAdmin () {
-      return this.links && this.links.attendees && this.links.attendees[Meteor.userId()].isAdmin;
+      return this.links && this.links.attendees && this.links.attendees[Meteor.userId()] && this.links.attendees[Meteor.userId()].isAdmin;
     },
     isAttendees (){
           return this.links && this.links.attendees && this.links.attendees[Meteor.userId()];

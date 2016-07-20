@@ -66,7 +66,7 @@ Template.newsList.helpers({
     return  countNews > Session.get('limit');
   },
   countNews () {
-    console.log(Router.current().params._id)
+    //console.log(Router.current().params._id)
     return Counts.get(`countNews.${Router.current().params._id}`);
   },
   isVote () {
@@ -100,11 +100,11 @@ Template.newsList.events({
         let str = +new Date + Math.floor((Math.random() * 100) + 1) + ".jpg";
         Meteor.call("photoNews",data,str,scope,self._id._str, function (error, result) {
           if (!error) {
-            console.log('result',result);
+            //console.log('result',result);
             Meteor.call('pushNewNewsAttendees',self._id._str,result.newsId);
             Router.go('newsList', {_id:self._id._str,scope:scope});
           }else{
-            console.log('error',error);
+            //console.log('error',error);
           }
         });
       }});
@@ -123,31 +123,32 @@ Template.newsList.events({
       MeteorCameraUI.getPicture(options,function (error, data) {
         if (! error) {
           let str = +new Date + Math.floor((Math.random() * 100) + 1) + ".jpg";
-          Meteor.call("photoEvents",data,str,scope,self._id._str, function (error, result) {
+          let dataURI = data;
+          Meteor.call("photoEvents",data,str,self._id._str, function (error, result) {
             if (!error) {
-              console.log('result',result);
+
             }else{
-              console.log('error',error);
+              //console.log('error',error);
             }
           });
         }});
 
       }
-  });
+    });
 
-  Template.newsEdit.helpers({
-    new () {
-      return News.findOne({_id:new Mongo.ObjectID(Router.current().params.newsId)});
-    }
-  });
+    Template.newsEdit.helpers({
+      new () {
+        return News.findOne({_id:new Mongo.ObjectID(Router.current().params.newsId)});
+      }
+    });
 
-  AutoForm.addHooks(['addNew', 'editNew'], {
-    after: {
-      method : function(error, result) {
-        if (error) {
-          console.log("Insert Error:", error);
-        } else {
-          console.log("Insert Result:", JSON.stringify(result.data.id["$id"]));
+    AutoForm.addHooks(['addNew', 'editNew'], {
+      after: {
+        method : function(error, result) {
+          if (error) {
+            //console.log("Insert Error:", error);
+          } else {
+            //console.log("Insert Result:", JSON.stringify(result.data.id["$id"]));
 
             var self = this;
             let selfresult=result.data.id["$id"];
@@ -177,32 +178,32 @@ Template.newsList.events({
                         }
                       });
                     }else{
-                      console.log('error',error);
+                      //console.log('error',error);
                     }
 
                   });
 
                 }});
 
-            },
-            onCancel: function(){
+              },
+              onCancel: function(){
 
-            }
-          });
+              }
+            });
 
-              Meteor.call('pushNewNewsAttendees',scopeId,selfresult);
-              Router.go('newsList', {_id: Session.get('scopeId'),scope:Session.get('scope')});
+            Meteor.call('pushNewNewsAttendees',scopeId,selfresult);
+            Router.go('newsList', {_id: Session.get('scopeId'),scope:Session.get('scope')});
 
           }
         },
         update : function(error, result) {
           if (error) {
-            console.log("Update Error:", error);
+            //console.log("Update Error:", error);
           } else {
             if (error) {
-              console.log("Update Error:", error);
+              //console.log("Update Error:", error);
             } else {
-              console.log("Update Result:", result);
+              //console.log("Update Result:", result);
               Router.go('newsList', {_id: Session.get('scopeId'),scope:Session.get('scope')});
             }
           }
@@ -222,7 +223,7 @@ Template.newsList.events({
     AutoForm.addHooks(['addNew'], {
       before: {
         method : function(doc, template) {
-          console.log(doc);
+          //console.log(doc);
 
           let scope = Session.get('scope');
           let scopeId = Session.get('scopeId');
