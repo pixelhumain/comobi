@@ -20,7 +20,7 @@ import { apiCommunecter } from './api.js';
 import { encodeString } from '../helpers.js';
 import { ValidEmail,IsValidEmail } from 'meteor/froatsnook:valid-email';
 
-URL._encodeParams = (params, prefix) => {
+URL._encodeParams = function(params, prefix) {
   var str = [];
   for(var p in params) {
     if (params.hasOwnProperty(p)) {
