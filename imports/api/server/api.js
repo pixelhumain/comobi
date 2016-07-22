@@ -108,7 +108,7 @@ const callPixelUploadRest = (token,folder,ownerId,input,dataURI,name) => {
 }
 
 apiCommunecter.postUploadPixel = (folder,ownerId,input,dataBlob,name) => {
-  var userC = Meteor.users.findOne({_id:Meteor.userId});
+  var userC = Meteor.users.findOne({_id:Meteor.userId()});
   if(userC && userC.services && userC.services.resume && userC.services.resume.loginTokens && userC.services.resume.loginTokens[0] && userC.services.resume.loginTokens[0].hashedToken){
     var retour = callPixelUploadRest(userC.services.resume.loginTokens[0].hashedToken,folder,ownerId,input,dataBlob,name);
     if(retour && retour.name){
