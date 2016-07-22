@@ -2,7 +2,9 @@ import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { request } from 'meteor/froatsnook:request';
 
-export const callPixelRest = function (token,method,controller,action,post){
+export const apiCommunecter = {};
+
+const callPixelRest = (token,method,controller,action,post) => {
   post["X-Auth-Token"] = token;
   let responsePost = HTTP.call( method, Meteor.settings.endpoint+'/communecter/'+controller+'/'+action, {
     headers:{
@@ -18,6 +20,7 @@ export const callPixelRest = function (token,method,controller,action,post){
     return responsePost;
   }else{
     if(responsePost && responsePost.data && responsePost.data.msg){
+      //console.log(responsePost);
       throw new Meteor.Error("error_call",responsePost.data.msg);
     }else{
       throw new Meteor.Error("error_server", "error server");
@@ -25,8 +28,17 @@ export const callPixelRest = function (token,method,controller,action,post){
   }
 }
 
+apiCommunecter.postPixel = function(controller,action,params){
+  var userC = Meteor.users.findOne({_id:Meteor.userId()});
+  if(userC && userC.services && userC.services.resume && userC.services.resume.loginTokens && userC.services.resume.loginTokens[0] && userC.services.resume.loginTokens[0].hashedToken){
+    var retour = callPixelRest(userC.services.resume.loginTokens[0].hashedToken,"POST",controller,action,params);
+    return retour;
+  }else{
+    throw new Meteor.Error("Error identification");
+  }
+};
 
-function dataUriToBuffer (uri) {
+const dataUriToBuffer = (uri) => {
   if (!/^data\:/i.test(uri)) {
     throw new TypeError('`uri` does not appear to be a Data URI (must begin with "data:")');
   }
@@ -66,7 +78,7 @@ function dataUriToBuffer (uri) {
   return buffer;
 }
 
-export const callPixelUploadRest = function (token,folder,ownerId,input,dataURI,name){
+const callPixelUploadRest = (token,folder,ownerId,input,dataURI,name) => {
   let result;
   let fileBuf = dataUriToBuffer(dataURI);
   let formData = {};
@@ -95,7 +107,21 @@ export const callPixelUploadRest = function (token,folder,ownerId,input,dataURI,
   }
 }
 
-export const authPixelRest = function (email,pwd){
+apiCommunecter.postUploadPixel = (folder,ownerId,input,dataBlob,name) => {
+  var userC = Meteor.users.findOne({_id:Meteor.userId()});
+  if(userC && userC.services && userC.services.resume && userC.services.resume.loginTokens && userC.services.resume.loginTokens[0] && userC.services.resume.loginTokens[0].hashedToken){
+    var retour = callPixelUploadRest(userC.services.resume.loginTokens[0].hashedToken,folder,ownerId,input,dataBlob,name);
+    if(retour && retour.name){
+      return retour;
+    }else{
+      throw new Meteor.Error("Error upload");
+    }
+  }else{
+    throw new Meteor.Error("Error identification");
+  }
+};
+
+apiCommunecter.authPixelRest = (email,pwd) => {
   var response = HTTP.call( 'POST', Meteor.settings.endpoint+'/communecter/person/authenticate', {
     params: {
       "pwd": pwd,

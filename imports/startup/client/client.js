@@ -18,7 +18,7 @@ import { Documents } from '../../api/documents.js';
 
 //schemas
 import { SchemasEventsRest } from '../../api/events.js';
-import { SchemasFollowRest } from '../../api/citoyens.js';
+import { SchemasFollowRest,SchemasInviteAttendeesEventRest } from '../../api/citoyens.js';
 import { SchemasNewsRest } from '../../api/news.js';
 
 Meteor.startup(function () {
@@ -56,6 +56,8 @@ TAPi18n.setLanguage(language)
 
 SchemasEventsRest.i18n("schemas.eventsrest");
 SchemasFollowRest.i18n("schemas.followrest");
+SchemasInviteAttendeesEventRest.i18n("schemas.followrest");
+SchemasNewsRest.i18n("schemas.news");
 
 Template.registerHelper('distance',function (coordinates) {
   let geo = Location.getReactivePosition();
@@ -126,6 +128,7 @@ Template.registerHelper("urlImageCommunecter", function () {
 
 
 Template.registerHelper("SchemasFollowRest", SchemasFollowRest);
+Template.registerHelper("SchemasInviteAttendeesEventRest", SchemasInviteAttendeesEventRest);
 Template.registerHelper("SchemasNewsRest", SchemasNewsRest);
 Template.registerHelper("SchemasEventsRest", SchemasEventsRest);
 

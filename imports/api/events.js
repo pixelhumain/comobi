@@ -231,13 +231,13 @@ export const SchemasEvents = new SimpleSchema({
   });
 
 
-if(Meteor.isClient){
+//if(Meteor.isClient){
   //collection
   import { News } from './news.js'
   import { Citoyens } from './citoyens.js';
 
   Events.helpers({
-    creatorProfile: function () {
+    creatorProfile () {
       return Citoyens.findOne({_id:new Mongo.ObjectID(this.creator)});
     },
     isCreator () {
@@ -275,4 +275,4 @@ if(Meteor.isClient){
     }
   });
 
-}
+//}

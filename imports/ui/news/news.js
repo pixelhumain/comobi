@@ -10,6 +10,7 @@ import { Counts } from 'meteor/tmeasday:publish-counts';
 import { MeteorCameraUI } from 'meteor/aboire:camera-ui';
 import { AutoForm } from 'meteor/aldeed:autoform';
 import { TAPi18n } from 'meteor/tap:i18n';
+import { ReactiveDict } from 'meteor/reactive-dict';
 
 import '../qrcode/qrcode.js'
 
@@ -18,6 +19,8 @@ import { newsListSubs } from '../../api/client/subsmanager.js';
 
 import { Events } from '../../api/events.js';
 import { News } from '../../api/news.js';
+
+let pageSession = new ReactiveDict('pageNews');
 
 Session.setDefault('limit', 5);
 
@@ -79,7 +82,13 @@ Template.newsList.events({
   "click .saveattendees-link" (evt) {
     evt.preventDefault();
     let scopeId=Session.get('scopeId');
-    Meteor.call('saveattendeesEvent',"event",scopeId);
+    Meteor.call('saveattendeesEvent',scopeId);
+    return ;
+  },
+  "click .inviteattendees-link" (evt) {
+    evt.preventDefault();
+    let scopeId=Session.get('scopeId');
+    Meteor.call('inviteattendeesEvent',scopeId);
     return ;
   },
   "click .give-me-more" (evt) {
@@ -136,20 +145,41 @@ Template.newsList.events({
       }
     });
 
+    Template.newsAdd.onCreated(function () {
+      pageSession.set( 'error', false );
+    });
+
+    Template.newsAdd.onRendered(function () {
+      pageSession.set( 'error', false );
+    });
+
+    Template.newsAdd.helpers({
+      error () {
+        return pageSession.get( 'error' );
+      }
+    });
+
+    Template.newsEdit.onCreated(function () {
+      pageSession.set( 'error', false );
+    });
+
+    Template.newsEdit.onRendered(function () {
+      pageSession.set( 'error', false );
+    });
+
     Template.newsEdit.helpers({
       new () {
         return News.findOne({_id:new Mongo.ObjectID(Router.current().params.newsId)});
+      },
+      error () {
+        return pageSession.get( 'error' );
       }
     });
 
     AutoForm.addHooks(['addNew', 'editNew'], {
       after: {
         method : function(error, result) {
-          if (error) {
-            //console.log("Insert Error:", error);
-          } else {
-            //console.log("Insert Result:", JSON.stringify(result.data.id["$id"]));
-
+          if (!error) {
             var self = this;
             let selfresult=result.data.id["$id"];
             let scopeId=Session.get('scopeId');
@@ -196,41 +226,93 @@ Template.newsList.events({
 
           }
         },
-        update : function(error, result) {
-          if (error) {
-            //console.log("Update Error:", error);
-          } else {
-            if (error) {
-              //console.log("Update Error:", error);
-            } else {
-              //console.log("Update Result:", result);
-              Router.go('newsList', {_id: Session.get('scopeId'),scope:Session.get('scope')});
-            }
+        "method-update" : function(error, result) {
+          if (!error) {
+            Router.go('newsList', {_id: Session.get('scopeId'),scope:Session.get('scope')});
           }
         }
       },
-      onError: function(formType, error) {
-        let ref;
-        if (error.errorType && error.errorType === 'Meteor.Error') {
-          //if ((ref = error.reason) === 'Name must be unique') {
-          //this.addStickyValidationError('name', error.reason);
-          //AutoForm.validateField(this.formId, 'name');
-          //}
-        }
-      }
-    });
-
-    AutoForm.addHooks(['addNew'], {
       before: {
         method : function(doc, template) {
           //console.log(doc);
-
           let scope = Session.get('scope');
           let scopeId = Session.get('scopeId');
           doc.parentType = scope;
           doc.parentId = scopeId;
-
           return doc;
+        },
+        "method-update" : function(modifier, documentId) {
+          let scope = Session.get('scope');
+          let scopeId = Session.get('scopeId');
+          modifier["$set"].parentType = scope;
+          modifier["$set"].parentId = scopeId;
+          return modifier;
+        }
+      },
+      onError: function(formType, error) {
+        if (error.errorType && error.errorType === 'Meteor.Error') {
+          if (error && error.error === "error_call") {
+            pageSession.set( 'error', error.reason.replace(":", " "));
+          }
+        }
+        //let ref;
+        //if (error.errorType && error.errorType === 'Meteor.Error') {
+        //if ((ref = error.reason) === 'Name must be unique') {
+        //this.addStickyValidationError('name', error.reason);
+        //AutoForm.validateField(this.formId, 'name');
+        //}
+        //}
+      }
+    });
+
+    Template._inviteattendeesEvent.onCreated(function () {
+      pageSession.set( 'error', false );
+      pageSession.set( 'invitedUserEmail', false);
+    });
+
+    Template._inviteattendeesEvent.onRendered(function () {
+      pageSession.set( 'error', false );
+      pageSession.set( 'invitedUserEmail', false);
+    });
+
+    Template._inviteattendeesEvent.helpers({
+      error () {
+        return pageSession.get( 'error' );
+      }
+    });
+
+    AutoForm.addHooks(['inviteAttendeesEvent'], {
+      before: {
+        method : function(doc, template) {
+          let scopeId = Session.get('scopeId');
+          doc.eventId = scopeId;
+          pageSession.set( 'invitedUserEmail', doc.invitedUserEmail);
+          return doc;
+        }
+      },
+      after: {
+        method : function(error, result) {
+          if (!error) {
+            IonModal.close();
+          }
+        }
+      },
+      onError: function(formType, error) {
+        //console.log(error);
+        if (error.errorType && error.errorType === 'Meteor.Error') {
+          if (error && error.error === "error_call") {
+            if( error.reason == "Problème à l'insertion du nouvel utilisateur : une personne avec cet mail existe déjà sur la plateforme"){
+              Meteor.call('saveattendeesEvent',Session.get('scopeId'),pageSession.get( 'invitedUserEmail'),function(error,result){
+                if(error){
+                  pageSession.set( 'error', error.reason.replace(":", " "));
+                }else{
+                  IonModal.close();
+                }
+              });
+            }
+          }else{
+            pageSession.set( 'error', error.reason.replace(":", " "));
+          }
         }
       }
     });

@@ -240,6 +240,7 @@ Template.listEvents.events({
 });
 
 Template.eventsAdd.onCreated(function () {
+  pageSession.set('error', false );
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
@@ -250,6 +251,7 @@ Template.eventsAdd.onCreated(function () {
 });
 
 Template.eventsEdit.onCreated(function () {
+  pageSession.set('error', false );
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
@@ -259,7 +261,9 @@ Template.eventsEdit.onCreated(function () {
 });
 
 Template.eventsAdd.helpers({
-
+  error () {
+    return pageSession.get( 'error' );
+  }
 });
 
 Template.eventsEdit.helpers({
@@ -283,6 +287,9 @@ Template.eventsEdit.helpers({
     eventEdit.geoPosLatitude = event.geo.latitude;
     eventEdit.geoPosLongitude = event.geo.longitude;
     return eventEdit;
+  },
+  error () {
+    return pageSession.get( 'error' );
   }
 });
 
@@ -341,7 +348,7 @@ Template.eventsFields.onRendered(function() {
   pageSession.set('geoPosLongitude', null);
 
   let geolocate = Session.get('geolocate');
-  if(geolocate){
+  if(geolocate && Router.current().route.getName()!="eventsEdit"){
     var onOk=IonPopup.confirm({template:TAPi18n.__('Utiliser votre position actuelle ?'),
     onOk: function(){
       let geo = Location.getReactivePosition();
@@ -456,31 +463,29 @@ Template.eventsFields.events({
 AutoForm.addHooks(['addEvent', 'editEvent'], {
   after: {
     method : function(error, result) {
-      if (error) {
-        //console.log("Insert Error:", error);
-      } else {
-        ////console.log("Insert Result:", result);
+      if (!error) {
         IonModal.close();
-        //Router.go('listEvents');
       }
     },
     "method-update" : function(error, result) {
-      if (error) {
-        //console.log("Update Error:", error);
-      } else {
-        ////console.log("Update Result:", result);
-        Router.go('listEvents');
+      if (!error) {
+        Router.go('newsList', {_id:result.data.id,scope:'events'});
       }
     }
   },
   onError: function(formType, error) {
-    let ref;
     if (error.errorType && error.errorType === 'Meteor.Error') {
+      if (error && error.error === "error_call") {
+        pageSession.set( 'error', error.reason.replace(":", " "));
+      }
+    }
+    //let ref;
+    //if (error.errorType && error.errorType === 'Meteor.Error') {
       //if ((ref = error.reason) === 'Name must be unique') {
       //this.addStickyValidationError('name', error.reason);
       //AutoForm.validateField(this.formId, 'name');
       //}
-    }
+    //}
   }
 });
 

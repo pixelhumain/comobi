@@ -63,6 +63,7 @@
   {{/ionContent}}
   {{/ionView}}
 </template>
+
 <template name="newsAdd">
   {{#contentFor "headerButtonLeft"}}
   {{>ionNavBackButton}}
@@ -82,6 +83,11 @@
     <div class="item item-divider">
       {{_ "post a news"}}
     </div>
+    {{#if error}}
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    {{/if}}
     {{#autoForm id="addNew" schema=SchemasNewsRest type="method" meteormethod="insertNew" template="ionic" class="padding"}}
     {{> newsFields}}
     <div class="item">
@@ -116,7 +122,12 @@
     <div class="item item-divider">
       {{_ "edit a news"}}
     </div>
-    {{#autoForm id="editNew" collection="News" doc=new type="update" template="ionic" class="padding form-rb-plain"}}
+    {{#if error}}
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    {{/if}}
+    {{#autoForm id="editNew" schema=SchemasNewsRest type="method-update" meteormethod="updateNew" doc=new template="ionic" class="padding form-rb-plain"}}
     {{> newsFields}}
     <div class="item">
       <div class="button-bar">
@@ -135,7 +146,7 @@
 
 <template name="listCard">
   <div class="list card">
-    <div class="item item-avatar">
+    <div class="item item-avatar item-button-right">
       {{#if profilThumbImageUrl}}
         <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
       {{else}}
@@ -143,6 +154,9 @@
       {{/if}}
       <h2 class="homestead">{{name}}</h2>
       <p>{{_ "creator"}} : {{creatorProfile.name}}</p>
+      {{#if isAdmin}}
+      <a href="{{pathFor 'eventsEdit' _id=_id._str}}" class="button button-positive">{{> ionIcon icon="edit"}}</a>
+      {{/if}}
     </div>
 
     <div class="item item-image">
@@ -189,6 +203,7 @@
       <button class="button button-small photo-link-new">{{> ionIcon icon="camera"}}</button>
       <a href="{{pathFor 'newsAdd' _id=_id._str scope=($.Session.get 'scope')}}" class="button button-small">{{> ionIcon icon="compose"}}</a>
       <a href="{{pathFor 'listAttendees' _id=_id._str}}" class="button button-small">{{> ionIcon icon="ios-people"}}</a>
+      <button class="button button-small" data-ion-modal="_inviteattendeesEvent">{{> ionIcon icon="person-add"}}</button>
       {{else}}
       <button class="button button-small saveattendees-link">{{> ionIcon icon="person-add"}} Participer</button>
       {{/if}}
@@ -196,25 +211,8 @@
   </div>
 </template>
 
-<template name="boutonVote">
-  {{#if isAttendees}}
-  {{#if isVote}}
-  <div class="padding">
-    <div class="button-bar bar-positive">
-      <button class="button button-small vote" data-action="voteUp">{{> ionIcon icon="thumbsup"}}</button>
-      <button class="button button-small vote" data-action="voteAbstain">{{> ionIcon icon=""}}</button>
-      <button class="button button-small vote" data-action="voteUnclear">{{> ionIcon icon=""}}</button>
-      <button class="button button-small vote" data-action="voteMoreInfo">{{> ionIcon icon=""}}</button>
-      <button class="button button-small vote" data-action="voteDown">{{> ionIcon icon="thumbsdown"}}</button>
-    </div>
-  </div>
-  {{/if}}
-  {{/if}}
-</template>
-
 <template name="listCardevents">
   {{> listCard}}
-  {{> boutonVote}}
   {{> boutonCard}}
 </template>
 
@@ -249,4 +247,35 @@
     </button>
   </div>
   {{/if}}
+</template>
+
+
+<template name="_inviteattendeesEvent">
+  {{#ionModal customTemplate=true}}
+  <div class="bar bar-header bar-dark">
+    <button data-dismiss="modal" type="button" class="button button-clear">{{_ "Reset"}}</button>
+    <h2 class="title">{{_ "Invite"}}</h2>
+  </div>
+<div class="content has-header overflow-scroll">
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "Send invite"}}
+    </div>
+    {{#if error}}
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    {{/if}}
+    {{#autoForm id="inviteAttendeesEvent" schema=SchemasInviteAttendeesEventRest type="method" meteormethod="inviteattendeesEvent" template="ionic" class="padding"}}
+    {{> afQuickField name='invitedUserName'}}
+    {{> afQuickField name='invitedUserEmail'}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "send"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+</div>
+  {{/ionModal}}
 </template>
