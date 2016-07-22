@@ -100,7 +100,7 @@ Template.contacts.onRendered(function () {
     onError: function(formType, error) {
       let ref;
       if (error.errorType && error.errorType === 'Meteor.Error') {
-
+        
       }
     }
   });

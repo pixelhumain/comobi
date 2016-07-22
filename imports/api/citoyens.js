@@ -65,17 +65,28 @@ const rolesCitoyen = new SimpleSchema({
 //invitedUserName
 //invitedUserEmail
 export const SchemasFollowRest = new SimpleSchema({
-    invitedUserName : {
-      type : String
-    },
-    invitedUserEmail : {
-      type : String,
-      regEx: SimpleSchema.RegEx.Email
-    }
-  });
+  invitedUserName : {
+    type : String
+  },
+  invitedUserEmail : {
+    type : String,
+    regEx: SimpleSchema.RegEx.Email
+  }
+});
 
-//TODO recuperer l'image du profil pour avatar
-//profilImageUrl
+export const SchemasInviteAttendeesEventRest = new SimpleSchema({
+  invitedUserName : {
+    type : String
+  },
+  invitedUserEmail : {
+    type : String,
+    regEx: SimpleSchema.RegEx.Email
+  },
+  eventId : {
+    type: String
+  },
+});
+
 
 Citoyens.attachSchema(
   new SimpleSchema({
@@ -141,7 +152,7 @@ Citoyens.attachSchema(
     profilMarkerImageUrl : {
       type : String,
       optional:true
-    },  
+    },
     created: {
       type: Date,
       autoValue: function() {
@@ -161,29 +172,29 @@ Citoyens.attachSchema(
 
   if(Meteor.isClient){
 
-  Citoyens.helpers({
-    isFollows (followId){
-          return this.links && this.links.follows && this.links.follows[followId];
-    },
-    knows () {
-      //this.links.knows
-      if(this && this.links && this.links.knows){
-        let knowsIds = _.map(this.links.knows, function(num, key){
-          let objectId = new Mongo.ObjectID(key);
-          return objectId;
-        });
-        return Citoyens.find({_id:{$in:knowsIds}});
+    Citoyens.helpers({
+      isFollows (followId){
+        return this.links && this.links.follows && this.links.follows[followId];
+      },
+      knows () {
+        //this.links.knows
+        if(this && this.links && this.links.knows){
+          let knowsIds = _.map(this.links.knows, function(num, key){
+            let objectId = new Mongo.ObjectID(key);
+            return objectId;
+          });
+          return Citoyens.find({_id:{$in:knowsIds}});
+        }
+      },
+      countKnows () {
+        if(this && this.links && this.links.knows){
+          let knowsIds = _.map(this.links.knows, function(num, key){
+            let objectId = new Mongo.ObjectID(key);
+            return objectId;
+          });
+          return Citoyens.find({_id:{$in:knowsIds}}).count();
+        }
       }
-    },
-    countKnows () {
-      if(this && this.links && this.links.knows){
-        let knowsIds = _.map(this.links.knows, function(num, key){
-          let objectId = new Mongo.ObjectID(key);
-          return objectId;
-        });
-        return Citoyens.find({_id:{$in:knowsIds}}).count();
-      }
-    }
-  });
+    });
 
-}
+  }

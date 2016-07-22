@@ -9,7 +9,7 @@ export const Documents = new Meteor.Collection("documents", {idGeneration : 'MON
 Documents.attachSchema(
   new SimpleSchema({
     id : {
-      type : String,
+      type : String
     },
     type : {
       type : String,
@@ -102,7 +102,7 @@ if(Meteor.isClient){
   import { Photosimg } from './client/photosimg.js'
 
 Documents.helpers({
-  photoNews: function () {
+  photoNews () {
     return Photosimg.find({_id:this.objId});
   }
 });

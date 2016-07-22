@@ -8,17 +8,10 @@ import { TAPi18n } from 'meteor/tap:i18n';
 import { Router } from 'meteor/iron:router';
 import { Location } from 'meteor/djabatav:geolocation-plus';
 
-let  pageSession = new ReactiveDict('pageSession');
+//helpers
+import { IsValidEmail } from 'meteor/froatsnook:valid-email';
 
-const isValidEmail = ( email ) => {
-  let emailTest = new RegExp(/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/);
-  if (emailTest.test(email) == false) {
-    pageSession.set( 'error', 'Email not valid' );
-    return false;
-  }else{
-    return true;
-  }
-};
+let  pageSession = new ReactiveDict('pageSession');
 
 Template.login.onCreated(function () {
   pageSession.set( 'error', false );
@@ -30,7 +23,7 @@ Template.login.onRendered(function () {
 });
 
 Template.login.events({
-  'submit .login-form': function (event,template) {
+  'submit .login-form' (event,template) {
     event.preventDefault();
     let email = event.target.email.value;
     let password = event.target.password.value;
@@ -39,7 +32,8 @@ Template.login.events({
       return;
     }
 
-    if(!isValidEmail(email)){
+    if(!IsValidEmail(email)){
+      pageSession.set( 'error', 'Email not valid' );
       return;
     }
     pageSession.set( 'loading-logging', true );
@@ -64,7 +58,7 @@ Template.login.helpers({
   },
   error () {
     return pageSession.get( 'error' );
-  },
+  }
 });
 
 Template.login.onCreated(function () {
@@ -103,7 +97,7 @@ Template.signin.onRendered(function () {
 });
 
 Template.signin.events({
-'keyup #codepostal, change #codepostal': function(event,template){
+'keyup #codepostal, change #codepostal' (event,template){
   if(event.currentTarget.value.length==5){
     Meteor.call('getcitiesbypostalcode',event.currentTarget.value,function(error, data){
       pageSession.set( 'cities', data);
@@ -114,7 +108,7 @@ Template.signin.events({
   return;
 }
 },
-'submit .signup-form': function (event,template) {
+'submit .signup-form' (event,template) {
   event.preventDefault();
   pageSession.set( 'error', null );
   const trimInput = ( val ) => {
@@ -179,7 +173,8 @@ Template.signin.events({
   if(!isValidUsername(username)){
     return;
   }
-  if(!isValidEmail(email)){
+  if(!IsValidEmail(email)){
+    pageSession.set( 'error', 'Email not valid' );
     return;
   }
   if (!isValidPassword(password)){

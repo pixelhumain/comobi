@@ -6,7 +6,7 @@ import { moment } from 'meteor/momentjs:moment';
 import { URL } from 'meteor/url';
 //collection et schemas
 import { NotificationHistory } from '../notification_history.js';
-import { Citoyens,SchemasFollowRest } from '../citoyens.js';
+import { Citoyens,SchemasFollowRest,SchemasInviteAttendeesEventRest } from '../citoyens.js';
 import { News,SchemasNewsRest } from '../news.js';
 import { Documents } from '../documents.js';
 import { Photosimg } from './photosimg.js';
@@ -14,13 +14,13 @@ import { Cities } from '../cities.js';
 import { Events,SchemasEventsRest } from '../events.js'
 
 //function api
-import { callPixelRest,callPixelUploadRest,authPixelRest } from './api.js';
+import { apiCommunecter } from './api.js';
 
-var encodeString = function(str) {
-  return encodeURIComponent(str).replace(/\*/g, "%2A");
-};
+//helpers
+import { encodeString } from '../helpers.js';
+import { ValidEmail,IsValidEmail } from 'meteor/froatsnook:valid-email';
 
-URL._encodeParams = function(params, prefix) {
+URL._encodeParams = (params, prefix) => {
   var str = [];
   for(var p in params) {
     if (params.hasOwnProperty(p)) {
@@ -44,8 +44,10 @@ URL._encodeParams = function(params, prefix) {
 //album
 //http://qa.communecter.org/upload/communecter/events/578a14c1dd0452a71cd386b6/album/1468873065_moon.png
 
+//refactor pour Utiliser l'upload des photos de news depuis le rest comme profil event
+
 Meteor.methods({
-  userup: function(geo) {
+  userup (geo) {
     check(geo, {longitude:Number,latitude:Number});
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
@@ -66,7 +68,7 @@ Meteor.methods({
     }
     this.unblock();
   },
-  'likePhoto': function(photoId) {
+  likePhoto (photoId) {
     check(photoId, String);
 
     if (!this.userId) {
@@ -103,7 +105,7 @@ Meteor.methods({
 
     }
   },
-  'dislikePhoto': function(photoId) {
+  dislikePhoto (photoId) {
     check(photoId, String);
 
     if (!this.userId) {
@@ -139,29 +141,29 @@ Meteor.methods({
 
     }
   },
-  addAction : function(doc){
+  addAction (doc){
     check(doc.id, String);
     check(doc.collection, String);
     check(doc.action, String);
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
-    var retour = Meteor.call("postPixel","action","addaction",doc);
+    var retour = apiCommunecter.postPixel("action","addaction",doc);
     return retour;
   },
-  followPersonExist : function(connectUserId){
+  followPersonExist (connectUserId){
     //type : person / follows
     //connectUserId
     check(connectUserId, String);
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
-    doc={};
+    let doc={};
     doc.connectUserId=connectUserId;
-    var retour = Meteor.call("postPixel","person","follows",doc);
+    var retour = apiCommunecter.postPixel("person","follows",doc);
     return retour;
   },
-  followPerson : function(doc){
+  followPerson (doc){
     //type : person / follows
     //invitedUserName
     //invitedUserEmail
@@ -169,24 +171,48 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
-    var retour = Meteor.call("postPixel","person","follows",doc);
+    var retour = apiCommunecter.postPixel("person","follows",doc);
     return retour;
   },
-  saveattendeesEvent : function(scope,eventId){
-    check(scope, String);
+  saveattendeesEvent (eventId,email){
     check(eventId, String);
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
-    doc={};
+    let doc={};
     doc.parentId=eventId;
-    doc.parentType=scope+'s';
+    doc.parentType='events';
     doc.childType="citoyens";
+    if(typeof email !== 'undefined'){
+    doc.childId=Citoyens.findOne({email:email})._id._str;
+    }else{
     doc.childId=this.userId;
-    var retour = Meteor.call("postPixel","link","connect",doc);
+    }
+    var retour = apiCommunecter.postPixel("link","connect",doc);
     return retour;
   },
-  insertNew : function(doc){
+  inviteattendeesEvent (doc){
+    check(doc, SchemasInviteAttendeesEventRest);
+    check(doc.invitedUserEmail,ValidEmail);
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+
+    if (!Meteor.call('isEmailValid',doc.invitedUserEmail)) {
+      throw new Meteor.Error("Email not valid");
+    }
+    let insertDoc={};
+    insertDoc.parentId=doc.eventId;
+    insertDoc.parentType='events';
+    insertDoc.childType="citoyens";
+    insertDoc.childEmail=doc.invitedUserEmail;
+    insertDoc.childName=doc.invitedUserName;
+    insertDoc.connectType="attendees";
+    insertDoc.childId="";
+    let retour = apiCommunecter.postPixel("link","connect",insertDoc);
+    return retour;
+  },
+  insertNew (doc){
     //type : organizations / projects > organizerId
     check(doc, SchemasNewsRest);
     if (!this.userId) {
@@ -199,7 +225,7 @@ Meteor.methods({
       doc.scope="public";
     }
 
-    var retour = Meteor.call("postPixel","news","save",doc);
+    var retour = apiCommunecter.postPixel("news","save",doc);
 
     if(doc.media && doc.media.content && doc.media.content.imageId){
       let image = Photosimg.findOne({_id:doc.media.content.imageId});
@@ -210,7 +236,25 @@ Meteor.methods({
 
     return retour;
   },
-  photoNews: function(photo,str,type,idType) {
+  updateNew (modifier,documentId){
+    check(modifier["$set"], SchemasNewsRest);
+
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    if (!News.findOne({_id:documentId}).isAuthor()) {
+      throw new Meteor.Error("not-authorized");
+    }
+
+    let updateNew = {};
+    updateNew.name = 'newsContent'+documentId._str;
+    updateNew.value = modifier["$set"].text;
+    updateNew.pk = documentId._str;
+
+    var retour = apiCommunecter.postPixel("news","updatefield",updateNew);
+    return retour;
+  },
+  photoNews (photo,str,type,idType) {
     check(str, String);
     check(type, String);
     check(idType, String);
@@ -261,7 +305,7 @@ Meteor.methods({
       throw new Meteor.Error("photoNews error");
     }
   },
-  photoNewsUpdate: function(newsId,photoId) {
+  photoNewsUpdate (newsId,photoId) {
     check(newsId, String);
     check(photoId, String);
     if (!this.userId) {
@@ -298,7 +342,7 @@ Meteor.methods({
 
     return image._id;
   },
-  cfsbase64tos3up: function(photo,str,type,idType) {
+  cfsbase64tos3up (photo,str,type,idType) {
     check(photo, Match.Any);
     check(str, Match.Any);
     if (!this.userId) {
@@ -320,7 +364,7 @@ Meteor.methods({
 
     return photoret._id;
   },
-  insertEvent : function(doc){
+  insertEvent (doc){
     //type : organizations / projects > organizerId
     check(doc, SchemasEventsRest);
     if (!this.userId) {
@@ -338,13 +382,16 @@ Meteor.methods({
     if(!doc.organizerType){
       doc.organizerType="citoyens";
     }
-    var retour = Meteor.call("postPixel","event","save",doc);
+    var retour = apiCommunecter.postPixel("event","save",doc);
     return retour;
   },
-  updateEvent : function(modifier,documentId){
-    check(documentId, String);
-    check(modifier, SchemasEventsRest);
+  updateEvent (modifier,documentId){
+    check(modifier["$set"], SchemasEventsRest);
+
     if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    if (!Events.findOne({_id:new Mongo.ObjectID(documentId)}).isAdmin()) {
       throw new Meteor.Error("not-authorized");
     }
     if(modifier["$set"].startDate){
@@ -360,16 +407,19 @@ Meteor.methods({
       modifier["$set"].organizerType="citoyens";
     }
     modifier["$set"].eventId=documentId;
-    var retour = Meteor.call("postPixel","event","update",modifier["$set"]);
+    var retour = apiCommunecter.postPixel("event","update",modifier["$set"]);
     return retour;
   },
-  photoEvents: function(photo,str,idType) {
+  photoEvents (photo,str,idType) {
     check(str, String);
     check(idType, String);
-    if (!this.userId && Events.find({_id:new Mongo.ObjectID(idType)}).isAdmin()) {
+    if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
-    let retourUpload = Meteor.call('postUploadPixel','events',idType,'avatar',photo,str);
+    if (!Events.findOne({_id:new Mongo.ObjectID(idType)}).isAdmin()) {
+      throw new Meteor.Error("not-authorized");
+    }
+    let retourUpload = apiCommunecter.postUploadPixel('events',idType,'avatar',photo,str);
     if(retourUpload){
       let documentId= Meteor.call("insertDocumentProfilEvents",idType,retourUpload);
       if(documentId){
@@ -381,7 +431,7 @@ Meteor.methods({
       throw new Meteor.Error("postUploadPixel error");
     }
   },
-  insertDocumentProfilEvents : function(idType,retourUpload){
+  insertDocumentProfilEvents (idType,retourUpload){
     check(idType, String);
     check(retourUpload, Object);
 
@@ -399,7 +449,7 @@ Meteor.methods({
     insertDoc.name = retourUpload.name;
     insertDoc.size = retourUpload.size;
     insertDoc.contentKey = "profil";
-    let  doc = Meteor.call("postPixel","document","save",insertDoc);
+    let  doc = apiCommunecter.postPixel("document","save",insertDoc);
     //console.log(doc);
     if(doc){
       Events.update({_id:new Mongo.ObjectID(idType)},{$set:{
@@ -409,105 +459,7 @@ Meteor.methods({
       }});
     }
   },
-  postPixel : function(controller,action,params){
-    check(controller, String);
-    check(action, String);
-    check(params, Object);
-    if (!this.userId) {
-      throw new Meteor.Error("not-authorized");
-    }
-    var userC = Meteor.users.findOne({_id:this.userId});
-    if(userC && userC.services && userC.services.resume && userC.services.resume.loginTokens && userC.services.resume.loginTokens[0] && userC.services.resume.loginTokens[0].hashedToken){
-      var retour = callPixelRest(userC.services.resume.loginTokens[0].hashedToken,"POST",controller,action,params);
-      //console.log(retour);
-      return retour;
-    }else{
-      throw new Meteor.Error("Error server");
-    }
-    //try {
-    /*} catch(e) {
-    throw new Meteor.Error("Error server");
-  }*/
-},
-postUploadPixel : function(folder,ownerId,input,dataBlob,name){
-  check(folder, String);
-  check(ownerId, String);
-  check(input, String);
-  //check(dataBlob, Object);
-  check(name, String);
-  if (!this.userId) {
-    throw new Meteor.Error("not-authorized");
-  }
-  var userC = Meteor.users.findOne({_id:this.userId});
-  if(userC && userC.services && userC.services.resume && userC.services.resume.loginTokens && userC.services.resume.loginTokens[0] && userC.services.resume.loginTokens[0].hashedToken){
-    var retour = callPixelUploadRest(userC.services.resume.loginTokens[0].hashedToken,folder,ownerId,input,dataBlob,name);
-    //console.log(retour);
-    if(retour && retour.name){
-      return retour;
-    }else{
-      throw new Meteor.Error("Error server");
-    }
-  }else{
-    throw new Meteor.Error("Error server");
-  }
-  //try {
-  /*} catch(e) {
-  throw new Meteor.Error("Error server");
-}*/
-},
-createUserAccount: function(user){
-  ////console.log(user);
-  check(user, Object);
-  check(user.name, String);
-  check(user.username, String);
-  check(user.email, String);
-  check(user.password, String);
-  check(user.codepostal, String);
-  check(user.city, String);
-
-  var passwordTest = new RegExp("(?=.{8,}).*", "g");
-  if (passwordTest.test(user.password) == false) {
-    throw new Meteor.Error("Password is Too short");
-  }
-
-  var emailTest = new RegExp(/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/);
-  if (emailTest.test(user.email) == false) {
-    throw new Meteor.Error("Email not valid");
-  }
-
-  if (Citoyens.find({email: user.email}).count() !== 0) {
-    throw new Meteor.Error("Email not unique");
-  }
-
-  if (Citoyens.find({username: user.username}).count() !== 0) {
-    throw new Meteor.Error("Username not unique");
-  }
-
-  var pswdDigest = SHA256(user.email+user.password)
-
-  let insee = Cities.findOne({insee: user.city});
-
-  let userId = Citoyens.insert({
-    name: user.name,
-    email: user.email,
-    pwd: pswdDigest,
-    created: new Date(),
-    address: {
-      addressLocality: insee.alternateName,
-      codeInsee: insee.insee,
-      postalCode:insee.cp
-    },
-    geo: {
-      latitude: insee.geo.latitude,
-      longitude: insee.geo.longitude
-    },
-    geoPosition: {
-      type: "Point",
-      coordinates : [parseFloat(insee.geo.longitude),parseFloat(insee.geo.latitude)]
-    }});
-    return userId;
-  },
-  createUserAccountRest: function(user){
+  createUserAccountRest (user){
     //console.log(user);
     check(user, Object);
     check(user.name, String);
@@ -522,8 +474,7 @@ createUserAccount: function(user){
       throw new Meteor.Error("Password is Too short");
     }
 
-    var emailTest = new RegExp(/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/);
-    if (emailTest.test(user.email) == false) {
+    if (!IsValidEmail(user.email)) {
       throw new Meteor.Error("Email not valid");
     }
 
@@ -563,7 +514,7 @@ createUserAccount: function(user){
 
 
   },
-  deletePhoto: function(photoId) {
+  deletePhoto (photoId) {
     check(photoId, String);
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
@@ -601,7 +552,7 @@ createUserAccount: function(user){
   });
 }
 },
-getcitiesbylatlng: function(latlng) {
+getcitiesbylatlng (latlng) {
   check(latlng, {latitude:Number,longitude:Number});
   Cities._ensureIndex({
     "geoShape": "2dsphere"
@@ -614,11 +565,11 @@ getcitiesbylatlng: function(latlng) {
 }
 },{_disableOplog: true});
 },
-getcitiesbypostalcode: function(cp) {
+getcitiesbypostalcode (cp) {
   check(cp, String);
   return Cities.find({'postalCodes.postalCode': cp}).fetch();
 },
-searchCities : function(query, options){
+searchCities (query, options){
   check(query, String);
   if (!query) return [];
 
@@ -635,7 +586,7 @@ searchCities : function(query, options){
   var regex = new RegExp("^" + query);
   return Cities.find({$or : [{name: {$regex:  regex, $options: "i"}},{'postalCodes.postalCode': {$regex:  regex}}]}, options).fetch();
 },
-pushNewAttendees : function(eventId){
+pushNewAttendees (eventId){
   check(eventId, String);
   if (!this.userId) {
     throw new Meteor.Error("not-authorized");
@@ -667,7 +618,7 @@ pushNewAttendees : function(eventId){
     throw new Meteor.Error("not-event-news");
   }
 },
-pushNewNewsAttendees : function(eventId,newsId){
+pushNewNewsAttendees (eventId,newsId){
   check(newsId, String);
   check(eventId, String);
   if (!this.userId) {
@@ -727,7 +678,7 @@ pushNewNewsAttendees : function(eventId,newsId){
     throw new Meteor.Error("not-event-news");
   }
 },
-pushUser : function(title,text,payload,query,badge){
+pushUser (title,text,payload,query,badge){
   check(title, String);
   check(text, String);
   check(payload, Object);
@@ -742,14 +693,14 @@ pushUser : function(title,text,payload,query,badge){
     badge: badge
   });
 },
-'insertNotification':function(notifObj){
+insertNotification (notifObj){
   if (!this.userId) {
     throw new Meteor.Error("not-authorized");
   }
   return  NotificationHistory.insert(notifObj)
 
 },
-'markRead': function(notifId) {
+markRead (notifId) {
   if (!this.userId) {
     throw new Meteor.Error("not-authorized");
   }
@@ -762,7 +713,7 @@ pushUser : function(title,text,payload,query,badge){
     }
   })
 },
-'alertCount':function(attendeesId){
+alertCount (attendeesId){
   if (!this.userId) {
     throw new Meteor.Error("not-authorized");
   }
@@ -778,7 +729,7 @@ pushUser : function(title,text,payload,query,badge){
     }
   }).count();
 },
-'registerClick': function(notifId) {
+registerClick (notifId) {
   if (!this.userId) {
     throw new Meteor.Error("not-authorized");
   }
@@ -791,7 +742,7 @@ pushUser : function(title,text,payload,query,badge){
     }
   })
 },
-'allRead': function() {
+allRead () {
   if (!this.userId) {
     throw new Meteor.Error("not-authorized");
   }
@@ -808,5 +759,23 @@ pushUser : function(title,text,payload,query,badge){
       'dismissals': this.userId
     }
   },{ multi: true})
+},
+isEmailValid: function(address) {
+  check(address, String);
+
+  // modify this with your key
+  var result = HTTP.get('https://api.mailgun.net/v2/address/validate', {
+    auth: 'api:pubkey-f83ce05bc8c736077a883e9c1d54ed29',
+    params: {address: address.trim()}
+  });
+
+  if (result.statusCode === 200) {
+    // is_valid is the boolean we are looking for
+    return result.data.is_valid;
+  } else {
+    // the api request failed (maybe the service is down)
+    // consider giving the user the benefit of the doubt and return true
+    return true;
+  }
 }
 });

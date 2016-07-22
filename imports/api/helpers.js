@@ -1,7 +1,11 @@
-export const capitalize = function(string) {
+export const capitalize = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-export const nameToCollection = function(name) {
+export const nameToCollection = (name) => {
   return this[capitalize(name)];
+};
+
+export const encodeString = (str) => {
+  return encodeURIComponent(str).replace(/\*/g, "%2A");
 };

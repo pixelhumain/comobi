@@ -130,28 +130,30 @@ News.deny({
 });
 
 
-if(Meteor.isClient){
+
 
   //collection
+if(Meteor.isClient){
   import { Photosimg } from './client/photosimg.js'
+}
   import { Citoyens } from './citoyens.js'
 
 News.helpers({
-  authorNews: function () {
+  authorNews () {
     return Citoyens.findOne({_id:new Mongo.ObjectID(this.author)});
   },
-  photoNews: function () {
+  photoNews () {
     if(this.media && this.media.content && this.media.content.imageId){
     return Photosimg.find({_id:this.media.content.imageId});
   }
   },
-  likesCount : function () {
+  likesCount () {
     if (this.voteUp && this.voteUpCount) {
       return this.voteUpCount;
     }
     return 0;
   },
-  dislikesCount : function () {
+  dislikesCount () {
     if (this.voteDown && this.voteDownCount) {
       return this.voteDownCount;
     }
@@ -161,4 +163,3 @@ News.helpers({
     return this.author === Meteor.userId();
   }
 });
-}
