@@ -1,0 +1,10 @@
+<template name="ionNavBackButton">
+  <button class="{{classes}}">
+    {{> ionIcon icon=icon}}
+    {{#unless isAndroid}}
+      <span class="back-text">
+        {{text}}
+      </span>
+    {{/unless}}
+  </button>
+</template>
