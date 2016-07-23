@@ -6,7 +6,7 @@ Package.describe({
 });
 
 Cordova.depends({
-  'ionic-plugin-keyboard': '2.2.1'
+  'ionic-plugin-keyboard': '1.0.8'
 });
 
 Package.onUse(function(api) {

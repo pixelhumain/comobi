@@ -89,4 +89,10 @@ window.addEventListener('native.keyboardhide', function (event) {
     $(el).css({bottom: $(el).data('ionkeyboard.bottom')});
   });
 
+  Meteor.setTimeout(function(){
+       if (!cordova.plugins.Keyboard.isVisible) {
+          $(".content.overflow-scroll").css("bottom", "0px")
+      }
+  }, 300);
+
 });
