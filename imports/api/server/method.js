@@ -20,7 +20,7 @@ import { apiCommunecter } from './api.js';
 import { encodeString } from '../helpers.js';
 import { ValidEmail,IsValidEmail } from 'meteor/froatsnook:valid-email';
 
-URL._encodeParams = (params, prefix) => {
+URL._encodeParams = function(params, prefix) {
   var str = [];
   for(var p in params) {
     if (params.hasOwnProperty(p)) {
@@ -765,7 +765,7 @@ isEmailValid: function(address) {
 
   // modify this with your key
   var result = HTTP.get('https://api.mailgun.net/v2/address/validate', {
-    auth: 'api:pubkey-f83ce05bc8c736077a883e9c1d54ed29',
+    auth: 'api:'+Meteor.settings.mailgun-pubkey,
     params: {address: address.trim()}
   });
 

@@ -37,57 +37,18 @@ Router.map(function() {
     path: '/',
     template: "listEvents",
     loadingTemplate: 'loading',
-    /*waitOn: function() {
-      Meteor.subscribe('citoyen');
-      let geo = Location.getReactivePosition();
-      let radius = Session.get('radius');
-      if(radius && geo && geo.latitude){
-        let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
-        singleSubs.subscribe('citoyenEvents',latlng,radius);
-      }else{
-        //console.log('City');
-        let city = Session.get('city');
-        if(city && city.geoShape && city.geoShape.coordinates){
-          singleSubs.subscribe('citoyenEvents',city.geoShape.coordinates);
-        }
-      }
-    }*/
   });
 
   this.route("mapEvents", {
     path: '/mapevents',
     template: "mapEvents",
     loadingTemplate: 'loading',
-    /*waitOn: function() {
-      Meteor.subscribe('citoyen');
-      let geo = Location.getReactivePosition();
-      let radius = Session.get('radius');
-      if(radius && geo && geo.latitude){
-        let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
-        Meteor.subscribe('citoyenEvents',latlng,radius);
-      }else{
-        //console.log('City');
-        let city = Session.get('city');
-        if(city && city.geoShape && city.geoShape.coordinates){
-          Meteor.subscribe('citoyenEvents',city.geoShape.coordinates);
-        }
-      }
-    }*/
   });
 
   this.route("mapWithEvent", {
     template: "mapEvents",
     loadingTemplate: 'loading',
     path: 'mapevents/:_id',
-    /*waitOn: function() {
-      Meteor.subscribe('citoyen');
-      let geo = Location.getReactivePosition();
-      let radius = Session.get('radius');
-      if(geo && geo.latitude){
-        let latlng = {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)};
-        Meteor.subscribe('citoyenEvents',latlng,radius);
-      }
-    },*/
     data: function() {
       Session.set("currentEvent", this.params._id);
     }
@@ -235,3 +196,7 @@ let ensurePixelSignin = function () {
 };
 
 Router.onBeforeAction(ensurePixelSignin, {except: ['login','signin']});
+
+Router.routes.login.options.progress = false;
+Router.routes.signin.options.progress = false;
+Router.routes.listEvents.options.progress = false;
