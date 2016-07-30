@@ -32,6 +32,14 @@ Session.setDefault('geolocate', true);
 Session.setDefault('radius', 25000);
 Session.setDefault('GPSstart', false);
 
+if(Meteor._localStorage.getItem('radius')){
+  Session.set('radius', parseInt(Meteor._localStorage.getItem('radius')));
+}
+
+if(Meteor._localStorage.getItem('geolocate')){
+  Session.set('geolocate', JSON.parse(Meteor._localStorage.getItem('geolocate')));
+}
+
 let language = window.navigator.userLanguage || window.navigator.language;
 if (language.indexOf('-') !== -1)
 language = language.split('-')[0];
