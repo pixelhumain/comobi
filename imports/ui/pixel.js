@@ -26,7 +26,21 @@ Template.layout.events({
         function (result) {
           if(result.cancelled==false && result.text && result.format=='QR_CODE'){
             //console.log(result.text);
+            //en fonction de ce qu'il y a dans le qr code
+            //ex {type:"events",_id:""}
+            let qr=JSON.parse(result.text);
+            if(qr && qr.type && qr._id){
+              if(qr.type=="person"){
+                Meteor.call('followPersonExist',qr._id);
+              }else if(qr.type=="event"){
+                Meteor.call('saveattendeesEvent',qr._id);
+                Router.go("newsList",{scope:'events',_id:qr._id});
+              }else if(qr.type=="organization"){
+
+              }
+            }else{
             Router.go("newsList",{scope:'events',_id:result.text});
+            }
           }else{
             return ;
           }
