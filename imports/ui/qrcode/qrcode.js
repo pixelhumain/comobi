@@ -6,7 +6,7 @@ import { $ } from 'meteor/jquery';
 
  Template.qrcode.rendered = function(){
 	this.$('#qrcode').qrcode({
-    "text": Router.current().params._id,
+    "text": '{type:"event",_id:'+Router.current().params._id+'}',
      render: 'image',
      size:100,
         ecLevel: 'H',
