@@ -26,7 +26,46 @@ Template.layout.events({
         function (result) {
           if(result.cancelled==false && result.text && result.format=='QR_CODE'){
             //console.log(result.text);
+            //en fonction de ce qu'il y a dans le qr code
+            //ex {type:"events",_id:""}
+            //alert(result.text);
+            let qr=JSON.parse(result.text);
+            //alert(qr);
+            if(qr && qr.type && qr._id){
+              if(qr.type=="person"){
+                Meteor.call('followPersonExist',qr._id, function (error, result) {
+                  if (!error) {
+                    alert("Connexion à l'entité réussie");
+                  }else{
+                    alert(error.reason);
+                    console.log('error',error);
+                  }
+                });
+              }else if(qr.type=="event"){
+                Meteor.call('saveattendeesEvent',qr._id);
+                Router.go("newsList",{scope:'events',_id:qr._id});
+              }else if(qr.type=="organization"){
+                Meteor.call('connectEntity',qr._id,'organizations', function (error, result) {
+                  if (!error) {
+                    alert("Connexion à l'entité réussie");
+                  }else{
+                    alert(error.reason);
+                    console.log('error',error);
+                  }
+                });
+              }else if(qr.type=="project"){
+                Meteor.call('connectEntity',qr._id,'projects', function (error, result) {
+                  if (!error) {
+                    alert("Connexion à l'entité réussie");
+                  }else{
+                    alert(error.reason);
+                    console.log('error',error);
+                  }
+                });
+              }
+            }else{
             Router.go("newsList",{scope:'events',_id:result.text});
+            }
           }else{
             return ;
           }

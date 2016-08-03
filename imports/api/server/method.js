@@ -191,6 +191,25 @@ Meteor.methods({
     var retour = apiCommunecter.postPixel("link","connect",doc);
     return retour;
   },
+  connectEntity (connectId,parentType){
+    check(connectId, String);
+    check(parentType, String);
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    let doc={};
+    doc.parentId=connectId;
+    doc.childType="citoyens";
+    if(parentType=="organizations"){
+    doc.connectType="member";
+    }else if(parentType=="projects"){
+    doc.connectType="contributor";
+    }
+    doc.childId=this.userId;
+    doc.parentType=parentType;
+    var retour = apiCommunecter.postPixel("link","connect",doc);
+    return retour;
+  },
   inviteattendeesEvent (doc){
     check(doc, SchemasInviteAttendeesEventRest);
     check(doc.invitedUserEmail,ValidEmail);
