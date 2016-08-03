@@ -5,14 +5,17 @@ import { Router } from 'meteor/iron:router';
 import { $ } from 'meteor/jquery';
 
  Template.qrcode.rendered = function(){
+   let qrresult = {type:"event",_id:Router.current().params._id};
+   let qr = JSON.stringify(qrresult);
+   console.log(qr);
 	this.$('#qrcode').qrcode({
-    "text": '{type:"event",_id:'+Router.current().params._id+'}',
+    "text": qr,
      render: 'image',
-     size:100,
-        ecLevel: 'H',
-        fill: "#E33551",
-        background: "#fafafa",
-        radius: 0.2,
+     size:150,
+     ecLevel: 'H',
+     fill: "#000000",
+     background: "#FFFFFF",
+     radius: 0.2
 });
 this.$('#qrcode image').remove();
 };
