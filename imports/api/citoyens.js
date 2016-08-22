@@ -94,8 +94,8 @@ Citoyens.attachSchema(
       type : String
     },
     username : {
-      type : String,
-      unique: true
+      type : String
+      //unique: true
     },
     email : {
       type : String,

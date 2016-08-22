@@ -206,6 +206,9 @@
       <button class="button button-small" data-ion-modal="_inviteattendeesEvent">{{> ionIcon icon="person-add"}}</button>
       {{else}}
       <button class="button button-small saveattendees-link">{{> ionIcon icon="person-add"}} Participer</button>
+      {{#if isCordova}}
+      <button class="button button-small scanner-event">{{> ionIcon icon="ios-barcode"}} Scanner QR</button>
+      {{/if}}
       {{/if}}
     </div>
   </div>
