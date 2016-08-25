@@ -174,7 +174,7 @@ Meteor.methods({
     var retour = apiCommunecter.postPixel("person","follows",doc);
     return retour;
   },
-  saveattendeesEvent (eventId,email){
+  saveattendeesEvent (eventId,email,inviteUserId){
     check(eventId, String);
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
@@ -186,7 +186,11 @@ Meteor.methods({
     if(typeof email !== 'undefined'){
     doc.childId=Citoyens.findOne({email:email})._id._str;
     }else{
-    doc.childId=this.userId;
+      if (typeof inviteUserId !== 'undefined' && inviteUserId) {
+        doc.childId=inviteUserId;
+      } else {
+        doc.childId=this.userId;
+      }
     }
     var retour = apiCommunecter.postPixel("link","connect",doc);
     return retour;
@@ -784,7 +788,7 @@ isEmailValid: function(address) {
 
   // modify this with your key
   var result = HTTP.get('https://api.mailgun.net/v2/address/validate', {
-    auth: 'api:'+Meteor.settings.mailgun-pubkey,
+    auth: 'api:'+Meteor.settings.mailgunpubkey,
     params: {address: address.trim()}
   });
 

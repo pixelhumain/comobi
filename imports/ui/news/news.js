@@ -91,6 +91,39 @@ Template.newsList.events({
     Meteor.call('inviteattendeesEvent',scopeId);
     return ;
   },
+  'click .scanner-event' : function(event, template){
+    event.preventDefault();
+    if(Meteor.isCordova){
+      const scopeId=Session.get('scopeId');
+      cordova.plugins.barcodeScanner.scan(
+        function (result) {
+          if(result.cancelled==false && result.text && result.format=='QR_CODE'){
+            let qr=JSON.parse(result.text);
+            //alert(qr);
+            if(qr && qr.type && qr._id){
+              if(qr.type=="person"){
+                Meteor.call('saveattendeesEvent', scopeId, undefined, qr._id, function (error, result) {
+                  if (!error) {
+                    alert("Connexion à l'entité réussie");
+                  }else{
+                    alert(error.reason);
+                    console.log('error',error);
+                  }
+                });
+              }
+            }
+          }else{
+            return ;
+          }
+        },
+        function (error) {
+          alert("Scanning failed: " + error);
+          return ;
+        }
+      );
+    }
+    return ;
+  },
   "click .give-me-more" (evt) {
     let newLimit = Session.get('limit') + 10;
     Session.set('limit', newLimit);
