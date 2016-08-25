@@ -12,7 +12,7 @@ Package.onUse(function(api) {
   api.export('MeteoricCamera');
 
   api.use(["tap:i18n@1.0.7"], ["client", "server"]);
-  api.use(['templating', 'session', 'ui', 'blaze', 'less@2.5.0_2', 'reactive-var', 'meteoric:ionic@0.1.13']);
+  api.use(['templating', 'session', 'ui', 'blaze', 'less@2.5.0_2', 'reactive-var', 'meteoric:ionic@0.2.0']);
   api.versionsFrom('METEOR@1.2');
 
   api.addFiles("package-tap.i18n", ["client", "server"]);

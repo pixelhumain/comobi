@@ -788,7 +788,7 @@ isEmailValid: function(address) {
 
   // modify this with your key
   var result = HTTP.get('https://api.mailgun.net/v2/address/validate', {
-    auth: 'api:'+Meteor.settings.mailgun-pubkey,
+    auth: 'api:'+Meteor.settings.mailgunpubkey,
     params: {address: address.trim()}
   });
 
