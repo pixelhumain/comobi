@@ -74,6 +74,8 @@
   "accountPending":"You've been invited : please resume the registration process in order to log in.",
   "betaTestNotOpen":"Our developpers are fighting to open soon ! Check your mail that will happen soon !",
   "notValidatedEmail":"Your account is not validated : please check your mailbox to validate your email address.",
+  "emailNotFound":"Impossible to find an account for this username or password.",
+  "emailAndPassNotMatch":"Email or password does not march. Please try again !",
   "Cities":"Villes",
   "schemas":{
     "followrest":{
