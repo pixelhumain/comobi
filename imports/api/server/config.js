@@ -54,7 +54,7 @@ Accounts.registerLoginHandler(function(loginRequest) {
       }
     }else{
       if(response && response.data && response.data.result === false){
-        throw new Meteor.Error(Accounts.LoginCancelledError.numericError, 'Communecter Login Failed');
+        throw new Meteor.Error(Accounts.LoginCancelledError.numericError, response.data.msg);
       } else if(response && response.data && response.data.result === true && response.data.msg){
         throw new Meteor.Error(response.data.msg);
       }
