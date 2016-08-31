@@ -72,6 +72,9 @@
   "Change location":"Changer de position",
   "Search a city or postal code":"Rechercher une ville ou un code postal",
   "Cities":"Villes",
+  "accountPending":"Vous avez été invité(e) : vous n'avez plus qu'à finir l'inscription pour vous connecter.",
+  "betaTestNotOpen":"Nos développeurs sont au taquet et ne dorment plus pour que la plateforme sorte bientôt ! Vérifiez votre boite aux lettres, ça arrive bientôt !",
+  "notValidatedEmail":"Votre compte n'est pas validé : un mail vous a été envoyé sur votre boite mail.",
   "schemas":{
     "followrest":{
       "invitedUserName":{

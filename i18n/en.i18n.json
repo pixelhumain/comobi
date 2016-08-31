@@ -71,6 +71,9 @@
   "Invitations contacts":"Invitations contacts",
   "Change location":"Change location",
   "Search a city or postal code":"Search a city or postal code",
+  "accountPending":"You've been invited : please resume the registration process in order to log in.",
+  "betaTestNotOpen":"Our developpers are fighting to open soon ! Check your mail that will happen soon !",
+  "notValidatedEmail":"Your account is not validated : please check your mailbox to validate your email address.",
   "Cities":"Villes",
   "schemas":{
     "followrest":{
