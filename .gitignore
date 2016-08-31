@@ -5,6 +5,7 @@ config.push.json
 settings.json
 settings-prod.json
 electron-settings.json
+electron-settings-prod.json
 cordova.facebook.json
 private/*
 node_modules/
