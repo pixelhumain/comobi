@@ -2,3 +2,48 @@
 .meteor-status {
 	z-index:100;
 }
+
+@media (min-width: 600px) {
+  .menu-content {
+    -webkit-transform: translate3d(265px, 0px, 0px) !important;
+    width: calc(100% - 265px) !important;
+  }
+
+.menu-left {
+overflow-y: auto;
+overflow-x: hidden;
+}
+
+.menu-right {
+overflow-y: auto;
+overflow-x: hidden;
+}
+
+i.icon.ion-navicon{
+	display: none;
+}
+
+button.button.button-clear.icon.ion-android-notifications.brand-base-text-color.pull-right {
+    display: none;
+}
+i.icon.ion-ios-arrow-right{
+	display: none;
+}
+i.icon.ion-ios-arrow-left{
+	display: none;
+}
+
+}
+
+
+@media (min-width: 1000px) {
+  .menu-content {
+    -webkit-transform: translate3d(265px, 0px, 0px) !important;
+    width: calc(100% - 530px) !important;
+  }
+
+.menu-left a[href="/notifications"].item.item-dark.item-icon-right {
+    display: none;
+}
+
+}
