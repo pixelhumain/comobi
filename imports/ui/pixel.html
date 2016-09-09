@@ -24,6 +24,13 @@
   <div class="content has-header">
     <div class="list">
       {{#if currentUser}}
+      <div class="item item-dark item-avatar">
+        {{#if currentUser.profile.pixelhumain.profilThumbImageUrl}}
+        {{> imgDoc profilThumbImageUrl=currentUser.profile.pixelhumain.profilThumbImageUrl}}
+        <h2>{{currentUser.profile.pixelhumain.name}}</h2>
+        <p>{{currentUser.profile.pixelhumain.email}}</p>
+        {{/if}}
+      </div>      
       <a class="item item-dark item-icon-right" href="#" data-ion-modal="eventsAdd" data-ion-menu-close>{{_ "Add event"}} {{> ionIcon icon="android-add-circle"}}</a>
       {{#if isCordova}}
       <a class="item item-dark item-icon-right" href="{{pathFor 'contacts'}}" data-ion-menu-close>{{_ "Invitations contacts"}} {{> ionIcon icon="android-contacts"}}</a>
