@@ -77,6 +77,8 @@
   "notValidatedEmail":"Votre compte n'est pas validé : un mail vous a été envoyé sur votre boite mail.",
   "emailNotFound":"impossible de trouver un compte avec ce nom d'utilisateur ou cet email.",
   "emailAndPassNotMatch":"Email ou Mot de Passe ne correspondent pas, rééssayez.",
+  "dashboard":"dashboard",
+  "me": "Moi",
   "schemas":{
     "followrest":{
       "invitedUserName":{

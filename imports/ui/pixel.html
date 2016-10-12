@@ -30,7 +30,7 @@
         <h2>{{currentUser.profile.pixelhumain.name}}</h2>
         <p>{{currentUser.profile.pixelhumain.email}}</p>
         {{/if}}
-      </div>      
+      </div>
       <a class="item item-dark item-icon-right" href="#" data-ion-modal="eventsAdd" data-ion-menu-close>{{_ "Add event"}} {{> ionIcon icon="android-add-circle"}}</a>
       {{#if isCordova}}
       <a class="item item-dark item-icon-right" href="{{pathFor 'contacts'}}" data-ion-menu-close>{{_ "Invitations contacts"}} {{> ionIcon icon="android-contacts"}}</a>
@@ -79,8 +79,9 @@
 
   {{#if currentUser}}
   {{#ionTabs class="tabs-dark tabs-icon-only"}}
-  {{> ionTab title=_events path="listEvents" iconOff="navicon-round" iconOn="navicon-round"}}
-  {{> ionTab title=_cartes path="mapEvents" iconOff="android-pin" iconOn="android-pin"}}
+    {{> ionTab title=_cartes path="dashboard" iconOff="home" iconOn="home"}}
+    {{> ionTab title=_events path="listEvents" iconOff="navicon-round" iconOn="navicon-round"}}
+    {{> ionTab title=_cartes path="mapEvents" iconOff="android-pin" iconOn="android-pin"}}
   {{/ionTabs}}
   {{/if}}
 
@@ -89,27 +90,6 @@
   {{/ionSideMenuContainer}}
 
   {{> meteorStatus lang=langChoix overlay=true}}
-
-  {{/ionBody}}
-</template>
-
-<template name="layout-old">
-  {{#ionBody}}
-  {{> ionNavBar class="bar-dark"}}
-
-  {{#ionNavView}}
-  {{> yield}}
-  {{/ionNavView}}
-
-  {{#if currentUser}}
-  {{#ionTabs class="tabs-dark tabs-icon-only"}}
-  {{> ionTab title=_events path="listEvents" iconOff="navicon-round" iconOn="navicon-round"}}
-  {{> ionTab title=_cartes path="mapEvents" iconOff="android-pin" iconOn="android-pin"}}
-  {{> ionTab title=_reglages path="settings" iconOff="gear-b" iconOn="gear-b"}}
-  {{/ionTabs}}
-  {{/if}}
-
-  {{> meteorStatus lang=langChoix}}
 
   {{/ionBody}}
 </template>

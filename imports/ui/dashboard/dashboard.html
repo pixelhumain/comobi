@@ -1,0 +1,53 @@
+<template name="dashboard">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "dashboard"}}</h1>
+  {{/contentFor}}
+  {{#contentFor "headerButtonLeft"}}
+  <button class="button button-clear pull-left" data-ion-menu-toggle="left">
+  {{#if isAndroid}}
+    {{> ionIcon icon='android-more-vertical'}}
+  {{else}}
+    {{> ionIcon icon='navicon'}}
+  {{/if}}
+  </button>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  <button class="button button-clear icon ion-android-notifications brand-base-text-color pull-right" data-ion-menu-toggle="right">
+   {{#if notificationsCount}}<div class="new-notification-bubble">{{notificationsCount}}</div>{{/if}}
+  </button>
+
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent class="scroll-bg"}}
+    <div class="row">
+      <div class="col">
+        <a class="button button-block button-large button-orga icon ion-person-stalker"><br>
+          {{_ "organizations"}}
+        </a>
+      </div>
+      <div class="col">
+        <a class="button button-block button-large button-event icon ion-calendar" href="{{pathFor 'listEvents'}}"><br>
+          {{_ "events"}}
+        </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <a class="button button-block button-large button-project icon ion-lightbulb"><br>
+          {{_ "projects"}}
+        </a>
+      </div>
+      <div class="col">
+        <a class="button button-block button-large button-person icon ion-person"><br>
+          {{_ "Me"}}
+        </a>
+      </div>
+    </div>
+  {{/ionContent}}
+
+
+  {{/ionView}}
+</template>

@@ -1,4 +1,7 @@
-
+$color-orga : #93C020; //vert
+$color-person: #FFC600; //jaune
+$color-event: #FFA200; //orange
+$color-project: #8C5AA1; // violet
 
 $ionicons-font-path: "/fonts" !default;
 
@@ -206,6 +209,57 @@ $brand-base-color: $positive;
 $brand-analogous-color: $positive;
 $brand-contrast-color: $dark;
 $color-algorithm : w3c;
+
+
+// BUTTONS START
+$button-orga-bg:              $color-orga !default;
+$button-orga-text:            #fff !default;
+$button-orga-border:          darken($color-orga, 10%) !default;
+$button-orga-active-bg:       darken($color-orga, 10%) !default;
+$button-orga-active-border:   darken($color-orga, 10%) !default;
+
+$button-person-bg:              $color-person !default;
+$button-person-text:            #fff !default;
+$button-person-border:          darken($color-person, 10%) !default;
+$button-person-active-bg:       darken($color-person, 10%) !default;
+$button-person-active-border:   darken($color-person, 10%) !default;
+
+$button-event-bg:              $color-event !default;
+$button-event-text:            #fff !default;
+$button-event-border:          darken($color-event, 10%) !default;
+$button-event-active-bg:       darken($color-event, 10%) !default;
+$button-event-active-border:   darken($color-event, 10%) !default;
+
+$button-project-bg:              $color-project !default;
+$button-project-text:            #fff !default;
+$button-project-border:          darken($color-project, 10%) !default;
+$button-project-active-bg:       darken($color-project, 10%) !default;
+$button-project-active-border:   darken($color-project, 10%) !default;
+
+.button{
+  &.button-orga {
+    @include button-style($button-orga-bg, $button-orga-border, $button-orga-active-bg, $button-orga-active-border, $button-orga-text);
+    @include button-clear($button-orga-border);
+    @include button-outline($button-orga-border);
+  }
+  &.button-person {
+    @include button-style($button-person-bg, $button-person-border, $button-person-active-bg, $button-person-active-border, $button-person-text);
+    @include button-clear($button-person-bg);
+    @include button-outline($button-person-bg);
+  }
+  &.button-event {
+    @include button-style($button-event-bg, $button-event-border, $button-event-active-bg, $button-event-active-border, $button-event-text);
+    @include button-clear($button-event-bg);
+    @include button-outline($button-event-bg);
+  }
+  &.button-project {
+    @include button-style($button-project-bg, $button-project-border, $button-project-active-bg, $button-project-active-border, $button-project-text);
+    @include button-clear($button-project-bg);
+    @include button-outline($button-project-bg);
+  }
+}
+
+// BUTTONS END
 
 .menu-left{
   background-color: $dark;

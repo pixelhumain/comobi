@@ -33,8 +33,14 @@ Router.map(function() {
     }
   });
 
-  this.route("listEvents", {
+  this.route("dashboard", {
     path: '/',
+    template: "dashboard",
+    loadingTemplate: 'loading',
+  });
+
+  this.route("listEvents", {
+    path: '/listevents',
     template: "listEvents",
     loadingTemplate: 'loading',
   });
@@ -191,7 +197,7 @@ let ensurePixelSignin = function () {
   if (Meteor.user() && Meteor.user().profile && Meteor.user().profile.pixelhumain) {
     this.next();
   } else {
-    this.render('login');
+    this.render('signin');
   }
 };
 

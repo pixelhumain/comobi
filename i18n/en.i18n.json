@@ -76,7 +76,9 @@
   "notValidatedEmail":"Your account is not validated : please check your mailbox to validate your email address.",
   "emailNotFound":"Impossible to find an account for this username or password.",
   "emailAndPassNotMatch":"Email or password does not march. Please try again !",
-  "Cities":"Villes",
+  "dashboard":"dashboard",
+  "me": "Me",
+  "Cities":"Cities",
   "schemas":{
     "followrest":{
       "invitedUserName":{
