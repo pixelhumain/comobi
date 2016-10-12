@@ -1,5 +1,5 @@
-# communEvent
-meteor mobile event application
+# co
+communecter mobile interface based on meteor
 directly pluggued into The ODB and also visible on Communecter
 
 - create new Event
@@ -15,6 +15,7 @@ directly pluggued into The ODB and also visible on Communecter
 - geo localisation
 - notifications of new pushes on an event
 - change location being watched
+- and support for organizations and projects to come
 
 # Install
 
