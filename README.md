@@ -66,6 +66,7 @@ directly pluggued into The ODB and also visible on Communecter
 
 ### Android
 
+* 
 * Génération de 2 apk (pour x86 et ARM car utilisation de crosswalk)
 * Signature des apk
 * Dépot sur le play Store
