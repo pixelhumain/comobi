@@ -12,6 +12,7 @@ import { Photosimg } from './photosimg.js';
 import { Cities } from '../cities.js';
 import { Events } from '../events.js';
 import { Lists } from '../lists.js';
+import { Orgas } from '../organizations.js';
 
 Meteor.publish('lists', function() {
 	if (!this.userId) {
@@ -158,6 +159,51 @@ Meteor.publishComposite('citoyenEvents', function(latlng,radius) {
 		]}
 	});
 
+	Orgas._ensureIndex({
+		"geoPosition": "2dsphere"
+	});
+
+	Meteor.publishComposite('citoyenOrgas', function(latlng,radius) {
+		if (!this.userId) {
+			return;
+		}
+		return {
+			find: function() {
+				if(radius){
+					return Orgas.find({'geoPosition': {
+						$nearSphere: {
+							$geometry: {
+								type: "Point",
+								coordinates: [latlng.longitude, latlng.latitude]
+							},
+							$maxDistance: radius
+						}}},{_disableOplog: true});
+					}else{
+						//console.log("polygon");
+						return Orgas.find({"geoPosition": {
+							$geoIntersects: {
+								$geometry:{
+									"type" : "Polygon",
+									"coordinates" : latlng
+								}
+							}
+						}
+					},{_disableOplog: true});
+				}
+			},
+			children: [
+				{
+					find: function(orga) {
+						return Documents.find({
+							id : orga._id._str,
+							contentKey : "profil"
+						});
+					}
+				}
+			]
+		}
+	});
+
 
 	Meteor.publishComposite('scopeDetail', function(scope,scopeId) {
 		check(scopeId, String);
@@ -171,7 +217,11 @@ Meteor.publishComposite('citoyenEvents', function(latlng,radius) {
 		}
 		return {
 			find: function() {
-				return Events.find({_id:new Mongo.ObjectID(scopeId)});
+				if(scope == "events"){
+					return Events.find({_id:new Mongo.ObjectID(scopeId)});
+				} else if (scope == "organizations"){
+					return Orgas.find({_id:new Mongo.ObjectID(scopeId)});
+				}
 			},
 			children: [
 				{

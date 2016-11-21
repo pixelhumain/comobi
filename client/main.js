@@ -5,6 +5,8 @@ import '../imports/ui/login/login.js';
 
 import '../imports/ui/dashboard/dashboard.js'
 
+import '../imports/ui/orgas/list.js'
+
 import '../imports/ui/events/attendees/attendees.js';
 import '../imports/ui/events/list.js';
 

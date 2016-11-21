@@ -1,0 +1,81 @@
+<template name="listAttendees">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "attendees"}}</h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="padding">
+    <div class="list">
+      <div class="item item-divider">
+        <i class="icon ion-ios-people"></i> {{_ "attendees"}} <span class="badge badge-dark">{{events.countAttendees}}</span>
+      </div>
+      {{#transition in="zoomIn" out="bounceOut"}}
+      {{#each events.listAttendees}}
+      {{#if isFollowsAttendees _id._str}}
+      <div class="item item-avatar animated out">
+        {{> imgDoc}}
+        <h2>{{name}}</h2>
+        {{#if onlineAttendees}}
+        <span class="badge badge-balanced">{{_ "online"}}</span>
+        {{else}}
+        <span class="badge badge-assertive">{{_ "offline"}}</span>
+        {{/if}}
+      </div>
+      {{else}}
+      <div class="item item-avatar item-button-right animated out">
+        {{> imgDoc}}
+        {{name}}
+        <button class="button button-positive followperson-link">
+          <i class="icon ion-person-add"></i>
+        </button>
+      </div>
+      {{/if}}
+      {{/each}}
+      {{/transition}}
+    </div>
+  </div>
+
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+
+<template name="chatEvents">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "Chat events"}}</h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent class="content-stable"}}
+
+  <div class="messages">
+    {{#transition in="zoomIn" out="bounceOut"}}
+    {{#each message in messages}}
+    <div class="message">
+      <span>{{ message.text }}</span>
+    </div>
+    <div class="time">{{message.time}}</div>
+    {{/each}}
+    {{/transition}}
+  </div>
+
+  {{/ionContent}}
+  {{/ionView}}
+</template>

@@ -79,6 +79,7 @@
   "dashboard":"dashboard",
   "me": "Me",
   "Cities":"Cities",
+  "Create an organization":"Create an organization",
   "schemas":{
     "followrest":{
       "invitedUserName":{

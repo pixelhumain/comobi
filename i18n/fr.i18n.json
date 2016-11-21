@@ -79,6 +79,7 @@
   "emailAndPassNotMatch":"Email ou Mot de Passe ne correspondent pas, rééssayez.",
   "dashboard":"dashboard",
   "me": "Moi",
+  "Create an organization":"Créer une organisation",
   "schemas":{
     "followrest":{
       "invitedUserName":{
