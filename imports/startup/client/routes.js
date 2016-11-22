@@ -45,6 +45,12 @@ Router.map(function() {
     loadingTemplate: 'loading',
   });
 
+  this.route("listProjects", {
+    path: '/listProjects',
+    template: "listProjects",
+    loadingTemplate: 'loading',
+  });
+
   this.route("listEvents", {
     path: '/listevents',
     template: "listEvents",

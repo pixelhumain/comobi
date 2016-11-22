@@ -20,6 +20,7 @@ import { newsListSubs } from '../../api/client/subsmanager.js';
 import { Events } from '../../api/events.js';
 import { News } from '../../api/news.js';
 import { Orgas } from '../../api/organizations.js';
+import { Projects } from '../../api/projects.js';
 
 let pageSession = new ReactiveDict('pageNews');
 
@@ -66,6 +67,8 @@ Template.newsList.helpers({
       return Orgas.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
     } else if (scopeName == "events") {
       return Events.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
+    } else if (scopeName == "projects") {
+      return Projects.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
     }
   },
   scopeCardTemplate () {
