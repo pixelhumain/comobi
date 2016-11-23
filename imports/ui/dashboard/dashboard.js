@@ -27,5 +27,8 @@ Template.dashboard.helpers({
   },
   city (){
     return Session.get('city');
+  },
+  meteorId (){
+    return Meteor.userId();
   }
 });
