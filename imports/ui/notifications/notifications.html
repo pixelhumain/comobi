@@ -11,20 +11,50 @@
   <h1 class="title">{{_ "notifications"}}</h1>
   {{/contentFor}}
 
+{{#if dataReady}}
   {{#ionView hide-nav-bar="true"}}
   {{#ionContent}}
   <div class="list">
     <div class="item item-divider">
       <i class="icon ion-speakerphone"></i> {{_ "notifications"}} <span class="badge badge-dark">{{notificationsCount}}</span>
     </div>
-    {{> notificationsList}}
+    {{> notificationsList notifications=notifications}}
   </div>
   {{/ionContent}}
   {{/ionView}}
+  {{/if}}
 </template>
 
 <template name="notificationsList">
-{{#if Template.subscriptionsReady}}
+
+{{#transition in="zoomIn" out="bounceOut"}}
+{{#each notifications}}
+{{#if notify.url}}
+<div class="item item-icon-left item-text-wrap animated out clickGo removeMe" data-ion-menu-close>
+  <p>
+  <i class="icon fa {{notify.icon}} positive"></i> {{notify.displayName}}
+  </p>
+  <p>{{livestamp created}}</p>
+</div>
+{{else}}
+<div class="item item-icon-left item-text-wrap animated out">
+  <p>
+    <i class="icon fa {{notify.icon}} positive"></i> {{notify.displayName}}
+  </p>
+    <p>{{livestamp created}}</p>
+</div>
+{{/if}}
+{{else}}
+{{#ionItem}}
+{{_ "not notifications"}}
+{{/ionItem}}
+{{/each}}
+{{/transition}}
+
+</template>
+
+<template name="notificationsListOld">
+{{#if dataReady}}
 {{#transition in="zoomIn" out="bounceOut"}}
 {{#each notifications}}
 {{#if link}}

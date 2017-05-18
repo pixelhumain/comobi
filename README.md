@@ -1,5 +1,5 @@
-# co
-communecter mobile interface based on meteor
+# communEvent
+meteor mobile event application
 directly pluggued into The ODB and also visible on Communecter
 
 - create new Event
@@ -15,7 +15,6 @@ directly pluggued into The ODB and also visible on Communecter
 - geo localisation
 - notifications of new pushes on an event
 - change location being watched
-- and support for organizations and projects to come
 
 # Install
 
@@ -53,20 +52,6 @@ directly pluggued into The ODB and also visible on Communecter
 
   pour l'envoyer en retour avec le userId
 
-  et ce token nous sert pour faire les appelle REST sur communecter vu qu'on partage la même base pour identifier l'user car pour le moment il y a de systeme type oauth sur communecter
+  et ce token nous sert pour faire les appelle REST sur communecter vu qu'on partage la même base pour identifier l'user
 
-## Build et mise en prod
-
-* voir https://guide.meteor.com/mobile.html#building-for-production
-* On utilise galaxy
-
-### iOS
-
-* il y a des trucs à voir avec xcode 8 des trucs à rajouter pour que ça passe
-
-### Android
-
-* 
-* Génération de 2 apk (pour x86 et ARM car utilisation de crosswalk)
-* Signature des apk
-* Dépot sur le play Store
+  car pour le moment il y a de systeme type oauth sur communecter

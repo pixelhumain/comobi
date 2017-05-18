@@ -1,0 +1,44 @@
+<template name="mapScope">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+{{#contentFor "headerButtonRight"}}
+
+{{/contentFor}}
+
+{{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "Carte"}}</h1>
+{{/contentFor}}
+
+ {{#ionView}}
+    {{#ionContent}}
+{{> mapCanvas}}
+      {{/ionContent}}
+  {{/ionView}}
+</template>
+
+<template name="mapCanvas">
+  <div id="map_canvas" class="map"></div>
+</template>
+
+<template name="mapscopepopup">
+  <h2><a href="{{pathFor 'detailList' _id=this._id._str scope=scopeVar}}">{{name}}</a></h2>
+  <span class="badge {{#if isStart}}badge-balanced{{else}}badge-dark{{/if}}"><i class="icon ion-person"></i> {{countPopMap}}</span>
+  {{#if startDate}}
+  <p>
+    {{#if isStart}}
+    <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
+    {{#if endDate}}
+    <i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>
+    <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
+    {{/if}}
+    {{else}}
+    <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
+    {{#if endDate}}
+    <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
+    {{/if}}
+    {{/if}}
+  </p>
+  {{/if}}
+</template>

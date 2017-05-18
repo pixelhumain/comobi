@@ -1,6 +1,6 @@
 <template name="dashboard">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "dashboard"}}</h1>
+    <h1 class="title">{{_ "dashboard"}} {{#if city}} : {{city.name}}{{/if}}</h1>
   {{/contentFor}}
   {{#contentFor "headerButtonLeft"}}
   <button class="button button-clear pull-left" data-ion-menu-toggle="left">
@@ -14,40 +14,70 @@
 
   {{#contentFor "headerButtonRight"}}
 
-  <button class="button button-clear icon ion-android-notifications brand-base-text-color pull-right" data-ion-menu-toggle="right">
-   {{#if notificationsCount}}<div class="new-notification-bubble">{{notificationsCount}}</div>{{/if}}
+  <button class="button button-clear icon ion-android-notifications brand-base-text-color pull-right all-seen" data-ion-menu-toggle="right">
+   {{#transition in="bounceInDown" out="bounceOutUp"}}
+   {{#if notificationsCount}}
+   <div class="new-notification-bubble animated out">{{notificationsCount}}</div>
+   {{/if}}
+   {{/transition}}
   </button>
 
   {{/contentFor}}
 
+
   {{#ionView}}
   {{#ionContent class="scroll-bg"}}
+  <div class="row">
+    <div class="col">
+      Les données afficher correspondent à votre position géolocalisée ou à celle de votre profil : {{#if city.name}}<strong>{{city.name}}</strong>{{/if}}, si la géolocalistion ne fonctionne pas
+      ou si vous changer de position par celle de la commune selectionner {{#if radius}} dans un rayon de <strong>{{radius}} métres</strong>{{/if}}
+    </div>
+  </div>
     <div class="row">
       <div class="col">
-        <a class="button button-block button-large button-orga icon ion-person-stalker" href="{{pathFor 'listOrgas'}}"><br>
-          {{_ "organizations"}}
+        <a class="button button-block button-large button-organization icon ion-person-stalker" href="{{pathFor 'listOrganizations'}}"><br>
+          {{_ "organizations"}}<br>
+          {{#if hasPublishedCount (geoId 'organizations')}}
+          {{getPublishedCount (geoId 'organizations')}}
+          {{else}}
+          <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+          {{/if}}
         </a>
       </div>
       <div class="col">
         <a class="button button-block button-large button-event icon ion-calendar" href="{{pathFor 'listEvents'}}"><br>
-          {{_ "events"}}
+          {{_ "events"}}<br>
+          {{#if hasPublishedCount (geoId 'events')}}
+          {{getPublishedCount (geoId 'events')}}
+          {{else}}
+          <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+          {{/if}}
         </a>
       </div>
     </div>
     <div class="row">
       <div class="col">
         <a class="button button-block button-large button-project icon ion-lightbulb" href="{{pathFor 'listProjects'}}"><br>
-          {{_ "projects"}}
+          {{_ "projects"}}<br>
+          {{#if hasPublishedCount (geoId 'projects')}}
+          {{getPublishedCount (geoId 'projects')}}
+          {{else}}
+          <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+          {{/if}}
         </a>
       </div>
       <div class="col">
-        <a class="button button-block button-large button-person icon ion-person" href="{{pathFor 'newsList' _id=meteorId scope="citoyens"}}"><br>
-          {{_ "Me"}}
+        <a class="button button-block button-large button-person icon ion-person" href="{{pathFor 'listCitoyens'}}"><br>
+          {{_ "persons"}}<br>
+          {{#if hasPublishedCount (geoId 'citoyens')}}
+          {{getPublishedCount (geoId 'citoyens')}}
+          {{else}}
+          <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+          {{/if}}
         </a>
       </div>
     </div>
   {{/ionContent}}
-
-
   {{/ionView}}
+
 </template>

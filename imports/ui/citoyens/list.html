@@ -1,0 +1,246 @@
+<template name="listCitoyens">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "citoyens"}} {{#if city}} : {{city.name}}{{/if}}</h1>
+  {{/contentFor}}
+  {{#contentFor "headerButtonLeft"}}
+  <button class="button button-clear pull-left" data-ion-menu-toggle="left">
+  {{#if isAndroid}}
+    {{> ionIcon icon='android-more-vertical'}}
+  {{else}}
+    {{> ionIcon icon='navicon'}}
+  {{/if}}
+  </button>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  <button class="button button-clear icon ion-android-notifications brand-base-text-color pull-right all-seen" data-ion-menu-toggle="right">
+    {{#transition in="bounceInDown" out="bounceOutUp"}}
+    {{#if notificationsCount}}
+    <div class="new-notification-bubble animated out">{{notificationsCount}}</div>
+    {{/if}}
+    {{/transition}}
+  </button>
+
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent class="scroll-bg"}}
+  <div class="list list-inset">
+    <label class="item item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input id="search" type="text" placeholder="{{_ "searchPlaceholder"}}" value="{{searchCitoyens}}">
+    </label>
+  </div>
+
+    <div class="list list-inset">
+
+      <div class="item item-divider">
+        <i class="ion-android-calendar"></i> {{_ "citoyens"}} <span class="badge badge-dark">{{countCitoyens}}</span>
+      </div>
+      {{#if dataReady}}
+      {{#transition in="zoomIn" out="bounceOut"}}
+      {{#each citoyens}}
+      <a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'detailList' _id=this._id._str scope="citoyens"}}">
+        {{#if profilThumbImageUrl}}
+          <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
+        {{/if}}
+        <h2>{{name}}</h2>
+        {{#if geo}}<p><a class="positive" href="{{pathFor 'mapWith' _id=_id._str scope='citoyens'}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a></p>{{/if}}
+        {{#if currentUser}}
+        {{#if isCreator}}
+
+        {{/if}}
+        {{/if}}
+      </a>
+       {{else}}
+
+      {{/each}}
+      {{/transition}}
+      {{/if}}
+    </div>
+
+  {{/ionContent}}
+  {{/ionView}}
+
+  {{#if currentUser}}
+  {{#ionTabs class="tabs-dark tabs-icon-only"}}
+  {{> ionTab title=_events path="listCitoyens" iconOff="navicon-round" iconOn="navicon-round"}}
+  {{#unless dataReady}}
+  <a class="tab-item">
+   <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+  </a>
+  {{else}}
+  {{> ionTab title=_cartes href="map/citoyens" iconOff="android-pin" iconOn="android-pin"}}
+  {{/unless}}
+  {{/ionTabs}}
+  {{/if}}
+  {{else}}
+  {{> loading}}
+  {{/if}}
+</template>
+
+
+<template name="citoyensBlockEdit">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "citoyens"}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "Edit a citoyen"}}
+    </div>
+    {{#if error}}
+    <div class="card">
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if equals block 'preferences'}}
+    {{#autoForm id="editBlockCitoyen" schema=blockSchema type="method-update" meteormethod="updateBlock" doc=citoyen autosave=true template="ionic" class="padding"}}
+    {{> citoyensFields block=block}}
+    {{/autoForm}}
+    {{else}}
+    {{#autoForm id="editBlockCitoyen" schema=blockSchema type="method-update" meteormethod="updateBlock" doc=citoyen template="ionic" class="padding"}}
+    {{> citoyensFields block=block}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+    {{/if}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+  {{> loading}}
+  {{/if}}
+</template>
+
+<template name="citoyensEdit">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "citoyens"}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "Edit a citoyen"}}
+    </div>
+    {{#if error}}
+    <div class="card">
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    </div>
+    {{/if}}
+    {{#autoForm id="editCitoyen" schema=SchemasCitoyensRest type="method-update" meteormethod="updateCitoyen" doc=citoyen template="ionic" class="padding"}}
+    {{> citoyensFields update="1"}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+  {{> loading}}
+  {{/if}}
+</template>
+
+
+<template name="citoyensFields">
+  {{#if equals block 'info'}}
+  {{> afQuickField name='name' label-type='placeholder' icon="fa fa-user positive"}}
+  {{> afQuickField name='username' label-type='placeholder' icon="fa fa-user positive"}}
+  {{> afQuickField name='tags' icon="fa fa-hashtag"}}
+  {{> afQuickField name='email' label-type='placeholder' icon="fa fa-envelope"}}
+  {{> afQuickField name='url' label-type='placeholder' icon="fa fa-link"}}
+  {{> afQuickField name='fixe' label-type='placeholder' icon="fa fa-phone"}}
+  {{> afQuickField name='mobile' label-type='placeholder' icon="fa fa-mobile"}}
+  {{> afQuickField name='fax' label-type='placeholder' icon="fa fa-fax"}}
+  {{> afQuickField name='birthDate' label-type='placeholder' icon="fa fa-birthday-cake"}}
+  {{/if}}
+
+  {{#if equals block 'network'}}
+  {{> afQuickField name='telegram' label-type='placeholder' icon="fa fa-telegram"}}
+  {{> afQuickField name='skype' type="url" label-type='placeholder' icon="fa fa-skype"}}
+  {{> afQuickField name='github' type="url" label-type='placeholder' icon="fa fa-github"}}
+  {{> afQuickField name='gpplus' type="url" label-type='placeholder' icon="fa fa-google-plus"}}
+  {{> afQuickField name='twitter' type="url" label-type='placeholder' icon="fa fa-twitter"}}
+  {{> afQuickField name='facebook' type="url" label-type='placeholder' icon="fa fa-facebook"}}
+  {{/if}}
+
+  {{#if equals block 'descriptions'}}
+  {{> afQuickField name='shortDescription' type="textarea" label-type='stacked' rows=8}}
+  {{> afQuickField name='description' type="textarea" label-type='stacked' rows=8}}
+  {{/if}}
+
+  {{#if equals block 'preferences'}}
+  <div class="list card">
+  <div class="item item-body">
+<strong>{{_ "Public"}}</strong> : {{_ "Visible pour tout le monde"}}<br>
+<strong>{{_ "Privé"}}</strong>  : {{_ "Visible pour mes contacts seulement"}}<br>
+<strong>{{_ "Masqué"}}</strong>  : {{_ "Visible pour personne"}}<br>
+<strong>{{_ "Open Data"}}</strong>  : {{_ "Vous proposez vos données en accès libre, afin de contribuer au bien commun"}}
+  </div>
+</div>
+  {{> afQuickField type="select-radio" name='preferences.email'}}
+  {{> afQuickField type="select-radio" name='preferences.locality'}}
+  {{> afQuickField type="select-radio" name='preferences.phone'}}
+  {{> afQuickField type="select-radio" name='preferences.directory'}}
+  {{> afQuickField type="select-radio" name='preferences.birthDate'}}
+  {{> afQuickField name='preferences.isOpenData'}}
+  {{/if}}
+
+  {{#if equals block 'locality'}}
+  {{> afQuickField name='country' autocomplete="off" value=country }}
+  {{#if currentFieldValue "country"}}
+  {{> afQuickField name='postalCode' value=postalCode autocomplete="off"}}
+  {{#if currentFieldValue "postalCode"}}
+  {{#if optionsInsee}}
+  {{> afQuickField name='city' options=optionsInsee value=city}}
+  {{> afQuickField name='cityName' type="hidden" value=cityName}}
+  {{else}}
+  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
+  {{/if}}
+  {{/if}}
+  {{> afQuickField name='streetAddress' label-type='stacked' autocomplete="off"}}
+  {{#if latlng}}
+  {{> map}}
+  {{/if}}
+  {{> afQuickField name='geoPosLatitude' type="hidden" value=latitude}}
+  {{> afQuickField name='geoPosLongitude' type="hidden" value=longitude}}
+  {{> afQuickField name='regionName' type="hidden" value=regionName}}
+  {{> afQuickField name='depName' type="hidden" value=depName}}
+  {{/if}}
+  {{/if}}
+
+</template>

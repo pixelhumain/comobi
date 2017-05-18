@@ -1,6 +1,8 @@
 <template name="newsDetail">
   {{#contentFor "headerButtonLeft"}}
-  {{>ionNavBackButton href=(urlFor 'newsList' _id=scope._id._str scope="events")}}
+  {{#if scope._id._str}}
+  {{>ionNavBackButton}}
+  {{/if}}
   {{/contentFor}}
 
   {{#contentFor "headerButtonRight"}}
@@ -11,53 +13,64 @@
   <h1 class="title">{{_ "news"}}</h1>
   {{/contentFor}}
 
+{{#if dataReady}}
   {{#ionView}}
   {{#ionContent}}
   <div class="list card">
     {{#with scope.new}}
-    <div class="item">
-      <h2>{{#if name}}{{name}}{{else}}{{authorNews.name}}{{/if}}</h2>
-      <p><i class="icon ion-clock"></i> {{livestamp created}} <i class="icon ion-person"></i>  {{authorNews.name}}</p>
+    <div class="item {{#if imageDoc authorNews._id._str}}item-avatar{{/if}}">
+      {{#if imageDoc authorNews._id._str}}
+      {{> imgDoc imageDoc=(imageDoc authorNews._id._str profil=true) resized="80x80"}}
+      {{/if}}
+      <h2>
+        {{#if equals targetIsAuthor 'true'}}
+        <a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="dark">{{#if name}}{{name}}{{else}}{{authorNews.name}}{{/if}}</a>
+        {{else}}
+        <a href="{{pathFor 'detailList' _id=authorNews._id._str scope='citoyens'}}" class="dark">{{#if name}}{{name}}{{else}}{{authorNews.name}}{{/if}}</a>
+        {{/if}}
+      </h2>
+      <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
     </div>
-    {{#if photoNews}}
+    {{#if photoNewsAlbums}}
     <div class="item item-body">
-      {{#each photoNews}}
-      <img src="{{this.url store='photosLarge' uploading='/default.png' storing='/default.png'}}" class="full-image photo-viewer"  />
+      {{#each photoNewsAlbums}}
+    <img src="{{urlImageCommunecter}}/upload/{{moduleId}}/{{folder}}/{{name}}" class="full-image photo-viewer" />
       {{/each}}
     </div>
     {{/if}}
     {{#if text}}
     <div class="item item-body">
-      {{text}}
+      {{{textMentions (autolinker text)}}}
+      {{#if tags}}
+      <p>
+      {{#each tags}}
+      <a href="" class="positive"><i class="icon ion-pound"></i> {{this}}</a>
+      {{/each}}
+    </p>
+      {{/if}}
     </div>
     {{/if}}
     <div class="item tabs tabs-secondary tabs-icon-left">
-      <a class="tab-item like-photo" href="#">
+      <a class="tab-item" href="{{pathFor 'newsDetailComments' _id=scope._id._str newsId=_id._str scope=scope.scopeVar}}">
+        <i class="icon fa fa-comment"></i>
+        {{commentsCount}}
+      </a>
+      <a class="tab-item like-news" href="#">
         <i class="icon ion-thumbsup"></i>
         {{likesCount}}
       </a>
-      <a class="tab-item dislike-photo" href="#">
+      <a class="tab-item dislike-news" href="#">
         <i class="icon ion-thumbsdown"></i>
         {{dislikesCount}}
       </a>
       {{#if isAuthor}}
-      <a class="tab-item delete-photo" href="#">
-        <i class="icon ion-trash-a"></i>
-        {{_ "delete"}}
-      </a>
-      <a class="tab-item" href="{{pathFor "newsEdit" _id=scope._id._str newsId=_id._str scope="events"}}">
-        <i class="icon ion-edit"></i>
-        {{_ "edit"}}
+      <a class="tab-item action-news" href="#">
+        <i class="icon fa fa-cog"></i>
       </a>
       {{else}}
       {{#if ../scope.isAdmin}}
-      <a class="tab-item delete-photo" href="#">
-        <i class="icon ion-trash-a"></i>
-        {{_ "delete"}}
-      </a>
-      <a class="tab-item" href="{{pathFor "newsEdit" _id=scope._id._str newsId=_id._str scope="events"}}">
-        <i class="icon ion-edit"></i>
-        {{_ "edit"}}
+      <a class="tab-item action-news" href="#">
+        <i class="icon fa fa-cog"></i>
       </a>
       {{/if}}
       {{/if}}
@@ -66,4 +79,7 @@
   </div>
   {{/ionContent}}
   {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
 </template>

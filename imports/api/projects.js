@@ -8,256 +8,300 @@ import { Router } from 'meteor/iron:router';
 export const Projects = new Meteor.Collection("projects", {idGeneration : 'MONGO'});
 
 //schemas
-import { Countries_SELECT,Countries_SELECT_LABEL,PostalAddress,GeoCoordinates,GeoPosition } from './schema.js'
+import { baseSchema,blockBaseSchema,geoSchema,avancements_SELECT,avancements_SELECT_LABEL,preferences } from './schema.js'
 
 //collection
 import { Lists } from './lists.js'
 
-export const SchemasProjectsRest = new SimpleSchema({
-  name : {
-    type : String
-  },
-  type : {
-    type : String,
-    autoform: {
-      type: "select",
-      options: function () {
-        if (Meteor.isClient) {
-          let listSelect = Lists.findOne({name:'organisationTypes'});
-          if(listSelect && listSelect.list){
-            return _.map(listSelect.list,function (value,key) {
-              return {label: value, value: key};
-            });
-          }
-        }
-      }
-    }
-  },
-  country : {
-    type : String,
-    allowedValues: Countries_SELECT,
-    autoform: {
-      type: "select",
-      options: Countries_SELECT_LABEL,
-    }
-  },
-  streetAddress: {
-    type : String,
-    optional: true
-  },
-  postalCode: {
-    type : String,
-    min:5,
-    max:9
-  },
-  city: {
-    type : String,
-    autoform: {
-      type: "select"
-    }
-  },
-  cityName: {
-    type : String,
-    autoform: {
-      type: "hidden"
-    }
-  },
-  geoPosLatitude: {
-    type: Number,
-    decimal: true,
-    optional:true
-  },
-  geoPosLongitude: {
-    type: Number,
-    decimal: true,
-    optional:true
-  },
-  description : {
-    type : String,
-    autoform: {
-      type: "textarea"
-    }
-  }
-});
+//SimpleSchema.debug = true;
 
-let linksProjects = new SimpleSchema({
-  events : {
-    type: [Object],
+export const SchemasProjectsRest = new SimpleSchema([baseSchema,geoSchema,{
+  avancement : {
+    type : String,
     optional:true
   },
-  contributors : {
-    type: [Object],
-    optional:true
-  },
-  followers : {
-    type: [Object],
-    optional:true
-  },
-  needs : {
-    type: [Object],
-    optional:true
-  }
-});
-
-
-export const SchemasProjects = new SimpleSchema({
-    name : {
-      type : String
-    },
-    address : {
-      type : PostalAddress
-    },
-    geo : {
-      type : GeoCoordinates
-    },
-    geoPosition : {
-      type : GeoPosition
-    },
-    description : {
-      type : String,
-      autoform: {
-        type: "textarea"
-      }
-    },
-    url : {
-      type : String,
+    startDate : {
+      type : Date,
       optional:true
     },
-    licence : {
-      type : String,
+    endDate : {
+      type : Date,
       optional:true
-    },
-    tasks : {
-      type : [Object],
-      optional: true
-    },
-    tags : {
-      type : [String]
     },
     email : {
       type : String,
-      regEx: SimpleSchema.RegEx.Email
+      regEx: SimpleSchema.RegEx.Email,
+      optional: true
     },
-    links : {
-      type : linksProjects,
-      optional:true
-    },
-    profilImageUrl : {
+    fixe : {
       type : String,
-      optional:true
+      optional: true
     },
-    profilThumbImageUrl : {
+    mobile : {
       type : String,
-      optional:true
+      optional: true
     },
-    profilMarkerImageUrl : {
+    fax : {
       type : String,
-      optional:true
+      optional: true
     },
-    profilMediumImageUrl : {
-      type : String,
-      optional:true
+    parentId : {
+      type: String
     },
-    creator : {
-      type: String,
-      autoValue: function() {
-        if (this.isInsert) {
-          return Meteor.userId();
-        } else if (this.isUpsert) {
-          return {
-            $setOnInsert: Meteor.userId()
-          };
-        } else {
-          this.unset();
-        }
-      },
-      denyUpdate: true
-    },
-    created: {
-      type: Date,
-      autoValue: function() {
-        if (this.isInsert) {
-          return new Date();
-        } else if (this.isUpsert) {
-          return {
-            $setOnInsert: new Date()
-          };
-        } else {
-          this.unset();
-        }
-      },
-      denyUpdate: true
-    },
-    startDate : {
-      type : Date
-    },
-    endDate : {
-      type : Date
+    parentType : {
+      type: String
     }
-  });
+  }]);
 
-  Projects.attachSchema(
-    SchemasProjects
-  );
-
-  Projects.allow({
-    insert: function (userId, doc) {
-      return (userId && doc.creator === userId);
-    },
-    update: function (userId, doc, fields, modifier) {
-      return doc.creator === userId;
-    },
-    remove: function (userId, doc) {
-      return doc.creator === userId;
-    },
-    fetch: ['creator']
-  });
-
-  Projects.deny({
-    update: function (userId, docs, fields, modifier) {
-      return _.contains(fields, 'creator');
+  export const BlockProjectsRest = {};
+  BlockProjectsRest.descriptions = new SimpleSchema([blockBaseSchema,baseSchema.pick(['shortDescription','description'])]);
+  BlockProjectsRest.info = new SimpleSchema([blockBaseSchema,baseSchema.pick(['name','tags','tags.$','url']),SchemasProjectsRest.pick(['avancement','email','fixe','mobile','fax'])]);
+  BlockProjectsRest.network = new SimpleSchema([blockBaseSchema,{
+      github : {
+        type : String,
+        regEx: SimpleSchema.RegEx.Url,
+        optional: true
+      },
+      instagram : {
+        type : String,
+        regEx: SimpleSchema.RegEx.Url,
+        optional: true
+      },
+      skype : {
+        type : String,
+        regEx: SimpleSchema.RegEx.Url,
+        optional: true
+      },
+      gpplus : {
+        type : String,
+        regEx: SimpleSchema.RegEx.Url,
+        optional: true
+      },
+      twitter : {
+        type : String,
+        regEx: SimpleSchema.RegEx.Url,
+        optional: true
+      },
+      facebook : {
+        type : String,
+        regEx: SimpleSchema.RegEx.Url,
+        optional: true
+      }
+    }]);
+  BlockProjectsRest.when = new SimpleSchema([blockBaseSchema,SchemasProjectsRest.pick(['startDate','endDate'])]);
+  BlockProjectsRest.locality = new SimpleSchema([blockBaseSchema,geoSchema]);
+  BlockProjectsRest.preferences = new SimpleSchema([blockBaseSchema,{
+    preferences : {
+      type: preferences,
+      optional:true
     }
-  });
-
+  }]);
 
 //if(Meteor.isClient){
   //collection
   import { News } from './news.js'
   import { Citoyens } from './citoyens.js';
+  import { Organizations } from './organizations.js';
+  import { Documents } from './documents.js';
+  import { Events } from './events.js';
+  import { ActivityStream } from './activitystream.js';
+  import { queryLink,queryLinkType,arrayLinkType,queryLinkToBeValidated,arrayLinkToBeValidated,queryOptions,nameToCollection } from './helpers.js';
+
+  if(Meteor.isClient){
+    window.Organizations = Organizations;
+    window.Citoyens = Citoyens;
+  }
 
   Projects.helpers({
+    isVisibleFields (field){
+      /*if(this.isMe()){
+        return true;
+      }else{
+        if(this.isPublicFields(field)){
+          return true;
+        }else{
+          if(this.isFollowersMe() && this.isPrivateFields(field)){
+            return true;
+          }else{
+            return false;
+          }
+        }
+      }*/
+      return true;
+    },
+    isPublicFields (field){
+       return this.preferences && this.preferences.publicFields && _.contains(this.preferences.publicFields, field);
+    },
+    isPrivateFields (field){
+      return this.preferences && this.preferences.privateFields && _.contains(this.preferences.privateFields, field);
+    },
+    documents (){
+    return Documents.find({
+      id : this._id._str,
+      contentKey : "profil"
+    },{sort: {"created": -1},limit: 1 });
+    },
+    organizerProject (){
+      if(this.parentId && this.parentType && _.contains(['events', 'projects','organizations','citoyens'], this.parentType)){
+        console.log(this.parentType);
+      let collectionType = nameToCollection(this.parentType);
+      return collectionType.findOne({
+        _id: new Mongo.ObjectID(this.parentId)
+      }, {
+        fields: {
+          'name': 1
+        }
+      });
+    }
+    },
     creatorProfile () {
       return Citoyens.findOne({_id:new Mongo.ObjectID(this.creator)});
     },
     isCreator () {
       return this.creator === Meteor.userId();
     },
-    isAdmin () {
-      return this.links && this.links.contributors && this.links.contributors[Meteor.userId()] && this.links.contributors[Meteor.userId()].isAdmin;
+    isAdmin (userId) {
+      let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+      return (this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].isAdmin && this.isToBeValidated(bothUserId)) ? true : false;
     },
-    isContributors (){
-          return this.links && this.links.contributors && this.links.contributors[Meteor.userId()];
+    isToBeValidated (userId) {
+      let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+      return (this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].toBeValidated) ? false : true;
     },
-    listContributors (){
+    toBeValidated (userId) {
+      let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+      return (this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].toBeValidated) ? true : false;
+    },
+    listMembersToBeValidated (){
       if(this.links && this.links.contributors){
-        let contributors = _.map(this.links.contributors, function(contributors,key){
-           return new Mongo.ObjectID(key);
-         });
-          return Citoyens.find({_id:{$in:contributors}},{sort: {"name": 1} });
+        const query = queryLinkToBeValidated(this.links.contributors);
+          return Citoyens.find(query,queryOptions);
       } else{
         return false;
       }
     },
-    countContributors () {
-      return this.links && this.links.contributors && _.size(this.links.contributors);
+    scopeVar () {
+      return 'projects';
+    },
+    scopeEdit () {
+      return 'projectsEdit';
+    },
+    listScope () {
+      return 'listProjects';
+    },
+    isFollows (followId){
+      return (this.links && this.links.follows && this.links.follows[followId]) ? true : false;
+    },
+    isFollowsMe (){
+      return (this.links && this.links.follows && this.links.follows[Meteor.userId()]) ? true : false;
+    },
+    listFollows (search){
+      if(this.links && this.links.follows){
+        const query = queryLink(this.links.follows,search);
+          return Citoyens.find(query,queryOptions);
+      } else{
+        return false;
+      }
+    },
+    countFollows (search) {
+      //return this.links && this.links.follows && _.size(this.links.follows);
+      return this.listFollows(search) && this.listFollows(search).count();
+    },
+    isFollowers (followId){
+      return (this.links && this.links.followers && this.links.followers[followId]) ? true : false;
+    },
+    isFollowersMe (){
+      return (this.links && this.links.followers && this.links.followers[Meteor.userId()]) ? true : false;
+    },
+    listFollowers (search){
+      if(this.links && this.links.followers){
+        const query = queryLink(this.links.followers,search);
+          return Citoyens.find(query,queryOptions);
+      } else{
+        return false;
+      }
+    },
+    countFollowers (search) {
+      //return this.links && this.links.followers && _.size(this.links.followers);
+      return this.listFollowers(search) && this.listFollowers(search).count();
+    },
+    isContributors (userId){
+      const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+      return (this.links && this.links.contributors && this.links.contributors[bothUserId] && this.isToBeValidated(bothUserId)) ? true : false;
+    },
+    listContributors (search){
+      if(this.links && this.links.contributors){
+        const query = queryLink(this.links.contributors,search);
+          return Citoyens.find(query,queryOptions);
+      } else{
+        return false;
+      }
     },
     isStart () {
       let start = moment(this.startDate).toDate();
       let now = moment().toDate();
       return moment(start).isBefore(now); // True
     },
-    news () {
-      return News.find({'target.id':Router.current().params._id},{sort: {"created": -1},limit: Session.get('limit') });
+    countContributors (search) {
+      //return this.links && this.links.contributors && _.size(this.links.contributors);
+      return this.listContributors(search) && this.listContributors(search).count();
+    },
+    listEvents (search){
+      if(this.links && this.links.events){
+        const query = queryLink(this.links.events,search);
+          return Events.find(query,queryOptions);
+      } else{
+        return false;
+      }
+    },
+    countEvents (search) {
+      //return this.links && this.links.events && _.size(this.links.events);
+      return this.listEvents(search) && this.listEvents(search).count();
+    },
+    listEventsCreator (){
+      let query = {};
+      query['organizerId'] = this._id._str;
+      return Events.find(query,queryOptions);
+    },
+    countEventsCreator () {
+      //return this.links && this.links.events && _.size(this.links.events);
+      return this.listEventsCreator() && this.listEventsCreator().count();
+    },
+    listNotifications (userId){
+    let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+  	return ActivityStream.api.isUnseen(bothUserId,this._id._str);
+    },
+    listNotificationsAsk (userId){
+    let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+  	return ActivityStream.api.isUnseenAsk(bothUserId,this._id._str);
+    },
+    countPopMap () {
+      return this.links && this.links.contributors && _.size(this.links.contributors);
+    },
+    newsJournal (target,userId,limit) {
+      const query = {};
+      const options = {};
+      options['sort'] = {"created": -1};
+      query['$or'] = [];
+      let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+      let targetId = (typeof target !== 'undefined') ? target : Router.current().params._id;
+      if(Meteor.isClient){
+        let bothLimit = Session.get('limit');
+      }else{
+        if(typeof limit !== 'undefined'){
+          options['limit'] = limit;
+        }
+      }
+      let scopeTypeArray = ['public','restricted'];
+      if (this.isContributors(bothUserId)) {
+        scopeTypeArray.push('private');
+      }
+      query['$or'].push({'target.id':targetId,'scope.type':{$in:scopeTypeArray}});
+      query['$or'].push({'mentions.id':targetId,'scope.type':{$in:scopeTypeArray}});
+      if(bothUserId){
+        //query['$or'].push({'author':bothUserId});
+      }
+      return News.find(query,options);
     },
     new () {
       return News.findOne({_id:new Mongo.ObjectID(Router.current().params.newsId)});

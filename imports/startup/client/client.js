@@ -1,88 +1,148 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { Session } from 'meteor/session';
 import { Tracker } from 'meteor/tracker';
-
-import { Helpers } from 'meteor/raix:handlebar-helpers';
-
-import { Location } from 'meteor/djabatav:geolocation-plus';
-import { geolib } from 'meteor/outatime:geolib';
 import { TAPi18n } from 'meteor/tap:i18n';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { AutoForm } from 'meteor/aldeed:autoform';
 import { moment } from 'meteor/momentjs:moment';
+import { Router } from 'meteor/iron:router';
+import { DeepLink } from 'meteor/communecter:deep-link';
 
 //collections
-import { NotificationHistory } from '../../api/notification_history.js';
+import { ActivityStream } from '../../api/activitystream.js';
 import { Documents } from '../../api/documents.js';
 
 //schemas
-import { SchemasEventsRest } from '../../api/events.js';
+import { SchemasEventsRest,BlockEventsRest } from '../../api/events.js';
+import { SchemasOrganizationsRest,BlockOrganizationsRest } from '../../api/organizations.js';
+import { SchemasProjectsRest,BlockProjectsRest } from '../../api/projects.js';
 import { SchemasFollowRest,SchemasInviteAttendeesEventRest } from '../../api/citoyens.js';
-import { SchemasNewsRest } from '../../api/news.js';
+import { SchemasNewsRest,SchemasNewsRestBase } from '../../api/news.js';
+import { SchemasCommentsRest,SchemasCommentsEditRest } from '../../api/comments.js';
+import { SchemasCitoyensRest,BlockCitoyensRest } from '../../api/citoyens.js';
+
 
 Meteor.startup(function () {
+
+  window.HTML.isConstructedObject = function(x) {
+  return _.isObject(x) && !$.isPlainObject(x)
+};
+if (Meteor.isCordova && !Meteor.isDesktop) {
+
+  DeepLink.once('INTENT', function(intent){
+    console.log('INTENT');
+    console.log(intent);
+    if (intent.split('#').length === 2) {
+      console.log('SPLIT');
+      let urlArray = intent.split('#')[1].split('.');
+      if (urlArray && urlArray.length === 4) {
+        const type = urlArray[0];
+        const detail = urlArray[1];
+        const _id = urlArray[3];
+        const scope = (type === 'person') ? 'citoyens' : `${type}s`;
+        if(detail === 'detail'){
+        if(scope === 'events' || scope === 'organizations' || scope === 'projects' || scope === 'citoyens'){
+          Router.go("detailList",{scope:scope,_id:_id});
+        }
+      }
+      }
+    }
+   });
+
+  DeepLink.once('communecter', function(data, url, scheme, path, querystring){
+    console.log('communecter');
+    console.log(url);
+    console.log(scheme);
+    console.log(path);
+    console.log(querystring);
+    /*
+    communecter://
+    communecter://login
+    communecter://signin
+    communecter://sign-out
+    communecter://events
+    communecter://organizations
+    communecter://projects
+    communecter://citoyens
+    communecter://citoyens/:_id/edit
+    communecter://organizations/add
+    communecter://organizations/:_id/edit
+    communecter://projects/add
+    communecter://projects/:_id/edit
+    communecter://events/add
+    communecter://events/:_id/edit
+    communecter://events/sous/:_id
+    communecter://map/:scope/
+    communecter://map/:scope/:_id
+    communecter://:scope/news/:_id
+    communecter://:scope/directory/:_id
+    communecter://:scope/news/:_id/new/:newsId
+    communecter://:scope/news/:_id/add
+    communecter://:scope/news/:_id/edit/:newsId
+    communecter://:scope/news/:_id/new/:newsId/comment
+    communecter://:scope/news/:_id/edit/:newsId/comments/:commentId/edit
+    communecter://organizations/members/:_id
+    communecter://projects/contributors/:_id
+    communecter://events/attendees/:_id
+    communecter://citoyens/follows/:_id
+    communecter://settings
+    communecter://contact
+    communecter://citie
+    communecter://notifications
+    communecter://search
+    */
+    Router.go(`/${path}`);
+   });
+
+DeepLink.on('https', (data, url, scheme, path) => {
+console.log('HTTPS');
+console.log(url);
+console.log(scheme);
+console.log(path);
+});
+
+}
+
 
   if (Meteor.isCordova) {
     window.alert = navigator.notification.alert;
     window.confirm = navigator.notification.confirm;
   }
 
-Session.setDefault('geolocate', true);
-Session.setDefault('radius', 25000);
-Session.setDefault('GPSstart', false);
-
-if(Meteor._localStorage.getItem('radius')){
-  Session.set('radius', parseInt(Meteor._localStorage.getItem('radius')));
-}
-
-if(Meteor._localStorage.getItem('geolocate')){
-  Session.set('geolocate', JSON.parse(Meteor._localStorage.getItem('geolocate')));
-}
-
-let language = window.navigator.userLanguage || window.navigator.language;
-if (language.indexOf('-') !== -1)
-language = language.split('-')[0];
-
-if (language.indexOf('_') !== -1)
-language = language.split('_')[0];
-
-////console.log(language);
-//alert('language: ' + language + '\n');
-
-Helpers.setLanguage(language);
-
-TAPi18n.setLanguage(language)
-.done(function () {
-  //Session.set("showLoadingIndicator", false);
-})
-.fail(function (error_message) {
-  //console.log(error_message);
-});
-
-
-
 SchemasEventsRest.i18n("schemas.eventsrest");
+SchemasOrganizationsRest.i18n("schemas.organizationsrest");
+SchemasProjectsRest.i18n("schemas.projectsrest");
 SchemasFollowRest.i18n("schemas.followrest");
 SchemasInviteAttendeesEventRest.i18n("schemas.followrest");
-SchemasNewsRest.i18n("schemas.news");
-
-Template.registerHelper('distance',function (coordinates) {
-  let geo = Location.getReactivePosition();
-  if(geo && geo.latitude){
-    let rmetre=geolib.getDistance(
-      {latitude: parseFloat(coordinates.latitude), longitude: parseFloat(coordinates.longitude)},
-      {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)});
-      if(rmetre>1000){
-        let rkm=rmetre/1000;
-        return 	rkm+' km';
-      }else{
-        return 	rmetre+' m';
-      }
-    }else{
-      return false;
-    }
-  });
+SchemasNewsRest.i18n("schemas.news.global");
+SchemasNewsRestBase.citoyens.i18n("schemas.news.citoyens");
+SchemasNewsRestBase.projects.i18n("schemas.news.projects");
+SchemasNewsRestBase.organizations.i18n("schemas.news.organizations");
+SchemasNewsRestBase.events.i18n("schemas.news.events");
+SchemasCommentsRest.i18n("schemas.comments");
+SchemasCommentsEditRest.i18n("schemas.comments");
+SchemasCitoyensRest.i18n("schemas.citoyens");
+BlockCitoyensRest.info.i18n("schemas.global");
+BlockCitoyensRest.network.i18n("schemas.global");
+BlockCitoyensRest.descriptions.i18n("schemas.global");
+BlockCitoyensRest.locality.i18n("schemas.global");
+BlockCitoyensRest.preferences.i18n("schemas.global");
+BlockEventsRest.info.i18n("schemas.global");
+BlockEventsRest.network.i18n("schemas.global");
+BlockEventsRest.descriptions.i18n("schemas.global");
+BlockEventsRest.when.i18n("schemas.global");
+BlockEventsRest.locality.i18n("schemas.global");
+BlockEventsRest.preferences.i18n("schemas.global");
+BlockOrganizationsRest.info.i18n("schemas.global");
+BlockOrganizationsRest.network.i18n("schemas.global");
+BlockOrganizationsRest.descriptions.i18n("schemas.global");
+BlockOrganizationsRest.locality.i18n("schemas.global");
+BlockOrganizationsRest.preferences.i18n("schemas.global");
+BlockProjectsRest.info.i18n("schemas.global");
+BlockProjectsRest.network.i18n("schemas.global");
+BlockProjectsRest.descriptions.i18n("schemas.global");
+BlockProjectsRest.when.i18n("schemas.global");
+BlockProjectsRest.locality.i18n("schemas.global");
+BlockProjectsRest.preferences.i18n("schemas.global");
 
 Template.registerHelper('equals',
   function(v1, v2) {
@@ -90,11 +150,6 @@ Template.registerHelper('equals',
   }
 );
 
-Template.registerHelper('langChoix',
-function() {
-  return Helpers.language();
-}
-);
 
 Template.registerHelper('diffInText',
 function(start, end) {
@@ -113,13 +168,55 @@ function() {
 }
 );
 
-Template.registerHelper('imageDoc',
+Template.registerHelper('notificationsCount',
+function() {
+  return ActivityStream.api.Unseen();
+}
+);
+
+Template.registerHelper('notificationsCountRead',
+function() {
+  return ActivityStream.api.Unread();
+}
+);
+
+Template.registerHelper('notificationsScopeCount',
 function(id) {
+  return ActivityStream.api.Unseen(id);
+}
+);
+
+Template.registerHelper('notificationsScopeCountAsk',
+function(id) {
+  return ActivityStream.api.UnseenAsk(id);
+}
+);
+
+Template.registerHelper('notificationsScopeCountRead',
+function(id) {
+  return ActivityStream.api.Unread(id);
+}
+);
+
+Template.registerHelper('imageDoc',
+function(id,profil) {
+  const query = {};
   if(id){
-    //console.log(id);
-    return Documents.findOne({	id : id,doctype :'image'});
+    query['id'] = id;
+    if(profil){
+      query['contentKey'] = 'profil';
+    }
+    return Documents.findOne(query,{sort: {"created": -1}});
   }else{
-    return this && this._id && this._id._str && Documents.findOne({	id : this._id._str,doctype :'image'});
+    if(this && this._id && this._id._str){
+      query['id'] = this._id._str;
+      query['doctype'] = 'image';
+      if(profil){
+        query['contentKey'] = 'profil';
+      }
+      return this && this._id && this._id._str && Documents.findOne(query,{sort: {"created": -1}});
+    }
+
   }
 }
 );
@@ -133,87 +230,23 @@ Template.registerHelper("urlImageCommunecter", function () {
   return Meteor.settings.public.urlimage;
 });
 
+Template.registerHelper("urlModuleCommunecter", function () {
+  return Meteor.settings.public.module;
+});
 
+Template.registerHelper("urlImageDesktop", function () {
+  console.log(Meteor.settings.public.remoteUrl);
+  return Meteor.isDesktop ? Meteor.settings.public.remoteUrl : '';
+});
 
 Template.registerHelper("SchemasFollowRest", SchemasFollowRest);
 Template.registerHelper("SchemasInviteAttendeesEventRest", SchemasInviteAttendeesEventRest);
 Template.registerHelper("SchemasNewsRest", SchemasNewsRest);
 Template.registerHelper("SchemasEventsRest", SchemasEventsRest);
+Template.registerHelper("SchemasOrganizationsRest", SchemasOrganizationsRest);
+Template.registerHelper("SchemasProjectsRest", SchemasProjectsRest);
+Template.registerHelper("SchemasCommentsRest", SchemasCommentsRest);
+Template.registerHelper("SchemasCommentsEditRest", SchemasCommentsEditRest);
+Template.registerHelper("SchemasCitoyensRest", SchemasCitoyensRest);
 
-
-let success = function (state) {
-  if(state === 'Enabled') {
-    //console.log("GPS Is Enabled");
-    Session.set('GPSstart', true);
-    Location.locate(function(pos){
-      Session.set('geo',pos);
-      //console.log(pos);
-    }, function(err){
-      //console.log(err.message);
-      Session.set('GPSstart', false);
-      Session.set('geo',null);
-      Session.set('geoError',err.message);
-    });
-  }else if(state==="Disabled"){
-    //console.log("GPS Is Disabled");
-    Session.set('GPSstart', false);
-    Session.set('geo',null);
-    Session.set('geoError','GPS Is Disabled');
-  }else if(state=='NotDetermined' || state=='Restricted'){
-    //console.log("Never asked user for auhtorization");
-    Session.set('GPSstart', false);
-    Session.set('geo',null);
-    Session.set('geoError','Never asked user for auhtorization');
-  }else if(state==='Denied'){
-    //console.log("Asked User for authorization but they denied");
-    Session.set('GPSstart', false);
-    Session.set('geo',null);
-    Session.set('geoError','Asked User for authorization but they denied');
-  }
-}
-
-let failure = function () {
-  //console.log("Failed to get the GPS State");
-  Session.set('geoError','Failed to get the GPS State');
-  Session.set('GPSstart', false);
-}
-
-Location.getGPSState(success, failure, {
-  dialog: false
-});
-
-});
-
-
-Tracker.autorun(function() {
-  if (Meteor.userId() && Meteor.user()) {
-    let geolocate = Session.get('geolocate');
-    if(geolocate){
-      Location.startWatching(function(pos){
-        //console.log("Got a position!", pos);
-      }, function(err){
-        //console.log("Oops! There was an error", err);
-      });
-    }else{
-      Location.stopWatching();
-    }
-  }
-});
-
-Tracker.autorun(function() {
-  if (Reload.isWaitingForResume()) {
-    alert("Fermer et ré-ouvrir cette application pour obtenir la nouvelle version!");
-    //window.location.reload();
-  }
-});
-
-Tracker.autorun(function() {
-  let geoError = Session.get('geoError');
-  if (geoError) {
-    //alert(geoError);
-  }
-});
-
-Location.setGetPositionOptions({
-  enableHighAccuracy: false,
 });

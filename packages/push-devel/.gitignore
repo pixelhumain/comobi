@@ -1,0 +1,5 @@
+/versions.json
+.idea
+.build*
+
+.npm/

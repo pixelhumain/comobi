@@ -11,6 +11,7 @@
 
   {{/contentFor}}
 
+{{#if dataReady}}
   {{#ionView}}
   {{#ionContent}}
   <div class="padding">
@@ -20,25 +21,24 @@
       </div>
       {{#transition in="zoomIn" out="bounceOut"}}
       {{#each events.listAttendees}}
-      {{#if isFollowsAttendees _id._str}}
-      <div class="item item-avatar animated out">
+      <div class="item item-avatar item-button-right animated out">
         {{> imgDoc}}
-        <h2>{{name}}</h2>
+        <h2><a href="{{pathFor 'detailList' _id=_id._str scope='citoyens'}}" class="dark">{{name}}</a></h2>
+        {{#if isFollowsAttendees _id._str}}
+        <button class="button button-positive unfollowperson-link">
+          <i class="icon fa fa-unlink"></i>
+        </button>
         {{#if onlineAttendees}}
         <span class="badge badge-balanced">{{_ "online"}}</span>
         {{else}}
-        <span class="badge badge-assertive">{{_ "offline"}}</span>
+
+        {{/if}}
+        {{else}}
+        <button class="button button-positive followperson-link">
+          <i class="icon fa fa-link"></i>
+        </button>
         {{/if}}
       </div>
-      {{else}}
-      <div class="item item-avatar item-button-right animated out">
-        {{> imgDoc}}
-        {{name}}
-        <button class="button button-positive followperson-link">
-          <i class="icon ion-person-add"></i>
-        </button>
-      </div>
-      {{/if}}
       {{/each}}
       {{/transition}}
     </div>
@@ -46,52 +46,7 @@
 
   {{/ionContent}}
   {{/ionView}}
-</template>
-
-
-<template name="chatEvents">
-  {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "Chat events"}}</h1>
-  {{/contentFor}}
-
-  {{#contentFor "headerButtonLeft"}}
-  {{>ionNavBackButton}}
-  {{/contentFor}}
-
-  {{#contentFor "headerButtonRight"}}
-
-  {{/contentFor}}
-
-  {{#ionView}}
-  {{#ionContent class="content-stable"}}
-
-  <div class="messages">
-    {{#transition in="zoomIn" out="bounceOut"}}
-    {{#each message in messages}}
-    <div class="message">
-      <span>{{ message.text }}</span>
-    </div>
-    <div class="time">{{message.time}}</div>
-    {{/each}}
-    {{/transition}}
-  </div>
-
-  {{/ionContent}}
-  {{/ionView}}
-</template>
-
-<template name="imgDoc">
-  {{#if profilThumbImageUrl}}
-    <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
   {{else}}
-  {{#with this.imageDoc}}
-  <img src="{{urlImageCommunecter}}/communecter/document/resized/{{#if ../resized}}{{../resized}}{{else}}50x50{{/if}}/upload/{{moduleId}}/{{folder}}/{{name}}">
-  {{else}}
-  {{#with imageDoc}}
-  <img src="{{urlImageCommunecter}}/communecter/document/resized/{{#if ../resized}}{{../resized}}{{else}}50x50{{/if}}/upload/{{moduleId}}/{{folder}}/{{name}}">
-  {{else}}
-  <img src="/pas-de-photo{{#if resized}}{{resized}}{{else}}50x50{{/if}}.png">
-  {{/with}}
-  {{/with}}
-  {{/if}}
+{{> loading}}
+{{/if}}
 </template>

@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor';
-import { Mapbox } from 'meteor/pauloborges:mapbox';
+import { Mapbox } from 'meteor/communecter:mapbox';
 
 Meteor.startup(function(){
   Mapbox.load({
-    plugins: ['directions','arc','draw', 'markercluster']
+    plugins: ['directions','arc', 'markercluster']
   });
 });

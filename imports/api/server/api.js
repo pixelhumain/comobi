@@ -6,16 +6,18 @@ export const apiCommunecter = {};
 
 const callPixelRest = (token,method,controller,action,post) => {
   post["X-Auth-Token"] = token;
-  let responsePost = HTTP.call( method, Meteor.settings.endpoint+'/communecter/'+controller+'/'+action, {
+  //console.log(post);
+  let responsePost = HTTP.call( method, `${Meteor.settings.endpoint}/${Meteor.settings.module}/${controller}/${action}`, {
     headers:{
       'X-Auth-Token' : token,
-      'Origin':"http://meteor.communecter.org"
+      'Origin':"https://co-mobile.communecter.org"
     },
     params: post,
     npmRequestOptions : {
       jar: true
     }
   });
+  console.log(responsePost);
   if(responsePost && responsePost.data && responsePost.data.result){
     return responsePost;
   }else{
@@ -28,10 +30,41 @@ const callPixelRest = (token,method,controller,action,post) => {
   }
 }
 
+const callPixelMethodRest = (token,method,controller,action,post) => {
+  post["X-Auth-Token"] = token;
+  //console.log(post);
+  let responsePost = HTTP.call( method, `${Meteor.settings.endpoint}/${Meteor.settings.module}/${controller}/${action}`, {
+    headers:{
+      'X-Auth-Token' : token,
+      'Origin':"https://co-mobile.communecter.org"
+    },
+    params: post,
+    npmRequestOptions : {
+      jar: true
+    }
+  });
+  console.log(responsePost);
+  if(responsePost && responsePost.data){
+    return responsePost;
+  }else{
+      throw new Meteor.Error("error_server", "error server");
+  }
+}
+
 apiCommunecter.postPixel = function(controller,action,params){
   var userC = Meteor.users.findOne({_id:Meteor.userId()});
   if(userC && userC.services && userC.services.resume && userC.services.resume.loginTokens && userC.services.resume.loginTokens[0] && userC.services.resume.loginTokens[0].hashedToken){
     var retour = callPixelRest(userC.services.resume.loginTokens[0].hashedToken,"POST",controller,action,params);
+    return retour;
+  }else{
+    throw new Meteor.Error("Error identification");
+  }
+};
+
+apiCommunecter.postPixelMethod = function(controller,action,params){
+  var userC = Meteor.users.findOne({_id:Meteor.userId()});
+  if(userC && userC.services && userC.services.resume && userC.services.resume.loginTokens && userC.services.resume.loginTokens[0] && userC.services.resume.loginTokens[0].hashedToken){
+    var retour = callPixelMethodRest(userC.services.resume.loginTokens[0].hashedToken,"POST",controller,action,params);
     return retour;
   }else{
     throw new Meteor.Error("Error identification");
@@ -91,7 +124,7 @@ const callPixelUploadRest = (token,folder,ownerId,input,dataURI,name) => {
     }
   };
 
-  let responsePost = request.postSync(Meteor.settings.endpoint+'/communecter/document/upload/dir/communecter/folder/'+folder+'/ownerId/'+ownerId+'/input/'+input, {
+  let responsePost = request.postSync(`${Meteor.settings.endpoint}/${Meteor.settings.module}/document/upload/dir/${Meteor.settings.module}/folder/${folder}/ownerId/${ownerId}/input/${input}`, {
     formData: formData,
     jar: true
   });
@@ -122,7 +155,7 @@ apiCommunecter.postUploadPixel = (folder,ownerId,input,dataBlob,name) => {
 };
 
 apiCommunecter.authPixelRest = (email,pwd) => {
-  var response = HTTP.call( 'POST', Meteor.settings.endpoint+'/communecter/person/authenticate', {
+  var response = HTTP.call( 'POST', `${Meteor.settings.endpoint}/${Meteor.settings.module}/person/authenticate`, {
     params: {
       "pwd": pwd,
       "email": email

@@ -6,7 +6,7 @@
   "home":"Accueil",
   "events":"Evenements",
   "projects":"Projets",
-  "citoyens":"Citoyens",
+  "persons":"Citoyens",
   "organizations":"Organisations",
   "email":"Email",
   "username":"Nom d'utilisateur",
@@ -40,6 +40,7 @@
   "edit a news":"Editer une news",
   "edit":"Editer",
   "create":"Publier",
+  "cancel":"Annuler",
   "Communecter Login Failed":"Échec de la connexion",
   "Email not valid":"Email non valide",
   "Email not unique":"Email déja présent",
@@ -63,6 +64,10 @@
   "No Items found":"Aucun contact trouvé",
   "Enter a search term":"Entrez un terme de recherche. 4 caractères minimum",
   "attendees":"Participants",
+  "members":"Membres",
+  "contributors":"Contributeurs",
+  "follows":"Personnes que je suis",
+  "loading":"chargement...",
   "online":"en ligne",
   "offline":"hors ligne",
   "settings":"Réglages",
@@ -71,15 +76,97 @@
   "Invitations contacts":"Invitations contacts",
   "Change location":"Changer de position",
   "Search a city or postal code":"Rechercher une ville ou un code postal",
-  "Cities":"Villes",
   "accountPending":"Vous avez été invité(e) : vous n'avez plus qu'à finir l'inscription pour vous connecter.",
   "betaTestNotOpen":"Nos développeurs sont au taquet et ne dorment plus pour que la plateforme sorte bientôt ! Vérifiez votre boite aux lettres, ça arrive bientôt !",
   "notValidatedEmail":"Votre compte n'est pas validé : un mail vous a été envoyé sur votre boite mail.",
   "emailNotFound":"impossible de trouver un compte avec ce nom d'utilisateur ou cet email.",
   "emailAndPassNotMatch":"Email ou Mot de Passe ne correspondent pas, rééssayez.",
-  "dashboard":"dashboard",
-  "me": "Moi",
-  "Create an organization":"Créer une organisation",
+  "Add organization":"Ajouter une organisation",
+  "Create a organization":"Créer une organisation",
+  "Edit a organization":"Modifier une organisation",
+  "Something went really bad An organization with the same name allready exists":"Une organisation avec le même nom existe déjà",
+  "Participate":"Participer",
+  "QR Scanner":"Scanner QR",
+  "Become a member":"Devenir membre",
+  "Become a contributor":"Devenir contributeur",
+  "Follow this person":"Suivre cette personne",
+  "Unfollow this person":"Ne plus suivre cette personne",
+  "Add project":"Ajouter un projet",
+  "Create a project":"Créer un projet",
+  "Edit a project":"Modifier un projet",
+  "Cities":"Villes",
+  "community":"Communauté",
+  "favorites":"Favoris",
+  "search":"Chercher",
+  "searchPlaceholder":"Chercher par nom, #tag...",
+  "simpleschema": {
+    "messages": {
+      "usernameNotUnique": "[label] existe déja",
+      "required": "Veuillez saisir quelque chose",
+      "minString": "Veuillez saisir au moins [min] caractères",
+      "maxString": "Veuillez saisir moins de [max] caractères",
+      "minNumber": "Ce champ doit être superieur ou égal à [min]",
+      "maxNumber": "Ce champ doit être inferieur ou égal à [max]",
+      "minNumberExclusive": "Ce champ doit être superieur à [min]",
+      "maxNumberExclusive": "Ce champ doit être inferieur à [max]",
+      "minDate": "La date doit est posterieure au [min]",
+      "maxDate": "La date doit est anterieure au [max]",
+      "badDate": "Cette date est invalide",
+      "minCount": "Vous devez saisir plus de [minCount] valeurs",
+      "maxCount": "Vous devez saisir moins de [maxCount] valeurs",
+      "noDecimal": "Ce champ doit être un entier",
+      "notAllowed": "[value] n'est pas une valeur acceptée",
+      "expectedString": "Ce champ doit être une chaine de caractères",
+      "expectedNumber": "Ce champ doit être un nombre",
+      "expectedBoolean": "Ce champ doit être un booléen",
+      "expectedArray": "Ce champ doit être un tableau",
+      "expectedObject": "Ce champ doit être une objet",
+      "expectedConstructor": "Ce champ doit être du type [type]",
+      "keyNotInSchema": "Le champ [key] n'est pas permis par le schéma",
+      "notUnique": "[label] doit être unique",
+      "regEx": {
+        "0": {
+          "msg": "Ce champ a échoué la validation par Regex"
+        },
+        "1": {
+          "exp": "SimpleSchema.RegEx.Email",
+          "msg": "Cette adresse e-mail est incorrecte"
+        },
+        "2": {
+          "exp": "SimpleSchema.RegEx.WeakEmail",
+          "msg": "Cette adresse e-mail est incorrecte"
+        },
+        "3": {
+          "exp": "SimpleSchema.RegEx.Domain",
+          "msg": "Ce champ doit être un domaine valide"
+        },
+        "4": {
+          "exp": "SimpleSchema.RegEx.WeakDomain",
+          "msg": "Ce champ doit être un domaine valide"
+        },
+        "5": {
+          "exp": "SimpleSchema.RegEx.IP",
+          "msg": "Cette adresse IP est invalide"
+        },
+        "6": {
+          "exp": "SimpleSchema.RegEx.IPv4",
+          "msg": "Cette adresse IPv4 est invalide"
+        },
+        "7": {
+          "exp": "SimpleSchema.RegEx.IPv6",
+          "msg": "Cette adresse IPv6 est invalide"
+        },
+        "8": {
+          "exp": "SimpleSchema.RegEx.Url",
+          "msg": "Cette URL est invalide"
+        },
+        "9": {
+          "exp": "SimpleSchema.RegEx.Id",
+          "msg": "Cet identifiant alphanumérique est invalide"
+        }
+      }
+    }
+  },
   "schemas":{
     "followrest":{
       "invitedUserName":{
@@ -93,8 +180,17 @@
       "name":{
         "label": "Nom"
       },
+      "shortDescription":{
+        "label": "Description courte"
+      },
       "description":{
         "label": "Description"
+      },
+      "url":{
+        "label": "Url"
+      },
+      "tags":{
+        "label": "Tags"
       },
       "type":{
         "label": "Type",
@@ -116,7 +212,14 @@
         "label": "Pays",
         "placeholder": "Sélectionnez un...",
         "options": {
-
+          "FR":"France",
+          "GP":"Guadeloupe",
+          "GF":"Guyanne Française",
+          "MQ":"Martinique",
+          "YT":"Mayotte",
+          "NC":"Nouvelle-Calédonie",
+          "RE":"Réunion",
+          "PM":"St Pierre et Miquelon"
         }
       },
       "postalCode":{
@@ -131,14 +234,453 @@
       },
       "streetAddress":{
         "label": "Adresse"
+      },
+      "preferences":{
+        "label": "Préférences",
+        "isOpenData":{
+          "label": "Open Data"
+        },
+        "isOpenEdition":{
+          "label": "Open Edition"
+        }
+      }
+    },
+    "organizationsrest" : {
+      "name":{
+        "label": "Nom"
+      },
+      "shortDescription":{
+        "label": "Description courte"
+      },
+      "description":{
+        "label": "Description"
+      },
+      "type":{
+        "label": "Type",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+
+        }
+      },
+      "role":{
+        "label": "Role",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+          "admin":"Administrateur",
+          "member":"Membre",
+          "creator":"Juste un citoyen"
+        }
+      },
+      "email":{
+        "label": "Email"
+      },
+      "url":{
+        "label": "Url"
+      },
+      "tags":{
+        "label": "Tags"
+      },
+      "country":{
+        "label": "Pays",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+          "FR":"France",
+          "GP":"Guadeloupe",
+          "GF":"Guyanne Française",
+          "MQ":"Martinique",
+          "YT":"Mayotte",
+          "NC":"Nouvelle-Calédonie",
+          "RE":"Réunion",
+          "PM":"St Pierre et Miquelon"
+        }
+      },
+      "postalCode":{
+        "label": "Code postal"
+      },
+      "city":{
+        "label": "Ville",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+
+        }
+      },
+      "streetAddress":{
+        "label": "Adresse"
+      },
+      "preferences":{
+        "label": "Préférences",
+        "isOpenData":{
+          "label": "Open Data"
+        },
+        "isOpenEdition":{
+          "label": "Open Edition"
+        }
+      }
+    },
+    "projectsrest" : {
+      "name":{
+        "label": "Nom"
+      },
+      "shortDescription":{
+        "label": "Description courte"
+      },
+      "description":{
+        "label": "Description"
+      },
+      "url":{
+        "label": "Url"
+      },
+      "tags":{
+        "label": "Tags"
+      },
+      "startDate":{
+        "label": "Date de début"
+      },
+      "endDate":{
+        "label": "Date de fin"
+      },
+      "country":{
+        "label": "Pays",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+          "FR":"France",
+          "GP":"Guadeloupe",
+          "GF":"Guyanne Française",
+          "MQ":"Martinique",
+          "YT":"Mayotte",
+          "NC":"Nouvelle-Calédonie",
+          "RE":"Réunion",
+          "PM":"St Pierre et Miquelon"
+        }
+      },
+      "postalCode":{
+        "label": "Code postal"
+      },
+      "city":{
+        "label": "Ville",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+
+        }
+      },
+      "streetAddress":{
+        "label": "Adresse"
+      },
+      "preferences":{
+        "label": "Préférences",
+        "isOpenData":{
+          "label": "Open Data"
+        },
+        "isOpenEdition":{
+          "label": "Open Edition"
+        }
       }
     },
     "news":{
-      "name":{
-        "label": "Titre"
+      "global":{
+        "name":{
+          "label": "title"
+        },
+        "text":{
+          "label": "Message",
+          "placeholder": "message..."
+        },
+        "tags":{
+          "label": "Tags"
+        }
+      },
+      "citoyens":{
+        "name":{
+          "label": "title"
+        },
+        "text":{
+          "label": "Message",
+          "placeholder": "message..."
+        },
+        "tags":{
+          "label": "Tags"
+        },
+        "scope":{
+          "label": "Visibilité",
+          "placeholder": "Sélectionnez un...",
+          "options": {
+            "restricted":"Mon réseau",
+            "private":"Privé",
+            "public":"Public"
+          }
+        }
+      },
+      "projects":{
+        "name":{
+          "label": "title"
+        },
+        "text":{
+          "label": "Message",
+          "placeholder": "message..."
+        },
+        "tags":{
+          "label": "Tags"
+        },
+        "scope":{
+          "label": "Visibilité",
+          "placeholder": "Sélectionnez un...",
+          "options": {
+            "private":"Privé",
+            "public":"Public",
+            "restricted":" Mon réseau"
+          }
+        },
+        "targetIsAuthor":{
+          "label": "Auteur",
+          "placeholder": "Sélectionnez un...",
+          "options": {
+            "false":"Moi",
+            "true":"Le projet"
+          }
+        }
+      },
+      "organizations":{
+        "name":{
+          "label": "title"
+        },
+        "text":{
+          "label": "Message",
+          "placeholder": "message..."
+        },
+        "tags":{
+          "label": "Tags"
+        },
+        "scope":{
+          "label": "Visibilité",
+          "placeholder": "Sélectionnez un...",
+          "options": {
+            "private":"Privé",
+            "public":"Public",
+            "restricted":" Mon réseau"
+          }
+        },
+        "targetIsAuthor":{
+          "label": "Auteur",
+          "placeholder": "Sélectionnez un...",
+          "options": {
+            "false":"Moi",
+            "true":"L'organisation"
+          }
+        }
+      },
+      "events":{
+        "name":{
+          "label": "title"
+        },
+        "text":{
+          "label": "Message",
+          "placeholder": "message..."
+        },
+        "tags":{
+          "label": "Tags"
+        },
+        "scope":{
+          "label": "Visibilité",
+          "placeholder": "Sélectionnez un...",
+          "options": {
+            "restricted":" Mon réseau"
+          }
+        }
+      }
+    },
+    "comments":{
+      "content":{
+        "label": "message",
+        "placeholder":"comment..."
       },
       "text":{
-        "label": "Message"
+        "label": "message",
+        "placeholder":"comment..."
+      }
+    },
+    "global":{
+      "name":{
+        "label": "Nom",
+        "placeholder": "nom"
+      },
+      "username":{
+        "label": "Pseudo",
+        "placeholder": "Pseudo"
+      },
+      "shortDescription":{
+        "label": "Description courte",
+        "placeholder":"Description courte"
+      },
+      "description":{
+        "label": "Description",
+        "placeholder":"Description"
+      },
+      "email":{
+        "label": "Email",
+        "placeholder": "email"
+      },
+      "fixe":{
+        "label": "Téléphone fixe",
+        "placeholder": "téléphone fixe"
+      },
+      "mobile":{
+        "label": "Téléphone mobile",
+        "placeholder": "téléphone mobile"
+      },
+      "fax":{
+        "label": "Fax",
+        "placeholder": "fax"
+      },
+      "url":{
+        "label": "Url",
+        "placeholder": "url"
+      },
+      "tags":{
+        "label": "Tags"
+      },
+      "birthDate" : {
+        "label": "Date d'anniversaire"
+      },
+      "allDay":{
+        "label": "Toute la journée"
+      },
+      "startDate":{
+        "label": "Date de début"
+      },
+      "endDate":{
+        "label": "Date de fin"
+      },
+      "type":{
+        "label": "Type",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+
+        }
+      },
+      "role":{
+        "label": "Role",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+          "admin":"Administrateur",
+          "member":"Membre",
+          "creator":"Juste un citoyen"
+        }
+      },
+      "avancement":{
+        "label": "Avancement",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+          "idea":"idée",
+          "concept":"concept",
+          "started":"démarrer",
+          "development":"développement",
+          "testing":"expérimentation",
+          "mature":"mature"
+        }
+      },
+      "github" : {
+        "label": "github",
+        "placeholder": "Lien github"
+      },
+      "telegram" : {
+        "label": "telegram",
+        "placeholder": "Speudo telegram"
+      },
+      "skype" : {
+        "label": "skype",
+        "placeholder": "Lien skype"
+      },
+      "gpplus" : {
+        "label": "google plus",
+        "placeholder": "Lien google plus"
+      },
+      "twitter" : {
+        "label": "twitter",
+        "placeholder": "Lien twitter"
+      },
+      "facebook" : {
+        "label": "facebook",
+        "placeholder": "Lien facebook"
+      },
+      "instagram" : {
+        "label": "instagram",
+        "placeholder": "Lien instagram"
+      },
+      "country":{
+        "label": "Pays",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+          "FR":"France",
+          "GP":"Guadeloupe",
+          "GF":"Guyanne Française",
+          "MQ":"Martinique",
+          "YT":"Mayotte",
+          "NC":"Nouvelle-Calédonie",
+          "RE":"Réunion",
+          "PM":"St Pierre et Miquelon"
+        }
+      },
+      "postalCode":{
+        "label": "Code postal"
+      },
+      "city":{
+        "label": "Ville",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+
+        }
+      },
+      "streetAddress":{
+        "label": "Adresse"
+      },
+      "preferences":{
+        "label": "Préférences",
+        "isOpenData":{
+          "label": "Open Data"
+        },
+        "isOpenEdition":{
+          "label": "Open Edition"
+        },
+        "email":{
+          "label": "Mon e-mail",
+          "options": {
+            "public":"public",
+            "private":"privé",
+            "hide":"masqué"
+          }
+        },
+        "locality":{
+          "label": "Adresse",
+          "options": {
+            "public":"public",
+            "private":"privé",
+            "hide":"masqué"
+          }
+        },
+        "phone":{
+          "label": "Mon téléphone",
+          "options": {
+            "public":"public",
+            "private":"privé",
+            "hide":"masqué"
+          }
+        },
+        "directory":{
+          "label": "Mon répertoire",
+          "options": {
+            "public":"public",
+            "private":"privé",
+            "hide":"masqué"
+          }
+        },
+        "birthDate":{
+          "label": "Date de naissance",
+          "options": {
+            "public":"public",
+            "private":"privé",
+            "hide":"masqué"
+          }
+        }
       }
     }
   }

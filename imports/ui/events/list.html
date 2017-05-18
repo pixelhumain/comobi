@@ -14,18 +14,23 @@
 
   {{#contentFor "headerButtonRight"}}
 
-  <button class="button button-clear icon ion-android-notifications brand-base-text-color pull-right" data-ion-menu-toggle="right">
-   {{#if notificationsCount}}<div class="new-notification-bubble">{{notificationsCount}}</div>{{/if}}
+  <button class="button button-clear icon ion-android-notifications brand-base-text-color pull-right all-seen" data-ion-menu-toggle="right">
+    {{#transition in="bounceInDown" out="bounceOutUp"}}
+    {{#if notificationsCount}}
+    <div class="new-notification-bubble animated out">{{notificationsCount}}</div>
+    {{/if}}
+    {{/transition}}
   </button>
 
   {{/contentFor}}
 
+{{#if dataReady}}
   {{#ionView}}
   {{#ionContent class="scroll-bg"}}
   <div class="list list-inset">
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input id="search" type="text" placeholder="{{_ "Search..."}}" value="{{searchEvents}}">
+      <input id="search" type="text" placeholder="{{_ "searchPlaceholder"}}" value="{{searchEvents}}">
     </label>
     <div class="button-bar bar-positive">
       <button class="button triEvents {{#if equals "Current" sortEvents}}button-dark{{/if}}" value="Current"><i class="icon ion-android-alarm-clock"></i> {{countEventsCurrent}} {{_ "Current"}}</button>
@@ -39,10 +44,10 @@
       <div class="item item-divider">
         <i class="ion-android-calendar"></i> {{_ "events"}} <span class="badge badge-dark">{{countEvents}}</span>
       </div>
-      {{#if Template.subscriptionsReady}}
+      {{#if dataReady}}
       {{#transition in="zoomIn" out="bounceOut"}}
       {{#each events}}
-      <a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'newsList' _id=this._id._str scope="events"}}">
+      <a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'detailList' _id=this._id._str scope="events"}}">
         {{#if profilThumbImageUrl}}
           <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
         {{/if}}
@@ -58,7 +63,7 @@
           <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
           {{/if}}
         </p>
-        <p><a class="positive" href="{{pathFor 'mapWithEvent' _id=_id._str}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a></p>
+        <p><a class="positive" href="{{pathFor 'mapWith' _id=_id._str scope='events'}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a></p>
         {{#if currentUser}}
         {{#if isCreator}}
 
@@ -74,66 +79,25 @@
 
   {{/ionContent}}
   {{/ionView}}
+
+  {{#if currentUser}}
+  {{#ionTabs class="tabs-dark tabs-icon-only"}}
+  {{> ionTab title=_events path="listEvents" iconOff="navicon-round" iconOn="navicon-round"}}
+  {{#unless dataReady}}
+ <a class="tab-item">
+   <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+ </a>
+ {{else}}
+ {{> ionTab title=_cartes href="map/events" iconOff="android-pin" iconOn="android-pin"}}
+ {{/unless}}
+  {{/ionTabs}}
+  {{/if}}
+  {{else}}
+  {{> loading}}
+  {{/if}}
 </template>
 
 <template name="eventsAdd">
-  {{#ionModal customTemplate=true}}
-  <div class="bar bar-header bar-dark">
-    <button data-dismiss="modal" type="button" class="button button-clear">{{_ "Reset"}}</button>
-    <h2 class="title">{{_ "Create a event"}}</h2>
-  </div>
-<div class="content has-header overflow-scroll">
-  <div class="list">
-    <div class="item item-divider">
-      {{_ "Create a event"}}
-    </div>
-    {{#autoForm id="addEvent" schema=SchemasEventsRest type="method" meteormethod="insertEvent" template="ionic" class="padding"}}
-    {{> eventsFields}}
-    <div class="item">
-      <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "create"}}</button>
-      </div>
-    </div>
-    {{/autoForm}}
-  </div>
-</div>
-  {{/ionModal}}
-</template>
-
-<template name="eventsAddOld">
-  {{#contentFor "headerButtonLeft"}}
-  {{>ionNavBackButton}}
-  {{/contentFor}}
-
-  {{#contentFor "headerButtonRight"}}
-
-  {{/contentFor}}
-
-  {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "Create a event"}}</h1>
-  {{/contentFor}}
-
-  {{#ionView}}
-  {{#ionContent}}
-  <div class="list">
-    <div class="item item-divider">
-      {{_ "Create a event"}}
-    </div>
-    {{#autoForm id="addEvent" schema=SchemasEventsRest type="method" meteormethod="insertEvent" template="ionic" class="padding"}}
-    {{> eventsFields}}
-    <div class="item">
-      <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "create"}}</button>
-      </div>
-    </div>
-    {{/autoForm}}
-  </div>
-  {{/ionContent}}
-  {{/ionView}}
-</template>
-
-
-<template name="eventsEdit">
   {{#contentFor "headerButtonLeft"}}
   {{>ionNavBackButton}}
   {{/contentFor}}
@@ -146,14 +110,67 @@
   <h1 class="title">{{_ "events"}}</h1>
   {{/contentFor}}
 
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "Create a event"}}
+    </div>
+    {{#if error}}
+    <div class="card">
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    </div>
+    {{/if}}
+    {{#autoForm id="addEvent" schema=SchemasEventsRest type="method" meteormethod="insertEvent" template="ionic" class="padding"}}
+    {{> eventsFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "create"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+  {{> loading}}
+  {{/if}}
+</template>
+
+
+<template name="eventsEdit">
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "events"}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
   {{#ionView}}
   {{#ionContent}}
   <div class="list">
     <div class="item item-divider">
       {{_ "Edit a event"}}
     </div>
+    {{#if error}}
+    <div class="card">
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    </div>
+    {{/if}}
     {{#autoForm id="editEvent" schema=SchemasEventsRest type="method-update" meteormethod="updateEvent" doc=event template="ionic" class="padding"}}
-    {{> eventsFields}}
+    {{> eventsFields update="1"}}
     <div class="item">
       <div class="button-bar">
         <button type="submit" class="button button-dark">{{_ "edit"}}</button>
@@ -163,11 +180,137 @@
   </div>
   {{/ionContent}}
   {{/ionView}}
+  {{else}}
+  {{> loading}}
+  {{/if}}
+</template>
+
+<template name="eventsBlockEdit">
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "events"}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "Edit a event"}}
+    </div>
+    {{#if error}}
+    <div class="card">
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    </div>
+    {{/if}}
+    {{#if equals block 'preferences'}}
+    {{#autoForm id="editBlockEvent" schema=blockSchema type="method-update" meteormethod="updateBlock" doc=event autosave=true template="ionic" class="padding"}}
+    {{> eventsFields block=block}}
+    {{/autoForm}}
+    {{else}}
+    {{#autoForm id="editBlockEvent" schema=blockSchema type="method-update" meteormethod="updateBlock" doc=event template="ionic" class="padding"}}
+    {{> eventsFields block=block}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+    {{/if}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+  {{> loading}}
+  {{/if}}
 </template>
 
 <template name="eventsFields">
+  {{#if equals block 'info'}}
   {{> afQuickField name='name'}}
+  {{> afQuickField name='type'}}
+  {{> afQuickField name='tags'}}
+  {{> afQuickField name='email'}}
+  {{> afQuickField name='url'}}
+  {{> afQuickField name='fixe'}}
+  {{> afQuickField name='mobile'}}
+  {{> afQuickField name='fax'}}
+  {{/if}}
+
+  {{#if equals block 'network'}}
+  {{> afQuickField name='instagram'}}
+  {{> afQuickField name='skype'}}
+  {{> afQuickField name='github'}}
+  {{> afQuickField name='gpplus'}}
+  {{> afQuickField name='twitter'}}
+  {{> afQuickField name='facebook'}}
+  {{/if}}
+
+  {{#if equals block 'descriptions'}}
+  {{> afQuickField name='shortDescription' type="textarea" label-type='placeholder' rows=8}}
+  {{> afQuickField name='description' type="textarea" label-type='placeholder' rows=8}}
+  {{/if}}
+
+  {{#if equals block 'when'}}
+  {{> afQuickField name='allDay'}}
+  {{> afQuickField name='startDate' type="datetime-local"}}
+  {{> afQuickField name='endDate' type="datetime-local"}}
+  {{/if}}
+
+  {{#if equals block 'preferences'}}
+  <div class="list card">
+  <div class="item item-body">
+    <strong>{{_ "Open Data"}}</strong>  : {{_ "Vous proposez vos données en accès libre, afin de contribuer au bien commun"}}<br>
+    <strong>{{_ "Open Edition"}}</strong>  : {{_ "Tous les utilisateurs ont la possibilité de participer / modifier les informations"}}
+  </div>
+  </div>
+  {{> afQuickField name='preferences.isOpenData'}}
+  {{> afQuickField name='preferences.isOpenEdition'}}
+  {{/if}}
+
+  {{#if equals block 'locality'}}
+  {{> afQuickField name='country' autocomplete="off" value=country }}
+  {{#if currentFieldValue "country"}}
+  {{> afQuickField name='postalCode' value=postalCode autocomplete="off"}}
+  {{#if currentFieldValue "postalCode"}}
+  {{#if optionsInsee}}
+  {{> afQuickField name='city' options=optionsInsee value=city}}
+  {{> afQuickField name='cityName' type="hidden" value=cityName}}
+  {{else}}
+  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
+  {{/if}}
+  {{/if}}
+  {{> afQuickField name='streetAddress' autocomplete="off"}}
+  {{#if latlng}}
+  {{> map}}
+  {{/if}}
+  {{> afQuickField name='geoPosLatitude' type="hidden" value=latitude}}
+  {{> afQuickField name='geoPosLongitude' type="hidden" value=longitude}}
+  {{> afQuickField name='regionName' type="hidden" value=regionName}}
+  {{> afQuickField name='depName' type="hidden" value=depName}}
+  {{/if}}
+  {{/if}}
+
+  {{#unless block}}
+  {{> afQuickField name='name'}}
+
+  {{#if update}}
+  {{> afQuickField name='shortDescription' rows=8}}
   {{> afQuickField name='description' rows=8}}
+  {{else}}
+  {{> afQuickField name='description' rows=8}}
+  {{/if}}
+
   {{> afQuickField name='type'}}
   {{> afQuickField name='allDay'}}
   {{> afQuickField name='startDate' type="datetime-local"}}
@@ -189,10 +332,11 @@
   {{/if}}
   {{> afQuickField name='geoPosLatitude' type="hidden" value=latitude}}
   {{> afQuickField name='geoPosLongitude' type="hidden" value=longitude}}
+  {{> afQuickField name='regionName' type="hidden" value=regionName}}
+  {{> afQuickField name='depName' type="hidden" value=depName}}
+  {{#if update}}
+  {{> afQuickField name='preferences'}}
   {{/if}}
-</template>
-
-
-<template name="map">
-  <div id="map" class="map"></div>
+  {{/if}}
+  {{/unless}}
 </template>

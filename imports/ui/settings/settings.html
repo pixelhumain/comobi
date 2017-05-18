@@ -1,9 +1,6 @@
 <template name="settings">
-<div class="item item-positive item-divider">
-    {{_ "settings"}}
-  </div>
-  <a class="item item-dark item-icon-right" href="{{pathFor 'changePosition'}}" data-ion-menu-close>{{_ "Change location"}} {{> ionIcon icon="location"}}</a>
-  <div class="item item-dark item-input item-select">
+  <a class="item item-stable item-icon-right" href="{{pathFor 'changePosition'}}" data-ion-menu-close>{{_ "Change location"}} {{> ionIcon icon="location"}}</a>
+  <div class="item item-stable item-input item-select">
     <div class="input-label">
       {{_ "radius"}}
     </div>
@@ -13,18 +10,16 @@
     <option value="5000" selected="{{#if isSelected radius '5000'}}selected{{/if}}">5km</option>
     <option value="10000" selected="{{#if isSelected radius '10000'}}selected{{/if}}">10km</option>
     <option value="25000" selected="{{#if isSelected radius '25000'}}selected{{/if}}">25km</option>
-    <option value="50000" selected="{{#if isSelected radius '50000'}}selected{{/if}}">50km</option>
     {{else}}
     <option value="1000">1km</option>
     <option value="5000">5km</option>
-    <option value="10000">10km</option>
-    <option value="25000" selected="selected">25km</option>
-    <option value="50000">50km</option>
+    <option value="10000" selected="selected">10km</option>
+    <option value="25000">25km</option>
     {{/if}}
     </select>
   </div>
 {{#if isCordova}}
-  <div class="item item-dark item-toggle">
+  <div class="item item-stable item-toggle">
 {{_ "tracking geolocation"}}
 <label class="toggle toggle-balanced">
    <input id="geolocate" type="checkbox" checked="{{#if geolocate}}checked{{/if}}">

@@ -1,0 +1,19 @@
+<template name="Button">
+  {{#if href}}
+  <a href="{{href}}" class="button {{#if class}}{{class}}{{/if}} {{#if isCall}}disabled{{/if}}">
+    {{#if isCall}}
+    <i class="icon fa fa-refresh fa-spin"></i>
+    {{else}}
+    {{#if icon}}<i class="icon {{icon}}"></i>{{/if}} {{#if title}}{{title}}{{/if}}
+    {{/if}}
+  </a>
+  {{else}}
+<button class="button {{#if class}}{{class}}{{/if}} {{#if isCall}}disabled{{/if}}">
+  {{#if isCall}}
+  <i class="icon fa fa-refresh fa-spin"></i>
+  {{else}}
+  {{#if icon}}<i class="icon {{icon}}"></i>{{/if}} {{#if title}}{{title}}{{/if}}
+  {{/if}}
+</button>
+{{/if}}
+</template>

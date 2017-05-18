@@ -1,0 +1,184 @@
+<template name="directory">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "community"}}</h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+
+  {{> Template.dynamic template="Directory_view" data=scope}}
+
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>
+
+<template name="Directory_search">
+  <label class="item item-input">
+    <i class="icon ion-search placeholder-icon"></i>
+    <input id="search" type="text" placeholder="{{_ "Search..."}}" value="{{search}}">
+  </label>
+</template>
+
+<template name="Directory_button_bar">
+  <div class="button-bar button-positive">
+    {{> Button_toggle condition=(equals view 'all') classOff="button button-small button-dark all" classOn="button button-small button-dark all activated" iconOff="icon fa fa-th-list" iconOn="icon fa fa-th-list positive"}}
+    {{#if equals scopeVar 'citoyens'}}
+    {{> Button_toggle condition=(equals view 'follows') classOff="button button-small button-person follows" classOn="button button-small button-person follows activated" iconOff="icon fa fa-user" iconOn="icon fa fa-user positive"}}
+    {{> Button_toggle condition=(equals view 'memberof') classOff="button button-small button-organization memberof" classOn="button button-small button-organization memberof activated" iconOff="icon fa fa-users" iconOn="icon fa fa-users positive"}}
+    {{> Button_toggle condition=(equals view 'projects') classOff="button button-small button-project projects" classOn="button button-small button-project projects activated" iconOff="icon fa fa-lightbulb-o" iconOn="icon fa fa-lightbulb-o positive"}}
+    {{/if}}
+    {{#if equals scopeVar 'organizations'}}
+    {{> Button_toggle condition=(equals view 'members') classOff="button button-small button-person members" classOn="button button-small button-person members activated" iconOff="icon fa fa-user" iconOn="icon fa fa-user positive"}}
+    {{> Button_toggle condition=(equals view 'membersorganizations') classOff="button button-small button-organization membersorganizations" classOn="button button-small button-organization membersorganizations activated" iconOff="icon fa fa-users" iconOn="icon fa fa-users positive"}}
+    {{> Button_toggle condition=(equals view 'projects') classOff="button button-small button-project projects" classOn="button button-small button-project projects activated" iconOff="icon fa fa-lightbulb-o" iconOn="icon fa fa-lightbulb-o positive"}}
+    {{/if}}
+    {{#if equals scopeVar 'projects'}}
+    {{> Button_toggle condition=(equals view 'contributors') classOff="button button-small button-person contributors" classOn="button button-small button-person contributors activated" iconOff="icon fa fa-user" iconOn="icon fa fa-user positive"}}
+    {{/if}}
+    {{> Button_toggle condition=(equals view 'events') classOff="button button-small button-event events" classOn="button button-small button-event events activated" iconOff="icon fa fa-calendar" iconOn="icon fa fa-calendar positive"}}
+    {{> Button_toggle condition=(equals view 'followers') classOff="button button-small button-follower followers" classOn="button button-small button-follower followers activated" iconOff="icon fa fa-heart" iconOn="icon fa fa-heart positive"}}
+  </div>
+</template>
+
+<template name="Directory_view">
+  <div class="list">
+  {{> Directory_search}}
+  {{> Directory_button_bar}}
+  {{#if equals view 'all'}}
+  {{#if equals scopeVar 'citoyens'}}
+  {{> listDirectoryFollows}}
+  {{> listDirectoryMemberOf}}
+  {{> listDirectoryProjects}}
+  {{/if}}
+  {{#if equals scopeVar 'organizations'}}
+  {{> listDirectoryMembers}}
+  {{> listDirectoryMembersOrganizations}}
+  {{> listDirectoryProjects}}
+  {{/if}}
+  {{#if equals scopeVar 'projects'}}
+  {{> listDirectoryContributors}}
+  {{/if}}
+  {{> listDirectoryEvents}}
+  {{> listDirectoryFollowers}}
+  {{else}}
+  {{#if equals view 'follows'}}
+  {{> listDirectoryFollows}}
+  {{/if}}
+  {{#if equals view 'memberof'}}
+  {{> listDirectoryMemberOf}}
+  {{/if}}
+  {{#if equals view 'members'}}
+  {{> listDirectoryMembers}}
+  {{/if}}
+  {{#if equals view 'membersorganizations'}}
+  {{> listDirectoryMembersOrganizations}}
+  {{/if}}
+  {{#if equals view 'contributors'}}
+    {{> listDirectoryContributors}}
+  {{/if}}
+  {{#if equals view 'projects'}}
+  {{> listDirectoryProjects}}
+  {{/if}}
+  {{#if equals view 'events'}}
+  {{> listDirectoryEvents}}
+  {{/if}}
+  {{#if equals view 'followers'}}
+  {{> listDirectoryFollowers}}
+  {{/if}}
+  {{/if}}
+  </div>
+</template>
+
+<template name="listDirectoryContributors">
+  {{#if countContributors search}}
+      <div class="item item-divider">
+        <i class="icon ion-ios-people"></i> {{_ "contributors"}} <span class="badge badge-dark">{{countContributors search}}</span>
+      </div>
+      {{> Directory_list list=(listContributors search) isConnect="isFollowersMe" person=true scope="citoyens"}}
+  {{/if}}
+</template>
+
+<template name="listDirectoryFollows">
+  {{#if countFollows search}}
+      <div class="item item-divider">
+        <i class="icon ion-ios-people"></i> {{_ "follows"}} <span class="badge badge-dark">{{countFollows search}}</span>
+      </div>
+      {{> Directory_list list=(listFollows search) isConnect="isFollowersMe" person=true scope="citoyens"}}
+  {{/if}}
+</template>
+
+<template name="listDirectoryFollowers">
+  {{#if countFollowers search}}
+      <div class="item item-divider">
+        <i class="icon ion-ios-heart"></i> {{_ "subscribers"}} <span class="badge badge-dark">{{countFollowers search}}</span>
+      </div>
+      {{> Directory_list list=(listFollowers search) isConnect="isFollowersMe" person=true scope="citoyens"}}
+  {{/if}}
+</template>
+
+<template name="listDirectoryMemberOf">
+  {{#if countMemberOf search ''}}
+      <div class="item item-divider">
+        <i class="icon ion-ios-people"></i> {{_ "organizations"}} <span class="badge badge-dark">{{countMemberOf search selectorga}}</span>
+      </div>
+      <div class="button-bar button-small">
+      {{#each listOrganisationTypes}}
+        <a class="button button-small {{#if equals selectorga value}}button-positive activated{{else}}button-positive{{/if}} selectorga" id="{{value}}" data-id="{{value}}">{{label}}</a>
+      {{/each}}
+      </div>
+      {{> Directory_list list=(listMemberOf search selectorga) isConnect="isMembers" person=false scope="organizations"}}
+  {{/if}}
+</template>
+
+<template name="listDirectoryMembers">
+  {{#if countMembers search}}
+      <div class="item item-divider">
+        <i class="icon ion-ios-people"></i> {{_ "members"}} <span class="badge badge-dark">{{countMembers search}}</span>
+      </div>
+      {{> Directory_list list=(listMembers search) isConnect="isFollowersMe" person=true scope="citoyens"}}
+  {{/if}}
+</template>
+
+<template name="listDirectoryMembersOrganizations">
+  {{#if countMembersOrganizations search ''}}
+      <div class="item item-divider">
+        <i class="icon ion-ios-people"></i> {{_ "organizations"}} <span class="badge badge-dark">{{countMembersOrganizations search selectorga}}</span>
+      </div>
+      <div class="button-bar button-small">
+      {{#each listOrganisationTypes}}
+        <a class="button button-small {{#if equals selectorga value}}button-positive activated{{else}}button-positive{{/if}} selectorga" id="{{value}}" data-id="{{value}}">{{label}}</a>
+      {{/each}}
+      </div>
+      {{> Directory_list list=(listMembersOrganizations search selectorga) isConnect="isMembers" person=false scope="organizations"}}
+  {{/if}}
+</template>
+
+<template name="listDirectoryProjects">
+  {{#if countProjects search}}
+      <div class="item item-divider">
+        <i class="icon fa fa-lightbulb-o"></i> {{_ "projects"}} <span class="badge badge-dark">{{countProjects search}}</span>
+      </div>
+      {{> Directory_list list=(listProjects search) isConnect="isContributors" person=false scope="projects"}}
+  {{/if}}
+</template>
+
+<template name="listDirectoryEvents">
+  {{#if countEvents search}}
+      <div class="item item-divider">
+        <i class="icon ion-ios-people"></i> {{_ "events"}} <span class="badge badge-dark">{{countEvents search}}</span>
+      </div>
+      {{> Directory_list list=(listEvents search) isConnect="isAttendees" person=false scope="events"}}
+  {{/if}}
+</template>

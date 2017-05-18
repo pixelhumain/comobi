@@ -1,0 +1,7 @@
+<template name="Button_toggle">
+  {{#if condition}}
+      {{> Button id=id scope=scope isCall=isCall class=classOn title=titleOn icon=iconOn}}
+  {{else}}
+      {{> Button id=id scope=scope isCall=isCall class=classOff title=titleOff icon=iconOff}}
+  {{/if}}
+</template>
