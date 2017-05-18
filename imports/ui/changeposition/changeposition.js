@@ -1,5 +1,3 @@
-import './changeposition.html';
-
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
@@ -7,9 +5,14 @@ import { Router } from 'meteor/iron:router';
 import { TAPi18n } from 'meteor/tap:i18n';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { Location } from 'meteor/djabatav:geolocation-plus';
+import { Random } from 'meteor/random';
 
 //submanager
-import { listEventsSubs } from '../../api/client/subsmanager.js';
+import { listEventsSubs,listOrganizationsSubs,listProjectsSubs,listCitoyensSubs,dashboardSubs } from '../../api/client/subsmanager.js';
+
+import { geoId } from '../../api/client/reactive.js';
+
+import './changeposition.html';
 
 let pageSession = new ReactiveDict('pageChangePosition');
 
@@ -59,7 +62,9 @@ Template.changePosition.onRendered(function () {
       var onOk=IonPopup.confirm({title:TAPi18n.__('Position'),template:TAPi18n.__('Utiliser la position de cette ville'),
       onOk: function(){
         Session.set( 'city', self);
-        Session.set('radius', false);
+        if(self.geoShape && self.geoShape.coordinates){
+          Session.set('radius', false);
+        }
         Session.set('geolocate',  false);
         Location.setMockLocation({
           latitude : self.geo.latitude,
@@ -67,8 +72,14 @@ Template.changePosition.onRendered(function () {
           updatedAt : new Date()
         });
         //clear cache
-        listEventsSubs.clear();
-        Router.go('listEvents');
+        /*listEventsSubs.clear();
+        listOrganizationsSubs.clear();
+        listProjectsSubs.clear();
+        listCitoyensSubs.clear();
+        dashboardSubs.clear();*/
+        const geoIdRandom = Random.id();
+        geoId.set('geoId', geoIdRandom);
+        Router.go('dashboard');
     }
     });
 

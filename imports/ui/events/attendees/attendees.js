@@ -1,15 +1,31 @@
-import './attendees.html';
-
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
 import { _ } from 'meteor/underscore';
 import { ReactiveDict } from 'meteor/reactive-dict';
+import { ReactiveVar } from 'meteor/reactive-var';
 import { AutoForm } from 'meteor/aldeed:autoform';
 import { Mongo } from 'meteor/mongo';
 
 import { Citoyens } from '../../../api/citoyens.js';
 import { Events } from '../../../api/events.js';
+
+import './attendees.html';
+
+Template.listAttendees.onCreated(function () {
+  const self = this;
+  self.ready = new ReactiveVar();
+
+  self.autorun(function(c) {
+      Session.set('scopeId', Router.current().params._id);
+  });
+
+  self.autorun(function(c) {
+      let handle = Meteor.subscribe('listAttendees',Router.current().params._id);
+          self.ready.set(handle.ready());
+  });
+
+});
 
 Template.listAttendees.helpers({
   events () {
@@ -26,13 +42,21 @@ Template.listAttendees.helpers({
       let citoyen = Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())},{fields:{links:1}});
       return citoyen.links && citoyen.links.follows && citoyen.links.follows[followId];
     }
+  },
+  dataReady() {
+  return Template.instance().ready.get();
   }
 });
 
 Template.listAttendees.events({
   "click .followperson-link" (evt) {
     evt.preventDefault();
-		Meteor.call('followPersonExist',this._id._str);
+		Meteor.call('followEntity',this._id._str,'citoyens');
 	return ;
-  }
+},
+"click .unfollowperson-link" (evt) {
+  evt.preventDefault();
+  Meteor.call('disconnectEntity',this._id._str,'citoyens');
+return ;
+}
 });

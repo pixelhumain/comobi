@@ -5,8 +5,8 @@
   "not notifications":"Not notifications",
   "home":"Home",
   "events":"Events",
-  "projects":"Projects",
-  "citoyens":"Citoyens",
+  "projects":"Project",
+  "persons":"Persons",
   "organizations":"Organizations",
   "email":"Email",
   "password":"Password",
@@ -40,6 +40,7 @@
   "edit a news":"Edit a news",
   "edit":"Edit",
   "create":"Publier",
+  "cancel":"Cancel",
   "Communecter Login Failed":"Communecter Login Failed",
   "Email not valid":"Email not valid",
   "Email not unique":"Email not unique",
@@ -63,6 +64,10 @@
   "No Items found":"No contact found",
   "Enter a search term":"Enter a search term. minimum 4 characters",
   "attendees":"Attendees",
+  "members":"Members",
+  "contributors":"Contributors",
+  "follows":"Follows",
+  "loading":"loading...",
   "online":"online",
   "offline":"offline",
   "settings":"Settings",
@@ -76,10 +81,92 @@
   "notValidatedEmail":"Your account is not validated : please check your mailbox to validate your email address.",
   "emailNotFound":"Impossible to find an account for this username or password.",
   "emailAndPassNotMatch":"Email or password does not march. Please try again !",
-  "dashboard":"dashboard",
-  "me": "Me",
+  "Add organization":"Add organization",
+  "Create a organization":"Create a organization",
+  "Edit a organization":"Edit a organization",
+  "Something went really bad An organization with the same name allready exists":"An organization with the same name allready exists",
+  "Participate":"Participate",
+  "QR Scanner":"QR Scanner",
+  "Become a member":"Become a member",
+  "Become a contributor":"Become a contributor",
+  "Follow this person":"Follow this person",
+  "Unfollow this person":"Unfollow this person",
+  "Add project":"Add project",
+  "Create a project":"Create a project",
+  "Edit a project":"Edit a project",
   "Cities":"Cities",
-  "Create an organization":"Create an organization",
+  "community":"Community",
+  "favorites":"Favorites",
+  "search":"Search",
+  "searchPlaceholder":"Search by name, #tag...",
+  "simpleschema": {
+    "messages": {
+      "usernameNotUnique": "[label] already exists",
+      "required": "[label] is required",
+      "minString": "[label] must be at least [min] characters",
+      "maxString": "[label] cannot exceed [max] characters",
+      "minNumber": "[label] must be at least [min]",
+      "maxNumber": "[label] cannot exceed [max]",
+      "minNumberExclusive": "[label] must be greater than [min]",
+      "maxNumberExclusive": "[label] must be less than [max]",
+      "minDate": "[label] must be on or after [min]",
+      "maxDate": "[label] cannot be after [max]",
+      "badDate": "[label] is not a valid date",
+      "minCount": "You must specify at least [minCount] values",
+      "maxCount": "You cannot specify more than [maxCount] values",
+      "noDecimal": "[label] must be an integer",
+      "notAllowed": "[value] is not an allowed value",
+      "expectedString": "[label] must be a string",
+      "expectedNumber": "[label] must be a number",
+      "expectedBoolean": "[label] must be a boolean",
+      "expectedArray": "[label] must be an array",
+      "expectedObject": "[label] must be an object",
+      "expectedConstructor": "[label] must be a [type]",
+      "keyNotInSchema": "[key] is not allowed by the schema",
+      "notUnique": "[label] must be unique",
+      "regEx": {
+        "0": {
+          "msg": "[label] failed regular expression validation"
+        },
+        "1": {
+          "exp": "SimpleSchema.RegEx.Email",
+          "msg": "[label] must be a valid e-mail address"
+        },
+        "2": {
+          "exp": "SimpleSchema.RegEx.WeakEmail",
+          "msg": "[label] must be a valid e-mail address"
+        },
+        "3": {
+          "exp": "SimpleSchema.RegEx.Domain",
+          "msg": "[label] must be a valid domain"
+        },
+        "4": {
+          "exp": "SimpleSchema.RegEx.WeakDomain",
+          "msg": "[label] must be a valid domain"
+        },
+        "5": {
+          "exp": "SimpleSchema.RegEx.IP",
+          "msg": "[label] must be a valid IPv4 or IPv6 address"
+        },
+        "6": {
+          "exp": "SimpleSchema.RegEx.IPv4",
+          "msg": "[label] must be a valid IPv4 address"
+        },
+        "7": {
+          "exp": "SimpleSchema.RegEx.IPv6",
+          "msg": "[label] must be a valid IPv6 address"
+        },
+        "8": {
+          "exp": "SimpleSchema.RegEx.Url",
+          "msg": "[label] must be a valid URL"
+        },
+        "9": {
+          "exp": "SimpleSchema.RegEx.Id",
+          "msg": "[label] must be a valid alphanumeric ID"
+        }
+      }
+    }
+  },
   "schemas":{
     "followrest":{
       "invitedUserName":{
@@ -93,8 +180,19 @@
       "name":{
         "label": "name"
       },
+      "shortDescription":{
+        "label": "short description",
+        "placeholder": "short description"
+      },
       "description":{
-        "label": "description"
+        "label": "description",
+        "placeholder": "description"
+      },
+      "url":{
+        "label": "url"
+      },
+      "tags":{
+        "label": "tags"
       },
       "type":{
         "label": "type",
@@ -116,7 +214,14 @@
         "label": "address country",
         "placeholder": "Select one...",
         "options": {
-
+          "FR": "France",
+          "GP": "Guadeloupe",
+          "GF": "French Guyana",
+          "MQ": "Martinique",
+          "YT": "Mayotte",
+          "NC": "New Caledonia",
+          "RE": "Reunion",
+          "PM": "St Pierre and Miquelon"
         }
       },
       "postalCode":{
@@ -131,14 +236,453 @@
       },
       "streetAddress":{
         "label": "street address"
+      },
+      "preferences":{
+        "label": "preferences",
+        "isOpenData":{
+          "label": "is Open Data"
+        },
+        "isOpenEdition":{
+          "label": "is Open Edition"
+        }
+      }
+    },
+    "organizationsrest" : {
+      "name":{
+        "label": "name"
+      },
+      "shortDescription":{
+        "label": "short description"
+      },
+      "description":{
+        "label": "description"
+      },
+      "type":{
+        "label": "type",
+        "placeholder": "Select one...",
+        "options": {
+
+        }
+      },
+      "role":{
+        "label": "role",
+        "placeholder": "Select one...",
+        "options": {
+          "admin":"admin",
+          "member":"member",
+          "creator":"creator"
+        }
+      },
+      "email":{
+        "label": "email"
+      },
+      "url":{
+        "label": "url"
+      },
+      "tags":{
+        "label": "tags"
+      },
+      "country":{
+        "label": "address country",
+        "placeholder": "Select one...",
+        "options": {
+          "FR": "France",
+          "GP": "Guadeloupe",
+          "GF": "French Guyana",
+          "MQ": "Martinique",
+          "YT": "Mayotte",
+          "NC": "New Caledonia",
+          "RE": "Reunion",
+          "PM": "St Pierre and Miquelon"
+        }
+      },
+      "postalCode":{
+        "label": "postal code"
+      },
+      "city":{
+        "label": "code insee",
+        "placeholder": "Select one...",
+        "options": {
+
+        }
+      },
+      "streetAddress":{
+        "label": "street address"
+      },
+      "preferences":{
+        "label": "preferences",
+        "isOpenData":{
+          "label": "is Open Data"
+        },
+        "isOpenEdition":{
+          "label": "is Open Edition"
+        }
+      }
+    },
+    "projectsrest" : {
+      "name":{
+        "label": "name"
+      },
+      "shortDescription":{
+        "label": "short description"
+      },
+      "description":{
+        "label": "description"
+      },
+      "url":{
+        "label": "url"
+      },
+      "tags":{
+        "label": "tags"
+      },
+      "startDate":{
+        "label": "start date"
+      },
+      "endDate":{
+        "label": "end date"
+      },
+      "country":{
+        "label": "address country",
+        "placeholder": "Select one...",
+        "options": {
+          "FR": "France",
+          "GP": "Guadeloupe",
+          "GF": "French Guyana",
+          "MQ": "Martinique",
+          "YT": "Mayotte",
+          "NC": "New Caledonia",
+          "RE": "Reunion",
+          "PM": "St Pierre and Miquelon"
+        }
+      },
+      "postalCode":{
+        "label": "postal code"
+      },
+      "city":{
+        "label": "code insee",
+        "placeholder": "Select one...",
+        "options": {
+
+        }
+      },
+      "streetAddress":{
+        "label": "street address"
+      },
+      "preferences":{
+        "label": "preferences",
+        "isOpenData":{
+          "label": "is Open Data"
+        },
+        "isOpenEdition":{
+          "label": "is Open Edition"
+        }
       }
     },
     "news":{
-      "name":{
-        "label": "title"
+      "global":{
+        "name":{
+          "label": "title"
+        },
+        "text":{
+          "label": "message",
+          "placeholder": "message..."
+        },
+        "tags":{
+          "label": "tags"
+        }
+      },
+      "citoyens":{
+        "name":{
+          "label": "title"
+        },
+        "text":{
+          "label": "message",
+          "placeholder": "message..."
+        },
+        "tags":{
+          "label": "tags"
+        },
+        "scope":{
+          "label": "scope",
+          "placeholder": "Select one...",
+          "options": {
+            "restricted":"restricted",
+            "private":"private",
+            "public":"public"
+          }
+        }
+      },
+      "projects":{
+        "name":{
+          "label": "title"
+        },
+        "text":{
+          "label": "message",
+          "placeholder": "message..."
+        },
+        "tags":{
+          "label": "tags"
+        },
+        "scope":{
+          "label": "scope",
+          "placeholder": "Select one...",
+          "options": {
+            "private":"private",
+            "public":"public",
+            "restricted":"restricted"
+          }
+        },
+        "targetIsAuthor":{
+          "label": "Author",
+          "placeholder": "Select one...",
+          "options": {
+            "false":"Me",
+            "true":"Project"
+          }
+        }
+      },
+      "organizations":{
+        "name":{
+          "label": "title"
+        },
+        "text":{
+          "label": "message",
+          "placeholder": "message..."
+        },
+        "tags":{
+          "label": "tags"
+        },
+        "scope":{
+          "label": "scope",
+          "placeholder": "Select one...",
+          "options": {
+            "private":"private",
+            "public":"public",
+            "restricted":"restricted"
+          }
+        },
+        "targetIsAuthor":{
+          "label": "Author",
+          "placeholder": "Select one...",
+          "options": {
+            "false":"Me",
+            "true":"Organization"
+          }
+        }
+      },
+      "events":{
+        "name":{
+          "label": "title"
+        },
+        "text":{
+          "label": "message",
+          "placeholder": "message..."
+        },
+        "tags":{
+          "label": "tags"
+        },
+        "scope":{
+          "label": "scope",
+          "placeholder": "Select one...",
+          "options": {
+            "restricted":"restricted"
+          }
+        }
+      }
+    },
+    "comments":{
+      "content":{
+        "label": "message",
+        "placeholder":"message"
       },
       "text":{
-        "label": "message"
+        "label": "message",
+        "placeholder":"message"
+      }
+    },
+    "global":{
+      "name":{
+        "label": "name",
+        "placeholder": "name"
+      },
+      "username":{
+        "label": "user name",
+        "placeholder": "user name"
+      },
+      "shortDescription":{
+        "label": "short description",
+        "placeholder": "short description"
+      },
+      "description":{
+        "label": "description",
+        "placeholder": "description"
+      },
+      "url":{
+        "label": "url",
+        "placeholder": "url"
+      },
+      "email":{
+        "label": "email",
+        "placeholder": "email"
+      },
+      "fixe":{
+        "label": "phone",
+        "placeholder": "phone"
+      },
+      "mobile":{
+        "label": "mobile phone",
+        "placeholder": "mobile phone"
+      },
+      "fax":{
+        "label": "fax",
+        "placeholder": "fax"
+      },
+      "tags":{
+        "label": "tags"
+      },
+      "birthDate" : {
+        "label": "birth date"
+      },
+      "github" : {
+        "label": "github",
+        "placeholder": "Link github"
+      },
+      "telegram" : {
+        "label": "telegram",
+        "placeholder": "Link telegram"
+      },
+      "skype" : {
+        "label": "skype",
+        "placeholder": "Link skype"
+      },
+      "gpplus" : {
+        "label": "google plus",
+        "placeholder": "Link google plus"
+      },
+      "twitter" : {
+        "label": "twitter",
+        "placeholder": "Link twitter"
+      },
+      "facebook" : {
+        "label": "facebook",
+        "placeholder": "Link facebook"
+      },
+      "instagram" : {
+        "label": "instagram",
+        "placeholder": "Link instagram"
+      },
+      "type":{
+        "label": "type",
+        "placeholder": "Select one...",
+        "options": {
+
+        }
+      },
+      "role":{
+        "label": "role",
+        "placeholder": "Select one...",
+        "options": {
+          "admin":"admin",
+          "member":"member",
+          "creator":"creator"
+        }
+      },
+      "avancement":{
+        "label": "project progress",
+        "placeholder": "Select one...",
+        "options": {
+          "idea":"idea",
+          "concept":"concept",
+          "started":"started",
+          "development":"development",
+          "testing":"testing",
+          "mature":"mature"
+        }
+      },
+      "allDay":{
+        "label": "all days"
+      },
+      "startDate":{
+        "label": "start date"
+      },
+      "endDate":{
+        "label": "end date"
+      },
+      "country":{
+        "label": "address country",
+        "placeholder": "Select one...",
+        "options": {
+          "FR": "France",
+          "GP": "Guadeloupe",
+          "GF": "French Guyana",
+          "MQ": "Martinique",
+          "YT": "Mayotte",
+          "NC": "New Caledonia",
+          "RE": "Reunion",
+          "PM": "St Pierre and Miquelon"
+        }
+      },
+      "postalCode":{
+        "label": "postal code"
+      },
+      "city":{
+        "label": "code insee",
+        "placeholder": "Select one...",
+        "options": {
+
+        }
+      },
+      "streetAddress":{
+        "label": "street address"
+      },
+      "preferences":{
+        "label": "preferences",
+        "isOpenData":{
+          "label": "is Open Data"
+        },
+        "isOpenEdition":{
+          "label": "is Open Edition"
+        },
+        "email":{
+          "label": "email",
+          "options": {
+            "public":"public",
+            "private":"private",
+            "hide":"hide"
+          }
+        },
+        "locality":{
+          "label": "locality",
+          "options": {
+            "public":"public",
+            "private":"private",
+            "hide":"hide"
+          }
+        },
+        "phone":{
+          "label": "phone",
+          "options": {
+            "public":"public",
+            "private":"private",
+            "hide":"hide"
+          }
+        },
+        "directory":{
+          "label": "directory",
+          "options": {
+            "public":"public",
+            "private":"private",
+            "hide":"hide"
+          }
+        },
+        "birthDate":{
+          "label": "birthDate",
+          "options": {
+            "public":"public",
+            "private":"private",
+            "hide":"hide"
+          }
+        }
       }
     }
   }

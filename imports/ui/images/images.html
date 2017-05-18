@@ -1,0 +1,16 @@
+
+<template name="imgDoc">
+  {{#if profilThumbImageUrl}}
+    <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
+  {{else}}
+  {{#with this.imageDoc}}
+  <img src="{{urlImageCommunecter}}/{{urlModuleCommunecter}}/document/resized/{{#if ../resized}}{{../resized}}{{else}}50x50{{/if}}/upload/{{moduleId}}/{{folder}}/{{name}}">
+  {{else}}
+  {{#with imageDoc}}
+  <img src="{{urlImageCommunecter}}/{{urlModuleCommunecter}}/document/resized/{{#if ../resized}}{{../resized}}{{else}}50x50{{/if}}/upload/{{moduleId}}/{{folder}}/{{name}}">
+  {{else}}
+  <img src="/pas-de-photo{{#if resized}}{{resized}}{{else}}50x50{{/if}}.png">
+  {{/with}}
+  {{/with}}
+  {{/if}}
+</template>

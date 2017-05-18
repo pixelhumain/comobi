@@ -1,0 +1,117 @@
+<template name="newsDetailComments">
+  {{#contentFor "headerButtonLeft"}}
+  {{#if scope._id._str}}
+  {{>ionNavBackButton}}
+  {{/if}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "comments"}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+  {{> commentsAdd}}
+  {{#with scope.new}}
+  {{#each listComments}}
+  <div class="list card">
+    <div class="item {{#if imageDoc authorComments._id._str}}item-avatar{{/if}}">
+      {{#if imageDoc authorComments._id._str}}
+      {{> imgDoc imageDoc=(imageDoc authorComments._id._str) resized="80x80"}}
+      {{/if}}
+      <p><i class="icon ion-person"></i>  <a href="{{pathFor 'detailList' _id=author scope='citoyens'}}" class="dark">{{authorComments.name}}</a></p>
+      <p><i class="icon ion-clock"></i> {{livestamp dateComments}}</p>
+    </div>
+    {{#if text}}
+    <div class="item item-body">
+      {{text}}
+    </div>
+    {{/if}}
+    <div class="item tabs tabs-secondary tabs-icon-left">
+      <a class="tab-item like-comment" href="#">
+        <i class="icon ion-thumbsup"></i>
+        {{likesCount}}
+      </a>
+      <a class="tab-item dislike-comment" href="#">
+        <i class="icon ion-thumbsdown"></i>
+        {{dislikesCount}}
+      </a>
+      {{#if isAuthor}}
+      <a class="tab-item action-comment" href="#">
+        <i class="icon fa fa-cog"></i>
+      </a>
+      {{else}}
+      {{#if ../scope.isAdmin}}
+      <a class="tab-item action-comment" href="#">
+        <i class="icon fa fa-cog"></i>
+      </a>
+      {{/if}}
+      {{/if}}
+    </div>
+
+  </div>
+  {{/each}}
+  {{/with}}
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>
+
+<template name="commentsAdd">
+  {{#autoForm id="addComment" schema=SchemasCommentsRest type="method" meteormethod="insertComment" template="ionic" class=""}}
+  {{> afQuickField name='content' label-type='placeholder' rows=2}}
+  <div class="item">
+    <div class="button-bar">
+      <button type="submit" class="button button-dark">{{_ "publish"}}</button>
+    </div>
+  </div>
+  {{/autoForm}}
+</template>
+
+<template name="commentsEdit">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "comment"}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "edit a comment"}}
+    </div>
+    {{#if error}}
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    {{/if}}
+    {{#autoForm id="editComment" schema=SchemasCommentsEditRest type="method-update" meteormethod="updateComment" doc=comment template="ionic" class="padding"}}
+    {{> afQuickField name='text' label-type='placeholder' rows=2}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>

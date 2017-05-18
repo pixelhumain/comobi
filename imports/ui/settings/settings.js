@@ -1,18 +1,27 @@
-import './settings.html';
-
 import { Template } from 'meteor/templating';
 import { Session } from 'meteor/session';
 import { Push } from 'meteor/raix:push';
+import { Random } from 'meteor/random';
 
 //submanager
-import { listEventsSubs } from '../../api/client/subsmanager.js';
+import { listEventsSubs,listOrganizationsSubs,listProjectsSubs,listCitoyensSubs,dashboardSubs } from '../../api/client/subsmanager.js';
+
+import { geoId } from '../../api/client/reactive.js';
+
+import './settings.html';
 
 Template.settings.events({
   "change #radius": function(e, t) {
     let value = parseInt(t.find('#radius').value);
     Session.set('radius',  value);
     //clear cache
-    listEventsSubs.clear();
+    /*listEventsSubs.clear();
+    listOrganizationsSubs.clear();
+    listProjectsSubs.clear();
+    listCitoyensSubs.clear();
+    dashboardSubs.clear();*/
+    const geoIdRandom = Random.id();
+    geoId.set('geoId', geoIdRandom);
     return;
   },
   'click #clear': function(event) {
@@ -23,7 +32,13 @@ Template.settings.events({
     if(t.find('#geolocate').checked){
       Session.set('geolocate', true);
       //clear cache
-      listEventsSubs.clear();
+      /*listEventsSubs.clear();
+      listOrganizationsSubs.clear();
+      listProjectsSubs.clear();
+      listCitoyensSubs.clear();
+      dashboardSubs.clear();*/
+      const geoIdRandom = Random.id();
+      geoId.set('geoId', geoIdRandom);
     }else{
       Session.set('geolocate',  false);
     }

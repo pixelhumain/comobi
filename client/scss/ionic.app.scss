@@ -3,6 +3,16 @@ $color-person: #FFC600; //jaune
 $color-event: #FFA200; //orange
 $color-project: #8C5AA1; // violet
 
+$light:                           #fff !default;
+$stable:                          #f8f8f8 !default;
+$positive:                        #E33551 !default;
+$calm:                            #11c1f3 !default;
+$balanced:                        #51e335 !default;
+$energized:                       #ffc900 !default;
+$assertive:                       #ef473a !default;
+$royal:                           #886aea !default;
+$dark:                            #324553 !default;
+
 $ionicons-font-path: "/fonts" !default;
 
 $font-family-base : Raleway !default;
@@ -114,6 +124,16 @@ body, .view{
   text-align: center;
 }
 
+.stable{
+  color: $dark;
+}
+
+.bar.bar-stable .title {
+  font-family: "Homestead";
+  color: #E33551;
+  text-align: center;
+}
+
 .logo{
   text-align: center;
   img{
@@ -210,7 +230,6 @@ $brand-analogous-color: $positive;
 $brand-contrast-color: $dark;
 $color-algorithm : w3c;
 
-
 // BUTTONS START
 $button-orga-bg:              $color-orga !default;
 $button-orga-text:            #fff !default;
@@ -236,8 +255,14 @@ $button-project-border:          darken($color-project, 10%) !default;
 $button-project-active-bg:       darken($color-project, 10%) !default;
 $button-project-active-border:   darken($color-project, 10%) !default;
 
+$button-follower-bg:              $assertive !default;
+$button-follower-text:            #fff !default;
+$button-follower-border:          darken($assertive, 10%) !default;
+$button-follower-active-bg:       darken($assertive, 10%) !default;
+$button-follower-active-border:   darken($assertive, 10%) !default;
+
 .button{
-  &.button-orga {
+  &.button-organization {
     @include button-style($button-orga-bg, $button-orga-border, $button-orga-active-bg, $button-orga-active-border, $button-orga-text);
     @include button-clear($button-orga-border);
     @include button-outline($button-orga-border);
@@ -257,12 +282,39 @@ $button-project-active-border:   darken($color-project, 10%) !default;
     @include button-clear($button-project-bg);
     @include button-outline($button-project-bg);
   }
+  &.button-follower {
+    @include button-style($button-follower-bg, $button-follower-border, $button-follower-active-bg, $button-follower-active-border, $button-follower-text);
+    @include button-clear($button-follower-bg);
+    @include button-outline($button-follower-bg);
+  }
 }
 
 // BUTTONS END
 
+.yellow{
+   color:#FFC600 !important;
+ }
+ .green{
+   color:#93C020 !important;
+ }
+ .orange{
+   color:#FFA200 !important;
+ }
+ .purple{
+   color:#8C5AA1 !important;
+ }
+ .red{
+   color:#E33551 !important;
+ }
+ .azure{
+   color:#2BB0C6 !important;
+ }
+ .prune{
+   color:#C32372 !important;
+ }
+
 .menu-left{
-  background-color: $dark;
+  background-color: $stable;
 }
 
 .chat-ui-screen{

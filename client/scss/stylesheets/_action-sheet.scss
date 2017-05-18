@@ -121,7 +121,7 @@
 
 
 .platform-android {
-
+/*
   .action-sheet-backdrop.active {
     background-color: rgba(0,0,0,0.2);
   }
@@ -131,13 +131,14 @@
 
     .action-sheet-title,
     .button {
-      text-align: left;
+      text-align: center;
       border-color: transparent;
       font-size: 16px;
       color: inherit;
     }
 
     .action-sheet-title {
+      text-align: center;
       font-size: 14px;
       padding: 16px;
       color: #666;
@@ -166,5 +167,5 @@
     }
 
   }
-
+*/
 }

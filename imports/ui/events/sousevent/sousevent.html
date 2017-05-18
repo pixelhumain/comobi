@@ -1,0 +1,60 @@
+<template name="listeventSous">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "events"}}</h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+      {{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent class="scroll-bg"}}
+    <div class="list list-inset">
+
+      <div class="item item-divider">
+        <i class="ion-android-calendar"></i> {{_ "events"}} <span class="badge badge-dark">{{countEvents}}</span>
+      </div>
+
+      {{#transition in="zoomIn" out="bounceOut"}}
+      {{#each events}}
+      <a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'detailList' _id=this._id._str scope="events"}}">
+        {{#if profilThumbImageUrl}}
+          <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
+        {{/if}}
+        <h2>{{name}}</h2>
+        <span class="badge {{#if isStart}}badge-balanced{{else}}badge-dark{{/if}}"><i class="icon ion-person"></i> {{countAttendees}}</span>
+        <p>
+          {{#if isStart}}
+          <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
+          <i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>
+          <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
+          {{else}}
+          <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
+          <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
+          {{/if}}
+        </p>
+        <p><a class="positive" href="{{pathFor 'mapWithEvent' _id=_id._str}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a></p>
+        {{#if currentUser}}
+        {{#if isCreator}}
+
+        {{/if}}
+        {{/if}}
+      </a>
+       {{else}}
+
+      {{/each}}
+      {{/transition}}
+
+    </div>
+
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>
