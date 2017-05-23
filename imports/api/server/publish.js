@@ -167,6 +167,26 @@ Meteor.publish('cities', function(cp,country) {
 	return lists;
 });
 
+Meteor.publish('organizerEvents', function(organizerType) {
+	if (!this.userId) {
+		return;
+	}
+	check(organizerType, String);
+	check(organizerType, Match.Where(function(name) {
+		return _.contains(['projects','organizations','citoyens'], name);
+	}));
+	if(organizerType === 'organizations'){
+		console.log(Citoyens.findOne({_id:new Mongo.ObjectID(this.userId)}).listOrganizationsCreator().fetch());
+		return Citoyens.findOne({_id:new Mongo.ObjectID(this.userId)}).listOrganizationsCreator();
+	}else if(organizerType === 'projects'){
+		return Citoyens.findOne({_id:new Mongo.ObjectID(this.userId)}).listProjectsCreator();
+	}else if(organizerType === 'citoyens'){
+		return Citoyens.find({_id:new Mongo.ObjectID(this.userId)},{fields:{_id:1,name:1}})
+	}
+	return;
+});
+
+
 Meteor.publish('citoyen', function() {
 	if (!this.userId) {
 		return;
@@ -637,6 +657,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 							find: function(scopeD) {
 								if(scope === 'citoyens' || scope === 'organizations' || scope === 'projects'){
 								return scopeD.listEventsCreator();
+							}else{
+								return;
 							}
 							},
 							children: [

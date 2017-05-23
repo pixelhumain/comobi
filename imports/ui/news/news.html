@@ -490,16 +490,16 @@
     <div class="item item-text-wrap">
       {{#transition in="slideInDown" out="slideOutUp"}}
       {{#if shortDescription}}
-      <p class="right-top animated in">{{shortDescription}}</p>
+      <p class="right-top animated in">{{{textTags shortDescription tags}}}</p>
       {{/if}}
       {{/transition}}
 
       {{#transition in="slideInDown" out="slideOutUp"}}
       {{#if description}}
       {{#if descriptionHTML}}
-      <p class="right-top animated in">{{{description}}}</p>
+      <p class="right-top animated in">{{{textTags description tags}}}</p>
       {{else}}
-      <p class="right-top animated in">{{#markdown}}{{description}}{{/markdown}}</p>
+      <p class="right-top animated in">{{#markdown}}{{textTags description tags}}{{/markdown}}</p>
       {{/if}}
       {{/if}}
       {{/transition}}

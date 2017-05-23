@@ -234,7 +234,6 @@
   {{#if equals block 'info'}}
   {{> afQuickField name='name'}}
   {{> afQuickField name='avancement'}}
-  {{> afQuickField name='tags'}}
   {{> afQuickField name='email'}}
   {{> afQuickField name='url'}}
   {{> afQuickField name='fixe'}}
@@ -297,6 +296,16 @@
 
   {{#unless block}}
   {{> afQuickField name='name'}}
+
+  {{> afQuickField name='parentType' type='select' value=parentType}}
+  {{#if dataReadyParent}}
+  {{#if parentType}}
+  {{#if optionsParentId parentType}}
+  {{> afQuickField name='parentId' type='select' options=(optionsParentId parentType) value=parentId}}
+  {{/if}}
+  {{/if}}
+  {{/if}}
+
   {{> afQuickField name='shortDescription' rows=8}}
   {{#if update}}
   {{> afQuickField name='description' rows=8}}

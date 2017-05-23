@@ -239,7 +239,6 @@
   {{#if equals block 'info'}}
   {{> afQuickField name='name'}}
   {{> afQuickField name='type'}}
-  {{> afQuickField name='tags'}}
   {{> afQuickField name='email'}}
   {{> afQuickField name='url'}}
   {{> afQuickField name='fixe'}}
@@ -310,6 +309,28 @@
   {{else}}
   {{> afQuickField name='description' rows=8}}
   {{/if}}
+
+
+  {{> afQuickField name='organizerType' type='select' value=organizerType}}
+  {{#if dataReadyOrganizer}}
+  {{#if organizerType}}
+  {{#if optionsOrganizerId organizerType}}
+  {{> afQuickField name='organizerId' type='select' options=(optionsOrganizerId organizerType) value=organizerId}}
+
+  {{#if organizerId}}
+  {{#if dataReadyParent}}
+  {{#if optionsParentId organizerType organizerId}}
+  {{> afQuickField name='parentId' options=(optionsParentId organizerType organizerId)}}
+  {{/if}}
+  {{/if}}
+  {{/if}}
+
+  {{/if}}
+  {{/if}}
+  {{/if}}
+
+
+
 
   {{> afQuickField name='type'}}
   {{> afQuickField name='allDay'}}

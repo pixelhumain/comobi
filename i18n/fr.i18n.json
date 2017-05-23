@@ -199,6 +199,29 @@
 
         }
       },
+      "organizerType":{
+        "label": "type d'Organisateur",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+          "citoyens": "Moi",
+          "organizations": "une organisation",
+          "projects": "un projet"
+        }
+      },
+      "organizerId":{
+        "label": "Organisateur",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+
+        }
+      },
+      "parentId":{
+        "label": "parent of the event",
+        "placeholder": "not parent",
+        "options": {
+
+        }
+      },
       "allDay":{
         "label": "Toute la journée"
       },
@@ -320,6 +343,21 @@
     "projectsrest" : {
       "name":{
         "label": "Nom"
+      },
+      "parentType":{
+        "label": "Createur type",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+          "citoyens": "Moi",
+          "organizations": "Organisations"
+        }
+      },
+      "parentId":{
+        "label": "Createur",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+
+        }
       },
       "shortDescription":{
         "label": "Description courte"

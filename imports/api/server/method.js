@@ -156,6 +156,10 @@ if(doc.typeElement === 'citoyens'){
   docRetour.endDate=moment(doc.endDate).format();
   docRetour.organizerId = doc.organizerId;
   docRetour.organizerType = doc.organizerType;
+  docRetour.tags = doc.tags ? doc.tags : '';
+  if(doc.parentId){
+  docRetour.parentId = doc.parentId;
+  }
   if(doc.preferences){
   docRetour.preferences = doc.preferences;
   }
@@ -755,7 +759,6 @@ indexMax:20*/
   return retour;
 },
 updateBlock (modifier,documentId){
-  console.log(modifier["$set"]);
   check(modifier["$set"].typeElement, Match.Where(function(name) {
     return _.contains(['events', 'projects','organizations','citoyens'], name);
   }));
@@ -860,7 +863,6 @@ updateCitoyen (modifier,documentId){
   return retour;
 },
   insertNew (doc){
-    console.log(JSON.stringify(doc));
       check(doc.parentType, Match.Where(function(name) {
         return _.contains(['events', 'projects','organizations','citoyens'], name);
       }));
@@ -926,7 +928,6 @@ updateCitoyen (modifier,documentId){
 
     const doc = modifier["$set"];
     doc.id = documentId;
-    console.log(doc);
     var retour = apiCommunecter.postPixel("news","save",doc);
     return retour;
   },
@@ -1348,113 +1349,6 @@ searchCities (query, options){
   // TODO fix regexp to support multiple tokens
   var regex = new RegExp("^" + query);
   return Cities.find({$or : [{name: {$regex:  regex, $options: "i"}},{'postalCodes.postalCode': {$regex:  regex}}]}, options).fetch();
-},
-pushNewAttendees (eventId){
-  check(eventId, String);
-  if (!this.userId) {
-    throw new Meteor.Error("not-authorized");
-  }
-  let user = Citoyens.findOne({_id: new Mongo.ObjectID(this.userId)});
-  let event = Events.findOne({_id: new Mongo.ObjectID(eventId)});
-  if(news && event && event.links && event.links.attendees){
-    let attendeesIdsTmp = _.map(event.links.attendees, function(attendees,key){
-      return key;
-    });
-    let attendeesIds = _.filter(attendeesIdsTmp, function(attendees){
-      return attendees!=this.userId;
-    },this);
-    //console.log(attendeesIds);
-    let title = event.name;
-    var text = user.name;
-    let payload = {};
-    payload['title'] = title;
-    payload['pushType'] = 'news';
-    payload['newsId'] = newsId;
-    payload['eventId'] = eventId;
-    payload['scope'] = 'events';
-
-    let query = {};
-    query['userId'] = {$in:attendeesIds};
-    Meteor.call('pushUser',title,text,payload,query);
-
-  }else{
-    throw new Meteor.Error("not-event-news");
-  }
-},
-pushNewNewsAttendees (eventId,newsId){
-  check(newsId, String);
-  check(eventId, String);
-  if (!this.userId) {
-    throw new Meteor.Error("not-authorized");
-  }
-  let news = News.findOne({_id: new Mongo.ObjectID(newsId)});
-  let event = Events.findOne({_id: new Mongo.ObjectID(eventId)});
-  if(news && event && event.links && event.links.attendees){
-    let attendeesIdsTmp = _.map(event.links.attendees, function(attendees,key){
-      return key;
-    });
-    let attendeesIds = _.filter(attendeesIdsTmp, function(attendees){
-      return attendees!=this.userId;
-    },this);
-    //console.log(attendeesIds);
-    let title = event.name;
-    if(news.name){
-      var text = news.name;
-    }else{
-      var text = 'nouvelle news';
-    }
-    let link = '/events/news/'+eventId+'/new/'+newsId;
-
-
-    let payload = {};
-    payload['title'] = title;
-    payload['text'] = text;
-    payload['pushType'] = 'news';
-    payload['newsId'] = newsId;
-    payload['eventId'] = eventId;
-    payload['scope'] = 'events';
-    payload['link'] = link;
-    payload['expiration'] = event.endDate;
-    payload['addedAt'] =  new Date();
-    payload['userId'] = attendeesIds;
-    payload['author'] = this.userId;
-
-    let notifId=Meteor.call('insertNotification',payload);
-    //let badge=Meteor.call('alertCount',);
-    payload['notifId'] = notifId;
-    let query = {};
-
-    //envoie d'un coup sans badge
-    //query['userId'] = {$in:attendeesIds.map};
-    //Meteor.call('pushUser',title,text,payload,query,badge);
-
-    //envoyer user par user si je veux badger
-    _.each(attendeesIds,function(value){
-      query['userId'] = value;
-      let badge=Meteor.call('alertCount',value);
-      //console.log(badge);
-      Meteor.call('pushUser',title,text,payload,query,badge);
-    },title,text,payload,query);
-
-
-  }else{
-    throw new Meteor.Error("not-event-news");
-  }
-},
-pushUser (title,text,payload,query,badge){
-  check(title, String);
-  check(text, String);
-  check(payload, Object);
-  check(query, Object);
-  Push.send({
-    from: 'push',
-    title: title,
-    text: text,
-    payload: payload,
-    sound: 'default',
-    query: query,
-    badge: badge
-  });
 },
 markRead (notifId) {
   check(notifId, String);

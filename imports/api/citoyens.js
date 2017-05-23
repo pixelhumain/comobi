@@ -287,6 +287,7 @@ export const SchemasInviteAttendeesEventRest = new SimpleSchema({
         let query = {};
         //query['creator'] = this._id._str;
         query[`links.contributors.${this._id._str}.isAdmin`] = true;
+        query[`links.contributors.${this._id._str}.toBeValidated`] = {$exists: false};
         return Projects.find(query,queryOptions);
       },
       countProjectsCreator () {
@@ -306,6 +307,7 @@ export const SchemasInviteAttendeesEventRest = new SimpleSchema({
         let query = {};
         //query['creator'] = this._id._str;
         query[`links.members.${this._id._str}.isAdmin`] = true;
+        query[`links.members.${this._id._str}.toBeValidated`] = {$exists: false};
         return Organizations.find(query,queryOptions);
       },
       countOrganizationsCreator () {

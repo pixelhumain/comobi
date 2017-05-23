@@ -174,11 +174,6 @@ Template.projectsAdd.onCreated(function () {
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
-  this.autorun(function() {
-    Session.set('scopeId', Router.current().params._id);
-    Session.set('scope', Router.current().params.scope);
-  });
-
 });
 
 Template.projectsEdit.onCreated(function () {
@@ -394,6 +389,29 @@ Template.projectsBlockEdit.helpers({
 });
 
 Template.projectsFields.helpers({
+  parentType (){
+    return pageSession.get('parentType');
+  },
+  parentId (){
+    return pageSession.get('parentId');
+  },
+  optionsParentId (parentType) {
+    let optionsParent = false;
+    if(Meteor.userId() && Citoyens && Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())}) && parentType){
+      console.log(parentType)
+      if(parentType === 'organizations'){
+          optionsParent = Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())}).listOrganizationsCreator();
+      }else if(parentType === 'citoyens'){
+        optionsParent =  Citoyens.find({_id:new Mongo.ObjectID(Meteor.userId())},{fields:{_id:1,name:1}})
+      }
+      if(optionsParent){
+        console.log(optionsParent.fetch());
+        return optionsParent.map(function (c) {
+          return {label: c.name, value: c._id._str};
+        });
+      }
+    }else{return false;}
+  },
   optionsInsee () {
     let postalCode = '';
     let country = '';
@@ -438,12 +456,42 @@ Template.projectsFields.helpers({
   },
   depName (){
     return pageSession.get('depName') || AutoForm.getFieldValue('depName');
+  },
+  dataReadyParent() {
+  return Template.instance().readyParent.get();
   }
 });
 
+Template.projectsFields.onCreated(function () {
+  const self = this;
+  const template = Template.instance();
+  template.ready = new ReactiveVar();
+  template.readyParent = new ReactiveVar();
+
+  pageSession.set('error', false );
+  pageSession.set('postalCode', null);
+  pageSession.set('country', null);
+  pageSession.set('city', null);
+  pageSession.set('cityName', null);
+  pageSession.set('regionName', null);
+  pageSession.set('depName', null);
+  pageSession.set('geoPosLatitude', null);
+  pageSession.set('geoPosLongitude', null);
+
+  self.autorun(function(c) {
+    if(Router.current().params._id && Router.current().params.scope){
+      Session.set('scopeId', Router.current().params._id);
+      Session.set('scope', Router.current().params.scope);
+      pageSession.set('parentType', Router.current().params.scope);
+      pageSession.set('parentId', Router.current().params._id);
+      c.stop();
+    }
+  });
+
+});
 
 Template.projectsFields.onRendered(function() {
-  var self = this;
+  const self = this;
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
@@ -489,10 +537,68 @@ Template.projectsFields.onRendered(function() {
       }
     }
   });
+
+  //#tags
+  pageSession.set( 'queryTag', false );
+  pageSession.set( 'tags', false );
+  self.$('textarea').atwho({
+    at: "#"
+  }).on("matched.atwho", function(event, flag, query) {
+      console.log(event, "matched " + flag + " and the result is " + query);
+      if(flag === '#' && query){
+    console.log(pageSession.get('queryTag'));
+    if(pageSession.get( 'queryTag') !== query){
+      pageSession.set( 'queryTag', query);
+      Meteor.call('searchTagautocomplete',query, function(error,result) {
+      if (!error) {
+        console.log(result);
+        self.$('textarea').atwho('load', '#', result).atwho('run');
+      }
+    });
+    }
+  }
+    }).on("inserted.atwho", function(event, $li, browser) {
+        console.log(JSON.stringify($li.data('item-data')));
+        if($li.data('item-data')['atwho-at'] == '#'){
+        const tag = $li.data('item-data').name;
+        if(pageSession.get('tags')){
+          let arrayTags = pageSession.get('tags');
+          arrayTags.push(tag);
+          pageSession.set( 'tags', arrayTags);
+        }else{
+          pageSession.set( 'tags', [tag] );
+        }
+      }
+      });
+
+      self.autorun(function() {
+        let parentType = pageSession.get('parentType');
+        //console.log(`autorun ${parentType}`);
+          if(parentType && Meteor.userId()){
+            if( parentType === 'organizations'){
+              const handleParent = self.subscribe('directoryListOrganizations','citoyens',Meteor.userId());
+              self.readyParent.set(handleParent.ready());
+            }else if(parentType === 'citoyens'){
+              const handleParent = self.subscribe('citoyen');
+              self.readyParent.set(handleParent.ready());
+            }
+
+          }
+      });
+
 });
 
+Template.projectsFields.onDestroyed(function () {
+this.$('textarea').atwho('destroy');
+});
 
 Template.projectsFields.events({
+  'change select[name="parentType"]': function(e, tmpl) {
+    e.preventDefault();
+    //console.log(tmpl.$(e.currentTarget).val());
+    pageSession.set( 'parentType', tmpl.$(e.currentTarget).val() );
+    pageSession.set( 'parentId', false);
+  },
   'keyup input[name="postalCode"],change input[name="postalCode"]':_.throttle((e, tmpl) => {
     e.preventDefault();
     pageSession.set( 'postalCode', tmpl.$(e.currentTarget).val() );
@@ -587,15 +693,56 @@ AutoForm.addHooks(['addProject', 'editProject'], {
       //console.log(doc);
       let scope = Session.get('scope');
       let scopeId = Session.get('scopeId');
-      doc.parentType = scope;
-      doc.parentId = scopeId;
+      if(!!doc.parentType){
+        doc.parentType = scope;
+      }
+      if(!!doc.parentId){
+        doc.parentId = scopeId;
+      }
+      const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
+      const matches = [];
+      let match;
+      if(doc.shortDescription){
+        while ((match = regex.exec(doc.shortDescription))) {
+          matches.push(match[1]);
+        }
+      }
+      if(doc.description){
+        while ((match = regex.exec(doc.description))) {
+          matches.push(match[1]);
+        }
+      }
+      if(pageSession.get('tags')){
+        const arrayTags = _.reject(pageSession.get('tags'), (value) => {
+          return matches[value] === null;
+        }, matches);
+        if(doc.tags){
+          doc.tags = _.uniq(_.union(doc.tags,arrayTags,matches));
+        }else{
+          doc.tags = _.uniq(_.union(arrayTags,matches));
+        }
+      }else{
+        //si on update est ce que la mention reste
+        if(matches.length > 0){
+        if(doc.tags){
+          doc.tags = _.uniq(_.union(doc.tags,matches));
+        }else{
+          doc.tags = _.uniq(matches);
+        }
+      }
+      }
+      console.log(doc.tags);
       return doc;
     },
     "method-update" : function(modifier, documentId) {
       let scope = Session.get('scope');
       let scopeId = Session.get('scopeId');
-      modifier["$set"].parentType = scope;
-      modifier["$set"].parentId = scopeId;
+      if(!!modifier["$set"].parentType){
+        modifier["$set"].parentType = scope;
+      }
+      if(!!modifier["$set"].parentId){
+        modifier["$set"].parentId = scopeId;
+      }
       return modifier;
     }
   },
@@ -617,13 +764,13 @@ AutoForm.addHooks(['addProject', 'editProject'], {
   }
 });
 
-AutoForm.addHooks(['addProject'], {
+/*AutoForm.addHooks(['addProject'], {
   before: {
     method : function(doc, template) {
       return doc;
     }
   }
-});
+});*/
 
 AutoForm.addHooks(['editBlockProject'], {
   after: {
@@ -640,7 +787,38 @@ AutoForm.addHooks(['editBlockProject'], {
       let scope = 'projects';
       let block = Session.get('block');
       if(modifier && modifier["$set"]){
-
+        const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
+        const matches = [];
+        let match;
+        if(modifier["$set"].shortDescription){
+          while ((match = regex.exec(modifier["$set"].shortDescription))) {
+            matches.push(match[1]);
+          }
+        }
+        if(modifier["$set"].description){
+          while ((match = regex.exec(modifier["$set"].description))) {
+            matches.push(match[1]);
+          }
+        }
+        if(pageSession.get('tags')){
+          const arrayTags = _.reject(pageSession.get('tags'), (value) => {
+            return matches[value] === null;
+          }, matches);
+          if(modifier["$set"].tags){
+            modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,arrayTags,matches));
+          }else{
+            modifier["$set"].tags = _.uniq(_.union(arrayTags,matches));
+          }
+        }else{
+          //si on update est ce que la mention reste
+          if(matches.length > 0){
+          if(modifier["$set"].tags){
+            modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,matches));
+          }else{
+            modifier["$set"].tags = _.uniq(matches);
+          }
+        }
+        }
       }else{
         modifier["$set"] = {};
       }

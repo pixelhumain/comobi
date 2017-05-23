@@ -45,11 +45,17 @@ export const SchemasProjectsRest = new SimpleSchema([baseSchema,geoSchema,{
       type : String,
       optional: true
     },
-    parentId : {
-      type: String
-    },
     parentType : {
-      type: String
+      type: String,
+      autoform: {
+        type: "select"
+      }
+    },
+    parentId : {
+      type: String,
+      autoform: {
+        type: "select"
+      }
     }
   }]);
 

@@ -201,6 +201,29 @@
 
         }
       },
+      "organizerType":{
+        "label": "Organizer of the event",
+        "placeholder": "Select one...",
+        "options": {
+          "citoyens": "Me",
+          "organizations": "Organizations",
+          "projects": "Projects"
+        }
+      },
+      "organizerId":{
+        "label": "Organizer of the event",
+        "placeholder": "Select one...",
+        "options": {
+
+        }
+      },
+      "parentId":{
+        "label": "parent of the event",
+        "placeholder": "Not parent",
+        "options": {
+
+        }
+      },
       "allDay":{
         "label": "all days"
       },
@@ -322,6 +345,21 @@
     "projectsrest" : {
       "name":{
         "label": "name"
+      },
+      "parentType":{
+        "label": "creator of the project",
+        "placeholder": "Select one...",
+        "options": {
+          "citoyens": "Me",
+          "organizations": "Organizations"
+        }
+      },
+      "parentId":{
+        "label": "creator of the project",
+        "placeholder": "Select one...",
+        "options": {
+
+        }
       },
       "shortDescription":{
         "label": "short description"

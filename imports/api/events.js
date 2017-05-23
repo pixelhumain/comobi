@@ -12,7 +12,9 @@ import { baseSchema,blockBaseSchema,geoSchema,Countries_SELECT,Countries_SELECT_
 
 //collection
 import { Lists } from './lists.js'
-
+import { Citoyens } from './citoyens.js';
+import { Organizations } from './organizations.js';
+import { Projects } from './projects.js';
 //SimpleSchema.debug = true;
 
 export const SchemasEventsRest = new SimpleSchema([baseSchema,geoSchema, {
@@ -59,11 +61,24 @@ export const SchemasEventsRest = new SimpleSchema([baseSchema,geoSchema, {
       optional: true
     },
     organizerId : {
-      type: String
+      type: String,
+      autoform: {
+        type: "select"
+      }
     },
     organizerType : {
-      type: String
+      type: String,
+      autoform: {
+        type: "select"
+      }
     },
+    parentId : {
+      type: String,
+      optional: true,
+      autoform: {
+        type: "select"
+      }
+    }
   }]);
 
   export const BlockEventsRest = {};
@@ -113,9 +128,6 @@ export const SchemasEventsRest = new SimpleSchema([baseSchema,geoSchema, {
 //if(Meteor.isClient){
   //collection
   import { News } from './news.js'
-  import { Citoyens } from './citoyens.js';
-  import { Organizations } from './organizations.js';
-  import { Projects } from './projects.js';
   import { Documents } from './documents.js';
   import { ActivityStream } from './activitystream.js';
   import { queryLink,queryLinkType,arrayLinkType,queryOptions,nameToCollection } from './helpers.js';
