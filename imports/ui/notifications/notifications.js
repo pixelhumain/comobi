@@ -116,7 +116,7 @@ Template.notificationsList.events({
               Router.go('newsList', {_id:this.target.id,scope:this.target.type});
             }
           }
-        }else if(this.verb === 'join' || this.verb === 'ask'){
+        }else if(this.verb === 'join' || this.verb === 'ask' || this.verb === 'follow'){
           if(this.target.type === 'citoyens' || this.target.type === 'projects' || this.target.type === 'organizations' || this.target.type === 'events'){
             if(this.notify.objectType === 'asMember'){
               Router.go('detailList', {_id:this.target.id,scope:this.target.type});

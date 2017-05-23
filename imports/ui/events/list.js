@@ -16,6 +16,8 @@ import { Mapbox } from 'meteor/communecter:mapbox';
 
 //collections
 import { Citoyens } from '../../api/citoyens.js';
+import { Projects } from '../../api/projects.js';
+import { Organizations } from '../../api/organizations.js';
 import { Events,BlockEventsRest } from '../../api/events.js';
 import { Cities } from '../../api/cities.js';
 
@@ -234,6 +236,8 @@ Template.eventsAdd.onCreated(function () {
   this.autorun(function(c) {
       Session.set('scopeId', Router.current().params._id);
       Session.set('scope', Router.current().params.scope);
+      pageSession.set('organizerType', Router.current().params.scope);
+      pageSession.set('organizerId', Router.current().params._id);
   });
 
   this.autorun(function(c) {
@@ -248,6 +252,7 @@ Template.eventsEdit.onCreated(function () {
   const template = Template.instance();
   template.ready = new ReactiveVar();
   pageSession.set('error', false );
+  pageSession.set('organizerId', null);
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
@@ -466,6 +471,69 @@ Template.eventsBlockEdit.helpers({
 
 
 Template.eventsFields.helpers({
+  organizerType (){
+    return pageSession.get('organizerType');
+  },
+  organizerId (){
+    return pageSession.get('organizerId');
+  },
+  optionsOrganizerId (organizerType) {
+    let optionsOrganizer = false;
+    if(Meteor.userId() && Citoyens && Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())}) && organizerType){
+      console.log(organizerType)
+      if(organizerType === 'organizations'){
+          optionsOrganizer = Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())}).listOrganizationsCreator();
+    	}else if(organizerType === 'projects'){
+          optionsOrganizer =  Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())}).listProjectsCreator();
+    	}else if(organizerType === 'citoyens'){
+    		optionsOrganizer =  Citoyens.find({_id:new Mongo.ObjectID(Meteor.userId())},{fields:{_id:1,name:1}})
+    	}
+      if(optionsOrganizer){
+        console.log(optionsOrganizer.fetch());
+        return optionsOrganizer.map(function (c) {
+          return {label: c.name, value: c._id._str};
+        });
+      }
+    }else{return false;}
+  },
+  parentId (){
+    return pageSession.get('parentId');
+  },
+  optionsParentId (organizerType,organizerId) {
+    let parent = false;
+    if(Meteor.userId() && organizerType && organizerId){
+      if(organizerType === 'organizations'){
+        if(Organizations && Organizations.findOne({_id:new Mongo.ObjectID(organizerId)})){
+          parent = Organizations.findOne({_id:new Mongo.ObjectID(organizerId)});
+        }
+      }else if(organizerType === 'projects'){
+        if(Projects && Projects.findOne({_id:new Mongo.ObjectID(organizerId)})){
+          parent = Projects.findOne({_id:new Mongo.ObjectID(organizerId)});
+        }
+      }else if(organizerType === 'citoyens'){
+        if(Citoyens && Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())},{fields:{name:1,_id:1}})){
+          parent = Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())},{fields:{name:1,_id:1}});
+        }
+      }
+      if(parent){
+        const optionsParentId =  parent.listEventsCreator();
+        if(optionsParentId){
+          //console.log(optionsParentId.fetch());
+          console.log(organizerType);
+          //const arrayParent =  optionsParentId.fetch();
+          if(optionsParentId.count()>0){
+            const arrayParent = optionsParentId.map( (c) => {
+              return {label: c.name, value: c._id._str};
+            });
+            return arrayParent;
+          }else{
+            return false;
+          }
+
+        }
+      }
+    }else{return false;}
+  },
   optionsInsee () {
     let postalCode = '';
     let country = '';
@@ -510,12 +578,21 @@ Template.eventsFields.helpers({
   },
   depName (){
     return pageSession.get('depName') || AutoForm.getFieldValue('depName');
-  }
+  },
+  dataReadyOrganizer() {
+  return Template.instance().readyOrganizer.get();
+  },
+  dataReadyParent() {
+  return Template.instance().readyParent.get();
+  },
 });
 
-
-Template.eventsFields.onRendered(function() {
-  var self = this;
+Template.eventsFields.onCreated(function () {
+  const self = this;
+  const template = Template.instance();
+  template.ready = new ReactiveVar();
+  template.readyOrganizer = new ReactiveVar();
+  template.readyParent = new ReactiveVar();
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
@@ -524,6 +601,64 @@ Template.eventsFields.onRendered(function() {
   pageSession.set('depName', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
+  /*pageSession.set('organizerType', null);
+  pageSession.set('organizerId', null);*/
+
+  self.autorun(function(c) {
+    if(Router.current().params._id && Router.current().params.scope){
+      Session.set('scopeId', Router.current().params._id);
+      Session.set('scope', Router.current().params.scope);
+      pageSession.set('organizerType', Router.current().params.scope);
+      pageSession.set('organizerId', Router.current().params._id);
+      c.stop();
+    }
+  });
+
+});
+
+Template.eventsFields.onRendered(function() {
+  const self = this;
+  pageSession.set('postalCode', null);
+  pageSession.set('country', null);
+  pageSession.set('city', null);
+  pageSession.set('cityName', null);
+  pageSession.set('regionName', null);
+  pageSession.set('depName', null);
+  pageSession.set('geoPosLatitude', null);
+  pageSession.set('geoPosLongitude', null);
+
+  //#tags
+  pageSession.set( 'queryTag', false );
+  pageSession.set( 'tags', false );
+  self.$('textarea').atwho({
+    at: "#"
+  }).on("matched.atwho", function(event, flag, query) {
+      console.log(event, "matched " + flag + " and the result is " + query);
+      if(flag === '#' && query){
+    console.log(pageSession.get('queryTag'));
+    if(pageSession.get( 'queryTag') !== query){
+      pageSession.set( 'queryTag', query);
+      Meteor.call('searchTagautocomplete',query, function(error,result) {
+      if (!error) {
+        console.log(result);
+        self.$('textarea').atwho('load', '#', result).atwho('run');
+      }
+    });
+    }
+  }
+    }).on("inserted.atwho", function(event, $li, browser) {
+        console.log(JSON.stringify($li.data('item-data')));
+        if($li.data('item-data')['atwho-at'] == '#'){
+        const tag = $li.data('item-data').name;
+        if(pageSession.get('tags')){
+          let arrayTags = pageSession.get('tags');
+          arrayTags.push(tag);
+          pageSession.set( 'tags', arrayTags);
+        }else{
+          pageSession.set( 'tags', [tag] );
+        }
+      }
+      });
 
   let geolocate = Session.get('geolocate');
   if(geolocate && Router.current().route.getName()!="eventsEdit" && Router.current().route.getName()!="eventsBlockEdit"){
@@ -561,10 +696,53 @@ Template.eventsFields.onRendered(function() {
       }
     }
   });
+
+  self.autorun(function() {
+    let organizerType = pageSession.get('organizerType');
+    //console.log(`autorun ${organizerType}`);
+      if(organizerType && Meteor.userId()){
+        if( organizerType === 'organizations'){
+          const handleOrganizer = self.subscribe('directoryListOrganizations','citoyens',Meteor.userId());
+          self.readyOrganizer.set(handleOrganizer.ready());
+        }else if(organizerType === 'projects'){
+          const handleOrganizer = self.subscribe('directoryListProjects','citoyens',Meteor.userId())
+          self.readyOrganizer.set(handleOrganizer.ready());
+        }else if(organizerType === 'citoyens'){
+          const handleOrganizer = self.subscribe('citoyen');
+          self.readyOrganizer.set(handleOrganizer.ready());
+        }
+
+      }
+  });
+
+  self.autorun(function(c) {
+    let organizerType = pageSession.get('organizerType');
+    let organizerId = pageSession.get('organizerId');
+    console.log(`autorun ${organizerType} ${organizerId}`);
+      if(organizerType && organizerId){
+          const handleParent = self.subscribe('directoryListEvents',organizerType,organizerId);
+          self.readyParent.set(handleParent.ready());
+      }
+  });
+
 });
 
+Template.eventsFields.onDestroyed(function () {
+this.$('textarea').atwho('destroy');
+});
 
 Template.eventsFields.events({
+  'change select[name="organizerType"]': function(e, tmpl) {
+    e.preventDefault();
+    //console.log(tmpl.$(e.currentTarget).val());
+    pageSession.set( 'organizerType', tmpl.$(e.currentTarget).val() );
+    pageSession.set( 'organizerId', false);
+  },
+  'change select[name="organizerId"]': function(e, tmpl) {
+    e.preventDefault();
+    //console.log(tmpl.$(e.currentTarget).val());
+    pageSession.set( 'organizerId', tmpl.$(e.currentTarget).val() );
+  },
   'keyup input[name="postalCode"],change input[name="postalCode"]':_.throttle((e, tmpl) => {
     e.preventDefault();
     pageSession.set( 'postalCode', tmpl.$(e.currentTarget).val() );
@@ -659,15 +837,88 @@ AutoForm.addHooks(['addEvent', 'editEvent'], {
       //console.log(doc);
       let scope = Session.get('scope');
       let scopeId = Session.get('scopeId');
-      doc.organizerType = scope;
-      doc.organizerId = scopeId;
+      if(!!doc.organizerType){
+        doc.organizerType = scope;
+      }
+      if(!!doc.organizerId){
+        doc.organizerId = scopeId;
+      }
+      const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
+      const matches = [];
+      let match;
+      if(doc.shortDescription){
+        while ((match = regex.exec(doc.shortDescription))) {
+          matches.push(match[1]);
+        }
+      }
+      if(doc.description){
+        while ((match = regex.exec(doc.description))) {
+          matches.push(match[1]);
+        }
+      }
+      if(pageSession.get('tags')){
+        const arrayTags = _.reject(pageSession.get('tags'), (value) => {
+          return matches[value] === null;
+        }, matches);
+        if(doc.tags){
+          doc.tags = _.uniq(_.union(doc.tags,arrayTags,matches));
+        }else{
+          doc.tags = _.uniq(_.union(arrayTags,matches));
+        }
+      }else{
+        //si on update est ce que la mention reste
+        if(matches.length > 0){
+        if(doc.tags){
+          doc.tags = _.uniq(_.union(doc.tags,matches));
+        }else{
+          doc.tags = _.uniq(matches);
+        }
+      }
+      }
+      console.log(doc.tags);
       return doc;
     },
     "method-update" : function(modifier, documentId) {
       let scope = Session.get('scope');
       let scopeId = Session.get('scopeId');
-      modifier["$set"].organizerType = scope;
-      modifier["$set"].organizerId = scopeId;
+      if(!!modifier["$set"].organizerType){
+        modifier["$set"].organizerType = scope;
+      }
+      if(!!modifier["$set"].organizerId){
+        modifier["$set"].organizerId = scopeId;
+      }
+      const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
+      const matches = [];
+      let match;
+      if(modifier["$set"].shortDescription){
+        while ((match = regex.exec(modifier["$set"].shortDescription))) {
+          matches.push(match[1]);
+        }
+      }
+      if(modifier["$set"].description){
+        while ((match = regex.exec(modifier["$set"].description))) {
+          matches.push(match[1]);
+        }
+      }
+      if(pageSession.get('tags')){
+        const arrayTags = _.reject(pageSession.get('tags'), (value) => {
+          return matches[value] === null;
+        }, matches);
+        if(modifier["$set"].tags){
+          modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,arrayTags,matches));
+        }else{
+          modifier["$set"].tags = _.uniq(_.union(arrayTags,matches));
+        }
+      }else{
+        //si on update est ce que la mention reste
+        if(matches.length > 0){
+        if(modifier["$set"].tags){
+          modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,matches));
+        }else{
+          modifier["$set"].tags = _.uniq(matches);
+        }
+      }
+      }
       return modifier;
     }
   },
@@ -702,7 +953,38 @@ AutoForm.addHooks(['editBlockEvent'], {
       let scope = 'events';
       let block = Session.get('block');
       if(modifier && modifier["$set"]){
-
+        const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
+        const matches = [];
+        let match;
+        if(modifier["$set"].shortDescription){
+          while ((match = regex.exec(modifier["$set"].shortDescription))) {
+            matches.push(match[1]);
+          }
+        }
+        if(modifier["$set"].description){
+          while ((match = regex.exec(modifier["$set"].description))) {
+            matches.push(match[1]);
+          }
+        }
+        if(pageSession.get('tags')){
+          const arrayTags = _.reject(pageSession.get('tags'), (value) => {
+            return matches[value] === null;
+          }, matches);
+          if(modifier["$set"].tags){
+            modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,arrayTags,matches));
+          }else{
+            modifier["$set"].tags = _.uniq(_.union(arrayTags,matches));
+          }
+        }else{
+          //si on update est ce que la mention reste
+          if(matches.length > 0){
+          if(modifier["$set"].tags){
+            modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,matches));
+          }else{
+            modifier["$set"].tags = _.uniq(matches);
+          }
+        }
+        }
       }else{
         modifier["$set"] = {};
       }

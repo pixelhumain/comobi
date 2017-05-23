@@ -485,8 +485,44 @@ Template.organizationsFields.onRendered(function() {
       }
     }
   });
+
+  //#tags
+  pageSession.set( 'queryTag', false );
+  pageSession.set( 'tags', false );
+  self.$('textarea').atwho({
+    at: "#"
+  }).on("matched.atwho", function(event, flag, query) {
+      console.log(event, "matched " + flag + " and the result is " + query);
+      if(flag === '#' && query){
+    console.log(pageSession.get('queryTag'));
+    if(pageSession.get( 'queryTag') !== query){
+      pageSession.set( 'queryTag', query);
+      Meteor.call('searchTagautocomplete',query, function(error,result) {
+      if (!error) {
+        console.log(result);
+        self.$('textarea').atwho('load', '#', result).atwho('run');
+      }
+    });
+    }
+  }
+    }).on("inserted.atwho", function(event, $li, browser) {
+        console.log(JSON.stringify($li.data('item-data')));
+        if($li.data('item-data')['atwho-at'] == '#'){
+        const tag = $li.data('item-data').name;
+        if(pageSession.get('tags')){
+          let arrayTags = pageSession.get('tags');
+          arrayTags.push(tag);
+          pageSession.set( 'tags', arrayTags);
+        }else{
+          pageSession.set( 'tags', [tag] );
+        }
+      }
+      });
 });
 
+Template.organizationsFields.onDestroyed(function () {
+this.$('textarea').atwho('destroy');
+});
 
 Template.organizationsFields.events({
   'keyup input[name="postalCode"],change input[name="postalCode"]':_.throttle((e, tmpl) => {
@@ -619,7 +655,38 @@ AutoForm.addHooks(['editBlockOrganization'], {
       let scope = 'organizations';
       let block = Session.get('block');
       if(modifier && modifier["$set"]){
-
+        const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
+        const matches = [];
+        let match;
+        if(modifier["$set"].shortDescription){
+          while ((match = regex.exec(modifier["$set"].shortDescription))) {
+            matches.push(match[1]);
+          }
+        }
+        if(modifier["$set"].description){
+          while ((match = regex.exec(modifier["$set"].description))) {
+            matches.push(match[1]);
+          }
+        }
+        if(pageSession.get('tags')){
+          const arrayTags = _.reject(pageSession.get('tags'), (value) => {
+            return matches[value] === null;
+          }, matches);
+          if(modifier["$set"].tags){
+            modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,arrayTags,matches));
+          }else{
+            modifier["$set"].tags = _.uniq(_.union(arrayTags,matches));
+          }
+        }else{
+          //si on update est ce que la mention reste
+          if(matches.length > 0){
+          if(modifier["$set"].tags){
+            modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,matches));
+          }else{
+            modifier["$set"].tags = _.uniq(matches);
+          }
+        }
+        }
       }else{
         modifier["$set"] = {};
       }

@@ -1070,7 +1070,6 @@ this.$('textarea').atwho('destroy');
             const arrayMentions = _.reject(pageSession.get('mentions'), (array) => {
               return doc.text.match(`@${array.value}`) === null;
             }, doc.text);
-            console.log(arrayMentions);
             doc.mentions = arrayMentions;
           }else{
             //si on update est ce que la mention reste
@@ -1082,12 +1081,10 @@ this.$('textarea').atwho('destroy');
           while ((match = regex.exec(doc.text))) {
             matches.push(match[1]);
           }
-          console.log(matches);
           if(pageSession.get('tags')){
             const arrayTags = _.reject(pageSession.get('tags'), (value) => {
               return doc.text.match(`#${value}`) === null;
             }, doc.text);
-            console.log(arrayTags);
             if(doc.tags){
               doc.tags = _.uniq(_.union(doc.tags,arrayTags,matches));
             }else{
@@ -1114,7 +1111,6 @@ this.$('textarea').atwho('destroy');
             const arrayMentions = _.reject(pageSession.get('mentions'), (array) => {
               return modifier["$set"].text.match(`@${array.value}`) === null;
             }, modifier["$set"].text);
-            console.log(arrayMentions);
             modifier["$set"].mentions = arrayMentions;
           }else{
             //si on update est ce que la mention reste
@@ -1127,12 +1123,10 @@ this.$('textarea').atwho('destroy');
           while ((match = regex.exec(modifier["$set"].text))) {
             matches.push(match[1]);
           }
-          console.log(matches);
           if(pageSession.get('tags')){
             const arrayTags = _.reject(pageSession.get('tags'), (value) => {
               return modifier["$set"].text.match(`#${value}`) === null;
             }, modifier["$set"].text);
-            console.log(arrayTags);
             if(modifier["$set"].tags){
               modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,arrayTags,matches));
             }else{

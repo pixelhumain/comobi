@@ -168,6 +168,19 @@ function() {
 }
 );
 
+Template.registerHelper('textTags',
+function(text,tags) {
+  if(text){
+  if(tags){
+  _.each(tags, (value) => {
+    text = text.replace(new RegExp(`#${value}`, 'g'), `<a href="" class="positive">#${value}</a>`);
+  }, text);
+  }
+  return text;
+}
+}
+);
+
 Template.registerHelper('notificationsCount',
 function() {
   return ActivityStream.api.Unseen();
