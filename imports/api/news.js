@@ -231,6 +231,7 @@ export const SchemasNewsRest =   new SimpleSchema({
       window.Projects = Projects;
       window.Citoyens = Citoyens;
       window.Events = Events;
+      window.News = News;
     }
 
     News.helpers({
@@ -260,6 +261,7 @@ export const SchemasNewsRest =   new SimpleSchema({
           'name': 1
         }};
           if(this.object && this.object.type && this.object.id){
+            console.log(this.object.type);
             const collection = nameToCollection(this.object.type);
             return collection.findOne({_id:new Mongo.ObjectID(this.object.id)},queryOptions);
           }
