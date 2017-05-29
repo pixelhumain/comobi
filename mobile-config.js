@@ -4,8 +4,8 @@ App.info({
   description: 'communecter mobile',
   author: 'thomas',
   email: 'thomas.craipeau@gmail.com',
-  version: '0.0.2',
-  buildNumber: '102'
+  version: '0.0.3',
+  buildNumber: '103'
 });
 
 App.setPreference('android-targetSdkVersion', '23');
