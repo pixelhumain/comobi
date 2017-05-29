@@ -45,7 +45,16 @@ if (Meteor.isCordova && !Meteor.isDesktop) {
           Router.go("detailList",{scope:scope,_id:_id});
         }
       }
+    } else if (urlArray && urlArray.length === 5) {
+      const scope = urlArray[2];
+      const page = urlArray[0];
+      const _id = urlArray[4];
+      if(page === 'page'){
+      if(scope === 'events' || scope === 'organizations' || scope === 'projects' || scope === 'citoyens'){
+        Router.go("detailList",{scope:scope,_id:_id});
       }
+    }
+  }
     }
    });
 
