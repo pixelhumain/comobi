@@ -18,6 +18,7 @@ import { Events,SchemasEventsRest,BlockEventsRest } from '../events.js';
 import { Organizations,SchemasOrganizationsRest,BlockOrganizationsRest } from '../organizations.js';
 import { Projects,SchemasProjectsRest,BlockProjectsRest } from '../projects.js';
 import { Comments,SchemasCommentsRest,SchemasCommentsEditRest } from '../comments.js';
+import { SchemasShareRest } from '../schema.js';
 
 //function api
 import { apiCommunecter } from './api.js';
@@ -40,6 +41,7 @@ if(doc.typeElement === 'citoyens'){
   if(doc.block === 'descriptions'){
     docRetour.description = doc.description ? doc.description : '';
     docRetour.shortDescription = doc.shortDescription ? doc.shortDescription : '';
+    docRetour.tags = doc.tags ? doc.tags : '';
   }
   if(doc.block === 'network'){
     docRetour.telegram = doc.telegram ? doc.telegram : '';
@@ -51,7 +53,6 @@ if(doc.typeElement === 'citoyens'){
   }
   if(doc.block === 'info'){
     docRetour.name = doc.name;
-    docRetour.tags = doc.tags ? doc.tags : '';
     docRetour.email = doc.email;
     docRetour.url = doc.url ? doc.url : '';
     docRetour.fixe = doc.fixe ? doc.fixe : '';
@@ -66,6 +67,7 @@ if(doc.typeElement === 'citoyens'){
   if(doc.block === 'descriptions'){
     docRetour.description = doc.description ? doc.description : '';
     docRetour.shortDescription = doc.shortDescription ? doc.shortDescription : '';
+    docRetour.tags = doc.tags ? doc.tags : '';
   }
   if(doc.block === 'network'){
     docRetour.instagram = doc.instagram ? doc.instagram : '';
@@ -77,7 +79,6 @@ if(doc.typeElement === 'citoyens'){
   }
   if(doc.block === 'info'){
     docRetour.name = doc.name;
-    docRetour.tags = doc.tags ? doc.tags : '';
     docRetour.type = doc.type;
     docRetour.email = doc.email ? doc.email : '';
     docRetour.url = doc.url ? doc.url : '';
@@ -94,6 +95,7 @@ if(doc.typeElement === 'citoyens'){
   if(doc.block === 'descriptions'){
     docRetour.description = doc.description ? doc.description : '';
     docRetour.shortDescription = doc.shortDescription ? doc.shortDescription : '';
+    docRetour.tags = doc.tags ? doc.tags : '';
   }
   if(doc.block === 'network'){
     docRetour.instagram = doc.instagram ? doc.instagram : '';
@@ -105,7 +107,6 @@ if(doc.typeElement === 'citoyens'){
   }
   if(doc.block === 'info'){
     docRetour.name = doc.name;
-    docRetour.tags = doc.tags ? doc.tags : '';
     docRetour.avancement = doc.avancement ? doc.avancement : '';
     docRetour.email = doc.email ? doc.email : '';
     docRetour.url = doc.url ? doc.url : '';
@@ -121,6 +122,7 @@ if(doc.typeElement === 'citoyens'){
   if(doc.block === 'descriptions'){
     docRetour.description = doc.description ? doc.description : '';
     docRetour.shortDescription = doc.shortDescription ? doc.shortDescription : '';
+    docRetour.tags = doc.tags ? doc.tags : '';
   }
   if(doc.block === 'network'){
     docRetour.instagram = doc.instagram ? doc.instagram : '';
@@ -132,7 +134,6 @@ if(doc.typeElement === 'citoyens'){
   }
   if(doc.block === 'info'){
     docRetour.name = doc.name;
-    docRetour.tags = doc.tags ? doc.tags : '';
     docRetour.type = doc.type;
     docRetour.email = doc.email ? doc.email : '';
     docRetour.url = doc.url ? doc.url : '';
@@ -491,6 +492,34 @@ followEntity (connectId,parentType,childId){
   doc.childId = (typeof childId !== 'undefined') ?  childId : this.userId;
   doc.parentType=parentType;
   var retour = apiCommunecter.postPixel("link","follow",doc);
+  return retour;
+},
+shareEntity (doc){
+  console.log(doc);
+    check(doc, SchemasShareRest);
+  if (!this.userId) {
+    throw new Meteor.Error("not-authorized");
+  }
+  doc.childType="citoyens";
+  doc.connectType="share";
+  doc.childId = this.userId;
+  var retour = apiCommunecter.postPixel("news","share",doc);
+  return retour;
+},
+collectionsAdd (id,type){
+  check(id, String);
+  check(type, String);
+  check(type, Match.Where(function(name) {
+    return _.contains(['events', 'projects','organizations','citoyens'], name);
+  }));
+  if (!this.userId) {
+    throw new Meteor.Error("not-authorized");
+  }
+  let doc={};
+  doc.id=id;
+  doc.type=type;
+  doc.collection='favorites';
+  var retour = apiCommunecter.postPixel("collections","add",doc);
   return retour;
 },
   connectEntity (connectId,parentType,childId){
@@ -996,6 +1025,24 @@ doc.docId=newsDoc._id._str;
       if (this.userId !== idType) {
         throw new Meteor.Error("not-authorized");
       }
+    } else if(type === 'projects'){
+      if (!collection.findOne({_id:new Mongo.ObjectID(idType)}).isAdmin()) {
+      if (!collection.findOne({_id:new Mongo.ObjectID(idType)}).isContributors(this.userId)) {
+        throw new Meteor.Error("not-authorized");
+      }
+    }
+    } else if(type === 'organizations'){
+      if (!collection.findOne({_id:new Mongo.ObjectID(idType)}).isAdmin()) {
+      if (!collection.findOne({_id:new Mongo.ObjectID(idType)}).isMembers(this.userId)) {
+        throw new Meteor.Error("not-authorized");
+      }
+    }
+  } else if(type === 'events'){
+    if (!collection.findOne({_id:new Mongo.ObjectID(idType)}).isAdmin()) {
+    if (!collection.findOne({_id:new Mongo.ObjectID(idType)}).isAttendees(this.userId)) {
+      throw new Meteor.Error("not-authorized");
+    }
+  }
     } else {
       if (!collection.findOne({_id:new Mongo.ObjectID(idType)}).isAdmin()) {
         throw new Meteor.Error("not-authorized");

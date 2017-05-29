@@ -32,6 +32,8 @@ import '../imports/ui/citoyens/list.js';
 
 import '../imports/ui/directory/directory.js';
 
+import '../imports/ui/share/share.js';
+
 import '../imports/ui/search/search.js';
 import '../imports/ui/changeposition/changeposition.js';
 import '../imports/ui/contacts/contacts.js';

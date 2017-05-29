@@ -19,11 +19,11 @@
 
   {{#if equals scope.scopeVar 'citoyens'}}
   <div class="item tabs tabs-icon-left">
-    <a class="tab-item selectview {{#if equals selectview 'scopeDetailTemplate'}}tab-item-active{{/if}}" href="" id="scopeDetailTemplate"><i class="icon fa fa-home"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeDetailTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'detailList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeDetailTemplate"><i class="icon fa fa-home"></i></a>
     {{#if scope.isMe}}
-    <a class="tab-item selectview {{#if equals selectview 'scopeFilActusTemplate'}}tab-item-active{{/if}}" href="" id="scopeFilActusTemplate"><i class="icon fa fa-rss"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeFilActusTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'actusList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeFilActusTemplate"><i class="icon fa fa-rss"></i></a>
     {{/if}}
-    <a class="tab-item selectview {{#if equals selectview 'scopeNewsTemplate'}}tab-item-active{{/if}}" href="" id="scopeNewsTemplate"><i class="icon fa fa-user-circle"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeNewsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'newsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNewsTemplate"><i class="icon fa fa-user-circle"></i></a>
     {{#if scope.isMe}}
     <a class="tab-item selectview {{#if equals selectview 'scopeOrganizationsTemplate'}}tab-item-active{{/if}}" href="" id="scopeOrganizationsTemplate"><i class="icon fa fa-users"></i></a>
     <a class="tab-item selectview {{#if equals selectview 'scopeProjectsTemplate'}}tab-item-active{{/if}}" href="" id="scopeProjectsTemplate"><i class="icon fa fa-lightbulb-o"></i></a>
@@ -34,11 +34,11 @@
   {{/if}}
   {{#if equals scope.scopeVar 'organizations'}}
   <div class="item tabs tabs-icon-left">
-    <a class="tab-item selectview {{#if equals selectview 'scopeDetailTemplate'}}tab-item-active{{/if}}" href="" id="scopeDetailTemplate"><i class="icon fa fa-home"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeDetailTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'detailList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeDetailTemplate"><i class="icon fa fa-home"></i></a>
     {{#if scope.isAdmin}}
-    <a class="tab-item selectview {{#if equals selectview 'scopeNotificationsTemplate'}}tab-item-active{{/if}}" href="" id="scopeNotificationsTemplate"><i class="icon fa fa-bell"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeNotificationsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'notificationsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNotificationsTemplate"><i class="icon fa fa-bell"></i></a>
     {{/if}}
-    <a class="tab-item selectview {{#if equals selectview 'scopeNewsTemplate'}}tab-item-active{{/if}}" href="" id="scopeNewsTemplate"><i class="icon fa fa-rss"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeNewsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'newsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNewsTemplate"><i class="icon fa fa-rss"></i></a>
     <a class="tab-item selectview {{#if equals selectview 'scopeProjectsTemplate'}}tab-item-active{{/if}}" href="" id="scopeProjectsTemplate"><i class="icon fa fa-lightbulb-o"></i></a>
     <a class="tab-item selectview {{#if equals selectview 'scopeEventsTemplate'}}tab-item-active{{/if}}" href="" id="scopeEventsTemplate"><i class="icon fa fa-calendar"></i></a>
   </div>
@@ -46,19 +46,22 @@
   {{/if}}
   {{#if equals scope.scopeVar 'projects'}}
   <div class="item tabs tabs-icon-left">
-    <a class="tab-item selectview {{#if equals selectview 'scopeDetailTemplate'}}tab-item-active{{/if}}" href="" id="scopeDetailTemplate"><i class="icon fa fa-home"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeDetailTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'detailList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeDetailTemplate"><i class="icon fa fa-home"></i></a>
     {{#if scope.isAdmin}}
-    <a class="tab-item selectview {{#if equals selectview 'scopeNotificationsTemplate'}}tab-item-active{{/if}}" href="" id="scopeNotificationsTemplate"><i class="icon fa fa-bell"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeNotificationsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'notificationsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNotificationsTemplate"><i class="icon fa fa-bell"></i></a>
     {{/if}}
-    <a class="tab-item selectview {{#if equals selectview 'scopeNewsTemplate'}}tab-item-active{{/if}}" href="" id="scopeNewsTemplate"><i class="icon fa fa-rss"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeNewsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'newsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNewsTemplate"><i class="icon fa fa-rss"></i></a>
     <a class="tab-item selectview {{#if equals selectview 'scopeEventsTemplate'}}tab-item-active{{/if}}" href="" id="scopeEventsTemplate"><i class="icon fa fa-calendar"></i></a>
   </div>
     {{> Template.dynamic template=selectview data=scope}}
   {{/if}}
   {{#if equals scope.scopeVar 'events'}}
   <div class="item tabs tabs-icon-left">
-    <a class="tab-item selectview {{#if equals selectview 'scopeDetailTemplate'}}tab-item-active{{/if}}" href="" id="scopeDetailTemplate"><i class="icon fa fa-home"></i></a>
-    <a class="tab-item selectview {{#if equals selectview 'scopeNewsTemplate'}}tab-item-active{{/if}}" href="" id="scopeNewsTemplate"><i class="icon fa fa-rss"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeDetailTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'detailList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeDetailTemplate"><i class="icon fa fa-home"></i></a>
+    {{#if scope.isAdmin}}
+    <a class="tab-item {{#if equals selectview 'scopeNotificationsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'notificationsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNotificationsTemplate"><i class="icon fa fa-bell"></i></a>
+    {{/if}}
+    <a class="tab-item {{#if equals selectview 'scopeNewsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'newsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNewsTemplate"><i class="icon fa fa-rss"></i></a>
   </div>
     {{> Template.dynamic template=selectview data=scope}}
   {{/if}}
@@ -373,16 +376,22 @@
   {{#if equals scopeVar 'events'}}
   {{#if isAdmin}}
   <a href="#" class="button button-positive action-card-events"><i class="icon fa fa-cog"></i></a>
+  {{else}}
+  <a href="{{pathFor 'share' _id=_id._str scope=scopeVar}}" class="button button-clear"><i class="icon fa fa-share"></i></a>
   {{/if}}
   {{/if}}
   {{#if equals scopeVar 'projects'}}
   {{#if isAdmin}}
   <a href="#" class="button button-positive action-card-projects"><i class="icon fa fa-cog"></i></a>
+  {{else}}
+  <a href="{{pathFor 'share' _id=_id._str scope=scopeVar}}" class="button button-clear"><i class="icon fa fa-share"></i></a>
   {{/if}}
   {{/if}}
   {{#if equals scopeVar 'organizations'}}
   {{#if isAdmin}}
   <a href="#" class="button button-positive action-card-organizations"><i class="icon fa fa-cog"></i></a>
+  {{else}}
+  <a href="{{pathFor 'share' _id=_id._str scope=scopeVar}}" class="button button-clear"><i class="icon fa fa-share"></i></a>
   {{/if}}
   {{/if}}
   {{#if equals scopeVar 'citoyens'}}
@@ -630,6 +639,8 @@
 
 <template name="boutonCardevents">
     <div class="button-bar bar-positive">
+      {{> Bouton_card id=_id._str scope=scopeVar isConnect=isFavorites classOff="button-small favorites-link" classOn="button-small favorites-link" iconOff="fa fa-star" iconOn="fa fa-star-o" titleOn=(_ "Favorites") titleOff=(_ "Favorites")}}
+
       {{#if isAttendees}}
       <a href="{{pathFor 'listAttendees' _id=_id._str}}" class="button button-small">{{> ionIcon icon="ios-people"}}</a>
       <button class="button button-small" data-ion-modal="_inviteattendeesEvent">{{> ionIcon icon="person-add"}}</button>
@@ -660,6 +671,7 @@
 <template name="boutonCardorganizations">
     <div class="button-bar bar-positive">
       {{> Bouton_card id=_id._str scope=scopeVar isConnect=isFollowersMe classOff="button-small followperson-link" classOn="button-small unfollowscope-link" iconOff="fa fa-rss" iconOn="fa fa-rss" titleOn=(_ "Unsubscribe") titleOff=(_ "Subscribe")}}
+      {{> Bouton_card id=_id._str scope=scopeVar isConnect=isFavorites classOff="button-small favorites-link" classOn="button-small favorites-link" iconOff="fa fa-star" iconOn="fa fa-star-o" titleOn=(_ "Favorites") titleOff=(_ "Favorites")}}
 
       {{#if toBeValidated}}
       <button class="button button-small disabled">
@@ -694,6 +706,8 @@
 <template name="boutonCardprojects">
     <div class="button-bar bar-positive">
       {{> Bouton_card id=_id._str scope=scopeVar isConnect=isFollowersMe classOff="button-small followperson-link" classOn="button-small unfollowscope-link" iconOff="fa fa-rss" iconOn="fa fa-rss" titleOn=(_ "Unsubscribe") titleOff=(_ "Subscribe")}}
+      {{> Bouton_card id=_id._str scope=scopeVar isConnect=isFavorites classOff="button-small favorites-link" classOn="button-small favorites-link" iconOff="fa fa-star" iconOn="fa fa-star-o" titleOn=(_ "Favorites") titleOff=(_ "Favorites")}}
+
 
       {{#if toBeValidated}}
       <button class="button button-small disabled">

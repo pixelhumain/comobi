@@ -1,0 +1,316 @@
+<template name="share">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "share"}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+
+<div class="list">
+
+  <div class="item item-divider">
+    <i class="icon fa fa-share"></i> {{_ "share content with your network"}}
+  </div>
+
+  {{> shareAdd}}
+
+{{#if newsId}}
+  <div class="card">
+    {{#with scope.new}}
+    <div class="item {{#if imageDoc authorNews._id._str}}item-avatar{{/if}}">
+      {{#if imageDoc authorNews._id._str}}
+      {{> imgDoc imageDoc=(imageDoc authorNews._id._str profil=true) resized="80x80"}}
+      {{/if}}
+      <h2>
+        {{#if equals targetIsAuthor 'true'}}
+        <a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="dark">{{#if name}}{{name}}{{else}}{{authorNews.name}}{{/if}}</a>
+        {{else}}
+        <a href="{{pathFor 'detailList' _id=authorNews._id._str scope='citoyens'}}" class="dark">{{#if name}}{{name}}{{else}}{{authorNews.name}}{{/if}}</a>
+        {{/if}}
+      </h2>
+      <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
+    </div>
+    {{#if photoNewsAlbums}}
+    <div class="item item-body">
+      {{#each photoNewsAlbums}}
+    <img src="{{urlImageCommunecter}}/upload/{{moduleId}}/{{folder}}/{{name}}" class="full-image photo-viewer" />
+      {{/each}}
+    </div>
+    {{/if}}
+    {{#if text}}
+    <div class="item item-body">
+      {{{textMentions (autolinker text)}}}
+      {{#if tags}}
+      <p>
+      {{#each tags}}
+      <a href="" class="positive"><i class="icon ion-pound"></i> {{this}}</a>
+      {{/each}}
+    </p>
+      {{/if}}
+    </div>
+    {{/if}}
+      {{/with}}
+  </div>
+  {{else}}
+  <div class="card">
+    {{#with scope}}
+    <div class="item item-avatar item-button-right">
+      {{#if profilThumbImageUrl}}
+        <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
+      {{else}}
+      {{> imgDoc imageDoc=imageDoc resized="50x50"}}
+      {{/if}}
+      <h2 class="homestead">{{name}}</h2>
+
+      {{#if equals scopeVar 'events'}}
+      {{#if organizerType}}
+      {{#if organizerEvent}}<p>{{_ "organizer"}} : <a href="{{pathFor 'detailList' _id=organizerId scope=organizerType}}" class="positive">{{organizerEvent.name}}</a></p>{{/if}}
+      {{else}}
+      {{#if creatorProfile}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
+      {{/if}}
+      {{else}}
+      {{#if equals scopeVar 'projects'}}
+      {{#if parentType}}
+      {{#if organizerProject}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=parentId scope=parentType}}" class="positive">{{organizerProject.name}}</a></p>{{/if}}
+      {{else}}
+      {{#if creatorProfile}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
+      {{/if}}
+      {{else}}
+      {{#if creatorProfile}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
+      {{/if}}
+      {{/if}}
+
+      {{#if typeValue}}{{typeValue}}{{/if}}
+      {{#if isVisibleFields 'birthDate'}}
+      {{#if birthDate}}
+      <p><i class="icon fa fa-birthday-cake"></i> {{formatBirthDate}} ({{diffInText birthDate}})</p>
+      {{/if}}
+      {{/if}}
+    </div>
+
+    <div class="item item-image">
+      {{#if profilImageUrl}}
+      {{#if isAdmin}}
+      <a href="" class="photo-link-scope"><img src="{{urlImageCommunecter}}{{profilImageUrl}}"></a>
+      {{else}}
+      <img src="{{urlImageCommunecter}}{{profilImageUrl}}">
+      {{/if}}
+      {{else}}
+      {{#if isAdmin}}
+      <a href="" class="photo-link-scope">{{> imgDoc imageDoc=imageDoc resized="340x340"}}</a>
+      {{else}}
+      {{> imgDoc imageDoc=imageDoc resized="340x340"}}
+      {{/if}}
+      {{/if}}
+
+
+
+      {{#if equals scopeVar 'citoyens'}}
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      <p class="right-top animated in">
+        {{#if modified}}<i class="icon ion-android-alarm-clock"></i> {{_ "modified"}} : {{livestamp modified}}<br>{{/if}}
+        {{#if preferences}}
+        {{#if equals preferences.isOpenData 'true'}}
+        <span class="icon fa-stack opendata" style="font-size:14px;width:14px;">
+                <i class="fa fa-database main fa-stack-1x dark"></i>
+                <i class="fa fa-share-alt  mainTop fa-stack-1x light" style="text-shadow: 0px 0px 2px rgb(15,15,15);"></i>
+              </span>  {{name}}
+        {{/if}}
+        {{/if}}
+      </p>
+      {{/transition}}
+      {{else}}
+      {{#transition in="slideInDown" out="slideOutUp"}}
+
+      <p class="right-top animated in">
+        {{#if startDate}}
+        {{#if startDate}}<i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>{{/if}}
+        {{#if endDate}}<i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>{{/if}}
+        {{#if endDate}}<i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>{{/if}}
+        {{/if}}
+        {{#if modified}}<i class="icon ion-android-alarm-clock"></i> {{_ "modified"}} : {{livestamp modified}}<br>{{/if}}
+        {{#if preferences}}
+        {{#if equals preferences.isOpenData 'true'}}
+        <span class="icon fa-stack opendata" style="font-size:14px;width:14px;">
+                <i class="icon fa fa-database main fa-stack-1x dark"></i>
+                <i class="icon fa fa-share-alt  mainTop fa-stack-1x light" style="text-shadow: 0px 0px 2px rgb(15,15,15);"></i>
+              </span>  {{name}}
+        {{/if}}
+        {{#if equals preferences.isOpenEdition 'true'}}
+        <i class="icon fa fa-creative-commons dark"></i> {{name}}
+        {{/if}}
+        {{/if}}
+      </p>
+      {{/transition}}
+      {{/if}}
+
+    </div>
+
+    <div class="item item-text-wrap">
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      {{#if shortDescription}}
+      <p class="right-top animated in">{{{textTags shortDescription tags}}}</p>
+      {{/if}}
+      {{/transition}}
+
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      {{#if description}}
+      {{#if descriptionHTML}}
+      <p class="right-top animated in">{{{textTags description tags}}}</p>
+      {{else}}
+      <p class="right-top animated in">{{#markdown}}{{textTags description tags}}{{/markdown}}</p>
+      {{/if}}
+      {{/if}}
+      {{/transition}}
+
+        {{#if isVisibleFields 'locality'}}
+        {{#transition in="slideInDown" out="slideOutUp"}}
+        {{#if address}}
+        <p class="right-top animated in">
+        {{#if address.streetAddress}}
+        {{address.streetAddress}}<br>
+        {{/if}}
+        {{address.postalCode}} {{address.addressLocality}}
+        </p>
+        {{/if}}
+        {{/transition}}
+        {{/if}}
+        </div>
+
+
+      {{#if socialNetwork}}
+      <div class="button-bar bar-positive right-top animated in">
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      {{#if socialNetwork.twitter}}
+      <a href="{{socialNetwork.twitter}}" class="button button-small right-top animated in"><i class="icon fa fa-twitter"></i></a>
+      {{/if}}
+      {{/transition}}
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      {{#if socialNetwork.github}}
+      <a href="{{socialNetwork.github}}" class="button button-small right-top animated in"><i class="icon fa fa-github"></i></a>
+      {{/if}}
+      {{/transition}}
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      {{#if socialNetwork.telegram}}
+      <a href="{{socialNetwork.telegram}}" class="button button-small right-top animated in"><i class="icon fa fa-telegram"></i></a>
+      {{/if}}
+      {{/transition}}
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      {{#if socialNetwork.instagram}}
+      <a href="{{socialNetwork.instagram}}" class="button button-small right-top animated in"><i class="icon fa fa-instagram"></i></a>
+      {{/if}}
+      {{/transition}}
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      {{#if socialNetwork.facebook}}
+      <a href="{{socialNetwork.facebook}}" class="button button-small right-top animated in"><i class="icon fa fa-facebook"></i></a>
+      {{/if}}
+      {{/transition}}
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      {{#if socialNetwork.googleplus}}
+      <a href="{{socialNetwork.googleplus}}" class="button button-small right-top animated in"><i class="icon fa fa-google-plus"></i></a>
+      {{/if}}
+      {{/transition}}
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      {{#if socialNetwork.skype}}
+      <a href="{{socialNetwork.skype}}" class="button button-small right-top animated in"><i class="icon fa fa-skype"></i></a>
+      {{/if}}
+      {{/transition}}
+      </div>
+
+      {{/if}}
+      <div class="list">
+      {{#if isVisibleFields 'email'}}
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      {{#if email}}
+      <a href="mailto:{{email}}" class="item item-icon-left right-top animated in"><i class="icon fa fa-envelope"></i> {{email}}</a>
+      {{/if}}
+      {{/transition}}
+      {{/if}}
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      {{#if url}}
+      <a href="{{url}}"  class="item item-icon-left right-top animated in"><i class="icon fa fa-link"></i> {{url}}</a>
+      {{/if}}
+      {{/transition}}
+
+      {{#if isVisibleFields 'phone'}}
+      {{#if telephone}}
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      {{#if telephone.fixe}}
+      {{#each telephone.fixe}}
+      <a href="tel:{{this}}" class="item item-icon-left right-top animated in">
+      <i class="icon fa fa-phone"></i> {{this}}
+      </a>
+      {{/each}}
+      {{/if}}
+      {{/transition}}
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      {{#if telephone.mobile}}
+      {{#each telephone.mobile}}
+      <a href="tel:{{this}}" class="item item-icon-left right-top animated in">
+      <i class="icon fa fa-mobile"></i> {{this}}
+      </a>
+      {{/each}}
+      {{/if}}
+      {{/transition}}
+      {{#transition in="slideInDown" out="slideOutUp"}}
+      {{#if telephone.fax}}
+      {{#each telephone.fax}}
+      <a href="tel:{{this}}" class="item item-icon-left right-top animated in">
+      <i class="icon fa fa-fax"></i> {{this}}
+      </a>
+      {{/each}}
+      {{/if}}
+      {{/transition}}
+      {{/if}}
+      {{/if}}
+
+      </div>
+
+      {{#transition in="slideInLeft" out="slideOutLeft"}}
+      {{#if tags}}
+      <div class="item item-text-wrap animated in">
+      <p>
+      {{#each tags}}
+      <a href="" class="positive animated in"><i class="icon fa fa-tag"></i> {{this}}</a>
+      {{/each}}
+      </p>
+      </div>
+      {{/if}}
+      {{/transition}}
+
+    <div class="item tabs tabs-secondary tabs-icon-left">
+      {{#if isVisibleFields 'locality'}}
+      {{#if geo}}<a class="tab-item" href="{{pathFor 'mapWith' _id=_id._str scope=scopeVar}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a>{{/if}}
+      {{/if}}
+      {{#if issousEvents}}<a class="tab-item" href="{{pathFor 'listeventSous' _id=_id._str}}"><i class="icon ion-calendar"></i> {{countsousEvents}} {{_ "events"}} </a>{{/if}}
+    </div>
+    {{/with}}
+  </div>
+  {{/if}}
+</div>
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>
+
+<template name="shareAdd">
+{{#autoForm id="addShare" schema=SchemasShareRest type="method" meteormethod="shareEntity" template="ionic" class=""}}
+{{> afQuickField name='comment' label-type='placeholder' rows=2}}
+<div class="item">
+  <div class="button-bar">
+    <button type="submit" class="button button-dark">{{_ "share"}}</button>
+  </div>
+</div>
+{{/autoForm}}
+</template>

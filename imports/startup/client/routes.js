@@ -164,9 +164,21 @@ Router.map(function() {
     loadingTemplate: 'loading'
   });
 
+  this.route("share", {
+    template: "share",
+    path: ':scope/share/:_id/:newsId?',
+    loadingTemplate: 'loading'
+  });
+
   this.route("newsList", {
     template: "newsList",
     path: ':scope/news/:_id',
+    loadingTemplate: 'loading'
+  });
+
+  this.route("actusList", {
+    template: "newsList",
+    path: ':scope/actus/:_id',
     loadingTemplate: 'loading'
   });
 

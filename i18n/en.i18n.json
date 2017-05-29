@@ -538,6 +538,12 @@
         "placeholder":"message"
       }
     },
+    "sharerest":{
+      "comment":{
+        "label": "message",
+        "placeholder":"message"
+      }
+    },
     "global":{
       "name":{
         "label": "name",

@@ -529,11 +529,17 @@
     "comments":{
       "content":{
         "label": "message",
-        "placeholder":"comment..."
+        "placeholder":"commentaire..."
       },
       "text":{
         "label": "message",
-        "placeholder":"comment..."
+        "placeholder":"commentaire..."
+      }
+    },
+    "sharerest":{
+      "comment":{
+        "label": "message",
+        "placeholder":"commentaire..."
       }
     },
     "global":{

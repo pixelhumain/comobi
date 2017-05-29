@@ -362,6 +362,21 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 				},
 				{
 					find: function(scopeD) {
+						if(scope !== 'citoyens'){
+						return Citoyens.find({
+							_id: new Mongo.ObjectID(this.userId)
+						}, {
+							fields: {
+								'name': 1,
+								'links': 1,
+								'collections': 1
+							}
+						});
+					}
+				}
+				},
+				{
+					find: function(scopeD) {
 						if(scope === 'events'){
 						if(scopeD.organizerType && scopeD.organizerId && _.contains(['events', 'projects','organizations','citoyens'], scopeD.organizerType)){
 						let collectionType = nameToCollection(scopeD.organizerType);

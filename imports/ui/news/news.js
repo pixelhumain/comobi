@@ -49,6 +49,8 @@ Template.newsList.onCreated(function(){
       pageSession.set('selectview', 'scopeNewsTemplate');
     }else if(Router.current().route.getName()=="notificationsList"){
       pageSession.set('selectview', 'scopeNotificationsTemplate');
+    }else if(Router.current().route.getName()=="actusList"){
+      pageSession.set('selectview', 'scopeFilActusTemplate');
     }else{
       pageSession.set('selectview', 'scopeDetailTemplate');
     }
@@ -226,10 +228,16 @@ Template.scopeNotificationsTemplate.onCreated(function(){
   });
 
   this.autorun(function() {
+    if(Router.current().params.scope !=='events'){
     const handleToBeValidated = newsListSubs.subscribe('listMembersToBeValidated', Router.current().params.scope, Router.current().params._id);
       const handle = newsListSubs.subscribe('notificationsScope', Router.current().params.scope, Router.current().params._id);
       if(handleToBeValidated.ready() && handle.ready())
       this.ready.set(handle.ready());
+    }else{
+        const handle = newsListSubs.subscribe('notificationsScope', Router.current().params.scope, Router.current().params._id);
+        if(handle.ready())
+        this.ready.set(handle.ready());
+    }
   }.bind(this));
 });
 
@@ -1037,7 +1045,7 @@ this.$('textarea').atwho('destroy');
                     if (!error) {
                       successCallback(photoret.newsId);
                     }else{
-                      //console.log('error',error);
+                      console.log('error',error);
                     }
                   });
                 }});
