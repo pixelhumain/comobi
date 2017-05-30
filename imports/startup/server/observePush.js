@@ -5,6 +5,8 @@ import { moment } from 'meteor/momentjs:moment';
 
 import { ActivityStream } from '../../api/activitystream.js';
 
+Push.debug = true;
+
 const pushUser = (title,text,payload,query,badge) => {
   const notId = Math.round(new Date().getTime() / 1000);
   console.log(payload);

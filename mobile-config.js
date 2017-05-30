@@ -4,15 +4,15 @@ App.info({
   description: 'communecter mobile',
   author: 'thomas',
   email: 'thomas.craipeau@gmail.com',
-  version: '0.0.3',
-  buildNumber: '103'
+  version: '0.0.5',
+  buildNumber: '105'
 });
 
 App.setPreference('android-targetSdkVersion', '23');
 App.setPreference('android-minSdkVersion', '19');
 
 App.configurePlugin('phonegap-plugin-push', {
-  SENDER_ID: 183063213318
+  SENDER_ID: 376774334081
 });
 
 App.configurePlugin('cordova-plugin-customurlscheme', {

@@ -73,8 +73,8 @@ Push.debug = true;
 
 Push.Configure({
   gcm: {
-    apiKey: 'AIzaSyCVVHtLfG9UoudCBctnysh6jT3N6C1qrRg',
-    projectNumber: 183063213318
+    apiKey: Meteor.settings.pushapiKey,
+    projectNumber: 376774334081
   },
   production: true,
   sound: true,
@@ -87,13 +87,12 @@ Push.Configure({
   apn: {
     certData: Assets.getText('apn-production/PushCommunEventCert.pem'),
     keyData: Assets.getText('apn-production/PushCommunEventKey.pem'),
-    passphrase: 'Djab974',
     production: true,
     //gateway: 'gateway.push.apple.com',
   },
   gcm: {
-    apiKey: 'AIzaSyAjzbMpjLMJw_rlBFK3hDG3dNVFQwy1JMs',
-    projectNumber: 501293889946
+    apiKey: '',
+    projectNumber:
   }
    //'production': true,
    //'sound': true,
@@ -108,6 +107,6 @@ Push.Configure({
 
 Push.allow({
         send: function(userId, notification) {
-            return false;
+            return true;
         }
 });

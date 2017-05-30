@@ -771,15 +771,15 @@ function successCallback (retour){
           displayTimeout: 300,
           startWithSpace: false,
           displayTpl: function(item) {
-            return `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} ${item.id} </li>`;
+            return `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} </li>`;
           },
           searchKey: "name"
         }).atwho({
           at: "#"
         }).on("matched.atwho", function(event, flag, query) {
-            console.log(event, "matched " + flag + " and the result is " + query);
+            //console.log(event, "matched " + flag + " and the result is " + query);
             if(flag === '@' && query){
-            console.log(pageSession.get('queryMention'));
+            //console.log(pageSession.get('queryMention'));
             if(pageSession.get( 'queryMention') !== query){
               pageSession.set( 'queryMention', query);
               Meteor.call('searchMemberautocomplete',query, function(error,result) {
@@ -791,13 +791,13 @@ function successCallback (retour){
                   return {id:key,name:array.name,type:'organizations',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`};
                 });
                 const arrayUnions = _.union(citoyensArray,organizationsArray)
-                console.log(citoyensArray);
+                //console.log(citoyensArray);
                 self.$('textarea').atwho('load', '@', arrayUnions).atwho('run');
               }
             });
             }
           } else if(flag === '#' && query){
-          console.log(pageSession.get('queryTag'));
+          //console.log(pageSession.get('queryTag'));
           if(pageSession.get( 'queryTag') !== query){
             pageSession.set( 'queryTag', query);
             Meteor.call('searchTagautocomplete',query, function(error,result) {
@@ -809,7 +809,7 @@ function successCallback (retour){
           }
         }
           }).on("inserted.atwho", function(event, $li, browser) {
-              console.log(JSON.stringify($li.data('item-data')));
+              //console.log(JSON.stringify($li.data('item-data')));
 
               if($li.data('item-data')['atwho-at'] == '@'){
               const mentions = {};
@@ -899,15 +899,15 @@ this.$('textarea').atwho('destroy');
         displayTimeout: 300,
         startWithSpace: false,
         displayTpl: function(item) {
-          return `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} ${item.id} </li>`;
+          return `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} </li>`;
         },
         searchKey: "name"
       }).atwho({
         at: "#"
       }).on("matched.atwho", function(event, flag, query) {
-          console.log(event, "matched " + flag + " and the result is " + query);
+          //console.log(event, "matched " + flag + " and the result is " + query);
           if(flag === '@' && query){
-          console.log(pageSession.get('queryMention'));
+          //console.log(pageSession.get('queryMention'));
           if(pageSession.get( 'queryMention') !== query){
             pageSession.set( 'queryMention', query);
             Meteor.call('searchMemberautocomplete',query, function(error,result) {
@@ -919,25 +919,25 @@ this.$('textarea').atwho('destroy');
                 return {id:key,name:array.name,type:'organizations',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`};
               });
               const arrayUnions = _.union(citoyensArray,organizationsArray)
-              console.log(citoyensArray);
+              //console.log(citoyensArray);
               self.$('textarea').atwho('load', '@', arrayUnions).atwho('run');
             }
           });
           }
         } else if(flag === '#' && query){
-        console.log(pageSession.get('queryTag'));
+        //console.log(pageSession.get('queryTag'));
         if(pageSession.get( 'queryTag') !== query){
           pageSession.set( 'queryTag', query);
           Meteor.call('searchTagautocomplete',query, function(error,result) {
           if (!error) {
-            console.log(result);
+            //console.log(result);
             self.$('textarea').atwho('load', '#', result).atwho('run');
           }
         });
         }
       }
         }).on("inserted.atwho", function(event, $li, browser) {
-            console.log(JSON.stringify($li.data('item-data')));
+            //console.log(JSON.stringify($li.data('item-data')));
 
             if($li.data('item-data')['atwho-at'] == '@'){
             const mentions = {};
