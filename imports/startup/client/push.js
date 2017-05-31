@@ -8,21 +8,7 @@ import { ActivityStream } from '../../api/activitystream.js';
 Push.debug = true;
 
 Meteor.startup(function () {
-	Push.Configure({
-		android: {
-			senderID: 376774334081,
-			alert: true,
-			badge: true,
-			sound: true,
-			vibrate: true,
-			clearNotifications: true
-		},
-		ios: {
-			alert: true,
-			badge: true,
-			sound: true
-		}
-	});
+
 	if (Meteor.isDesktop){
 		console.log('DESKTOP');
 
@@ -58,7 +44,23 @@ Desktop.on('systemNotifications', 'notificationClicked', (sender, data) => {
 
 	} else {
 		if(Meteor.isCordova){
-
+			Push.Configure({
+				android: {
+					senderID: 376774334081,
+					alert: true,
+					badge: true,
+					sound: true,
+					vibrate: true,
+					clearNotifications: true,
+					icon: 'ic_stat_co_24',
+					iconColor: '#6B97AF'
+				},
+				ios: {
+					alert: true,
+					badge: true,
+					sound: true
+				}
+			});
 
 			Push.addListener('startup', function(notification) {
 				Router.go('/notifications');

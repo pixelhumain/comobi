@@ -25,9 +25,9 @@
     {{/if}}
     <a class="tab-item {{#if equals selectview 'scopeNewsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'newsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNewsTemplate"><i class="icon fa fa-user-circle"></i></a>
     {{#if scope.isMe}}
-    <a class="tab-item selectview {{#if equals selectview 'scopeOrganizationsTemplate'}}tab-item-active{{/if}}" href="" id="scopeOrganizationsTemplate"><i class="icon fa fa-users"></i></a>
-    <a class="tab-item selectview {{#if equals selectview 'scopeProjectsTemplate'}}tab-item-active{{/if}}" href="" id="scopeProjectsTemplate"><i class="icon fa fa-lightbulb-o"></i></a>
-    <a class="tab-item selectview {{#if equals selectview 'scopeEventsTemplate'}}tab-item-active{{/if}}" href="" id="scopeEventsTemplate"><i class="icon fa fa-calendar"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeOrganizationsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'organizationsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeOrganizationsTemplate"><i class="icon fa fa-users"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeProjectsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'projectsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeProjectsTemplate"><i class="icon fa fa-lightbulb-o"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeEventsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'eventsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeEventsTemplate"><i class="icon fa fa-calendar"></i></a>
     {{/if}}
   </div>
     {{> Template.dynamic template=selectview data=scope}}
@@ -39,8 +39,8 @@
     <a class="tab-item {{#if equals selectview 'scopeNotificationsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'notificationsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNotificationsTemplate"><i class="icon fa fa-bell"></i></a>
     {{/if}}
     <a class="tab-item {{#if equals selectview 'scopeNewsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'newsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNewsTemplate"><i class="icon fa fa-rss"></i></a>
-    <a class="tab-item selectview {{#if equals selectview 'scopeProjectsTemplate'}}tab-item-active{{/if}}" href="" id="scopeProjectsTemplate"><i class="icon fa fa-lightbulb-o"></i></a>
-    <a class="tab-item selectview {{#if equals selectview 'scopeEventsTemplate'}}tab-item-active{{/if}}" href="" id="scopeEventsTemplate"><i class="icon fa fa-calendar"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeProjectsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'projectsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeProjectsTemplate"><i class="icon fa fa-lightbulb-o"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeEventsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'eventsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeEventsTemplate"><i class="icon fa fa-calendar"></i></a>
   </div>
     {{> Template.dynamic template=selectview data=scope}}
   {{/if}}
@@ -51,7 +51,7 @@
     <a class="tab-item {{#if equals selectview 'scopeNotificationsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'notificationsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNotificationsTemplate"><i class="icon fa fa-bell"></i></a>
     {{/if}}
     <a class="tab-item {{#if equals selectview 'scopeNewsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'newsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNewsTemplate"><i class="icon fa fa-rss"></i></a>
-    <a class="tab-item selectview {{#if equals selectview 'scopeEventsTemplate'}}tab-item-active{{/if}}" href="" id="scopeEventsTemplate"><i class="icon fa fa-calendar"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeEventsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'eventsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeEventsTemplate"><i class="icon fa fa-calendar"></i></a>
   </div>
     {{> Template.dynamic template=selectview data=scope}}
   {{/if}}

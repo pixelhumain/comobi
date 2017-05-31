@@ -51,6 +51,12 @@ Template.newsList.onCreated(function(){
       pageSession.set('selectview', 'scopeNotificationsTemplate');
     }else if(Router.current().route.getName()=="actusList"){
       pageSession.set('selectview', 'scopeFilActusTemplate');
+    }else if(Router.current().route.getName()=="organizationsList"){
+      pageSession.set('selectview', 'scopeOrganizationsTemplate');
+    }else if(Router.current().route.getName()=="projectsList"){
+      pageSession.set('selectview', 'scopeProjectsTemplate');
+    }else if(Router.current().route.getName()=="eventsList"){
+      pageSession.set('selectview', 'scopeEventsTemplate');
     }else{
       pageSession.set('selectview', 'scopeDetailTemplate');
     }
@@ -769,9 +775,9 @@ function successCallback (retour){
           limit: 10,
           delay: 600,
           displayTimeout: 300,
-          startWithSpace: false,
+          startWithSpace: true,
           displayTpl: function(item) {
-            return `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} </li>`;
+            return item.avatar ? `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} </li>` : `<li>${item.name} </li>`;
           },
           searchKey: "name"
         }).atwho({
@@ -785,10 +791,10 @@ function successCallback (retour){
               Meteor.call('searchMemberautocomplete',query, function(error,result) {
               if (!error) {
                 const citoyensArray = _.map(result.citoyens, (array,key) => {
-                  return {id:key,name:array.name,type:'citoyens',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`};
+                  return array.profilThumbImageUrl ? {id:key,name:array.name,type:'citoyens',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`} : {id:key,name:array.name,type:'citoyens'};
                 });
                 const organizationsArray = _.map(result.organizations, (array,key) => {
-                  return {id:key,name:array.name,type:'organizations',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`};
+                  return array.profilThumbImageUrl ? {id:key,name:array.name,type:'organizations',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`} : {id:key,name:array.name,type:'organizations'};
                 });
                 const arrayUnions = _.union(citoyensArray,organizationsArray)
                 //console.log(citoyensArray);
@@ -897,9 +903,9 @@ this.$('textarea').atwho('destroy');
         limit: 10,
         delay: 600,
         displayTimeout: 300,
-        startWithSpace: false,
+        startWithSpace: true,
         displayTpl: function(item) {
-          return `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} </li>`;
+          return item.avatar ? `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} </li>` : `<li>${item.name} </li>`;
         },
         searchKey: "name"
       }).atwho({
@@ -913,10 +919,10 @@ this.$('textarea').atwho('destroy');
             Meteor.call('searchMemberautocomplete',query, function(error,result) {
             if (!error) {
               const citoyensArray = _.map(result.citoyens, (array,key) => {
-                return {id:key,name:array.name,type:'citoyens',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`};
+                return array.profilThumbImageUrl ? {id:key,name:array.name,type:'citoyens',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`} : {id:key,name:array.name,type:'citoyens'};
               });
               const organizationsArray = _.map(result.organizations, (array,key) => {
-                return {id:key,name:array.name,type:'organizations',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`};
+                return array.profilThumbImageUrl ? {id:key,name:array.name,type:'organizations',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`} : {id:key,name:array.name,type:'organizations'};
               });
               const arrayUnions = _.union(citoyensArray,organizationsArray)
               //console.log(citoyensArray);

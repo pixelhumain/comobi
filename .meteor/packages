@@ -75,6 +75,6 @@ omega:meteor-desktop-bundler@=0.7.1
 omega:meteor-desktop-localstorage
 tap:i18n-bundler
 communecter:deep-link
-markdown
+markdown@1.0.12
 jameslefrere:atjs
 jameslefrere:caretjs

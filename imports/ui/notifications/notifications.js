@@ -118,9 +118,7 @@ Template.notificationsList.events({
           }
         }else if(this.verb === 'mention'){
           if(this.target.type === 'citoyens' || this.target.type === 'projects' || this.target.type === 'organizations' || this.target.type === 'events'){
-            if(this.notify.objectType === 'news'){
-              Router.go('newsDetail', {_id:this.target.parent.id,newsId:this.target.id,scope:this.target.parent.type});
-            }
+              Router.go('newsDetail', {_id:this.target.id,newsId:this.object.id,scope:this.target.type});
           }
         }else if(this.verb === 'join' || this.verb === 'ask' || this.verb === 'follow' || this.verb === 'accept' || this.verb === 'wait' || this.verb === 'confirm' || this.verb === 'invite' || this.verb === 'authorize' || this.verb === 'attend'){
           if(this.target.type === 'citoyens' || this.target.type === 'projects' || this.target.type === 'organizations' || this.target.type === 'events'){
