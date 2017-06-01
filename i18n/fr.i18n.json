@@ -99,6 +99,23 @@
   "favorites":"Favoris",
   "search":"Chercher",
   "searchPlaceholder":"Chercher par nom, #tag...",
+  "redirect":"redirect",
+  "connect":"connect",
+  "yes":"Oui",
+  "no":"Non",
+  "successful connection":"Connexion réussie",
+  "would you like to connect to this":"Voulez-vous vous connecter à cet entité ?",
+  "edit info":"modifier info",
+  "edit network":"modifier réseau",
+  "edit description":"modifier description",
+  "edit address":"modifier adresse",
+  "edit dates":"modifier dates",
+  "edit privacy settings":"modifier paramètres de confidentialité",
+  "Waiting for a response":"En attente de réponse",
+  "wants to become a member of the organization":"Veut devenir membre de l'organisation",
+  "wants to become a contributor to the project":"Veut devenir un contributeur au projet",
+  "share":"Partager",
+  "share content with your network":"Partagez le contenu avec votre réseau",
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] existe déja",
@@ -529,11 +546,17 @@
     "comments":{
       "content":{
         "label": "message",
-        "placeholder":"comment..."
+        "placeholder":"commentaire..."
       },
       "text":{
         "label": "message",
-        "placeholder":"comment..."
+        "placeholder":"commentaire..."
+      }
+    },
+    "sharerest":{
+      "comment":{
+        "label": "message",
+        "placeholder":"commentaire..."
       }
     },
     "global":{

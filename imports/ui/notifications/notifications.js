@@ -108,7 +108,7 @@ Template.notificationsList.events({
             }
         }else if(this.verb === 'like'){
           if(this.target.type === 'news'){
-            Router.go('newsDetailComments', {_id:this.target.parent.id,newsId:this.target.id,scope:this.target.parent.type});
+            Router.go('newsDetail', {_id:this.target.parent.id,newsId:this.target.id,scope:this.target.parent.type});
           }
         }else if(this.verb === 'post'){
           if(this.target.type === 'citoyens' || this.target.type === 'projects' || this.target.type === 'organizations' || this.target.type === 'events'){
@@ -116,17 +116,14 @@ Template.notificationsList.events({
               Router.go('newsList', {_id:this.target.id,scope:this.target.type});
             }
           }
-        }else if(this.verb === 'join' || this.verb === 'ask' || this.verb === 'follow'){
+        }else if(this.verb === 'mention'){
           if(this.target.type === 'citoyens' || this.target.type === 'projects' || this.target.type === 'organizations' || this.target.type === 'events'){
-            if(this.notify.objectType === 'asMember'){
-              Router.go('detailList', {_id:this.target.id,scope:this.target.type});
-            }
+              Router.go('newsDetail', {_id:this.target.id,newsId:this.object.id,scope:this.target.type});
           }
-        }else if(this.verb === 'accept'){
-          if(this.object.objectType === 'citoyens' || this.object.objectType === 'projects' || this.object.objectType === 'organizations' || this.object.objectType === 'events'){
-            if(this.target.objectType === 'projects' || this.target.objectType === 'organizations' || this.target.objectType === 'events'){
-              Router.go('detailList', {_id:this.target.id,scope:this.target.objectType});
-
+        }else if(this.verb === 'join' || this.verb === 'ask' || this.verb === 'follow' || this.verb === 'accept' || this.verb === 'wait' || this.verb === 'confirm' || this.verb === 'invite' || this.verb === 'authorize' || this.verb === 'attend'){
+          if(this.target.type === 'citoyens' || this.target.type === 'projects' || this.target.type === 'organizations' || this.target.type === 'events'){
+            if(this.target.id){
+              Router.go('detailList', {_id:this.target.id,scope:this.target.type});
             }
           }
         }

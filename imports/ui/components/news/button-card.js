@@ -112,5 +112,19 @@ return ;
     }
   });
 return ;
-}
+},
+"click .favorites-link" (evt,instance) {
+  evt.preventDefault();
+  instance.state.set('call', true);
+  Meteor.call('collectionsAdd',this.id,this.scope, (error, result)  => {
+    if(error){
+      instance.state.set('call', false);
+      alert(err.error);
+    }else{
+      instance.state.set('call', false);
+    }
+  });
+return ;
+},
+
 });

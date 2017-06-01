@@ -19,6 +19,7 @@ import { SchemasFollowRest,SchemasInviteAttendeesEventRest } from '../../api/cit
 import { SchemasNewsRest,SchemasNewsRestBase } from '../../api/news.js';
 import { SchemasCommentsRest,SchemasCommentsEditRest } from '../../api/comments.js';
 import { SchemasCitoyensRest,BlockCitoyensRest } from '../../api/citoyens.js';
+import { SchemasShareRest } from '../../api/schema.js';
 
 
 Meteor.startup(function () {
@@ -44,7 +45,16 @@ if (Meteor.isCordova && !Meteor.isDesktop) {
           Router.go("detailList",{scope:scope,_id:_id});
         }
       }
+    } else if (urlArray && urlArray.length === 5) {
+      const scope = urlArray[2];
+      const page = urlArray[0];
+      const _id = urlArray[4];
+      if(page === 'page'){
+      if(scope === 'events' || scope === 'organizations' || scope === 'projects' || scope === 'citoyens'){
+        Router.go("detailList",{scope:scope,_id:_id});
       }
+    }
+  }
     }
    });
 
@@ -113,6 +123,7 @@ SchemasOrganizationsRest.i18n("schemas.organizationsrest");
 SchemasProjectsRest.i18n("schemas.projectsrest");
 SchemasFollowRest.i18n("schemas.followrest");
 SchemasInviteAttendeesEventRest.i18n("schemas.followrest");
+SchemasShareRest.i18n("schemas.sharerest");
 SchemasNewsRest.i18n("schemas.news.global");
 SchemasNewsRestBase.citoyens.i18n("schemas.news.citoyens");
 SchemasNewsRestBase.projects.i18n("schemas.news.projects");
@@ -261,5 +272,6 @@ Template.registerHelper("SchemasProjectsRest", SchemasProjectsRest);
 Template.registerHelper("SchemasCommentsRest", SchemasCommentsRest);
 Template.registerHelper("SchemasCommentsEditRest", SchemasCommentsEditRest);
 Template.registerHelper("SchemasCitoyensRest", SchemasCitoyensRest);
+Template.registerHelper("SchemasShareRest", SchemasShareRest);
 
 });

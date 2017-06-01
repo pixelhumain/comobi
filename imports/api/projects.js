@@ -60,8 +60,8 @@ export const SchemasProjectsRest = new SimpleSchema([baseSchema,geoSchema,{
   }]);
 
   export const BlockProjectsRest = {};
-  BlockProjectsRest.descriptions = new SimpleSchema([blockBaseSchema,baseSchema.pick(['shortDescription','description'])]);
-  BlockProjectsRest.info = new SimpleSchema([blockBaseSchema,baseSchema.pick(['name','tags','tags.$','url']),SchemasProjectsRest.pick(['avancement','email','fixe','mobile','fax'])]);
+  BlockProjectsRest.descriptions = new SimpleSchema([blockBaseSchema,baseSchema.pick(['shortDescription','description','tags','tags.$'])]);
+  BlockProjectsRest.info = new SimpleSchema([blockBaseSchema,baseSchema.pick(['name','url']),SchemasProjectsRest.pick(['avancement','email','fixe','mobile','fax'])]);
   BlockProjectsRest.network = new SimpleSchema([blockBaseSchema,{
       github : {
         type : String,
@@ -165,6 +165,10 @@ export const SchemasProjectsRest = new SimpleSchema([baseSchema,geoSchema,{
     },
     isCreator () {
       return this.creator === Meteor.userId();
+    },
+    isFavorites (userId) {
+      let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+      return Citoyens.findOne({_id:new Mongo.ObjectID(bothUserId)}).isFavorites('projects',this._id._str);
     },
     isAdmin (userId) {
       let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();

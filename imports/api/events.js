@@ -82,8 +82,8 @@ export const SchemasEventsRest = new SimpleSchema([baseSchema,geoSchema, {
   }]);
 
   export const BlockEventsRest = {};
-  BlockEventsRest.descriptions = new SimpleSchema([blockBaseSchema,baseSchema.pick(['shortDescription','description'])]);
-  BlockEventsRest.info = new SimpleSchema([blockBaseSchema,baseSchema.pick(['name','tags','tags.$','url']),SchemasEventsRest.pick(['type','email','fixe','mobile','fax'])]);
+  BlockEventsRest.descriptions = new SimpleSchema([blockBaseSchema,baseSchema.pick(['shortDescription','description','tags','tags.$'])]);
+  BlockEventsRest.info = new SimpleSchema([blockBaseSchema,baseSchema.pick(['name','url']),SchemasEventsRest.pick(['type','email','fixe','mobile','fax'])]);
   BlockEventsRest.network = new SimpleSchema([blockBaseSchema,{
     github : {
       type : String,
@@ -185,6 +185,10 @@ export const SchemasEventsRest = new SimpleSchema([baseSchema,geoSchema, {
     isCreator () {
       return this.creator === Meteor.userId();
     },
+    isFavorites (userId) {
+      let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+      return Citoyens.findOne({_id:new Mongo.ObjectID(bothUserId)}).isFavorites('events',this._id._str);
+    },
     isAdmin (userId) {
       let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
       return (this.links && this.links.attendees && this.links.attendees[bothUserId] && this.links.attendees[bothUserId].isAdmin) ? true : false;
@@ -213,11 +217,13 @@ export const SchemasEventsRest = new SimpleSchema([baseSchema,geoSchema, {
     countAttendees () {
       return this.links && this.links.attendees && _.size(this.links.attendees);
     },
-    listNotifications (){
-    return ActivityStream.api.isUnread(this._id._str);
+    listNotifications (userId){
+    let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+  	return ActivityStream.api.isUnseen(bothUserId,this._id._str);
     },
-    listNotificationsAsk (){
-    return ActivityStream.api.isUnreadAsk(this._id._str);
+    listNotificationsAsk (userId){
+    let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+  	return ActivityStream.api.isUnseenAsk(bothUserId,this._id._str);
     },
     countPopMap () {
       return this.links && this.links.attendees && _.size(this.links.attendees);

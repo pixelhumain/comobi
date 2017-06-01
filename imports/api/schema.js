@@ -15,6 +15,19 @@ export const avancements_SELECT_LABEL = [{label : "idea",value: "idea"},{label:"
 
 export const preferences_SELECT = ["public","private","hide"];
 
+
+export const SchemasShareRest = new SimpleSchema({
+parentId : {
+type : String
+},
+parentType : {
+type : String
+},
+comment : {
+type : String
+}
+});
+
 export const blockBaseSchema = new SimpleSchema({
 typeElement : {
 type : String

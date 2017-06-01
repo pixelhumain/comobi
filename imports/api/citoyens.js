@@ -89,8 +89,8 @@ export const SchemasCitoyensRest = new SimpleSchema([baseSchemaCitoyens,updateSc
 }]);
 
 export const BlockCitoyensRest = {};
-BlockCitoyensRest.descriptions = new SimpleSchema([blockBaseSchema,baseSchema.pick(['shortDescription','description'])]);
-BlockCitoyensRest.info = new SimpleSchema([blockBaseSchema,baseSchema.pick(['name','tags','tags.$','url']),updateSchemaCitoyens.pick(['email','fixe','mobile','fax','birthDate']),{
+BlockCitoyensRest.descriptions = new SimpleSchema([blockBaseSchema,baseSchema.pick(['shortDescription','description','tags','tags.$'])]);
+BlockCitoyensRest.info = new SimpleSchema([blockBaseSchema,baseSchema.pick(['name','url']),updateSchemaCitoyens.pick(['email','fixe','mobile','fax','birthDate']),{
   username : {
     type : String,
     custom: function () {
@@ -208,6 +208,9 @@ export const SchemasInviteAttendeesEventRest = new SimpleSchema({
         id : this._id._str,
         contentKey : "profil"
       },{sort: {"created": -1},limit: 1 });
+      },
+      isFavorites (scope,scopeId) {
+        return (this.collections && this.collections.favorites && this.collections.favorites[scope] && this.collections.favorites[scope][scopeId]) ? true : false;
       },
       isMe (){
         return this._id._str === Meteor.userId();
@@ -401,6 +404,7 @@ export const SchemasInviteAttendeesEventRest = new SimpleSchema({
         return News.find(query,options);
       },
       new () {
+        console.log(News.findOne({_id:new Mongo.ObjectID(Router.current().params.newsId)}));
         return News.findOne({_id:new Mongo.ObjectID(Router.current().params.newsId)});
       }
     });

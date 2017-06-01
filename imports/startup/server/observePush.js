@@ -5,8 +5,11 @@ import { moment } from 'meteor/momentjs:moment';
 
 import { ActivityStream } from '../../api/activitystream.js';
 
+Push.debug = true;
+
 const pushUser = (title,text,payload,query,badge) => {
   const notId = Math.round(new Date().getTime() / 1000);
+  console.log(payload);
   Push.send({
     from: 'push',
     title: title,
@@ -33,7 +36,7 @@ added: function(notification) {
   if(!initNotifystart) return ;
   //le serveur start donc la date est fixe on recupre les notifs qui sont créer aprés
   //mais ensuite
-  console.log(notification);
+  //console.log(JSON.stringify(notification));
   if(notification && notification.notify && notification.notify.id && notification.notify.displayName){
 
   let title = 'notification';
@@ -46,11 +49,12 @@ added: function(notification) {
   _.each(notifsId,function(value){
     let query = {};
     query['userId'] = value;
+    let payload = JSON.parse(JSON.stringify(notification));
     let badge = ActivityStream.api.queryUnseen(value).count();
     console.log({value,badge});
-    pushUser(title,text,notification,query,badge)
+    pushUser(title,text,payload,query,badge)
   },title,text,notification);
-  
+
   }
 }
 });

@@ -29,7 +29,11 @@
         <a href="{{pathFor 'detailList' _id=authorNews._id._str scope='citoyens'}}" class="dark">{{#if name}}{{name}}{{else}}{{authorNews.name}}{{/if}}</a>
         {{/if}}
       </h2>
-      <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
+      <p><i class="icon ion-clock"></i> {{livestamp created}} 
+        {{#if equals scope.new.scope.type 'public'}}<i class="icon fa fa-globe"></i>{{/if}}
+        {{#if equals scope.new.scope.type 'restricted'}}<i class="icon fa fa-connectdevelop"></i>{{/if}}
+        {{#if equals scope.new.scope.type 'private'}}<i class="icon fa fa-lock"></i>{{/if}}
+      </p>
     </div>
     {{#if photoNewsAlbums}}
     <div class="item item-body">
@@ -63,6 +67,16 @@
         <i class="icon ion-thumbsdown"></i>
         {{dislikesCount}}
       </a>
+      {{#if equals scope.new.scope.type 'public'}}
+      <a href="{{pathFor 'share' _id=scope._id._str scope=scope.scopeVar newsId=_id._str}}" class="tab-item">
+        <i class="icon fa fa-share"></i>
+      </a>
+      {{/if}}
+      {{#if equals scope.new.scope.type 'restricted'}}
+      <a href="{{pathFor 'share' _id=scope._id._str scope=scope.scopeVar newsId=_id._str}}" class="tab-item">
+        <i class="icon fa fa-share"></i>
+      </a>
+      {{/if}}
       {{#if isAuthor}}
       <a class="tab-item action-news" href="#">
         <i class="icon fa fa-cog"></i>

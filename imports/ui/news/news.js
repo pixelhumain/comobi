@@ -49,6 +49,14 @@ Template.newsList.onCreated(function(){
       pageSession.set('selectview', 'scopeNewsTemplate');
     }else if(Router.current().route.getName()=="notificationsList"){
       pageSession.set('selectview', 'scopeNotificationsTemplate');
+    }else if(Router.current().route.getName()=="actusList"){
+      pageSession.set('selectview', 'scopeFilActusTemplate');
+    }else if(Router.current().route.getName()=="organizationsList"){
+      pageSession.set('selectview', 'scopeOrganizationsTemplate');
+    }else if(Router.current().route.getName()=="projectsList"){
+      pageSession.set('selectview', 'scopeProjectsTemplate');
+    }else if(Router.current().route.getName()=="eventsList"){
+      pageSession.set('selectview', 'scopeEventsTemplate');
     }else{
       pageSession.set('selectview', 'scopeDetailTemplate');
     }
@@ -226,10 +234,16 @@ Template.scopeNotificationsTemplate.onCreated(function(){
   });
 
   this.autorun(function() {
+    if(Router.current().params.scope !=='events'){
     const handleToBeValidated = newsListSubs.subscribe('listMembersToBeValidated', Router.current().params.scope, Router.current().params._id);
       const handle = newsListSubs.subscribe('notificationsScope', Router.current().params.scope, Router.current().params._id);
       if(handleToBeValidated.ready() && handle.ready())
       this.ready.set(handle.ready());
+    }else{
+        const handle = newsListSubs.subscribe('notificationsScope', Router.current().params.scope, Router.current().params._id);
+        if(handle.ready())
+        this.ready.set(handle.ready());
+    }
   }.bind(this));
 });
 
@@ -761,35 +775,35 @@ function successCallback (retour){
           limit: 10,
           delay: 600,
           displayTimeout: 300,
-          startWithSpace: false,
+          startWithSpace: true,
           displayTpl: function(item) {
-            return `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} ${item.id} </li>`;
+            return item.avatar ? `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} </li>` : `<li>${item.name} </li>`;
           },
           searchKey: "name"
         }).atwho({
           at: "#"
         }).on("matched.atwho", function(event, flag, query) {
-            console.log(event, "matched " + flag + " and the result is " + query);
+            //console.log(event, "matched " + flag + " and the result is " + query);
             if(flag === '@' && query){
-            console.log(pageSession.get('queryMention'));
+            //console.log(pageSession.get('queryMention'));
             if(pageSession.get( 'queryMention') !== query){
               pageSession.set( 'queryMention', query);
               Meteor.call('searchMemberautocomplete',query, function(error,result) {
               if (!error) {
                 const citoyensArray = _.map(result.citoyens, (array,key) => {
-                  return {id:key,name:array.name,type:'citoyens',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`};
+                  return array.profilThumbImageUrl ? {id:key,name:array.name,type:'citoyens',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`} : {id:key,name:array.name,type:'citoyens'};
                 });
                 const organizationsArray = _.map(result.organizations, (array,key) => {
-                  return {id:key,name:array.name,type:'organizations',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`};
+                  return array.profilThumbImageUrl ? {id:key,name:array.name,type:'organizations',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`} : {id:key,name:array.name,type:'organizations'};
                 });
                 const arrayUnions = _.union(citoyensArray,organizationsArray)
-                console.log(citoyensArray);
+                //console.log(citoyensArray);
                 self.$('textarea').atwho('load', '@', arrayUnions).atwho('run');
               }
             });
             }
           } else if(flag === '#' && query){
-          console.log(pageSession.get('queryTag'));
+          //console.log(pageSession.get('queryTag'));
           if(pageSession.get( 'queryTag') !== query){
             pageSession.set( 'queryTag', query);
             Meteor.call('searchTagautocomplete',query, function(error,result) {
@@ -801,7 +815,7 @@ function successCallback (retour){
           }
         }
           }).on("inserted.atwho", function(event, $li, browser) {
-              console.log(JSON.stringify($li.data('item-data')));
+              //console.log(JSON.stringify($li.data('item-data')));
 
               if($li.data('item-data')['atwho-at'] == '@'){
               const mentions = {};
@@ -889,47 +903,47 @@ this.$('textarea').atwho('destroy');
         limit: 10,
         delay: 600,
         displayTimeout: 300,
-        startWithSpace: false,
+        startWithSpace: true,
         displayTpl: function(item) {
-          return `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} ${item.id} </li>`;
+          return item.avatar ? `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} </li>` : `<li>${item.name} </li>`;
         },
         searchKey: "name"
       }).atwho({
         at: "#"
       }).on("matched.atwho", function(event, flag, query) {
-          console.log(event, "matched " + flag + " and the result is " + query);
+          //console.log(event, "matched " + flag + " and the result is " + query);
           if(flag === '@' && query){
-          console.log(pageSession.get('queryMention'));
+          //console.log(pageSession.get('queryMention'));
           if(pageSession.get( 'queryMention') !== query){
             pageSession.set( 'queryMention', query);
             Meteor.call('searchMemberautocomplete',query, function(error,result) {
             if (!error) {
               const citoyensArray = _.map(result.citoyens, (array,key) => {
-                return {id:key,name:array.name,type:'citoyens',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`};
+                return array.profilThumbImageUrl ? {id:key,name:array.name,type:'citoyens',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`} : {id:key,name:array.name,type:'citoyens'};
               });
               const organizationsArray = _.map(result.organizations, (array,key) => {
-                return {id:key,name:array.name,type:'organizations',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`};
+                return array.profilThumbImageUrl ? {id:key,name:array.name,type:'organizations',avatar:`${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}`} : {id:key,name:array.name,type:'organizations'};
               });
               const arrayUnions = _.union(citoyensArray,organizationsArray)
-              console.log(citoyensArray);
+              //console.log(citoyensArray);
               self.$('textarea').atwho('load', '@', arrayUnions).atwho('run');
             }
           });
           }
         } else if(flag === '#' && query){
-        console.log(pageSession.get('queryTag'));
+        //console.log(pageSession.get('queryTag'));
         if(pageSession.get( 'queryTag') !== query){
           pageSession.set( 'queryTag', query);
           Meteor.call('searchTagautocomplete',query, function(error,result) {
           if (!error) {
-            console.log(result);
+            //console.log(result);
             self.$('textarea').atwho('load', '#', result).atwho('run');
           }
         });
         }
       }
         }).on("inserted.atwho", function(event, $li, browser) {
-            console.log(JSON.stringify($li.data('item-data')));
+            //console.log(JSON.stringify($li.data('item-data')));
 
             if($li.data('item-data')['atwho-at'] == '@'){
             const mentions = {};
@@ -1037,7 +1051,7 @@ this.$('textarea').atwho('destroy');
                     if (!error) {
                       successCallback(photoret.newsId);
                     }else{
-                      //console.log('error',error);
+                      console.log('error',error);
                     }
                   });
                 }});

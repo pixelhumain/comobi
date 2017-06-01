@@ -5,7 +5,10 @@ import { Tracker } from 'meteor/tracker';
 
 import { ActivityStream } from '../../api/activitystream.js';
 
+Push.debug = true;
+
 Meteor.startup(function () {
+
 	if (Meteor.isDesktop){
 		console.log('DESKTOP');
 
@@ -43,7 +46,7 @@ Desktop.on('systemNotifications', 'notificationClicked', (sender, data) => {
 		if(Meteor.isCordova){
 			Push.Configure({
 				android: {
-					senderID: 183063213318,
+					senderID: 376774334081,
 					alert: true,
 					badge: true,
 					sound: true,

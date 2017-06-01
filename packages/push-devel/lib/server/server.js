@@ -67,6 +67,7 @@ Meteor.methods({
       // The user wanted us to use a specific id, we didn't find this while
       // searching. The client could depend on the id eg. as reference so
       // we respect this and try to create a document with the selected id;
+
       Push.appCollection._collection.insert(doc);
     } else {
       // We found the app so update the updatedAt and set the token
@@ -156,4 +157,3 @@ Meteor.methods({
     return !!found;
   }
 });
-

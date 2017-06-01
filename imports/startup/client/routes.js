@@ -70,7 +70,7 @@ Router.map(function() {
 
   this.route("organizationsAdd", {
     template: "organizationsAdd",
-    path: 'organizations/add',
+    path: '/organizations/add',
     loadingTemplate: 'loading'
   });
 
@@ -100,13 +100,13 @@ Router.map(function() {
 
   this.route("citoyensEdit", {
     template: "citoyensEdit",
-    path: 'citoyens/:_id/edit',
+    path: '/citoyens/:_id/edit',
     loadingTemplate: 'loading'
   });
 
   this.route("organizationsEdit", {
     template: "organizationsEdit",
-    path: 'organizations/:_id/edit',
+    path: '/organizations/:_id/edit',
     loadingTemplate: 'loading'
   });
 
@@ -118,13 +118,13 @@ Router.map(function() {
 
   this.route("projectsAdd", {
     template: "projectsAdd",
-    path: ':scope/projects/:_id/add',
+    path: '/:scope/projects/:_id/add',
     loadingTemplate: 'loading'
   });
 
   this.route("projectsEdit", {
     template: "projectsEdit",
-    path: 'projects/:_id/edit',
+    path: '/projects/:_id/edit',
     loadingTemplate: 'loading'
   });
 
@@ -148,95 +148,125 @@ Router.map(function() {
 
   this.route("eventsAdd", {
     template: "eventsAdd",
-    path: ':scope/events/:_id/add',
+    path: '/:scope/events/:_id/add',
     loadingTemplate: 'loading'
   });
 
   this.route("eventsEdit", {
     template: "eventsEdit",
-    path: 'events/:_id/edit',
+    path: '/events/:_id/edit',
     loadingTemplate: 'loading'
   });
 
   this.route("detailList", {
     template: "newsList",
-    path: ':scope/detail/:_id',
+    path: '/:scope/detail/:_id',
+    loadingTemplate: 'loading'
+  });
+
+  this.route("share", {
+    template: "share",
+    path: '/:scope/share/:_id/:newsId?',
     loadingTemplate: 'loading'
   });
 
   this.route("newsList", {
     template: "newsList",
-    path: ':scope/news/:_id',
+    path: '/:scope/news/:_id',
+    loadingTemplate: 'loading'
+  });
+
+  this.route("actusList", {
+    template: "newsList",
+    path: '/:scope/actus/:_id',
     loadingTemplate: 'loading'
   });
 
   this.route("notificationsList", {
     template: "newsList",
-    path: ':scope/notifications/:_id',
+    path: '/:scope/notifications/:_id',
+    loadingTemplate: 'loading'
+  });
+
+  this.route("organizationsList", {
+    template: "newsList",
+    path: '/:scope/organizations/:_id',
+    loadingTemplate: 'loading'
+  });
+
+  this.route("projectsList", {
+    template: "newsList",
+    path: '/:scope/projects/:_id',
+    loadingTemplate: 'loading'
+  });
+
+  this.route("eventsList", {
+    template: "newsList",
+    path: '/:scope/events/:_id',
     loadingTemplate: 'loading'
   });
 
   this.route("directory", {
     template: "directory",
-    path: ':scope/directory/:_id',
+    path: '/:scope/directory/:_id',
     loadingTemplate: 'loading'
   });
 
   this.route("listeventSous", {
     template: "listeventSous",
-    path: 'events/sous/:_id',
+    path: '/events/sous/:_id',
     loadingTemplate: 'loading'
   });
 
   this.route("listMembers", {
     template: "listMembers",
-    path: 'organizations/members/:_id',
+    path: '/organizations/members/:_id',
     loadingTemplate: 'loading'
   });
 
   this.route("listContributors", {
     template: "listContributors",
-    path: 'projects/contributors/:_id',
+    path: '/projects/contributors/:_id',
     loadingTemplate: 'loading'
   });
 
   this.route("listAttendees", {
     template: "listAttendees",
-    path: 'events/attendees/:_id',
+    path: '/events/attendees/:_id',
     loadingTemplate: 'loading'
   });
 
   this.route("listFollows", {
     template: "listFollows",
-    path: 'citoyens/follows/:_id',
+    path: '/citoyens/follows/:_id',
     loadingTemplate: 'loading'
   });
 
   this.route("newsDetail", {
     template: "newsDetail",
-    path: ':scope/news/:_id/new/:newsId'
+    path: '/:scope/news/:_id/new/:newsId'
   });
 
   this.route("newsAdd", {
     template: "newsAdd",
-    path: ':scope/news/:_id/add',
+    path: '/:scope/news/:_id/add',
     loadingTemplate: 'loading'
   });
 
   this.route("newsEdit", {
     template: "newsEdit",
-    path: ':scope/news/:_id/edit/:newsId',
+    path: '/:scope/news/:_id/edit/:newsId',
     loadingTemplate: 'loading'
   });
 
   this.route("newsDetailComments", {
     template: "newsDetailComments",
-    path: ':scope/news/:_id/new/:newsId/comments'
+    path: '/:scope/news/:_id/new/:newsId/comments'
   })
 
   this.route("commentsEdit", {
     template: "commentsEdit",
-    path: ':scope/news/:_id/edit/:newsId/comments/:commentId/edit',
+    path: '/:scope/news/:_id/edit/:newsId/comments/:commentId/edit',
     loadingTemplate: 'loading'
   });
 
