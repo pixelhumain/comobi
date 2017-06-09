@@ -29,6 +29,7 @@ coffeescript@1.12.3_1
 communecter:deep-link@4.0.4
 communecter:mapbox@2.2.3_3
 copleykj:livestamp@1.1.7
+crosswalk@1.7.1
 dburles:collection-helpers@1.1.0
 ddp@1.2.5
 ddp-client@1.3.4
