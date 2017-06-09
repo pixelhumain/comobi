@@ -1,7 +1,7 @@
 <template name="Directory_list">
   {{#transition in="zoomIn" out="bounceOut"}}
   {{#each item in list}}
-  {{> Directory_item item=item isConnect=isConnect isAdmin=item.isAdmin toBeValidated=item.toBeValidated typeValue=item.typeValue scope=scope person=person}}
+  {{> Directory_item item=item isConnect=isConnect isAdmin=item.isAdmin toBeValidated=item.toBeValidated typeValue=item.typeValue scope=scope person=person notButton=notButton}}
   {{/each}}
   {{/transition}}
 </template>

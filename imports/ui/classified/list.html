@@ -1,0 +1,226 @@
+<template name="listClassified">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "classified"}} {{#if city}} : {{city.name}}{{/if}}</h1>
+  {{/contentFor}}
+  {{#contentFor "headerButtonLeft"}}
+  <button class="button button-clear pull-left" data-ion-menu-toggle="left">
+  {{#if isAndroid}}
+    {{> ionIcon icon='android-more-vertical'}}
+  {{else}}
+    {{> ionIcon icon='navicon'}}
+  {{/if}}
+  </button>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  <button class="button button-clear icon ion-android-notifications brand-base-text-color pull-right all-seen" data-ion-menu-toggle="right">
+    {{#transition in="bounceInDown" out="bounceOutUp"}}
+    {{#if notificationsCount}}
+    <div class="new-notification-bubble animated out">{{notificationsCount}}</div>
+    {{/if}}
+    {{/transition}}
+  </button>
+
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent class="scroll-bg"}}
+  <div class="list list-inset">
+    <label class="item item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input id="search" type="text" placeholder="{{_ "searchPlaceholder"}}" value="{{searchClassified}}">
+    </label>
+  </div>
+
+    <div class="list list-inset">
+
+      <div class="item item-divider">
+        <i class="ion-speakerphone"></i> {{_ "classified"}} <span class="badge badge-dark">{{countClassified}}</span>
+      </div>
+      {{#if dataReady}}
+      {{#transition in="zoomIn" out="bounceOut"}}
+      {{#each classified}}
+      <a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'detailList' _id=this._id._str scope="classified"}}">
+        {{#if profilThumbImageUrl}}
+          <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
+        {{/if}}
+        <h2>{{name}}</h2>
+        {{#if type}}
+        <p>{{_ (typeI18n type)}}</p>
+        {{/if}}
+        <p><a class="positive" href="{{pathFor 'mapWith' _id=_id._str scope='classified'}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a></p>
+        {{#if currentUser}}
+        {{#if isCreator}}
+
+        {{/if}}
+        {{/if}}
+      </a>
+       {{else}}
+
+      {{/each}}
+      {{/transition}}
+      {{/if}}
+    </div>
+
+  {{/ionContent}}
+  {{/ionView}}
+
+  {{#if currentUser}}
+  {{#ionTabs class="tabs-dark tabs-icon-only"}}
+  {{> ionTab title=_events path="listClassified" iconOff="navicon-round" iconOn="navicon-round"}}
+  {{#unless dataReady}}
+  <a class="tab-item">
+   <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+  </a>
+  {{else}}
+  {{> ionTab title=_cartes href="map/classified" iconOff="android-pin" iconOn="android-pin"}}
+  {{/unless}}
+  {{/ionTabs}}
+  {{/if}}
+  {{else}}
+  {{> loading}}
+  {{/if}}
+</template>
+
+<template name="classifiedAdd">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "classified"}}</h1>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "Create a classified"}}
+    </div>
+    {{#if error}}
+    <div class="card">
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    </div>
+    {{/if}}
+    {{#autoForm id="addClassified" schema=SchemasClassifiedRest type="method" meteormethod="insertClassified" template="ionic" class="padding"}}
+    {{> classifiedFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "create"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+
+<template name="classifiedEdit">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "classified"}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "Edit a classified"}}
+    </div>
+    {{#if error}}
+    <div class="card">
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    </div>
+    {{/if}}
+    {{#autoForm id="editClassified" schema=SchemasClassifiedRest type="method-update" meteormethod="updateClassified" doc=classified template="ionic" class="padding"}}
+    {{> classifiedFields update="1"}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+  {{> loading}}
+  {{/if}}
+</template>
+
+
+<template name="classifiedFields">
+  {{> afQuickField name='name'}}
+
+  {{> afQuickField name='section'}}
+  {{#if section}}
+  {{> afQuickField name='type' type='select' options=(optionsType section) value=type}}
+  {{#if equals section 'Emplois'}}
+
+  {{else}}
+  {{#if type}}
+  {{> afQuickField name='subtype' type='select' options=(optionsSubtype type) value=subtype optional=false}}
+  {{/if}}
+  {{/if}}
+  {{/if}}
+
+  {{> afQuickField name='price'}}
+  {{> afQuickField name='contactInfo'}}
+
+  {{> afQuickField name='parentType' type='select' value=parentType}}
+  {{#if dataReadyParent}}
+  {{#if parentType}}
+  {{#if optionsParentId parentType}}
+  {{> afQuickField name='parentId' type='select' options=(optionsParentId parentType) value=parentId}}
+  {{/if}}
+  {{/if}}
+  {{/if}}
+
+  {{#if update}}
+  {{> afQuickField name='shortDescription' rows=8}}
+  {{> afQuickField name='description' rows=8}}
+  {{else}}
+  {{> afQuickField name='description' rows=8}}
+  {{/if}}
+
+  {{> afQuickField name='country' autocomplete="off" value=country }}
+  {{#if currentFieldValue "country"}}
+  {{> afQuickField name='postalCode' value=postalCode autocomplete="off"}}
+  {{#if currentFieldValue "postalCode"}}
+  {{#if optionsInsee}}
+  {{> afQuickField name='city' options=optionsInsee value=city}}
+  {{> afQuickField name='cityName' type="hidden" value=cityName}}
+  {{else}}
+  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
+  {{/if}}
+  {{/if}}
+  {{> afQuickField name='streetAddress' autocomplete="off"}}
+  {{#if latlng}}
+  {{> map}}
+  {{/if}}
+  {{> afQuickField name='geoPosLatitude' type="hidden" value=latitude}}
+  {{> afQuickField name='geoPosLongitude' type="hidden" value=longitude}}
+  {{> afQuickField name='regionName' type="hidden" value=regionName}}
+  {{> afQuickField name='depName' type="hidden" value=depName}}
+  {{/if}}
+
+</template>

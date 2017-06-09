@@ -68,6 +68,18 @@ Router.map(function() {
     loadingTemplate: 'loading'
   });
 
+  this.route("listPoi", {
+    path: '/poi',
+    template: "listPoi",
+    loadingTemplate: 'loading'
+  });
+
+  this.route("listClassified", {
+    path: '/classified',
+    template: "listClassified",
+    loadingTemplate: 'loading'
+  });
+
   this.route("organizationsAdd", {
     template: "organizationsAdd",
     path: '/organizations/add',
@@ -98,6 +110,12 @@ Router.map(function() {
     loadingTemplate: 'loading'
   });
 
+  this.route("poiBlockEdit", {
+    template: "poiBlockEdit",
+    path: '/poi/:_id/edit/block/:block',
+    loadingTemplate: 'loading'
+  });
+
   this.route("citoyensEdit", {
     template: "citoyensEdit",
     path: '/citoyens/:_id/edit',
@@ -125,6 +143,30 @@ Router.map(function() {
   this.route("projectsEdit", {
     template: "projectsEdit",
     path: '/projects/:_id/edit',
+    loadingTemplate: 'loading'
+  });
+
+  this.route("poiAdd", {
+    template: "poiAdd",
+    path: '/:scope/poi/:_id/add',
+    loadingTemplate: 'loading'
+  });
+
+  this.route("poiEdit", {
+    template: "poiEdit",
+    path: '/poi/:_id/edit',
+    loadingTemplate: 'loading'
+  });
+
+  this.route("classifiedAdd", {
+    template: "classifiedAdd",
+    path: '/:scope/classified/:_id/add',
+    loadingTemplate: 'loading'
+  });
+
+  this.route("classifiedEdit", {
+    template: "classifiedEdit",
+    path: '/:scope/classified/:_id/edit',
     loadingTemplate: 'loading'
   });
 
@@ -206,9 +248,27 @@ Router.map(function() {
     loadingTemplate: 'loading'
   });
 
+  this.route("poiList", {
+    template: "newsList",
+    path: '/:scope/poi/:_id',
+    loadingTemplate: 'loading'
+  });
+
+  this.route("classifiedList", {
+    template: "newsList",
+    path: '/:scope/classified/:_id',
+    loadingTemplate: 'loading'
+  });
+
   this.route("directory", {
     template: "directory",
     path: '/:scope/directory/:_id',
+    loadingTemplate: 'loading'
+  });
+
+  this.route("collections", {
+    template: "collections",
+    path: '/:scope/collections/:_id',
     loadingTemplate: 'loading'
   });
 

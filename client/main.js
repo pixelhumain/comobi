@@ -27,10 +27,16 @@ import '../imports/ui/organizations/list.js';
 import '../imports/ui/projects/contributors/contributors.js';
 import '../imports/ui/projects/list.js';
 
+import '../imports/ui/poi/list.js';
+
+import '../imports/ui/classified/list.js';
+
 import '../imports/ui/citoyens/follows/follows.js';
 import '../imports/ui/citoyens/list.js';
 
 import '../imports/ui/directory/directory.js';
+
+import '../imports/ui/collections/collections.js';
 
 import '../imports/ui/share/share.js';
 

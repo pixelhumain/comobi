@@ -59,7 +59,7 @@ Template.changePosition.onRendered(function () {
     },
     'click .city': function(event,template){
       var self = this;
-      var onOk=IonPopup.confirm({title:TAPi18n.__('Position'),template:TAPi18n.__('Utiliser la position de cette ville'),
+      var onOk=IonPopup.confirm({title:TAPi18n.__('Location'),template:TAPi18n.__('Utiliser la position de cette ville'),
       onOk: function(){
         Session.set( 'city', self);
         if(self.geoShape && self.geoShape.coordinates){

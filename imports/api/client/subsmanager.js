@@ -16,6 +16,14 @@ export const listProjectsSubs = new SubsManager({
     cacheLimit: 500,
     expireIn: 60
 });
+export const listPoiSubs = new SubsManager({
+    cacheLimit: 500,
+    expireIn: 60
+});
+export const listClassifiedSubs = new SubsManager({
+    cacheLimit: 500,
+    expireIn: 60
+});
 export const listCitoyensSubs = new SubsManager({
     cacheLimit: 500,
     expireIn: 60
@@ -29,6 +37,10 @@ export const filActusSubs = new SubsManager({
     expireIn: 60
 });
 export const directoryListSubs = new SubsManager({
+    cacheLimit: 800,
+    expireIn: 60
+});
+export const collectionsListSubs = new SubsManager({
     cacheLimit: 800,
     expireIn: 60
 });

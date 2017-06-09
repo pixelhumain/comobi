@@ -15,10 +15,11 @@ import { Documents } from '../../api/documents.js';
 import { SchemasEventsRest,BlockEventsRest } from '../../api/events.js';
 import { SchemasOrganizationsRest,BlockOrganizationsRest } from '../../api/organizations.js';
 import { SchemasProjectsRest,BlockProjectsRest } from '../../api/projects.js';
-import { SchemasFollowRest,SchemasInviteAttendeesEventRest } from '../../api/citoyens.js';
+import { SchemasPoiRest,BlockPoiRest } from '../../api/poi.js';
+import { SchemasClassifiedRest,BlockClassifiedRest } from '../../api/classified.js';
+import { SchemasFollowRest,SchemasInviteAttendeesEventRest,SchemasCitoyensRest,BlockCitoyensRest } from '../../api/citoyens.js';
 import { SchemasNewsRest,SchemasNewsRestBase } from '../../api/news.js';
 import { SchemasCommentsRest,SchemasCommentsEditRest } from '../../api/comments.js';
-import { SchemasCitoyensRest,BlockCitoyensRest } from '../../api/citoyens.js';
 import { SchemasShareRest } from '../../api/schema.js';
 
 
@@ -121,6 +122,8 @@ console.log(path);
 SchemasEventsRest.i18n("schemas.eventsrest");
 SchemasOrganizationsRest.i18n("schemas.organizationsrest");
 SchemasProjectsRest.i18n("schemas.projectsrest");
+SchemasPoiRest.i18n("schemas.poirest");
+SchemasClassifiedRest.i18n("schemas.classifiedrest");
 SchemasFollowRest.i18n("schemas.followrest");
 SchemasInviteAttendeesEventRest.i18n("schemas.followrest");
 SchemasShareRest.i18n("schemas.sharerest");
@@ -154,6 +157,9 @@ BlockProjectsRest.descriptions.i18n("schemas.global");
 BlockProjectsRest.when.i18n("schemas.global");
 BlockProjectsRest.locality.i18n("schemas.global");
 BlockProjectsRest.preferences.i18n("schemas.global");
+BlockPoiRest.info.i18n("schemas.global");
+BlockPoiRest.descriptions.i18n("schemas.global");
+BlockPoiRest.locality.i18n("schemas.global");
 
 Template.registerHelper('equals',
   function(v1, v2) {
@@ -268,6 +274,8 @@ Template.registerHelper("SchemasInviteAttendeesEventRest", SchemasInviteAttendee
 Template.registerHelper("SchemasNewsRest", SchemasNewsRest);
 Template.registerHelper("SchemasEventsRest", SchemasEventsRest);
 Template.registerHelper("SchemasOrganizationsRest", SchemasOrganizationsRest);
+Template.registerHelper("SchemasPoiRest", SchemasPoiRest);
+Template.registerHelper("SchemasClassifiedRest", SchemasClassifiedRest);
 Template.registerHelper("SchemasProjectsRest", SchemasProjectsRest);
 Template.registerHelper("SchemasCommentsRest", SchemasCommentsRest);
 Template.registerHelper("SchemasCommentsEditRest", SchemasCommentsEditRest);

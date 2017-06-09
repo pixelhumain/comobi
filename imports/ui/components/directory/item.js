@@ -34,7 +34,7 @@ Template.Directory_item.events({
     Meteor.call('disconnectEntity',this.id,this.scope, (error, result)  => {
       if(error){
         instance.state.set('call', false);
-        alert(err.error);
+        alert(error.error);
       }else{
         instance.state.set('call', false);
       }
@@ -47,7 +47,7 @@ Template.Directory_item.events({
     Meteor.call('connectEntity',this.id,this.scope, (error, result)  => {
       if(error){
         instance.state.set('call', false);
-        alert(err.error);
+        alert(error.error);
       }else{
         instance.state.set('call', false);
       }
@@ -60,7 +60,7 @@ Template.Directory_item.events({
     Meteor.call('disconnectEntity',this.id,'citoyens', (error, result)  => {
       if(error){
         instance.state.set('call', false);
-        alert(err.error);
+        alert(error.error);
       }else{
         instance.state.set('call', false);
       }
@@ -73,11 +73,24 @@ Template.Directory_item.events({
     Meteor.call('followEntity',this.id,'citoyens', (error, result)  => {
       if(error){
         instance.state.set('call', false);
-        alert(err.error);
+        alert(error.error);
       }else{
         instance.state.set('call', false);
       }
     });
     return ;
-  }
+  },
+  "click .favorites-link" (evt,instance) {
+    evt.preventDefault();
+    instance.state.set('call', true);
+    Meteor.call('collectionsAdd',this.id,this.scope, (error, result)  => {
+      if(error){
+        instance.state.set('call', false);
+        alert(error.error);
+      }else{
+        instance.state.set('call', false);
+      }
+    });
+  return ;
+  },
 });

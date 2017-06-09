@@ -110,6 +110,7 @@ export const SchemasProjectsRest = new SimpleSchema([baseSchema,geoSchema,{
   import { Organizations } from './organizations.js';
   import { Documents } from './documents.js';
   import { Events } from './events.js';
+  import { Poi } from './poi.js';
   import { ActivityStream } from './activitystream.js';
   import { queryLink,queryLinkType,arrayLinkType,queryLinkToBeValidated,arrayLinkToBeValidated,queryOptions,nameToCollection } from './helpers.js';
 
@@ -148,14 +149,15 @@ export const SchemasProjectsRest = new SimpleSchema([baseSchema,geoSchema,{
     },{sort: {"created": -1},limit: 1 });
     },
     organizerProject (){
-      if(this.parentId && this.parentType && _.contains(['events', 'projects','organizations','citoyens'], this.parentType)){
+      if(this.parentId && this.parentType && _.contains(['organizations','citoyens'], this.parentType)){
         console.log(this.parentType);
       let collectionType = nameToCollection(this.parentType);
       return collectionType.findOne({
         _id: new Mongo.ObjectID(this.parentId)
       }, {
         fields: {
-          'name': 1
+          'name': 1,
+          'links': 1
         }
       });
     }
@@ -172,7 +174,13 @@ export const SchemasProjectsRest = new SimpleSchema([baseSchema,geoSchema,{
     },
     isAdmin (userId) {
       let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
-      return (this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].isAdmin && this.isToBeValidated(bothUserId)) ? true : false;
+      if(bothUserId && this.parentId && this.parentType && _.contains(['organizations'], this.parentType)){
+          console.log(this.organizerProject());
+          console.log(`${this.parentType}:${this.parentId}`);
+          return this.organizerProject().isAdmin(bothUserId);
+        }else{
+          return (this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].isAdmin && this.isToBeValidated(bothUserId)) ? true : false;
+        }
     },
     isToBeValidated (userId) {
       let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
@@ -276,6 +284,14 @@ export const SchemasProjectsRest = new SimpleSchema([baseSchema,geoSchema,{
     countEventsCreator () {
       //return this.links && this.links.events && _.size(this.links.events);
       return this.listEventsCreator() && this.listEventsCreator().count();
+    },
+    listPoiCreator (){
+      let query = {};
+      query['parentId'] = this._id._str;
+      return Poi.find(query,queryOptions);
+    },
+    countPoiCreator () {
+      return this.listPoiCreator() && this.listPoiCreator().count();
     },
     listNotifications (userId){
     let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();

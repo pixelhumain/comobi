@@ -33,16 +33,22 @@
       </div>
       <div class="button-bar bar-stable">
         <a href="{{pathFor 'directory' _id=currentUser._id scope='citoyens'}}" class="button button-dark button-small" data-ion-menu-close><i class="icon fa fa-connectdevelop"></i></a>
-        <a href="{{pathFor 'eventsAdd' _id=currentUser._id scope='citoyens'}}" class="button button-event button-small" data-ion-menu-close><i class="icon fa fa-plus"></i> <i class="icon fa fa-calendar"></i></a>
+        <a href="{{pathFor 'collections' _id=currentUser._id scope='citoyens'}}" class="button button-dark button-small" data-ion-menu-close><i class="icon fa fa-star"></i></a>
+      </div>
+      <div class="button-bar bar-stable">
         <a href="{{pathFor 'organizationsAdd' _id=currentUser._id scope='citoyens'}}" class="button button-organization button-small" data-ion-menu-close><i class="icon fa fa-plus"></i> <i class="icon fa fa-users"></i></a>
         <a href="{{pathFor 'projectsAdd' _id=currentUser._id scope='citoyens'}}" class="button button-project button-small" data-ion-menu-close><i class="icon fa fa-plus"></i> <i class="icon fa fa-lightbulb-o"></i></a>
+        <a href="{{pathFor 'eventsAdd' _id=currentUser._id scope='citoyens'}}" class="button button-event button-small" data-ion-menu-close><i class="icon fa fa-plus"></i> <i class="icon fa fa-calendar"></i></a>
+        <a href="{{pathFor 'poiAdd' _id=currentUser._id scope='citoyens'}}" class="button button-poi button-small" data-ion-menu-close><i class="icon fa fa-plus"></i> <i class="icon fa fa-map-marker"></i></a>
+        <a href="{{pathFor 'classifiedAdd' _id=currentUser._id scope='citoyens'}}" class="button button-classified button-small" data-ion-menu-close><i class="icon fa fa-plus"></i> <i class="icon fa fa-bullhorn"></i></a>
       </div>
-
       <a class="item item-stable item-icon-right" href="{{pathFor 'dashboard'}}" data-ion-menu-close>{{_ "Dashboard"}} {{> ionIcon icon="ios-speedometer"}}</a>
       <a class="item item-stable item-icon-right" href="{{pathFor 'listEvents'}}" data-ion-menu-close>{{_ "events"}} {{> ionIcon icon="calendar"}}</a>
       <a class="item item-stable item-icon-right" href="{{pathFor 'listOrganizations'}}" data-ion-menu-close>{{_ "organizations"}} {{> ionIcon icon="person-stalker"}}</a>
       <a class="item item-stable item-icon-right" href="{{pathFor 'listProjects'}}" data-ion-menu-close>{{_ "projects"}} {{> ionIcon icon="lightbulb"}}</a>
       <a class="item item-stable item-icon-right" href="{{pathFor 'listCitoyens'}}" data-ion-menu-close>{{_ "persons"}} {{> ionIcon icon="person"}}</a>
+      <a class="item item-stable item-icon-right" href="{{pathFor 'listPoi'}}" data-ion-menu-close>{{_ "poi"}} <i class="icon fa fa-map-marker"></i></a>
+      <a class="item item-stable item-icon-right" href="{{pathFor 'listClassified'}}" data-ion-menu-close>{{_ "classified"}} <i class="icon fa fa-bullhorn"></i></a>
       <a class="item item-stable item-icon-right" href="{{pathFor 'searchGlobal'}}" data-ion-menu-close>{{_ "search"}} {{> ionIcon icon="search"}}</a>
 
       {{#if isCordova}}

@@ -20,7 +20,7 @@ import { ActivityStream } from '../../api/activitystream.js';
 import { Cities } from '../../api/cities.js';
 
 //submanager
-import { dashboardSubs,listEventsSubs,listOrganizationsSubs,listProjectsSubs } from '../../api/client/subsmanager.js';
+import { dashboardSubs } from '../../api/client/subsmanager.js';
 
 import { position } from '../../api/client/position.js';
 
@@ -79,7 +79,7 @@ Template.dashboard.onRendered(function() {
     let geolocate = Session.get('geolocate');
     if(!Session.get('GPSstart') && geolocate && !position.getLatlng()){
 
-      IonPopup.confirm({title:TAPi18n.__('Position'),template:TAPi18n.__('Utiliser la position de votre profil'),
+      IonPopup.confirm({title:TAPi18n.__('Location'),template:TAPi18n.__('Use the location of your profile'),
       onOk: function(){
         if(Citoyens.findOne() && Citoyens.findOne().geo && Citoyens.findOne().geo.latitude){
           Location.setMockLocation({
@@ -88,11 +88,11 @@ Template.dashboard.onRendered(function() {
             updatedAt : new Date()
           });
           //clear cache
-          listEventsSubs.clear();
+          /*listEventsSubs.clear();
           listOrganizationsSubs.clear();
           listProjectsSubs.clear();
           listCitoyensSubs.clear();
-          dashboardSubs.clear();
+          dashboardSubs.clear();*/
         }
       },
       onCancel: function(){
