@@ -6,9 +6,9 @@ import './qrcode.html';
 
 Template.qrcode.onRendered(function () {
   const scope = Router.current().params.scope;
-  const type = (scope === 'citoyens') ? 'person' : scope.substring(0,scope.length-1);
+  //const type = (scope === 'citoyens') ? 'person' : scope.substring(0,scope.length-1);
   //let qrresult = {type:type,_id:Router.current().params._id};
-  const qrLink = `https://www.communecter.org/#page.type.${type}.id.${Router.current().params._id}`;
+  const qrLink = `https://www.communecter.org/#page.type.${scope}.id.${Router.current().params._id}`;
 
   const qr = JSON.stringify(qrLink);
   console.log(qr);
