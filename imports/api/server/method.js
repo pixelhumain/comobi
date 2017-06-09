@@ -1047,7 +1047,7 @@ doc.docId=newsDoc._id._str;
     check(idType, String);
     check(newsId, Match.Maybe(String));
     check(type, Match.Where(function(name) {
-      return _.contains(['events', 'projects','organizations','citoyens'], name);
+      return _.contains(['events', 'projects','organizations','citoyens','poi','classified'], name);
     }));
     const collection = nameToCollection(type);
     if (!this.userId) {
@@ -1391,7 +1391,7 @@ doc.docId=newsDoc._id._str;
     check(idType, String);
     check(scope, String);
     check(scope, Match.Where(function(name) {
-      return _.contains(['events', 'projects','organizations'], name);
+      return _.contains(['events', 'projects','organizations','citoyens','poi','classified'], name);
     }));
     const collection = nameToCollection(scope);
     if (!this.userId) {
