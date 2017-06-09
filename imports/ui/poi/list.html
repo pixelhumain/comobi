@@ -1,6 +1,6 @@
-<template name="listProjects">
+<template name="listPoi">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "projects"}} {{#if city}} : {{city.name}}{{/if}}</h1>
+  <h1 class="title">{{_ "poi"}} {{#if city}} : {{city.name}}{{/if}}</h1>
   {{/contentFor}}
   {{#contentFor "headerButtonLeft"}}
   <button class="button button-clear pull-left" data-ion-menu-toggle="left">
@@ -30,41 +30,27 @@
   <div class="list list-inset">
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input id="search" type="text" placeholder="{{_ "searchPlaceholder"}}" value="{{searchProjects}}">
+      <input id="search" type="text" placeholder="{{_ "searchPlaceholder"}}" value="{{searchPoi}}">
     </label>
   </div>
 
     <div class="list list-inset">
 
       <div class="item item-divider">
-        <i class="ion-android-calendar"></i> {{_ "projects"}} <span class="badge badge-dark">{{countProjects}}</span>
+        <i class="ion-android-calendar"></i> {{_ "point of interest"}} <span class="badge badge-dark">{{countPoi}}</span>
       </div>
       {{#if dataReady}}
       {{#transition in="zoomIn" out="bounceOut"}}
-      {{#each projects}}
-      <a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'detailList' _id=this._id._str scope="projects"}}">
+      {{#each poi}}
+      <a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'detailList' _id=this._id._str scope="poi"}}">
         {{#if profilThumbImageUrl}}
           <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
         {{/if}}
         <h2>{{name}}</h2>
-        <span class="badge {{#if isStart}}badge-balanced{{else}}badge-dark{{/if}}"><i class="icon ion-person"></i> {{countContributors}}</span>
-        {{#if startDate}}
-        <p>
-          {{#if isStart}}
-          <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
-          {{#if endDate}}
-          <i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>
-          <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
-          {{/if}}
-          {{else}}
-          <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
-          {{#if endDate}}
-          <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
-          {{/if}}
-          {{/if}}
-        </p>
+        {{#if type}}
+        <p>{{_ (typeI18n type)}}</p>
         {{/if}}
-        <p><a class="positive" href="{{pathFor 'mapWith' _id=_id._str scope='projects'}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a></p>
+        <p><a class="positive" href="{{pathFor 'mapWith' _id=_id._str scope='poi'}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a></p>
         {{#if currentUser}}
         {{#if isCreator}}
 
@@ -83,13 +69,13 @@
 
   {{#if currentUser}}
   {{#ionTabs class="tabs-dark tabs-icon-only"}}
-  {{> ionTab title=_events path="listProjects" iconOff="navicon-round" iconOn="navicon-round"}}
+  {{> ionTab title=_events path="listPoi" iconOff="navicon-round" iconOn="navicon-round"}}
   {{#unless dataReady}}
   <a class="tab-item">
    <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
   </a>
   {{else}}
-  {{> ionTab title=_cartes href="map/projects" iconOff="android-pin" iconOn="android-pin"}}
+  {{> ionTab title=_cartes href="map/poi" iconOff="android-pin" iconOn="android-pin"}}
   {{/unless}}
   {{/ionTabs}}
   {{/if}}
@@ -98,7 +84,7 @@
   {{/if}}
 </template>
 
-<template name="projectsAdd">
+<template name="poiAdd">
   {{#contentFor "headerButtonLeft"}}
   {{>ionNavBackButton}}
   {{/contentFor}}
@@ -108,14 +94,14 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "projects"}}</h1>
+  <h1 class="title">{{_ "poi"}}</h1>
   {{/contentFor}}
 
   {{#ionView}}
   {{#ionContent}}
   <div class="list">
     <div class="item item-divider">
-      {{_ "Create a project"}}
+      {{_ "Create a point of interest"}}
     </div>
     {{#if error}}
     <div class="card">
@@ -124,8 +110,8 @@
       </div>
     </div>
     {{/if}}
-    {{#autoForm id="addProject" schema=SchemasProjectsRest type="method" meteormethod="insertProject" template="ionic" class="padding"}}
-    {{> projectsFields}}
+    {{#autoForm id="addPoi" schema=SchemasPoiRest type="method" meteormethod="insertPoi" template="ionic" class="padding"}}
+    {{> poiFields}}
     <div class="item">
       <div class="button-bar">
         <button type="submit" class="button button-dark">{{_ "create"}}</button>
@@ -138,7 +124,7 @@
 </template>
 
 
-<template name="projectsEdit">
+<template name="poiEdit">
   {{#contentFor "headerButtonLeft"}}
   {{>ionNavBackButton}}
   {{/contentFor}}
@@ -148,7 +134,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "projects"}}</h1>
+  <h1 class="title">{{_ "poi"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -156,7 +142,7 @@
   {{#ionContent}}
   <div class="list">
     <div class="item item-divider">
-      {{_ "Edit a project"}}
+      {{_ "Edit a point of interest"}}
     </div>
     {{#if error}}
     <div class="card">
@@ -165,8 +151,8 @@
       </div>
     </div>
     {{/if}}
-    {{#autoForm id="editProject" schema=SchemasProjectsRest type="method-update" meteormethod="updateProject" doc=project template="ionic" class="padding"}}
-    {{> projectsFields update="1"}}
+    {{#autoForm id="editPoi" schema=SchemasPoiRest type="method-update" meteormethod="updatePoi" doc=poi template="ionic" class="padding"}}
+    {{> poiFields update="1"}}
     <div class="item">
       <div class="button-bar">
         <button type="submit" class="button button-dark">{{_ "edit"}}</button>
@@ -181,7 +167,7 @@
   {{/if}}
 </template>
 
-<template name="projectsBlockEdit">
+<template name="poiBlockEdit">
   {{#contentFor "headerButtonLeft"}}
   {{>ionNavBackButton}}
   {{/contentFor}}
@@ -191,7 +177,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "projects"}}</h1>
+  <h1 class="title">{{_ "poi"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -199,7 +185,7 @@
   {{#ionContent}}
   <div class="list">
     <div class="item item-divider">
-      {{_ "Edit a project"}}
+      {{_ "Edit a point of interest"}}
     </div>
     {{#if error}}
     <div class="card">
@@ -209,12 +195,12 @@
     </div>
     {{/if}}
     {{#if equals block 'preferences'}}
-    {{#autoForm id="editBlockProject" schema=blockSchema type="method-update" meteormethod="updateBlock" doc=project autosave=true template="ionic" class="padding"}}
-    {{> projectsFields block=block}}
+    {{#autoForm id="editBlockPoi" schema=blockSchema type="method-update" meteormethod="updateBlock" doc=poi autosave=true template="ionic" class="padding"}}
+    {{> poiFields block=block}}
     {{/autoForm}}
     {{else}}
-    {{#autoForm id="editBlockProject" schema=blockSchema type="method-update" meteormethod="updateBlock" doc=project template="ionic" class="padding"}}
-    {{> projectsFields block=block}}
+    {{#autoForm id="editBlockPoi" schema=blockSchema type="method-update" meteormethod="updateBlock" doc=poi template="ionic" class="padding"}}
+    {{> poiFields block=block}}
     <div class="item">
       <div class="button-bar">
         <button type="submit" class="button button-dark">{{_ "edit"}}</button>
@@ -230,34 +216,15 @@
   {{/if}}
 </template>
 
-<template name="projectsFields">
+<template name="poiFields">
   {{#if equals block 'info'}}
   {{> afQuickField name='name'}}
-  {{> afQuickField name='avancement'}}
-  {{> afQuickField name='email'}}
-  {{> afQuickField name='url'}}
-  {{> afQuickField name='fixe'}}
-  {{> afQuickField name='mobile'}}
-  {{> afQuickField name='fax'}}
   {{/if}}
 
-  {{#if equals block 'network'}}
-  {{> afQuickField name='instagram'}}
-  {{> afQuickField name='skype'}}
-  {{> afQuickField name='github'}}
-  {{> afQuickField name='gpplus'}}
-  {{> afQuickField name='twitter'}}
-  {{> afQuickField name='facebook'}}
-  {{/if}}
 
   {{#if equals block 'descriptions'}}
   {{> afQuickField name='shortDescription' type="textarea" label-type='placeholder' rows=8}}
   {{> afQuickField name='description' type="textarea" label-type='placeholder' rows=8}}
-  {{/if}}
-
-  {{#if equals block 'when'}}
-  {{> afQuickField name='startDate' type="datetime-local"}}
-  {{> afQuickField name='endDate' type="datetime-local"}}
   {{/if}}
 
   {{#if equals block 'preferences'}}
@@ -297,6 +264,8 @@
   {{#unless block}}
   {{> afQuickField name='name'}}
 
+  {{> afQuickField name='type'}}
+
   {{> afQuickField name='parentType' type='select' value=parentType}}
   {{#if dataReadyParent}}
   {{#if parentType}}
@@ -312,10 +281,7 @@
   {{else}}
   {{> afQuickField name='description' rows=8}}
   {{/if}}
-  
-  {{> afQuickField name='url'}}
-  {{> afQuickField name='startDate' type="datetime-local"}}
-  {{> afQuickField name='endDate' type="datetime-local"}}
+
   {{> afQuickField name='country' autocomplete="off" value=country }}
   {{#if currentFieldValue "country"}}
   {{> afQuickField name='postalCode' value=postalCode autocomplete="off"}}

@@ -105,6 +105,7 @@ export const SchemasOrganizationsRest = new SimpleSchema([baseSchema,geoSchema,{
   import { Documents } from './documents.js';
   import { Events } from './events.js';
   import { Projects } from './projects.js';
+  import { Poi } from './poi.js';
   import { ActivityStream } from './activitystream.js';
   import { queryLink,queryLinkType,arrayLinkType,queryLinkToBeValidated,arrayLinkToBeValidated,queryOptions } from './helpers.js';
 
@@ -276,6 +277,14 @@ export const SchemasOrganizationsRest = new SimpleSchema([baseSchema,geoSchema,{
     },
     countProjectsCreator () {
       return this.listProjectsCreator() && this.listProjectsCreator().count();
+    },
+    listPoiCreator (){
+      let query = {};
+      query['parentId'] = this._id._str;
+      return Poi.find(query,queryOptions);
+    },
+    countPoiCreator () {
+      return this.listPoiCreator() && this.listPoiCreator().count();
     },
     listEventsCreator (){
       let query = {};

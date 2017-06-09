@@ -77,6 +77,28 @@
         </a>
       </div>
     </div>
+    <div class="row">
+      <div class="col">
+        <a class="button button-block button-large button-poi icon ion-location" href="{{pathFor 'listPoi'}}"><br>
+          {{_ "poi"}}<br>
+          {{#if hasPublishedCount (geoId 'poi')}}
+          {{getPublishedCount (geoId 'poi')}}
+          {{else}}
+          <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+          {{/if}}
+        </a>
+      </div>
+      <div class="col">
+        <a class="button button-block button-large button-classified icon ion-speakerphone" href="{{pathFor 'listClassified'}}"><br>
+          {{_ "classified"}}<br>
+          {{#if hasPublishedCount (geoId 'classified')}}
+          {{getPublishedCount (geoId 'classified')}}
+          {{else}}
+          <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+          {{/if}}
+        </a>
+      </div>
+    </div>
   {{/ionContent}}
   {{/ionView}}
 

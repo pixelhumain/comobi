@@ -16,11 +16,11 @@ import { Mapbox } from 'meteor/communecter:mapbox';
 
 //collections
 import { Citoyens } from '../../api/citoyens.js';
-import { Projects,BlockProjectsRest } from '../../api/projects.js';
+import { Classified } from '../../api/classified.js';
 import { Cities } from '../../api/cities.js';
 
 //submanager
-import { dashboardSubs,listEventsSubs,listOrganizationsSubs,listProjectsSubs,listsSubs } from '../../api/client/subsmanager.js';
+import { listClassifiedSubs } from '../../api/client/subsmanager.js';
 
 import '../map/map.js';
 
@@ -31,28 +31,28 @@ import { position } from '../../api/client/position.js';
 import { searchQuery,queryGeoFilter } from '../../api/helpers.js';
 
 
-Template.listProjects.onCreated(function () {
+Template.listClassified.onCreated(function () {
   var self = this;
   self.ready = new ReactiveVar();
-  pageSession.set('sortProjects', null);
-  pageSession.set('searchProjects', null);
+  pageSession.set('sortClassified', null);
+  pageSession.set('searchClassified', null);
 
   //mettre sur layer ?
   Meteor.subscribe('citoyen');
 
-  //sub listProjects
+  //sub listClassified
   self.autorun(function(c) {
     const radius = position.getRadius();
     const latlngObj = position.getLatlngObject();
     if (radius && latlngObj) {
-      console.log('sub list projects geo radius');
-      let handle = listProjectsSubs.subscribe('geo.scope','projects',latlngObj,radius);
+      console.log('sub list classified geo radius');
+      let handle = listClassifiedSubs.subscribe('geo.scope','classified',latlngObj,radius);
           self.ready.set(handle.ready());
     }else{
-      console.log('sub list projects city');
+      console.log('sub list classified city');
       let city = Session.get('city');
       if(city && city.geoShape && city.geoShape.coordinates){
-        let handle = listProjectsSubs.subscribe('geo.scope','projects',city.geoShape);
+        let handle = listClassifiedSubs.subscribe('geo.scope','classified',city.geoShape);
             self.ready.set(handle.ready());
       }
     }
@@ -73,7 +73,7 @@ Template.listProjects.onCreated(function () {
 
 });
 
-Template.listProjects.onRendered(function() {
+Template.listClassified.onRendered(function() {
 
   const testgeo = () => {
     let geolocate = Session.get('geolocate');
@@ -91,6 +91,8 @@ Template.listProjects.onRendered(function() {
           /*listEventsSubs.clear();
           listOrganizationsSubs.clear();
           listProjectsSubs.clear();
+          listPoiSubs.clear();
+          listClassifiedSubs.clear();
           listCitoyensSubs.clear();
           dashboardSubs.clear();*/
           const geoIdRandom = Random.id();
@@ -108,29 +110,29 @@ Meteor.setTimeout(testgeo, '3000');
 });
 
 
-Template.listProjects.helpers({
-  projects () {
+Template.listClassified.helpers({
+  classified () {
     let inputDate = new Date();
-    let searchProjects= pageSession.get('searchProjects');
+    let searchClassified= pageSession.get('searchClassified');
     let query={};
     query = queryGeoFilter(query);
-    if(searchProjects){
-      query = searchQuery(query,searchProjects);
+    if(searchClassified){
+      query = searchQuery(query,searchClassified);
     }
-    return Projects.find(query);
+    return Classified.find(query);
   },
-  countProjects () {
+  countClassified () {
     let inputDate = new Date();
-    let searchProjects= pageSession.get('searchProjects');
+    let searchClassified= pageSession.get('searchClassified');
     let query={};
     query = queryGeoFilter(query);
-    if(searchProjects){
-      query = searchQuery(query,searchProjects);
+    if(searchClassified){
+      query = searchQuery(query,searchClassified);
     }
-    return Projects.find(query).count();
+    return Classified.find(query).count();
   },
-  searchProjects (){
-    return pageSession.get('searchProjects');
+  searchClassified (){
+    return pageSession.get('searchClassified');
   },
   city (){
     return Session.get('city');
@@ -141,29 +143,33 @@ Template.listProjects.helpers({
 dataReadyAll() {
   let query={};
   query = queryGeoFilter(query);
-return Template.instance().ready.get() && Projects.find(query).count() === Counts.get(`countScopeGeo.projects`);
+return Template.instance().ready.get() && Classified.find(query).count() === Counts.get(`countScopeGeo.classified`);
 },
 dataReadyPourcentage() {
   let query={};
   query = queryGeoFilter(query);
-return  `${Projects.find(query).count()}/${Counts.get('countScopeGeo.projects')}`;
+return  `${Classified.find(query).count()}/${Counts.get('countScopeGeo.classified')}`;
+},
+typeI18n(type) {
+return  `schemas.classifiedrest.type.options.${type}`;
 }
+
 });
 
-Template.listProjects.events({
+Template.listClassified.events({
   'keyup #search, change #search': function(event,template){
     if(event.currentTarget.value.length>2){
-      pageSession.set( 'searchProjects', event.currentTarget.value);
+      pageSession.set( 'searchClassified', event.currentTarget.value);
     }else{
-      pageSession.set( 'searchProjects', null);
+      pageSession.set( 'searchClassified', null);
     }
   },
 });
 
 /*
-Meteor.call('searchGlobalautocomplete',{name:'test',searchType:['projects']})
+Meteor.call('searchGlobalautocomplete',{name:'test',searchType:['classified']})
 */
-Template.projectsAdd.onCreated(function () {
+Template.classifiedAdd.onCreated(function () {
   pageSession.set('error', false );
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
@@ -173,10 +179,12 @@ Template.projectsAdd.onCreated(function () {
   pageSession.set('depName', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
-
+  pageSession.set('section', null);
+  pageSession.set('type', null);
+  pageSession.set('subtype', null);
 });
 
-Template.projectsEdit.onCreated(function () {
+Template.classifiedEdit.onCreated(function () {
   const template = Template.instance();
   template.ready = new ReactiveVar();
   pageSession.set('error', false );
@@ -188,6 +196,9 @@ Template.projectsEdit.onCreated(function () {
   pageSession.set('depName', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
+  pageSession.set('section', null);
+  pageSession.set('type', null);
+  pageSession.set('subtype', null);
 
   this.autorun(function() {
     Session.set('scopeId', Router.current().params._id);
@@ -195,86 +206,46 @@ Template.projectsEdit.onCreated(function () {
   });
 
   this.autorun(function(c) {
-      const handle = Meteor.subscribe('scopeDetail','projects',Router.current().params._id);
+      const handle = Meteor.subscribe('scopeDetail','classified',Router.current().params._id);
       if(handle.ready()){
         template.ready.set(handle.ready());
       }
   });
 });
 
-Template.projectsBlockEdit.onCreated(function () {
-  const template = Template.instance();
-  template.ready = new ReactiveVar();
-  pageSession.set('error', false );
-  pageSession.set('postalCode', null);
-  pageSession.set('country', null);
-  pageSession.set('city', null);
-  pageSession.set('cityName', null);
-  pageSession.set('regionName', null);
-  pageSession.set('depName', null);
-  pageSession.set('geoPosLatitude', null);
-  pageSession.set('geoPosLongitude', null);
 
-  this.autorun(function(c) {
-      Session.set('scopeId', Router.current().params._id);
-      Session.set('block', Router.current().params.block);
-  });
-
-  this.autorun(function(c) {
-      const handle = Meteor.subscribe('scopeDetail','projects',Router.current().params._id);
-      if(handle.ready()){
-        template.ready.set(handle.ready());
-      }
-  });
-});
-
-Template.projectsAdd.helpers({
+Template.classifiedAdd.helpers({
   error () {
     return pageSession.get( 'error' );
   }
 });
 
-Template.projectsEdit.helpers({
-  project () {
-    let project = Projects.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
-    let projectEdit = {};
-    projectEdit._id = project._id._str;
-    projectEdit.name = project.name;
-    projectEdit.url = project.url;
-    projectEdit.startDate = project.startDate;
-    projectEdit.endDate = project.endDate;
-    if(project && project.preferences){
-      projectEdit.preferences = {};
-      if(project.preferences.isOpenData == "true"){
-        projectEdit.preferences.isOpenData = true;
-      }else{
-        projectEdit.preferences.isOpenData = false;
-      }
-      if(project.preferences.isOpenEdition == "true"){
-        projectEdit.preferences.isOpenEdition = true;
-      }else{
-        projectEdit.preferences.isOpenEdition = false;
-      }
+Template.classifiedEdit.helpers({
+  classified () {
+    let classified = Classified.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
+    let classifiedEdit = {};
+    classifiedEdit._id = classified._id._str;
+    classifiedEdit.name = classified.name;
+
+    classifiedEdit.tags = classified.tags;
+    classifiedEdit.description = classified.description;
+    classifiedEdit.shortDescription = classified.shortDescription;
+    classifiedEdit.country = classified.address.addressCountry;
+    classifiedEdit.postalCode = classified.address.postalCode;
+    classifiedEdit.city = classified.address.codeInsee;
+    classifiedEdit.cityName = classified.address.addressLocality;
+    if(classified && classified.address && classified.address.streetAddress){
+      classifiedEdit.streetAddress = classified.address.streetAddress;
     }
-    projectEdit.tags = project.tags;
-    projectEdit.description = project.description;
-    projectEdit.shortDescription = project.shortDescription;
-    projectEdit.country = project.address.addressCountry;
-    projectEdit.postalCode = project.address.postalCode;
-    projectEdit.city = project.address.codeInsee;
-    projectEdit.cityName = project.address.addressLocality;
-    if(project && project.address && project.address.streetAddress){
-      projectEdit.streetAddress = project.address.streetAddress;
+    if(classified && classified.address && classified.address.regionName){
+      classifiedEdit.regionName = classified.address.regionName;
     }
-    if(project && project.address && project.address.regionName){
-      projectEdit.regionName = project.address.regionName;
+    if(classified && classified.address && classified.address.depName){
+      classifiedEdit.depName = classified.address.depName;
     }
-    if(project && project.address && project.address.depName){
-      projectEdit.depName = project.address.depName;
-    }
-    projectEdit.geoPosLatitude = project.geo.latitude;
-    projectEdit.geoPosLongitude = project.geo.longitude;
-    return projectEdit;
+    classifiedEdit.geoPosLatitude = classified.geo.latitude;
+    classifiedEdit.geoPosLongitude = classified.geo.longitude;
+    return classifiedEdit;
   },
   error () {
     return pageSession.get( 'error' );
@@ -284,111 +255,8 @@ Template.projectsEdit.helpers({
   }
 });
 
-Template.projectsBlockEdit.helpers({
-  project () {
-    let project = Projects.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
-    let projectEdit = {};
-    projectEdit._id = project._id._str;
-    if(Router.current().params.block === 'descriptions'){
-      projectEdit.description = project.description;
-      projectEdit.shortDescription = project.shortDescription;
-    }else if(Router.current().params.block === 'info'){
-      projectEdit.name = project.name;
-      if(project.tags){
-        projectEdit.tags = project.tags;
-      }
-      if(project.properties && project.properties.avancement){
-        projectEdit.avancement = project.properties.avancement;
-      }
-      projectEdit.email = project.email;
-      projectEdit.url = project.url;
-      if(project.telephone){
-        if(project.telephone.fixe){
-          projectEdit.fixe = project.telephone.fixe.join();
-        }
-        if(project.telephone.mobile){
-          projectEdit.mobile = project.telephone.mobile.join();
-        }
-        if(project.telephone.fax){
-          projectEdit.fax = project.telephone.fax.join();
-        }
-      }
-    }else if(Router.current().params.block === 'network'){
-      if(project.socialNetwork){
-        if(project.socialNetwork.instagram){
-        projectEdit.instagram = project.socialNetwork.instagram;
-      }
-      if(project.socialNetwork.skype){
-        projectEdit.skype = project.socialNetwork.skype;
-      }
-      if(project.socialNetwork.googleplus){
-        projectEdit.gpplus = project.socialNetwork.googleplus;
-      }
-      if(project.socialNetwork.github){
-        projectEdit.github = project.socialNetwork.github;
-      }
-      if(project.socialNetwork.twitter){
-        projectEdit.twitter = project.socialNetwork.twitter;
-      }
-      if(project.socialNetwork.facebook){
-        projectEdit.facebook = project.socialNetwork.facebook;
-      }
-      }
 
-
-    }else if(Router.current().params.block === 'when'){
-      projectEdit.startDate = project.startDate;
-      projectEdit.endDate = project.endDate;
-    }else if(Router.current().params.block === 'locality'){
-      if(project && project.address){
-      projectEdit.country = project.address.addressCountry;
-      projectEdit.postalCode = project.address.postalCode;
-      projectEdit.city = project.address.codeInsee;
-      projectEdit.cityName = project.address.addressLocality;
-      if(project && project.address && project.address.streetAddress){
-        projectEdit.streetAddress = project.address.streetAddress;
-      }
-      if(project && project.address && project.address.regionName){
-        projectEdit.regionName = project.address.regionName;
-      }
-      if(project && project.address && project.address.depName){
-        projectEdit.depName = project.address.depName;
-      }
-      projectEdit.geoPosLatitude = project.geo.latitude;
-      projectEdit.geoPosLongitude = project.geo.longitude;
-    }
-  }else if(Router.current().params.block === 'preferences'){
-    if(project && project.preferences){
-      projectEdit.preferences = {};
-      if(project.preferences.isOpenData === true){
-        projectEdit.preferences.isOpenData = true;
-      }else{
-        projectEdit.preferences.isOpenData = false;
-      }
-      if(project.preferences.isOpenEdition === true){
-        projectEdit.preferences.isOpenEdition = true;
-      }else{
-        projectEdit.preferences.isOpenEdition = false;
-      }
-    }
-  }
-    return projectEdit;
-  },
-  blockSchema() {
-    return BlockProjectsRest[Router.current().params.block];
-  },
-  block() {
-    return Router.current().params.block;
-  },
-  error () {
-    return pageSession.get( 'error' );
-  },
-  dataReady() {
-  return Template.instance().ready.get();
-  }
-});
-
-Template.projectsFields.helpers({
+Template.classifiedFields.helpers({
   parentType (){
     return pageSession.get('parentType');
   },
@@ -400,7 +268,11 @@ Template.projectsFields.helpers({
     if(Meteor.userId() && Citoyens && Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())}) && parentType){
       console.log(parentType)
       if(parentType === 'organizations'){
-          optionsParent = Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())}).listOrganizationsCreator();
+        optionsParent = Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())}).listOrganizationsCreator();
+      }else if(parentType === 'events'){
+        optionsParent = Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())}).listEventsCreator();
+      }else if(parentType === 'projects'){
+        optionsParent = Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())}).listProjectsCreator();
       }else if(parentType === 'citoyens'){
         optionsParent =  Citoyens.find({_id:new Mongo.ObjectID(Meteor.userId())},{fields:{_id:1,name:1}})
       }
@@ -410,6 +282,131 @@ Template.projectsFields.helpers({
           return {label: c.name, value: c._id._str};
         });
       }
+    }else{return false;}
+  },
+  section (){
+    return pageSession.get('section');
+  },
+  type (){
+    return pageSession.get('type');
+  },
+  optionsType (section) {
+    if(section){
+      console.log(section)
+      if(section === 'Emplois'){
+        return [
+          {label: 'Achats-Comptabilité-Gestion', value: 'Achats-Comptabilité-Gestion'},
+          {label: 'Arts-Artisanat', value: 'Arts-Artisanat'},
+          {label: 'Banque-Assurance', value: 'Banque-Assurance'},
+          {label: 'Bâtiment-Travaux_Publics', value: 'Bâtiment-Travaux_Publics'},
+          {label: 'Commerce-Vente', value: 'Commerce-Vente'},
+          {label: 'Communication-Multimédia', value: 'Communication-Multimédia'},
+          {label: 'Conseil-Etudes', value: 'Conseil-Etudes'},
+          {label: 'Direction_Entreprise', value: 'Direction_Entreprise'},
+          {label: 'Espaces_Naturels', value: 'Espaces_Naturels'},
+          {label: 'Agriculture', value: 'Agriculture'},
+          {label: 'Pêche', value: 'Pêche'},
+          {label: 'Soins_aux_animaux', value: 'Soins_aux_animaux'},
+          {label: 'Hôtellerie', value: 'Hôtellerie'},
+          {label: 'Restauration', value: 'Restauration'},
+          {label: 'Tourisme', value: 'Tourisme'},
+          {label: 'Animation', value: 'Animation'},
+          {label: 'Immobilier', value: 'Immobilier'},
+          {label: 'Industrie', value: 'Industrie'},
+          {label: 'Informatique-Télécommunication', value: 'Informatique-Télécommunication'},
+          {label: 'Installation-Maintenance', value: 'Installation-Maintenance'},
+          {label: 'Marketing-Stratégie_Commerciale', value: 'Marketing-Stratégie_Commerciale'},
+          {label: 'Ressources_Humaines', value: 'Ressources_Humaines'},
+          {label: 'Santé', value: 'Santé'},
+          {label: 'Secrétariat-Assistanat', value: 'Secrétariat-Assistanat'},
+          {label: 'Services_à_la_personne', value: 'Services_à_la_personne'},
+          {label: 'Services_à_la_collectivité', value: 'Services_à_la_collectivité'},
+          {label: 'Spectacle', value: 'Spectacle'},
+          {label: 'Sport', value: 'Sport'},
+          {label: 'Transport-Logistique', value: 'Transport-Logistique'}
+      ];
+      }else{
+        return [
+          {label: 'Technologie', value: 'Technologie'},
+          {label: 'Immobilier', value: 'Immobilier'},
+          {label: 'Véhicules', value: 'Véhicules'},
+          {label: 'Maison', value: 'Maison'},
+          {label: 'Loisirs', value: 'Loisirs'},
+          {label: 'Mode', value: 'Mode'}
+      ];
+      }
+    }else{return false;}
+  },
+  subtype (){
+    return pageSession.get('subtype');
+  },
+  optionsSubtype (type) {
+    if(type){
+      console.log(type);
+      const subtype = {
+        "Technologie":[
+          {label: 'TV / Vidéo', value: 'TV / Vidéo'},
+          {label: 'Informatique', value: 'Informatique'},
+          {label: 'Tablettes', value: 'Tablettes'},
+          {label: 'Téléphonie', value: 'Téléphonie'},
+          {label: 'Appareils photos', value: 'Appareils photos'},
+          {label: 'Appareil audio', value: 'Appareil audio'}
+        ],
+        "Immobilier":[
+          {label: 'Maison', value: 'Maison'},
+          {label: 'Appartement', value: 'Appartement'},
+          {label: 'Terrain', value: 'Terrain'},
+          {label: 'Parking', value: 'Parking'},
+          {label: 'Bureaux', value: 'Bureaux'}
+        ],
+        "Véhicules":[
+          {label: 'SUV', value: 'SUV'},
+          {label: '4x4', value: '4x4'},
+          {label: 'Utilitaire', value: 'Utilitaire'},
+          {label: 'Moto', value: 'Moto'},
+          {label: 'Scooter', value: 'Scooter'},
+          {label: 'Bateau', value: 'Bateau'},
+          {label: 'Voiturette', value: 'Voiturette'},
+          {label: 'Vélos', value: 'Vélos'},
+          {label: 'Équipement véhicule', value: 'Équipement véhicule'},
+          {label: 'Équipement 2 roues', value: 'Équipement 2 roues'},
+          {label: 'Équipement bateau', value: 'Équipement bateau'},
+          {label: 'Équipement vélo', value: 'Équipement vélo'},
+        ],
+        "Maison":[
+          {label: 'Electroménager', value: 'Electroménager'},
+          {label: 'Mobilier', value: 'Mobilier'},
+          {label: 'Équipement bébé', value: 'Équipement bébé'},
+          {label: 'Animaux', value: 'Animaux'},
+          {label: 'Divers', value: 'Divers'},
+        ],
+        "Loisirs":[
+          {label: 'Sports', value: 'Sports'},
+          {label: 'Instrument musique', value: 'Instrument musique'},
+          {label: 'Sonorisation', value: 'Sonorisation'},
+          {label: 'CD / DVD', value: 'CD / DVD'},
+          {label: 'Jouet', value: 'Jouet'},
+          {label: 'Jeux de société', value: 'Jeux de société'},
+          {label: 'Livres / BD', value: 'Livres / BD'},
+          {label: 'Collections', value: 'Collections'},
+          {label: 'Bricolages', value: 'Bricolages'},
+          {label: 'Jardinage', value: 'Jardinage'},
+          {label: 'Art / Déco', value: 'Art / Déco'},
+          {label: 'Modélisme', value: 'Modélisme'},
+          {label: 'Puériculture', value: 'Puériculture'},
+          {label: 'Animaux', value: 'Animaux'},
+          {label: 'Divers', value: 'Divers'}
+        ],
+        "Mode":[
+          {label: 'Vêtements', value: 'Vêtements'},
+          {label: 'Chaussures', value: 'Chaussures'},
+          {label: 'Accessoires', value: 'Accessoires'},
+          {label: 'Montres', value: 'Montres'},
+          {label: 'Bijoux', value: 'Bijoux'}
+        ],
+      };
+
+      return subtype[type];
     }else{return false;}
   },
   optionsInsee () {
@@ -462,7 +459,7 @@ Template.projectsFields.helpers({
   }
 });
 
-Template.projectsFields.onCreated(function () {
+Template.classifiedFields.onCreated(function () {
   const self = this;
   const template = Template.instance();
   template.ready = new ReactiveVar();
@@ -490,7 +487,7 @@ Template.projectsFields.onCreated(function () {
 
 });
 
-Template.projectsFields.onRendered(function() {
+Template.classifiedFields.onRendered(function() {
   const self = this;
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
@@ -502,7 +499,7 @@ Template.projectsFields.onRendered(function() {
   pageSession.set('geoPosLongitude', null);
 
   let geolocate = Session.get('geolocate');
-  if(geolocate && Router.current().route.getName()!="projectsEdit" && Router.current().route.getName()!="projectsBlockEdit"){
+  if(geolocate && Router.current().route.getName()!="classifiedEdit"){
     var onOk=IonPopup.confirm({template:TAPi18n.__('Utiliser votre position actuelle ?'),
     onOk: function(){
       const latlngObj = position.getLatlngObject();
@@ -578,6 +575,12 @@ Template.projectsFields.onRendered(function() {
             if( parentType === 'organizations'){
               const handleParent = self.subscribe('directoryListOrganizations','citoyens',Meteor.userId());
               self.readyParent.set(handleParent.ready());
+            }else if( parentType === 'events'){
+              const handleParent = self.subscribe('directoryListEvents','citoyens',Meteor.userId());
+              self.readyParent.set(handleParent.ready());
+            }else if( parentType === 'projects'){
+              const handleParent = self.subscribe('directoryListProjects','citoyens',Meteor.userId());
+              self.readyParent.set(handleParent.ready());
             }else if(parentType === 'citoyens'){
               const handleParent = self.subscribe('citoyen');
               self.readyParent.set(handleParent.ready());
@@ -588,21 +591,39 @@ Template.projectsFields.onRendered(function() {
 
 });
 
-Template.projectsFields.onDestroyed(function () {
+Template.classifiedFields.onDestroyed(function () {
 this.$('textarea').atwho('destroy');
 });
 
-Template.projectsFields.events({
+Template.classifiedFields.events({
   'change select[name="parentType"]': function(e, tmpl) {
     e.preventDefault();
-    //console.log(tmpl.$(e.currentTarget).val());
+    console.log(tmpl.$(e.currentTarget).val());
     pageSession.set( 'parentType', tmpl.$(e.currentTarget).val() );
     pageSession.set( 'parentId', false);
   },
   'change select[name="parentId"]': function(e, tmpl) {
     e.preventDefault();
-    //console.log(tmpl.$(e.currentTarget).val());
+    console.log(tmpl.$(e.currentTarget).val());
     pageSession.set( 'parentId', tmpl.$(e.currentTarget).val() );
+  },
+  'change select[name="section"]': function(e, tmpl) {
+    e.preventDefault();
+    console.log(tmpl.$(e.currentTarget).val());
+    pageSession.set( 'section', tmpl.$(e.currentTarget).val() );
+    pageSession.set( 'type', false);
+    pageSession.set( 'subtype', false);
+  },
+  'change select[name="type"]': function(e, tmpl) {
+    e.preventDefault();
+    console.log(tmpl.$(e.currentTarget).val());
+    pageSession.set( 'type', tmpl.$(e.currentTarget).val() );
+    pageSession.set( 'subtype', false);
+  },
+  'change select[name="subtype"]': function(e, tmpl) {
+    e.preventDefault();
+    console.log(tmpl.$(e.currentTarget).val());
+    pageSession.set( 'subtype', tmpl.$(e.currentTarget).val() );
   },
   'keyup input[name="postalCode"],change input[name="postalCode"]':_.throttle((e, tmpl) => {
     e.preventDefault();
@@ -680,24 +701,25 @@ Template.projectsFields.events({
 }, 500)
 });
 
-AutoForm.addHooks(['addProject', 'editProject'], {
+AutoForm.addHooks(['addClassified', 'editClassified'], {
   after: {
     method : function(error, result) {
       if (!error) {
-        Router.go('detailList', {_id:result.data.id,scope:'projects'});
+        Router.go('detailList', {_id:result.data.id,scope:'classified'});
       }
     },
     "method-update" : function(error, result) {
       if (!error) {
-        Router.go('detailList', {_id:result.data.id,scope:'projects'});
+        Router.go('detailList', {_id:result.data.id,scope:'classified'});
       }
     }
   },
   before: {
     method : function(doc, template) {
-      //console.log(doc);
+      console.log(doc);
       doc.parentType = pageSession.get('parentType');
       doc.parentId = pageSession.get('parentId');
+
       const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
       const matches = [];
       let match;
@@ -748,83 +770,11 @@ AutoForm.addHooks(['addProject', 'editProject'], {
 
     //let ref;
     //if (error.errorType && error.errorType === 'Meteor.Error') {
-      //if (error.reason === 'Something went really bad  An project with the same name allready exists') {
+      //if (error.reason === 'Something went really bad  An classified with the same name allready exists') {
       //this.addStickyValidationError('name', error.reason.replace(":", " "));
       //this.addStickyValidationError('name', error.errorType , error.reason)
       //AutoForm.validateField(this.formId, 'name');
       //}
     //}
-  }
-});
-
-/*AutoForm.addHooks(['addProject'], {
-  before: {
-    method : function(doc, template) {
-      return doc;
-    }
-  }
-});*/
-
-AutoForm.addHooks(['editBlockProject'], {
-  after: {
-    "method-update" : function(error, result) {
-      if (!error) {
-        if(Session.get('block')!=='preferences'){
-        Router.go('detailList', {_id:Session.get('scopeId'),scope:'projects'});
-      }
-      }
-    }
-  },
-  before: {
-    "method-update" : function(modifier, documentId) {
-      let scope = 'projects';
-      let block = Session.get('block');
-      if(modifier && modifier["$set"]){
-        const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
-        const matches = [];
-        let match;
-        if(modifier["$set"].shortDescription){
-          while ((match = regex.exec(modifier["$set"].shortDescription))) {
-            matches.push(match[1]);
-          }
-        }
-        if(modifier["$set"].description){
-          while ((match = regex.exec(modifier["$set"].description))) {
-            matches.push(match[1]);
-          }
-        }
-        if(pageSession.get('tags')){
-          const arrayTags = _.reject(pageSession.get('tags'), (value) => {
-            return matches[value] === null;
-          }, matches);
-          if(modifier["$set"].tags){
-            modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,arrayTags,matches));
-          }else{
-            modifier["$set"].tags = _.uniq(_.union(arrayTags,matches));
-          }
-        }else{
-          //si on update est ce que la mention reste
-          if(matches.length > 0){
-          if(modifier["$set"].tags){
-            modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,matches));
-          }else{
-            modifier["$set"].tags = _.uniq(matches);
-          }
-        }
-        }
-      }else{
-        modifier["$set"] = {};
-      }
-      modifier["$set"].typeElement = scope;
-      modifier["$set"].block = block;
-      return modifier;
-    }
-  },
-  onError: function(formType, error) {
-    if (error.errorType && error.errorType === 'Meteor.Error') {
-      if (error && error.error === "error_call") {
-        pageSession.set( 'error', error.reason.replace(": ", ""));
-      }
-    }
   }
 });

@@ -20,6 +20,7 @@ import { newsListSubs,filActusSubs } from '../../api/client/subsmanager.js';
 import { Events } from '../../api/events.js';
 import { Organizations } from '../../api/organizations.js';
 import { Projects } from '../../api/projects.js';
+import { Poi } from '../../api/poi.js';
 import { Citoyens } from '../../api/citoyens.js';
 import { News,SchemasNewsRestBase } from '../../api/news.js';
 
@@ -33,6 +34,7 @@ import '../components/news/button-card.js';
 window.Events = Events;
 window.Organizations = Organizations;
 window.Projects = Projects;
+window.Poi = Poi;
 window.Citoyens = Citoyens;
 
 let pageSession = new ReactiveDict('pageNews');
@@ -55,6 +57,8 @@ Template.newsList.onCreated(function(){
       pageSession.set('selectview', 'scopeOrganizationsTemplate');
     }else if(Router.current().route.getName()=="projectsList"){
       pageSession.set('selectview', 'scopeProjectsTemplate');
+    }else if(Router.current().route.getName()=="poiList"){
+      pageSession.set('selectview', 'scopePoiTemplate');
     }else if(Router.current().route.getName()=="eventsList"){
       pageSession.set('selectview', 'scopeEventsTemplate');
     }else{
@@ -312,6 +316,30 @@ Template.scopeProjectsTemplate.helpers({
   }
 });
 
+Template.scopePoiTemplate.onCreated(function(){
+  self = this;
+  this.ready = new ReactiveVar();
+
+  this.autorun(function() {
+    Session.set('scopeId', Router.current().params._id);
+    Session.set('scope', Router.current().params.scope);
+  });
+
+  this.autorun(function() {
+      const handle = newsListSubs.subscribe('directoryListPoi', Router.current().params.scope, Router.current().params._id);
+      this.ready.set(handle.ready());
+  }.bind(this));
+});
+
+Template.scopePoiTemplate.helpers({
+  scopeBoutonProjectsTemplate () {
+    return  'boutonPoi'+Router.current().params.scope;
+  },
+  dataReady() {
+  return Template.instance().ready.get();
+  }
+});
+
 Template.scopeOrganizationsTemplate.onCreated(function(){
   self = this;
   this.ready = new ReactiveVar();
@@ -543,6 +571,38 @@ Template.actionSheet.events({
         if (index === 5) {
           console.log('Edit!');
           Router.go('projectsBlockEdit', {_id:Router.current().params._id,block:'preferences'});
+        }
+        return true;
+      }
+    });
+  },
+  "click .action-card-poi" (e, t) {
+    const self=this;
+    e.preventDefault();
+    //info,description,contact
+    IonActionSheet.show({
+      titleText: TAPi18n.__('Actions Poi'),
+      buttons: [
+        { text: `${TAPi18n.__('edit info')} <i class="icon ion-edit"></i>` },
+        { text: `${TAPi18n.__('edit description')} <i class="icon ion-edit"></i>` },
+        { text: `${TAPi18n.__('edit address')} <i class="icon ion-edit"></i>` },
+      ],
+      cancelText: TAPi18n.__('cancel'),
+      cancel: function() {
+        console.log('Cancelled!');
+      },
+      buttonClicked: function(index) {
+        if (index === 0) {
+          console.log('Edit!');
+          Router.go('poiBlockEdit', {_id:Router.current().params._id,block:'info'});
+        }
+        if (index === 1) {
+          console.log('Edit!');
+          Router.go('poiBlockEdit', {_id:Router.current().params._id,block:'descriptions'});
+        }
+        if (index === 2) {
+          console.log('Edit!');
+          Router.go('poiBlockEdit', {_id:Router.current().params._id,block:'locality'});
         }
         return true;
       }

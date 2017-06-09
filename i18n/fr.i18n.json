@@ -6,8 +6,16 @@
   "home":"Accueil",
   "events":"Evenements",
   "projects":"Projets",
+  "poi":"Point d'intérêt",
+  "classified":"Annonces",
+  "point of interest":"Point d'intérêt",
   "persons":"Citoyens",
   "organizations":"Organisations",
+  "All read":"Tout lu",
+  "No found":"Pas trouvé",
+  "No Cities found":"Aucune commune trouvée",
+  "Location":"Position",
+  "Use the location of your profile":"Utiliser la position de votre profil",
   "email":"Email",
   "username":"Nom d'utilisateur",
   "password":"Mot de passe",
@@ -94,6 +102,12 @@
   "Add project":"Ajouter un projet",
   "Create a project":"Créer un projet",
   "Edit a project":"Modifier un projet",
+  "Add point of interest":"Ajouter un point d'intérêt",
+  "Create a point of interest":"Créer un point d'intérêt",
+  "Edit a point of interest":"Modifier un point d'intérêt",
+  "Add classified":"Ajouter une annonce",
+  "Create a classified":"Créer une annonce",
+  "Edit a classified":"Modifier une annonce",
   "Cities":"Villes",
   "community":"Communauté",
   "favorites":"Favoris",
@@ -393,6 +407,103 @@
       },
       "endDate":{
         "label": "Date de fin"
+      },
+      "country":{
+        "label": "Pays",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+          "FR":"France",
+          "GP":"Guadeloupe",
+          "GF":"Guyanne Française",
+          "MQ":"Martinique",
+          "YT":"Mayotte",
+          "NC":"Nouvelle-Calédonie",
+          "RE":"Réunion",
+          "PM":"St Pierre et Miquelon"
+        }
+      },
+      "postalCode":{
+        "label": "Code postal"
+      },
+      "city":{
+        "label": "Ville",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+
+        }
+      },
+      "streetAddress":{
+        "label": "Adresse"
+      },
+      "preferences":{
+        "label": "Préférences",
+        "isOpenData":{
+          "label": "Open Data"
+        },
+        "isOpenEdition":{
+          "label": "Open Edition"
+        }
+      }
+    },
+    "poirest" : {
+      "name":{
+        "label": "Nom"
+      },
+      "parentType":{
+        "label": "Createur type",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+          "citoyens": "Moi",
+          "organizations": "Organisations",
+          "events": "Evenements",
+          "projects": "Projets"
+        }
+      },
+      "parentId":{
+        "label": "Createur",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+
+        }
+      },
+      "shortDescription":{
+        "label": "Description courte"
+      },
+      "description":{
+        "label": "Description"
+      },
+      "type":{
+        "label": "type",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+          "link": "link",
+          "tool": "tool",
+          "machine": "machine",
+          "software": "software",
+          "rh": "rh",
+          "RessourceMaterielle": "RessourceMaterielle",
+          "RessourceFinanciere": "RessourceFinanciere",
+          "ficheBlanche": "ficheBlanche",
+          "geoJson": "geoJson",
+          "compostPickup": "compostPickup",
+          "video": "video",
+          "sharedLibrary": "sharedLibrary",
+          "recoveryCenter": "recoveryCenter",
+          "trash": "trash",
+          "history": "history",
+          "something2See": "something2See",
+          "funPlace": "funPlace",
+          "place": "place",
+          "artPiece": "artPiece",
+          "streetArts": "streetArts",
+          "openScene": "openScene",
+          "stand": "stand",
+          "parking": "parking",
+          "other": "other"
+        }
+      },
+      "tags":{
+        "label": "tags"
       },
       "country":{
         "label": "Pays",

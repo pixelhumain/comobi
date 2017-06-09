@@ -12,12 +12,14 @@ import { _ } from 'meteor/underscore';
 import { Events } from '../../api/events.js';
 import { Organizations } from '../../api/organizations.js';
 import { Projects } from '../../api/projects.js';
+import { Poi } from '../../api/poi.js';
+import { Classified } from '../../api/classified.js';
 import { Citoyens } from '../../api/citoyens.js';
 
 import { nameToCollection } from '../../api/helpers.js';
 
 //submanager
-import { listEventsSubs,listOrganizationsSubs,listProjectsSubs,listCitoyensSubs } from '../../api/client/subsmanager.js';
+import { listEventsSubs,listOrganizationsSubs,listProjectsSubs,listPoiSubs,listClassifiedSubs,listCitoyensSubs } from '../../api/client/subsmanager.js';
 
 import { position } from '../../api/client/position.js';
 import { queryGeoFilter } from '../../api/helpers.js';
@@ -27,12 +29,16 @@ import './mapscope.html';
 window.Events = Events;
 window.Organizations = Organizations;
 window.Projects = Projects;
+window.Poi = Poi;
+window.Classified = Classified;
 window.Citoyens = Citoyens;
 
 const subs = {};
 subs.events = listEventsSubs;
 subs.organizations = listOrganizationsSubs;
 subs.projects = listProjectsSubs;
+subs.poi = listPoiSubs;
+subs.classified = listClassifiedSubs;
 subs.citoyens = listCitoyensSubs;
 
 Template.mapCanvas.onCreated(function () {

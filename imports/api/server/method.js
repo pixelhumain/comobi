@@ -17,6 +17,8 @@ import { Lists } from '../lists.js';
 import { Events,SchemasEventsRest,BlockEventsRest } from '../events.js';
 import { Organizations,SchemasOrganizationsRest,BlockOrganizationsRest } from '../organizations.js';
 import { Projects,SchemasProjectsRest,BlockProjectsRest } from '../projects.js';
+import { Poi,SchemasPoiRest,BlockPoiRest } from '../poi.js';
+import { Classified,SchemasClassifiedRest } from '../classified.js';
 import { Comments,SchemasCommentsRest,SchemasCommentsEditRest } from '../comments.js';
 import { SchemasShareRest } from '../schema.js';
 
@@ -32,6 +34,8 @@ import { nameToCollection } from '../helpers.js';
 global.Events = Events;
 global.Organizations = Organizations;
 global.Projects = Projects;
+global.Poi = Poi;
+global.Classified = Classified;
 global.Citoyens = Citoyens;
 
 const baseDocRetour = (docRetour,doc,scope) => {
@@ -118,6 +122,15 @@ if(doc.typeElement === 'citoyens'){
     docRetour.startDate=moment(doc.startDate).format();
     docRetour.endDate=moment(doc.endDate).format();
   }
+}else if(doc.typeElement === 'poi'){
+  if(doc.block === 'descriptions'){
+    docRetour.description = doc.description ? doc.description : '';
+    docRetour.shortDescription = doc.shortDescription ? doc.shortDescription : '';
+    docRetour.tags = doc.tags ? doc.tags : '';
+  }
+  if(doc.block === 'info'){
+    docRetour.name = doc.name;
+  }
 }else if(doc.typeElement === 'organizations'){
   if(doc.block === 'descriptions'){
     docRetour.description = doc.description ? doc.description : '';
@@ -185,6 +198,18 @@ if(doc.typeElement === 'citoyens'){
   if(doc.preferences){
   docRetour.preferences = doc.preferences;
   }
+} else if(scope === 'poi'){
+  docRetour.name = doc.name;
+  docRetour.description = doc.description ? doc.description : '';
+  docRetour.url = doc.url ? doc.url : '';
+  docRetour.parentId = doc.parentId;
+  docRetour.parentType = doc.parentType;
+} else if(scope === 'classified'){
+  docRetour.name = doc.name;
+  docRetour.description = doc.description ? doc.description : '';
+  docRetour.url = doc.url ? doc.url : '';
+  docRetour.parentId = doc.parentId;
+  docRetour.parentType = doc.parentType;
 } else {
   if(doc.name){
   docRetour.name = doc.name;
@@ -510,7 +535,7 @@ collectionsAdd (id,type){
   check(id, String);
   check(type, String);
   check(type, Match.Where(function(name) {
-    return _.contains(['events', 'projects','organizations','citoyens'], name);
+    return _.contains(['events', 'projects','organizations','citoyens','poi','classified'], name);
   }));
   if (!this.userId) {
     throw new Meteor.Error("not-authorized");
@@ -789,10 +814,10 @@ indexMax:20*/
 },
 updateBlock (modifier,documentId){
   check(modifier["$set"].typeElement, Match.Where(function(name) {
-    return _.contains(['events', 'projects','organizations','citoyens'], name);
+    return _.contains(['events', 'projects','poi','organizations','citoyens'], name);
   }));
 
-  if(modifier["$set"].typeElement=="organizations" || modifier["$set"].typeElement=="projects" || modifier["$set"].typeElement=="events"){
+  if(modifier["$set"].typeElement=="organizations" || modifier["$set"].typeElement=="projects" || modifier["$set"].typeElement=="poi" || modifier["$set"].typeElement=="events"){
     const collection = nameToCollection(modifier["$set"].typeElement);
     if (!collection.findOne({_id:new Mongo.ObjectID(documentId)}).isAdmin()) {
       throw new Meteor.Error("not-authorized");
@@ -827,6 +852,13 @@ updateBlock (modifier,documentId){
   } else if(modifier["$set"].typeElement === 'projects'){
     check(modifier["$set"].block, Match.Where(function(name) {
       return _.contains(['descriptions','network','info','when','locality','preferences'], name);
+    }));
+    //block description,contact,info,when
+    BlockProjectsRest[modifier["$set"].block].clean(modifier["$set"]);
+    check(modifier["$set"], BlockProjectsRest[modifier["$set"].block]);
+  } else if(modifier["$set"].typeElement === 'poi'){
+    check(modifier["$set"].block, Match.Where(function(name) {
+      return _.contains(['descriptions','info','locality','preferences'], name);
     }));
     //block description,contact,info,when
     BlockProjectsRest[modifier["$set"].block].clean(modifier["$set"]);
@@ -1224,6 +1256,130 @@ doc.docId=newsDoc._id._str;
     docRetour.id = documentId;
     docRetour.key='project';
     docRetour.collection='projects';
+
+    console.log(docRetour);
+
+    var retour = apiCommunecter.postPixel("element","save",docRetour);
+    return retour;
+  },
+  insertPoi (doc){
+    SchemasPoiRest.clean(doc);
+    check(doc, SchemasPoiRest);
+    check(doc.parentType, Match.Where(function(name) {
+      return _.contains(['events', 'projects','organizations','citoyens'], name);
+    }));
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    if(doc.parentType === 'citoyens'){
+      if (this.userId !== doc.parentId ) {
+        throw new Meteor.Error("not-authorized");
+      }
+    } else {
+      const collection = nameToCollection(doc.parentType);
+      if (!collection.findOne({_id:new Mongo.ObjectID(doc.parentId)}).isAdmin()) {
+        throw new Meteor.Error("not-authorized");
+      }
+    }
+
+    const docRetour = baseDocRetour({},doc,'poi');
+    docRetour.key='poi';
+    docRetour.collection='poi';
+
+    console.log(docRetour);
+
+    var retour = apiCommunecter.postPixel("element","save",docRetour);
+    return retour;
+  },
+  updatePoi (modifier,documentId){
+    SchemasPoiRest.clean(modifier["$set"]);
+    check(modifier["$set"], SchemasPoiRest);
+    check(modifier["$set"].parentType, Match.Where(function(name) {
+      return _.contains(['events', 'projects','organizations','citoyens'], name);
+    }));
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    if(modifier["$set"].parentType === 'citoyens'){
+      if (this.userId !== modifier["$set"].parentId ) {
+        throw new Meteor.Error("not-authorized");
+      }
+    } else {
+      const collection = nameToCollection(modifier["$set"].parentType);
+      if (!collection.findOne({_id:new Mongo.ObjectID(modifier["$set"].parentId)}).isAdmin()) {
+        throw new Meteor.Error("not-authorized");
+      }
+    }
+    if (!Poi.findOne({_id:new Mongo.ObjectID(documentId)}).isAdmin()) {
+      throw new Meteor.Error("not-authorized");
+    }
+
+    const docRetour = baseDocRetour({},modifier["$set"],'poi');
+    docRetour.id = documentId;
+    docRetour.key='poi';
+    docRetour.collection='poi';
+
+    console.log(docRetour);
+
+    var retour = apiCommunecter.postPixel("element","save",docRetour);
+    return retour;
+  },
+  insertClassified (doc){
+    SchemasClassifiedRest.clean(doc);
+    check(doc, SchemasClassifiedRest);
+    check(doc.parentType, Match.Where(function(name) {
+      return _.contains(['events', 'projects','organizations','citoyens'], name);
+    }));
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    if(doc.parentType === 'citoyens'){
+      if (this.userId !== doc.parentId ) {
+        throw new Meteor.Error("not-authorized");
+      }
+    } else {
+      const collection = nameToCollection(doc.parentType);
+      if (!collection.findOne({_id:new Mongo.ObjectID(doc.parentId)}).isAdmin()) {
+        throw new Meteor.Error("not-authorized");
+      }
+    }
+
+    const docRetour = baseDocRetour({},doc,'classified');
+    docRetour.key='classified';
+    docRetour.collection='classified';
+
+    console.log(docRetour);
+
+    var retour = apiCommunecter.postPixel("element","save",docRetour);
+    return retour;
+  },
+  updateClassified (modifier,documentId){
+    SchemasClassifiedRest.clean(modifier["$set"]);
+    check(modifier["$set"], SchemasClassifiedRest);
+    check(modifier["$set"].parentType, Match.Where(function(name) {
+      return _.contains(['events', 'projects','organizations','citoyens'], name);
+    }));
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    if(modifier["$set"].parentType === 'citoyens'){
+      if (this.userId !== modifier["$set"].parentId ) {
+        throw new Meteor.Error("not-authorized");
+      }
+    } else {
+      const collection = nameToCollection(modifier["$set"].parentType);
+      if (!collection.findOne({_id:new Mongo.ObjectID(modifier["$set"].parentId)}).isAdmin()) {
+        throw new Meteor.Error("not-authorized");
+      }
+    }
+    if (!Classified.findOne({_id:new Mongo.ObjectID(documentId)}).isAdmin()) {
+      throw new Meteor.Error("not-authorized");
+    }
+
+    const docRetour = baseDocRetour({},modifier["$set"],'classified');
+    docRetour.id = documentId;
+    docRetour.key='classified';
+    docRetour.collection='classified';
 
     console.log(docRetour);
 

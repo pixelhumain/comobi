@@ -173,10 +173,21 @@ export const SchemasInviteAttendeesEventRest = new SimpleSchema({
   import { News } from './news.js';
   import { Events } from './events.js';
   import { Projects } from './projects.js';
+  import { Poi } from './poi.js';
+  import { Classified } from './classified.js';
   import { Organizations } from './organizations.js';
   import { Documents } from './documents.js';
   import { ActivityStream } from './activitystream.js';
-  import { queryLink,queryOptions } from './helpers.js';
+  import { queryLink,queryOptions,nameToCollection } from './helpers.js';
+
+  if(Meteor.isClient){
+    window.Organizations = Organizations;
+    window.Citoyens = Citoyens;
+    window.Projects = Projects;
+    window.Events = Events;
+    window.Poi = Poi;
+    window.Classified = Classified;
+  }
 
     Citoyens.helpers({
       isVisibleFields (field){
@@ -286,6 +297,19 @@ export const SchemasInviteAttendeesEventRest = new SimpleSchema({
         //return this.links && this.links.projects && _.size(this.links.projects);
         return this.listProjects(search) && this.listProjects(search).count();
       },
+      //Citoyens.findOne().listCollections('favorites','projects',search)
+      listCollections (type,collections,search){
+        if(this.collections && this.collections[type] && this.collections[type][collections]){
+           const query = queryLink(this.collections[type][collections],search);
+           const collection = nameToCollection(collections);
+            return collection.find(query,queryOptions);
+        } else{
+          return false;
+        }
+      },
+      countCollections (type,collections,search) {
+        return this.listCollections(type,collections,search) && this.listCollections(type,collections,search).count();
+      },
       listProjectsCreator (){
         let query = {};
         //query['creator'] = this._id._str;
@@ -295,6 +319,16 @@ export const SchemasInviteAttendeesEventRest = new SimpleSchema({
       },
       countProjectsCreator () {
         return this.listProjectsCreator() && this.listProjectsCreator().count();
+      },
+      listPoiCreator (){
+        let query = {};
+        query['parentId'] = this._id._str;
+        //query[`links.contributors.${this._id._str}.isAdmin`] = true;
+        //query[`links.contributors.${this._id._str}.toBeValidated`] = {$exists: false};
+        return Poi.find(query,queryOptions);
+      },
+      countPoiCreator () {
+        return this.listPoiCreator() && this.listPoiCreator().count();
       },
       listEventsCreator (){
         let query = {};

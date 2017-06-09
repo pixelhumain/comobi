@@ -77,7 +77,7 @@ Template.listOrganizations.onRendered(function() {
     let geolocate = Session.get('geolocate');
     if(!Session.get('GPSstart') && geolocate && !position.getLatlng()){
 
-      IonPopup.confirm({title:TAPi18n.__('Position'),template:TAPi18n.__('Utiliser la position de votre profil'),
+      IonPopup.confirm({title:TAPi18n.__('Location'),template:TAPi18n.__('Use the location of your profile'),
       onOk: function(){
         if(Citoyens.findOne() && Citoyens.findOne().geo && Citoyens.findOne().geo.latitude){
           Location.setMockLocation({

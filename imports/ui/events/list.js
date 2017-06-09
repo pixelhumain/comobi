@@ -79,7 +79,7 @@ Template.listEvents.onRendered(function() {
     let geolocate = Session.get('geolocate');
     if(!Session.get('GPSstart') && geolocate && !position.getLatlng()){
 
-      IonPopup.confirm({title:TAPi18n.__('Position'),template:TAPi18n.__('Utiliser la position de votre profil'),
+      IonPopup.confirm({title:TAPi18n.__('Location'),template:TAPi18n.__('Use the location of your profile'),
       onOk: function(){
         if(Citoyens.findOne() && Citoyens.findOne().geo && Citoyens.findOne().geo.latitude){
           Location.setMockLocation({
@@ -835,14 +835,8 @@ AutoForm.addHooks(['addEvent', 'editEvent'], {
   before: {
     method : function(doc, template) {
       //console.log(doc);
-      let scope = Session.get('scope');
-      let scopeId = Session.get('scopeId');
-      if(!!doc.organizerType){
-        doc.organizerType = scope;
-      }
-      if(!!doc.organizerId){
-        doc.organizerId = scopeId;
-      }
+      doc.organizerType = pageSession.get('organizerType');
+      doc.organizerId = pageSession.get('organizerId');
       const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
       const matches = [];
       let match;
@@ -879,14 +873,8 @@ AutoForm.addHooks(['addEvent', 'editEvent'], {
       return doc;
     },
     "method-update" : function(modifier, documentId) {
-      let scope = Session.get('scope');
-      let scopeId = Session.get('scopeId');
-      if(!!modifier["$set"].organizerType){
-        modifier["$set"].organizerType = scope;
-      }
-      if(!!modifier["$set"].organizerId){
-        modifier["$set"].organizerId = scopeId;
-      }
+      modifier["$set"].organizerType = pageSession.get('organizerType');
+      modifier["$set"].organizerId = pageSession.get('organizerId');
       const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
       const matches = [];
       let match;

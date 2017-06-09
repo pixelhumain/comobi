@@ -2,6 +2,9 @@ $color-orga : #93C020; //vert
 $color-person: #FFC600; //jaune
 $color-event: #FFA200; //orange
 $color-project: #8C5AA1; // violet
+$color-poi: #20C06B; // vert poi
+$color-classified: #2BB0C6; //
+
 
 $light:                           #fff !default;
 $stable:                          #f8f8f8 !default;
@@ -255,6 +258,18 @@ $button-project-border:          darken($color-project, 10%) !default;
 $button-project-active-bg:       darken($color-project, 10%) !default;
 $button-project-active-border:   darken($color-project, 10%) !default;
 
+$button-poi-bg:              $color-poi !default;
+$button-poi-text:            #fff !default;
+$button-poi-border:          darken($color-poi, 10%) !default;
+$button-poi-active-bg:       darken($color-poi, 10%) !default;
+$button-poi-active-border:   darken($color-poi, 10%) !default;
+
+$button-classified-bg:              $color-classified !default;
+$button-classified-text:            #fff !default;
+$button-classified-border:          darken($color-classified, 10%) !default;
+$button-classified-active-bg:       darken($color-classified, 10%) !default;
+$button-classified-active-border:   darken($color-classified, 10%) !default;
+
 $button-follower-bg:              $assertive !default;
 $button-follower-text:            #fff !default;
 $button-follower-border:          darken($assertive, 10%) !default;
@@ -281,6 +296,16 @@ $button-follower-active-border:   darken($assertive, 10%) !default;
     @include button-style($button-project-bg, $button-project-border, $button-project-active-bg, $button-project-active-border, $button-project-text);
     @include button-clear($button-project-bg);
     @include button-outline($button-project-bg);
+  }
+  &.button-poi {
+    @include button-style($button-poi-bg, $button-poi-border, $button-poi-active-bg, $button-poi-active-border, $button-poi-text);
+    @include button-clear($button-poi-bg);
+    @include button-outline($button-poi-bg);
+  }
+  &.button-classified {
+    @include button-style($button-classified-bg, $button-classified-border, $button-classified-active-bg, $button-classified-active-border, $button-classified-text);
+    @include button-clear($button-classified-bg);
+    @include button-outline($button-classified-bg);
   }
   &.button-follower {
     @include button-style($button-follower-bg, $button-follower-border, $button-follower-active-bg, $button-follower-active-border, $button-follower-text);

@@ -15,6 +15,7 @@ import { Lists } from './lists.js'
 import { Citoyens } from './citoyens.js';
 import { Organizations } from './organizations.js';
 import { Projects } from './projects.js';
+import { Poi } from './poi.js';
 //SimpleSchema.debug = true;
 
 export const SchemasEventsRest = new SimpleSchema([baseSchema,geoSchema, {
@@ -135,6 +136,7 @@ export const SchemasEventsRest = new SimpleSchema([baseSchema,geoSchema, {
   if(Meteor.isClient){
     window.Organizations = Organizations;
     window.Projects = Projects;
+    window.Poi = Poi;
     window.Citoyens = Citoyens;
   }
 
@@ -168,7 +170,8 @@ export const SchemasEventsRest = new SimpleSchema([baseSchema,geoSchema, {
         _id: new Mongo.ObjectID(this.organizerId)
       }, {
         fields: {
-          'name': 1
+          'name': 1,
+          'links': 1
         }
       });
     }
@@ -191,7 +194,12 @@ export const SchemasEventsRest = new SimpleSchema([baseSchema,geoSchema, {
     },
     isAdmin (userId) {
       let bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
-      return (this.links && this.links.attendees && this.links.attendees[bothUserId] && this.links.attendees[bothUserId].isAdmin) ? true : false;
+      if(bothUserId && this.organizerId && this.organizerType && _.contains(['events', 'projects','organizations'], this.organizerType)){
+          //console.log(this.organizerEvent());
+          return this.organizerEvent() && this.organizerEvent().isAdmin(bothUserId);
+        }else{
+          return (this.links && this.links.attendees && this.links.attendees[bothUserId] && this.links.attendees[bothUserId].isAdmin) ? true : false;
+        }
     },
     scopeVar () {
       return 'events';
@@ -238,6 +246,14 @@ export const SchemasEventsRest = new SimpleSchema([baseSchema,geoSchema, {
     },
     listEventTypes (){
         return Lists.find({name:'eventTypes'});
+    },
+    listPoiCreator (){
+      let query = {};
+      query['parentId'] = this._id._str;
+      return Poi.find(query,queryOptions);
+    },
+    countPoiCreator () {
+      return this.listPoiCreator() && this.listPoiCreator().count();
     },
     newsJournal (target,userId,limit) {
       const query = {};

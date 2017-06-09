@@ -28,7 +28,7 @@ Template.Bouton_card.events({
     Meteor.call('saveattendeesEvent',this.id, (error, result)  => {
       if(error){
         instance.state.set('call', false);
-        alert(err.error);
+        alert(error.error);
       }else{
         instance.state.set('call', false);
       }
@@ -41,7 +41,7 @@ Template.Bouton_card.events({
     Meteor.call('inviteattendeesEvent',this.id, (error, result)  => {
       if(error){
         instance.state.set('call', false);
-        alert(err.error);
+        alert(error.error);
       }else{
         instance.state.set('call', false);
       }
@@ -54,7 +54,7 @@ Template.Bouton_card.events({
     Meteor.call('connectEntity',this.id,this.scope, (error, result)  => {
       if(error){
         instance.state.set('call', false);
-        alert(err.error);
+        alert(error.error);
       }else{
         instance.state.set('call', false);
       }
@@ -67,7 +67,7 @@ Template.Bouton_card.events({
     Meteor.call('disconnectEntity',this.id,this.scope, (error, result)  => {
       if(error){
         instance.state.set('call', false);
-        alert(err.error);
+        alert(error.error);
       }else{
         instance.state.set('call', false);
       }
@@ -80,7 +80,7 @@ Template.Bouton_card.events({
     Meteor.call('followEntity',this.id,this.scope, (error, result)  => {
       if(error){
         instance.state.set('call', false);
-        alert(err.error);
+        alert(error.error);
       }else{
         instance.state.set('call', false);
       }
@@ -93,7 +93,7 @@ Template.Bouton_card.events({
   Meteor.call('disconnectEntity',this.id,this.scope, (error, result)  => {
     if(error){
       instance.state.set('call', false);
-      alert(err.error);
+      alert(error.error);
     }else{
       instance.state.set('call', false);
     }
@@ -106,7 +106,7 @@ return ;
   Meteor.call('disconnectEntity',this.id,this.scope,'followers', (error, result)  => {
     if(error){
       instance.state.set('call', false);
-      alert(err.error);
+      alert(error.error);
     }else{
       instance.state.set('call', false);
     }
@@ -119,7 +119,7 @@ return ;
   Meteor.call('collectionsAdd',this.id,this.scope, (error, result)  => {
     if(error){
       instance.state.set('call', false);
-      alert(err.error);
+      alert(error.error);
     }else{
       instance.state.set('call', false);
     }

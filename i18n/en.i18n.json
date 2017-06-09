@@ -6,8 +6,16 @@
   "home":"Home",
   "events":"Events",
   "projects":"Project",
+  "poi":"Poi",
+  "classified":"Classified",
+  "point of interest":"point of interest",
   "persons":"Persons",
   "organizations":"Organizations",
+  "All read":"Read all",
+  "No found":"No found",
+  "No Cities found":"No Cities found",
+  "Location":"Location",
+  "Use the location of your profile":"Use the location of your profile",
   "email":"Email",
   "password":"Password",
   "username":"Username",
@@ -94,6 +102,12 @@
   "Add project":"Add project",
   "Create a project":"Create a project",
   "Edit a project":"Edit a project",
+  "Add point of interest":"Add point of interest",
+  "Create a point of interest":"Create a point of interest",
+  "Edit a point of interest":"Edit a point of interest",
+  "Add classified":"Add classified",
+  "Create a classified":"Create a classified",
+  "Edit a classified":"Edit a classified",
   "Cities":"Cities",
   "community":"Community",
   "favorites":"Favorites",
@@ -431,6 +445,193 @@
         "isOpenEdition":{
           "label": "is Open Edition"
         }
+      }
+    },
+    "poirest" : {
+      "name":{
+        "label": "name"
+      },
+      "parentType":{
+        "label": "creator of the poi",
+        "placeholder": "Select one...",
+        "options": {
+          "citoyens": "Me",
+          "organizations": "Organizations",
+          "events": "Events",
+          "projects": "Projects"
+        }
+      },
+      "parentId":{
+        "label": "creator of the poi",
+        "placeholder": "Select one...",
+        "options": {
+
+        }
+      },
+      "shortDescription":{
+        "label": "short description"
+      },
+      "description":{
+        "label": "description"
+      },
+      "type":{
+        "label": "type",
+        "placeholder": "Select one...",
+        "options": {
+          "link": "link",
+          "tool": "tool",
+          "machine": "machine",
+          "software": "software",
+          "rh": "rh",
+          "RessourceMaterielle": "RessourceMaterielle",
+          "RessourceFinanciere": "RessourceFinanciere",
+          "ficheBlanche": "ficheBlanche",
+          "geoJson": "geoJson",
+          "compostPickup": "compostPickup",
+          "video": "video",
+          "sharedLibrary": "sharedLibrary",
+          "recoveryCenter": "recoveryCenter",
+          "trash": "trash",
+          "history": "history",
+          "something2See": "something2See",
+          "funPlace": "funPlace",
+          "place": "place",
+          "artPiece": "artPiece",
+          "streetArts": "streetArts",
+          "openScene": "openScene",
+          "stand": "stand",
+          "parking": "parking",
+          "other": "other"
+        }
+      },
+      "tags":{
+        "label": "tags"
+      },
+      "country":{
+        "label": "address country",
+        "placeholder": "Select one...",
+        "options": {
+          "FR": "France",
+          "GP": "Guadeloupe",
+          "GF": "French Guyana",
+          "MQ": "Martinique",
+          "YT": "Mayotte",
+          "NC": "New Caledonia",
+          "RE": "Reunion",
+          "PM": "St Pierre and Miquelon"
+        }
+      },
+      "postalCode":{
+        "label": "postal code"
+      },
+      "city":{
+        "label": "code insee",
+        "placeholder": "Select one...",
+        "options": {
+
+        }
+      },
+      "streetAddress":{
+        "label": "street address"
+      },
+      "preferences":{
+        "label": "preferences",
+        "isOpenData":{
+          "label": "is Open Data"
+        },
+        "isOpenEdition":{
+          "label": "is Open Edition"
+        }
+      }
+    },
+    "classifiedrest" : {
+      "name":{
+        "label": "name"
+      },
+      "parentType":{
+        "label": "creator of the classified",
+        "placeholder": "Select one...",
+        "options": {
+          "citoyens": "Me",
+          "organizations": "Organizations",
+          "events": "Events",
+          "projects": "Projects"
+        }
+      },
+      "parentId":{
+        "label": "creator of the classified",
+        "placeholder": "Select one...",
+        "options": {
+
+        }
+      },
+      "shortDescription":{
+        "label": "short description"
+      },
+      "description":{
+        "label": "description"
+      },
+      "section":{
+        "label": "type",
+        "placeholder": "Select one...",
+        "options": {
+          "Partager": "sharing",
+          "Donner": "donation",
+          "Vendre": "for sale",
+          "Louer": "for rent",
+          "Besoin": "looking for",
+          "Emplois": "job"
+        }
+      },
+      "type":{
+        "label": "type",
+        "placeholder": "Select one...",
+        "options": {
+
+        }
+      },
+      "subtype":{
+        "label": "type",
+        "placeholder": "Select one...",
+        "options": {
+
+        }
+      },
+      "contactInfo":{
+        "label": "Contact information"
+      },
+      "price":{
+        "label": "price"
+      },
+      "tags":{
+        "label": "tags"
+      },
+      "country":{
+        "label": "address country",
+        "placeholder": "Select one...",
+        "options": {
+          "FR": "France",
+          "GP": "Guadeloupe",
+          "GF": "French Guyana",
+          "MQ": "Martinique",
+          "YT": "Mayotte",
+          "NC": "New Caledonia",
+          "RE": "Reunion",
+          "PM": "St Pierre and Miquelon"
+        }
+      },
+      "postalCode":{
+        "label": "postal code"
+      },
+      "city":{
+        "label": "code insee",
+        "placeholder": "Select one...",
+        "options": {
+
+        }
+      },
+      "streetAddress":{
+        "label": "street address"
       }
     },
     "news":{
