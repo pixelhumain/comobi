@@ -782,7 +782,9 @@
 </template>
 
 <template name="boutonCardpoi">
-
+  <div class="button-bar bar-positive">
+    {{> Bouton_card id=_id._str scope=scopeVar isConnect=isFavorites classOff="button-small favorites-link" classOn="button-small favorites-link" iconOff="fa fa-star" iconOn="fa fa-star-o"}}
+  </div>
 </template>
 
 <template name="boutonNewspoi">
