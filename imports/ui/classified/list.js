@@ -23,6 +23,7 @@ import { Cities } from '../../api/cities.js';
 import { listClassifiedSubs } from '../../api/client/subsmanager.js';
 
 import '../map/map.js';
+import '../components/scope/item.js'
 
 import './list.html';
 

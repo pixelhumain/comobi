@@ -1,6 +1,6 @@
 {
   "name": "communecter",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "communecter",
   "private": true,
   "scripts": {
@@ -16,15 +16,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aboire/communEvent.git"
+    "url": "git+https://github.com/aboire/co.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/aboire/communEvent/issues"
+    "url": "https://github.com/aboire/cot/issues"
   },
-  "homepage": "https://github.com/aboire/communEvent#readme",
+  "homepage": "https://github.com/aboire/co#readme",
   "devDependencies": {
-    "meteor-desktop": "^0.7.0"
+    "meteor-desktop": "^0.7.2"
   }
 }

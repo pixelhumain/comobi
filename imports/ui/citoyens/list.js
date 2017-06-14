@@ -19,9 +19,10 @@ import { Citoyens,BlockCitoyensRest } from '../../api/citoyens.js';
 import { Cities } from '../../api/cities.js';
 
 //submanager
-import { dashboardSubs,listEventsSubs,listOrganizationsSubs,listProjectsSubs,listCitoyensSubs,listsSubs } from '../../api/client/subsmanager.js';
+import { listCitoyensSubs } from '../../api/client/subsmanager.js';
 
 import '../map/map.js';
+import '../components/scope/item.js'
 
 import './list.html';
 

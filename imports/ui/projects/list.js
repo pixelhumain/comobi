@@ -20,9 +20,10 @@ import { Projects,BlockProjectsRest } from '../../api/projects.js';
 import { Cities } from '../../api/cities.js';
 
 //submanager
-import { dashboardSubs,listEventsSubs,listOrganizationsSubs,listProjectsSubs,listsSubs } from '../../api/client/subsmanager.js';
+import { listProjectsSubs } from '../../api/client/subsmanager.js';
 
 import '../map/map.js';
+import '../components/scope/item.js'
 
 import './list.html';
 

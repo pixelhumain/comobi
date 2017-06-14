@@ -22,9 +22,10 @@ import { Events,BlockEventsRest } from '../../api/events.js';
 import { Cities } from '../../api/cities.js';
 
 //submanager
-import { dashboardSubs,listEventsSubs,listOrganizationsSubs,listProjectsSubs,listsSubs } from '../../api/client/subsmanager.js';
+import { listEventsSubs,listsSubs } from '../../api/client/subsmanager.js';
 
 import '../map/map.js';
+import '../components/scope/item.js'
 
 import './list.html';
 
