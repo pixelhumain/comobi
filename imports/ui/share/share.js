@@ -19,6 +19,8 @@ import { nameToCollection } from '../../api/helpers.js';
 
 import './share.html';
 
+import '../components/news/card.js';
+
 window.Events = Events;
 window.Organizations = Organizations;
 window.Projects = Projects;

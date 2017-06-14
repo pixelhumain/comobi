@@ -39,8 +39,7 @@
     {{/if}}
   </div>
     {{> Template.dynamic template=selectview data=scope}}
-  {{/if}}
-  {{#if equals scope.scopeVar 'organizations'}}
+  {{else if equals scope.scopeVar 'organizations'}}
   <div class="item tabs tabs-icon-left">
     <a class="tab-item {{#if equals selectview 'scopeDetailTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'detailList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeDetailTemplate"><i class="icon fa fa-home"></i></a>
     {{#if scope.isAdmin}}
@@ -52,8 +51,7 @@
     <a class="tab-item {{#if equals selectview 'scopePoiTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'poiList' _id=scope._id._str scope=scope.scopeVar}}" id="scopePoiTemplate"><i class="icon fa fa-map-marker"></i></a>
   </div>
     {{> Template.dynamic template=selectview data=scope}}
-  {{/if}}
-  {{#if equals scope.scopeVar 'projects'}}
+  {{else if equals scope.scopeVar 'projects'}}
   <div class="item tabs tabs-icon-left">
     <a class="tab-item {{#if equals selectview 'scopeDetailTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'detailList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeDetailTemplate"><i class="icon fa fa-home"></i></a>
     {{#if scope.isAdmin}}
@@ -64,8 +62,7 @@
     <a class="tab-item {{#if equals selectview 'scopePoiTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'poiList' _id=scope._id._str scope=scope.scopeVar}}" id="scopePoiTemplate"><i class="icon fa fa-map-marker"></i></a>
   </div>
     {{> Template.dynamic template=selectview data=scope}}
-  {{/if}}
-  {{#if equals scope.scopeVar 'events'}}
+  {{else if equals scope.scopeVar 'events'}}
   <div class="item tabs tabs-icon-left">
     <a class="tab-item {{#if equals selectview 'scopeDetailTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'detailList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeDetailTemplate"><i class="icon fa fa-home"></i></a>
     {{#if scope.isAdmin}}
@@ -75,8 +72,7 @@
     <a class="tab-item {{#if equals selectview 'scopePoiTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'poiList' _id=scope._id._str scope=scope.scopeVar}}" id="scopePoiTemplate"><i class="icon fa fa-map-marker"></i></a>
   </div>
     {{> Template.dynamic template=selectview data=scope}}
-  {{/if}}
-  {{#if equals scope.scopeVar 'poi'}}
+  {{else if equals scope.scopeVar 'poi'}}
     {{> Template.dynamic template=selectview data=scope}}
   {{/if}}
 
@@ -404,29 +400,25 @@
   {{else}}
   <a href="{{pathFor 'share' _id=_id._str scope=scopeVar}}" class="button button-clear"><i class="icon fa fa-share"></i></a>
   {{/if}}
-  {{/if}}
-  {{#if equals scopeVar 'projects'}}
+  {{else if equals scopeVar 'projects'}}
   {{#if isAdmin}}
   <a href="#" class="button button-positive action-card-projects"><i class="icon fa fa-cog"></i></a>
   {{else}}
   <a href="{{pathFor 'share' _id=_id._str scope=scopeVar}}" class="button button-clear"><i class="icon fa fa-share"></i></a>
   {{/if}}
-  {{/if}}
-  {{#if equals scopeVar 'poi'}}
+  {{else if equals scopeVar 'poi'}}
   {{#if isAdmin}}
   <a href="#" class="button button-positive action-card-poi"><i class="icon fa fa-cog"></i></a>
   {{else}}
   <a href="{{pathFor 'share' _id=_id._str scope=scopeVar}}" class="button button-clear"><i class="icon fa fa-share"></i></a>
   {{/if}}
-  {{/if}}
-  {{#if equals scopeVar 'organizations'}}
+  {{else if equals scopeVar 'organizations'}}
   {{#if isAdmin}}
   <a href="#" class="button button-positive action-card-organizations"><i class="icon fa fa-cog"></i></a>
   {{else}}
   <a href="{{pathFor 'share' _id=_id._str scope=scopeVar}}" class="button button-clear"><i class="icon fa fa-share"></i></a>
   {{/if}}
-  {{/if}}
-  {{#if equals scopeVar 'citoyens'}}
+  {{else if equals scopeVar 'citoyens'}}
   {{#if isMe}}
   <a href="#" class="button button-positive action-card-citoyen"><i class="icon fa fa-cog"></i></a>
   {{/if}}
@@ -434,247 +426,7 @@
 </template>
 
 <template name="listCard">
-  <div class="list card">
-    <div class="item item-avatar item-button-right">
-      {{#if profilThumbImageUrl}}
-        <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
-      {{else}}
-      {{> imgDoc imageDoc=imageDoc resized="50x50"}}
-      {{/if}}
-      <h2 class="homestead">{{name}}</h2>
-
-      {{#if equals scopeVar 'events'}}
-      {{#if organizerType}}
-      {{#if organizerEvent}}<p>{{_ "organizer"}} : <a href="{{pathFor 'detailList' _id=organizerId scope=organizerType}}" class="positive">{{organizerEvent.name}}</a></p>{{/if}}
-      {{else}}
-      {{#if creatorProfile}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
-      {{/if}}
-      {{else}}
-      {{#if equals scopeVar 'projects'}}
-      {{#if parentType}}
-      {{#if organizerProject}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=parentId scope=parentType}}" class="positive">{{organizerProject.name}}</a></p>{{/if}}
-      {{else}}
-      {{#if creatorProfile}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
-      {{/if}}
-      {{else}}
-      {{#if equals scopeVar 'poi'}}
-      {{#if parentType}}
-      {{#if organizerPoi}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=parentId scope=parentType}}" class="positive">{{organizerPoi.name}}</a></p>{{/if}}
-      {{else}}
-      {{#if creatorProfile}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
-      {{/if}}
-      {{else}}
-      {{#if creatorProfile}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
-      {{/if}}
-      {{/if}}
-      {{/if}}
-
-      {{#if typeValue}}{{typeValue}}{{/if}}
-      {{#if isVisibleFields 'birthDate'}}
-      {{#if birthDate}}
-      <p><i class="icon fa fa-birthday-cake"></i> {{formatBirthDate}} ({{diffInText birthDate}})</p>
-      {{/if}}
-      {{/if}}
-      {{> actionSheet}}
-    </div>
-
-    <div class="item item-image">
-      {{#if profilImageUrl}}
-      {{#if isAdmin}}
-      <a href="" class="photo-link-scope"><img src="{{urlImageCommunecter}}{{profilImageUrl}}"></a>
-      {{else}}
-      <img src="{{urlImageCommunecter}}{{profilImageUrl}}">
-      {{/if}}
-      {{else}}
-      {{#if isAdmin}}
-      <a href="" class="photo-link-scope">{{> imgDoc imageDoc=imageDoc resized="340x340"}}</a>
-      {{else}}
-      {{> imgDoc imageDoc=imageDoc resized="340x340"}}
-      {{/if}}
-      {{/if}}
-
-
-
-      {{#if equals scopeVar 'citoyens'}}
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      <p class="right-top animated in">
-        {{#if modified}}<i class="icon ion-android-alarm-clock"></i> {{_ "modified"}} : {{livestamp modified}}<br>{{/if}}
-        {{#if preferences}}
-        {{#if equals preferences.isOpenData 'true'}}
-        <span class="icon fa-stack opendata" style="font-size:14px;width:14px;">
-                <i class="fa fa-database main fa-stack-1x dark"></i>
-                <i class="fa fa-share-alt  mainTop fa-stack-1x light" style="text-shadow: 0px 0px 2px rgb(15,15,15);"></i>
-              </span>
-        {{/if}}
-        {{/if}}
-      </p>
-      {{/transition}}
-      {{else}}
-      {{#transition in="slideInDown" out="slideOutUp"}}
-
-      <p class="right-top animated in">
-        {{#if startDate}}
-        {{#if startDate}}<i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>{{/if}}
-        {{#if endDate}}<i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>{{/if}}
-        {{#if endDate}}<i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>{{/if}}
-        {{/if}}
-        {{#if modified}}<i class="icon ion-android-alarm-clock"></i> {{_ "modified"}} : {{livestamp modified}}<br>{{/if}}
-        {{#if preferences}}
-        {{#if equals preferences.isOpenData 'true'}}
-        <span class="icon fa-stack opendata" style="font-size:14px;width:14px;">
-                <i class="icon fa fa-database main fa-stack-1x dark"></i>
-                <i class="icon fa fa-share-alt  mainTop fa-stack-1x light" style="text-shadow: 0px 0px 2px rgb(15,15,15);"></i>
-              </span>
-        {{/if}}
-        {{#if equals preferences.isOpenEdition 'true'}}
-        <i class="icon fa fa-creative-commons dark"></i>
-        {{/if}}
-        {{/if}}
-      </p>
-      {{/transition}}
-      {{/if}}
-
-    </div>
-
-    <div class="item item-text-wrap">
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      {{#if shortDescription}}
-      <p class="right-top animated in">{{{textTags shortDescription tags}}}</p>
-      {{/if}}
-      {{/transition}}
-
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      {{#if description}}
-      {{#if descriptionHTML}}
-      <p class="right-top animated in">{{{textTags description tags}}}</p>
-      {{else}}
-      <p class="right-top animated in">{{#markdown}}{{textTags description tags}}{{/markdown}}</p>
-      {{/if}}
-      {{/if}}
-      {{/transition}}
-
-        {{#if isVisibleFields 'locality'}}
-        {{#transition in="slideInDown" out="slideOutUp"}}
-        {{#if address}}
-        <p class="right-top animated in">
-        {{#if address.streetAddress}}
-        {{address.streetAddress}}<br>
-        {{/if}}
-        {{address.postalCode}} {{address.addressLocality}}
-        </p>
-        {{/if}}
-        {{/transition}}
-        {{/if}}
-        </div>
-
-
-      {{#if socialNetwork}}
-      <div class="button-bar bar-positive right-top animated in">
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      {{#if socialNetwork.twitter}}
-      <a href="{{socialNetwork.twitter}}" class="button button-small right-top animated in"><i class="icon fa fa-twitter"></i></a>
-      {{/if}}
-      {{/transition}}
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      {{#if socialNetwork.github}}
-      <a href="{{socialNetwork.github}}" class="button button-small right-top animated in"><i class="icon fa fa-github"></i></a>
-      {{/if}}
-      {{/transition}}
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      {{#if socialNetwork.telegram}}
-      <a href="{{socialNetwork.telegram}}" class="button button-small right-top animated in"><i class="icon fa fa-telegram"></i></a>
-      {{/if}}
-      {{/transition}}
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      {{#if socialNetwork.instagram}}
-      <a href="{{socialNetwork.instagram}}" class="button button-small right-top animated in"><i class="icon fa fa-instagram"></i></a>
-      {{/if}}
-      {{/transition}}
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      {{#if socialNetwork.facebook}}
-      <a href="{{socialNetwork.facebook}}" class="button button-small right-top animated in"><i class="icon fa fa-facebook"></i></a>
-      {{/if}}
-      {{/transition}}
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      {{#if socialNetwork.googleplus}}
-      <a href="{{socialNetwork.googleplus}}" class="button button-small right-top animated in"><i class="icon fa fa-google-plus"></i></a>
-      {{/if}}
-      {{/transition}}
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      {{#if socialNetwork.skype}}
-      <a href="{{socialNetwork.skype}}" class="button button-small right-top animated in"><i class="icon fa fa-skype"></i></a>
-      {{/if}}
-      {{/transition}}
-      </div>
-
-      {{/if}}
-      <div class="list">
-      {{#if isVisibleFields 'email'}}
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      {{#if email}}
-      <a href="mailto:{{email}}" class="item item-icon-left right-top animated in"><i class="icon fa fa-envelope"></i> {{email}}</a>
-      {{/if}}
-      {{/transition}}
-      {{/if}}
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      {{#if url}}
-      <a href="{{url}}"  class="item item-icon-left right-top animated in"><i class="icon fa fa-link"></i> {{url}}</a>
-      {{/if}}
-      {{/transition}}
-
-      {{#if isVisibleFields 'phone'}}
-      {{#if telephone}}
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      {{#if telephone.fixe}}
-      {{#each telephone.fixe}}
-      <a href="tel:{{this}}" class="item item-icon-left right-top animated in">
-      <i class="icon fa fa-phone"></i> {{this}}
-      </a>
-      {{/each}}
-      {{/if}}
-      {{/transition}}
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      {{#if telephone.mobile}}
-      {{#each telephone.mobile}}
-      <a href="tel:{{this}}" class="item item-icon-left right-top animated in">
-      <i class="icon fa fa-mobile"></i> {{this}}
-      </a>
-      {{/each}}
-      {{/if}}
-      {{/transition}}
-      {{#transition in="slideInDown" out="slideOutUp"}}
-      {{#if telephone.fax}}
-      {{#each telephone.fax}}
-      <a href="tel:{{this}}" class="item item-icon-left right-top animated in">
-      <i class="icon fa fa-fax"></i> {{this}}
-      </a>
-      {{/each}}
-      {{/if}}
-      {{/transition}}
-      {{/if}}
-      {{/if}}
-
-      </div>
-
-      {{#transition in="slideInLeft" out="slideOutLeft"}}
-      {{#if tags}}
-      <div class="item item-text-wrap animated in">
-      <p>
-      {{#each tags}}
-      <a href="" class="positive animated in"><i class="icon fa fa-tag"></i> {{this}}</a>
-      {{/each}}
-      </p>
-      </div>
-      {{/if}}
-      {{/transition}}
-
-    <div class="item tabs tabs-secondary tabs-icon-left">
-      {{#if isVisibleFields 'locality'}}
-      {{#if geo}}<a class="tab-item" href="{{pathFor 'mapWith' _id=_id._str scope=scopeVar}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a>{{/if}}
-      {{/if}}
-      {{#if issousEvents}}<a class="tab-item" href="{{pathFor 'listeventSous' _id=_id._str}}"><i class="icon ion-calendar"></i> {{countsousEvents}} {{_ "events"}} </a>{{/if}}
-    </div>
-  </div>
+{{> scopeCard class="list card" scope=this}}
 </template>
 
 <template name="boutonCardevents">

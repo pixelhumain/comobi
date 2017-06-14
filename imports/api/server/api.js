@@ -124,7 +124,7 @@ const callPixelUploadRest = (token,folder,ownerId,input,dataURI,name) => {
     }
   };
 
-  let responsePost = request.postSync(`${Meteor.settings.endpoint}/${Meteor.settings.module}/document/upload/dir/${Meteor.settings.module}/folder/${folder}/ownerId/${ownerId}/input/${input}`, {
+  let responsePost = request.postSync(`${Meteor.settings.endpoint}/${Meteor.settings.module}/document/upload/dir/communecter/folder/${folder}/ownerId/${ownerId}/input/${input}`, {
     formData: formData,
     jar: true
   });

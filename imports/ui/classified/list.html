@@ -41,22 +41,8 @@
       </div>
       {{#if dataReady}}
       {{#transition in="zoomIn" out="bounceOut"}}
-      {{#each classified}}
-      <a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'detailList' _id=this._id._str scope="classified"}}">
-        {{#if profilThumbImageUrl}}
-          <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
-        {{/if}}
-        <h2>{{name}}</h2>
-        {{#if type}}
-        <p>{{_ (typeI18n type)}}</p>
-        {{/if}}
-        <p><a class="positive" href="{{pathFor 'mapWith' _id=_id._str scope='classified'}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a></p>
-        {{#if currentUser}}
-        {{#if isCreator}}
-
-        {{/if}}
-        {{/if}}
-      </a>
+      {{#each item in classified}}
+      {{> scopeItemList item=item}}
        {{else}}
 
       {{/each}}

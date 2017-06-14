@@ -1,0 +1,35 @@
+<template name="scopeItemList">
+  {{#with item}}
+<a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'detailList' _id=_id._str scope=scopeVar}}">
+  {{#if profilThumbImageUrl}}
+    <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
+  {{/if}}
+  <h2>{{name}}</h2>
+  {{#if ../count}}
+  <span class="badge {{#if isStart}}badge-balanced{{else}}badge-dark{{/if}}"><i class="icon ion-person"></i> {{../count}}</span>
+  {{/if}}
+  {{#if equals scopeVar 'poi'}}
+  {{#if type}}
+  <p>{{_ (typeI18n type)}}</p>
+  {{/if}}
+  {{/if}}
+  {{#if startDate}}
+  <p>
+    {{#if isStart}}
+    <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
+    {{#if endDate}}
+    <i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>
+    <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
+    {{/if}}
+    {{else}}
+    <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
+    {{#if endDate}}
+    <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
+    {{/if}}
+    {{/if}}
+  </p>
+  {{/if}}
+  <p><a class="positive" href="{{pathFor 'mapWith' _id=_id._str scope=scopeVar}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a></p>
+</a>
+{{/with}}
+</template>

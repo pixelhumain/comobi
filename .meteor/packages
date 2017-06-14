@@ -70,8 +70,8 @@ force-ssl@1.0.14
 froatsnook:request
 froatsnook:valid-email
 shell-server@0.2.3
-omega:meteor-desktop-watcher@=0.7.1
-omega:meteor-desktop-bundler@=0.7.1
+omega:meteor-desktop-watcher@=0.7.2
+omega:meteor-desktop-bundler@=0.7.2
 omega:meteor-desktop-localstorage
 tap:i18n-bundler
 communecter:deep-link

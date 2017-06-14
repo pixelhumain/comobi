@@ -77,12 +77,6 @@ export const SchemasPoiRest = new SimpleSchema([baseSchema,geoSchema,{
       }*/
       return true;
     },
-    isPublicFields (field){
-       return this.preferences && this.preferences.publicFields && _.contains(this.preferences.publicFields, field);
-    },
-    isPrivateFields (field){
-      return this.preferences && this.preferences.privateFields && _.contains(this.preferences.privateFields, field);
-    },
     documents (){
     return Documents.find({
       id : this._id._str,

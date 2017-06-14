@@ -75,6 +75,22 @@ export const SchemasClassifiedRest = new SimpleSchema([baseSchema,geoSchema,{
   }
 
   Classified.helpers({
+    isVisibleFields (field){
+      /*if(this.isMe()){
+        return true;
+      }else{
+        if(this.isPublicFields(field)){
+          return true;
+        }else{
+          if(this.isFollowersMe() && this.isPrivateFields(field)){
+            return true;
+          }else{
+            return false;
+          }
+        }
+      }*/
+      return true;
+    },
     documents (){
     return Documents.find({
       id : this._id._str,

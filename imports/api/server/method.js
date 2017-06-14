@@ -1416,9 +1416,9 @@ doc.docId=newsDoc._id._str;
       //console.log(doc);
       if(doc){
         collection.update({_id:new Mongo.ObjectID(idType)},{$set:{
-          'profilImageUrl':`/upload/${Meteor.settings.module}/${scope}/${idType}/${retourUpload.name}`,
-          'profilThumbImageUrl':`/upload/${Meteor.settings.module}/${scope}/${idType}/thumb/profil-resized.png?=${new Date}${Math.floor((Math.random() * 100) + 1)}`,
-          'profilMarkerImageUrl':`/upload/${Meteor.settings.module}/${scope}/${idType}/thumb/profil-marker.png?=${new Date}${Math.floor((Math.random() * 100) + 1)}`
+          'profilImageUrl':`/upload/communecter/${scope}/${idType}/${retourUpload.name}`,
+          'profilThumbImageUrl':`/upload/communecter/${scope}/${idType}/thumb/profil-resized.png?=${new Date}${Math.floor((Math.random() * 100) + 1)}`,
+          'profilMarkerImageUrl':`/upload/communecter/${scope}/${idType}/thumb/profil-marker.png?=${new Date}${Math.floor((Math.random() * 100) + 1)}`
         }});
         return doc.data.id["$id"];
       }else{

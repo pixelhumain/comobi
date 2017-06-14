@@ -187,7 +187,6 @@ Meteor.publish('organizerEvents', function(organizerType) {
 		return _.contains(['projects','organizations','citoyens'], name);
 	}));
 	if(organizerType === 'organizations'){
-		console.log(Citoyens.findOne({_id:new Mongo.ObjectID(this.userId)}).listOrganizationsCreator().fetch());
 		return Citoyens.findOne({_id:new Mongo.ObjectID(this.userId)}).listOrganizationsCreator();
 	}else if(organizerType === 'projects'){
 		return Citoyens.findOne({_id:new Mongo.ObjectID(this.userId)}).listProjectsCreator();

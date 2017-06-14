@@ -41,19 +41,8 @@
       </div>
       {{#if dataReady}}
       {{#transition in="zoomIn" out="bounceOut"}}
-      {{#each citoyens}}
-      <a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'detailList' _id=this._id._str scope="citoyens"}}">
-        {{#if profilThumbImageUrl}}
-          <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
-        {{/if}}
-        <h2>{{name}}</h2>
-        {{#if geo}}<p><a class="positive" href="{{pathFor 'mapWith' _id=_id._str scope='citoyens'}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a></p>{{/if}}
-        {{#if currentUser}}
-        {{#if isCreator}}
-
-        {{/if}}
-        {{/if}}
-      </a>
+      {{#each item in citoyens}}
+      {{> scopeItemList item=item}}
        {{else}}
 
       {{/each}}
