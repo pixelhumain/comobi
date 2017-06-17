@@ -260,6 +260,13 @@ Template.poiEdit.helpers({
       }
     }
     poiEdit.tags = poi.tags;
+    poiEdit.urls = poi.urls;
+    poiEdit.type = poi.type;
+    poiEdit.parentType = poi.parentType;
+    poiEdit.parentId = poi.parentId;
+    pageSession.set('parentType',poi.parentType);
+    pageSession.set('parentId',poi.parentId);
+
     poiEdit.description = poi.description;
     poiEdit.shortDescription = poi.shortDescription;
     poiEdit.country = poi.address.addressCountry;
@@ -709,6 +716,41 @@ AutoForm.addHooks(['addPoi', 'editPoi'], {
     "method-update" : function(modifier, documentId) {
       modifier["$set"].parentType = pageSession.get('parentType');
       modifier["$set"].parentId = pageSession.get('parentId');
+
+      const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
+      const matches = [];
+      let match;
+      if(modifier["$set"].shortDescription){
+        while ((match = regex.exec(modifier["$set"].shortDescription))) {
+          matches.push(match[1]);
+        }
+      }
+      if(modifier["$set"].description){
+        while ((match = regex.exec(modifier["$set"].description))) {
+          matches.push(match[1]);
+        }
+      }
+      if(pageSession.get('tags')){
+        const arrayTags = _.reject(pageSession.get('tags'), (value) => {
+          return matches[value] === null;
+        }, matches);
+        if(modifier["$set"].tags){
+          modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,arrayTags,matches));
+        }else{
+          modifier["$set"].tags = _.uniq(_.union(arrayTags,matches));
+        }
+      }else{
+        //si on update est ce que la mention reste
+        if(matches.length > 0){
+        if(modifier["$set"].tags){
+          modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,matches));
+        }else{
+          modifier["$set"].tags = _.uniq(matches);
+        }
+      }
+      }
+      console.log(modifier["$set"].tags);
+
       return modifier;
     }
   },

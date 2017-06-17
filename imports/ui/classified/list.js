@@ -228,6 +228,19 @@ Template.classifiedEdit.helpers({
     classifiedEdit._id = classified._id._str;
     classifiedEdit.name = classified.name;
 
+    classifiedEdit.section = classified.section;
+    pageSession.set('section',classified.section);
+    classifiedEdit.type = classified.type;
+    pageSession.set('type',classified.type);
+    classifiedEdit.subtype = classified.subtype;
+    pageSession.set('subtype',classified.subtype);
+    classifiedEdit.contactInfo = classified.contactInfo;
+    classifiedEdit.price = classified.price;
+    classifiedEdit.parentType = classified.parentType;
+    classifiedEdit.parentId = classified.parentId;
+    pageSession.set('parentType',classified.parentType);
+    pageSession.set('parentId',classified.parentId);
+
     classifiedEdit.tags = classified.tags;
     classifiedEdit.description = classified.description;
     classifiedEdit.shortDescription = classified.shortDescription;
@@ -294,8 +307,11 @@ Template.classifiedFields.helpers({
   optionsType (section) {
     if(section){
       console.log(section)
+      const typeArray = TAPi18n.__(`schemas.classifiedrest.typeArray`,{ returnObjectTrees: true });
       if(section === 'Emplois'){
-        return [
+        console.log(typeArray);
+        return typeArray['Emplois'];
+        /*return [
           {label: 'Achats-Comptabilité-Gestion', value: 'Achats-Comptabilité-Gestion'},
           {label: 'Arts-Artisanat', value: 'Arts-Artisanat'},
           {label: 'Banque-Assurance', value: 'Banque-Assurance'},
@@ -325,16 +341,18 @@ Template.classifiedFields.helpers({
           {label: 'Spectacle', value: 'Spectacle'},
           {label: 'Sport', value: 'Sport'},
           {label: 'Transport-Logistique', value: 'Transport-Logistique'}
-      ];
+      ];*/
       }else{
-        return [
+        console.log(typeArray);
+        return typeArray['Autres'];
+        /*return [
           {label: 'Technologie', value: 'Technologie'},
           {label: 'Immobilier', value: 'Immobilier'},
           {label: 'Véhicules', value: 'Véhicules'},
           {label: 'Maison', value: 'Maison'},
           {label: 'Loisirs', value: 'Loisirs'},
           {label: 'Mode', value: 'Mode'}
-      ];
+      ];*/
       }
     }else{return false;}
   },
@@ -344,7 +362,8 @@ Template.classifiedFields.helpers({
   optionsSubtype (type) {
     if(type){
       console.log(type);
-      const subtype = {
+      const subtype = TAPi18n.__('schemas.classifiedrest.subtypeArray',{ returnObjectTrees: true });
+      /*const subtype = {
         "Technologie":[
           {label: 'TV / Vidéo', value: 'TV / Vidéo'},
           {label: 'Informatique', value: 'Informatique'},
@@ -405,7 +424,7 @@ Template.classifiedFields.helpers({
           {label: 'Montres', value: 'Montres'},
           {label: 'Bijoux', value: 'Bijoux'}
         ],
-      };
+      };*/
 
       return subtype[type];
     }else{return false;}
@@ -759,6 +778,41 @@ AutoForm.addHooks(['addClassified', 'editClassified'], {
     "method-update" : function(modifier, documentId) {
       modifier["$set"].parentType = pageSession.get('parentType');
       modifier["$set"].parentId = pageSession.get('parentId');
+
+      const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
+      const matches = [];
+      let match;
+      if(modifier["$set"].shortDescription){
+        while ((match = regex.exec(modifier["$set"].shortDescription))) {
+          matches.push(match[1]);
+        }
+      }
+      if(modifier["$set"].description){
+        while ((match = regex.exec(modifier["$set"].description))) {
+          matches.push(match[1]);
+        }
+      }
+      if(pageSession.get('tags')){
+        const arrayTags = _.reject(pageSession.get('tags'), (value) => {
+          return matches[value] === null;
+        }, matches);
+        if(modifier["$set"].tags){
+          modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,arrayTags,matches));
+        }else{
+          modifier["$set"].tags = _.uniq(_.union(arrayTags,matches));
+        }
+      }else{
+        //si on update est ce que la mention reste
+        if(matches.length > 0){
+        if(modifier["$set"].tags){
+          modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,matches));
+        }else{
+          modifier["$set"].tags = _.uniq(matches);
+        }
+      }
+      }
+      console.log(modifier["$set"].tags);
+
       return modifier;
     }
   },

@@ -507,6 +507,9 @@
       "tags":{
         "label": "tags"
       },
+      "urls":{
+        "label": "Free information / urls"
+      },
       "country":{
         "label": "address country",
         "placeholder": "Select one...",
@@ -590,12 +593,115 @@
 
         }
       },
+      "typeArray":{
+        "Emplois":[
+          {"label": "Achats-Comptabilité-Gestion", "value": "Achats-Comptabilité-Gestion"},
+          {"label": "Arts-Artisanat", "value": "Arts-Artisanat"},
+          {"label": "Banque-Assurance", "value": "Banque-Assurance"},
+          {"label": "Bâtiment-Travaux_Publics", "value": "Bâtiment-Travaux_Publics"},
+          {"label": "Commerce-Vente", "value": "Commerce-Vente"},
+          {"label": "Communication-Multimédia", "value": "Communication-Multimédia"},
+          {"label": "Conseil-Etudes", "value": "Conseil-Etudes"},
+          {"label": "Direction_Entreprise", "value": "Direction_Entreprise"},
+          {"label": "Espaces_Naturels", "value": "Espaces_Naturels"},
+          {"label": "Agriculture", "value": "Agriculture"},
+          {"label": "Pêche", "value": "Pêche"},
+          {"label": "Soins_aux_animaux", "value": "Soins_aux_animaux"},
+          {"label": "Hôtellerie", "value": "Hôtellerie"},
+          {"label": "Restauration", "value": "Restauration"},
+          {"label": "Tourisme", "value": "Tourisme"},
+          {"label": "Animation", "value": "Animation"},
+          {"label": "Immobilier", "value": "Immobilier"},
+          {"label": "Industrie", "value": "Industrie"},
+          {"label": "Informatique-Télécommunication", "value": "Informatique-Télécommunication"},
+          {"label": "Installation-Maintenance", "value": "Installation-Maintenance"},
+          {"label": "Marketing-Stratégie_Commerciale", "value": "Marketing-Stratégie_Commerciale"},
+          {"label": "Ressources_Humaines", "value": "Ressources_Humaines"},
+          {"label": "Santé", "value": "Santé"},
+          {"label": "Secrétariat-Assistanat", "value": "Secrétariat-Assistanat"},
+          {"label": "Services_à_la_personne", "value": "Services_à_la_personne"},
+          {"label": "Services_à_la_collectivité", "value": "Services_à_la_collectivité"},
+          {"label": "Spectacle", "value": "Spectacle"},
+          {"label": "Sport", "value": "Sport"},
+          {"label": "Transport-Logistique", "value": "Transport-Logistique"}
+      ],
+      "Autres":[
+        {"label": "Technologie", "value": "Technologie"},
+        {"label": "Immobilier", "value": "Immobilier"},
+        {"label": "Véhicules", "value": "Véhicules"},
+        {"label": "Maison", "value": "Maison"},
+        {"label": "Loisirs", "value": "Loisirs"},
+        {"label": "Mode", "value": "Mode"}
+    ]
+    },
       "subtype":{
         "label": "type",
         "placeholder": "Select one...",
         "options": {
 
         }
+      },
+      "subtypeArray":{
+        "Technologie":[
+          {"label": "TV / Vidéo", "value": "TV / Vidéo"},
+          {"label": "Informatique", "value": "Informatique"},
+          {"label": "Tablettes", "value": "Tablettes"},
+          {"label": "Téléphonie", "value": "Téléphonie"},
+          {"label": "Appareils photos", "value": "Appareils photos"},
+          {"label": "Appareil audio", "value": "Appareil audio"}
+        ],
+        "Immobilier":[
+          {"label": "Maison", "value": "Maison"},
+          {"label": "Appartement", "value": "Appartement"},
+          {"label": "Terrain", "value": "Terrain"},
+          {"label": "Parking", "value": "Parking"},
+          {"label": "Bureaux", "value": "Bureaux"}
+        ],
+        "Véhicules":[
+          {"label": "SUV", "value": "SUV"},
+          {"label": "4x4", "value": "4x4"},
+          {"label": "Utilitaire", "value": "Utilitaire"},
+          {"label": "Moto", "value": "Moto"},
+          {"label": "Scooter", "value": "Scooter"},
+          {"label": "Bateau", "value": "Bateau"},
+          {"label": "Voiturette", "value": "Voiturette"},
+          {"label": "Vélos", "value": "Vélos"},
+          {"label": "Équipement véhicule", "value": "Équipement véhicule"},
+          {"label": "Équipement 2 roues", "value": "Équipement 2 roues"},
+          {"label": "Équipement bateau", "value": "Équipement bateau"},
+          {"label": "Équipement vélo", "value": "Équipement vélo"}
+        ],
+        "Maison":[
+          {"label": "Electroménager", "value": "Electroménager"},
+          {"label": "Mobilier", "value": "Mobilier"},
+          {"label": "Équipement bébé", "value": "Équipement bébé"},
+          {"label": "Animaux", "value": "Animaux"},
+          {"label": "Divers", "value": "Divers"}
+        ],
+        "Loisirs":[
+          {"label": "Sports", "value": "Sports"},
+          {"label": "Instrument musique", "value": "Instrument musique"},
+          {"label": "Sonorisation", "value": "Sonorisation"},
+          {"label": "CD / DVD", "value": "CD / DVD"},
+          {"label": "Jouet", "value": "Jouet"},
+          {"label": "Jeux de société", "value": "Jeux de société"},
+          {"label": "Livres / BD", "value": "Livres / BD"},
+          {"label": "Collections", "value": "Collections"},
+          {"label": "Bricolages", "value": "Bricolages"},
+          {"label": "Jardinage", "value": "Jardinage"},
+          {"label": "Art / Déco", "value": "Art / Déco"},
+          {"label": "Modélisme", "value": "Modélisme"},
+          {"label": "Puériculture", "value": "Puériculture"},
+          {"label": "Animaux", "value": "Animaux"},
+          {"label": "Divers", "value": "Divers"}
+        ],
+        "Mode":[
+          {"label": "Vêtements", "value": "Vêtements"},
+          {"label": "Chaussures", "value": "Chaussures"},
+          {"label": "Accessoires", "value": "Accessoires"},
+          {"label": "Montres", "value": "Montres"},
+          {"label": "Bijoux", "value": "Bijoux"}
+        ]
       },
       "contactInfo":{
         "label": "Contact information"

@@ -294,7 +294,8 @@ export const SchemasNewsRest =   new SimpleSchema({
           let text = this.text;
         if(this.mentions){
         _.each(this.mentions, (array,key) => {
-          text = text.replace(new RegExp(`@${array.value}`, 'g'), `<a href="${Router.path('detailList', {scope:array.type,_id:array.id})}" class="positive">@${array.value}</a>`);
+          //text = text.replace(new RegExp(`@${array.value}`, 'g'), `<a href="${Router.path('detailList', {scope:array.type,_id:array.id})}" class="positive">@${array.value}</a>`);
+          text = text.replace(new RegExp(`@?${array.value}`, 'g'), `<a href="${Router.path('detailList', {scope:array.type,_id:array.id})}" class="positive">@${array.value}</a>`);
         }, text);
         }
         return text;
