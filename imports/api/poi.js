@@ -33,7 +33,11 @@ export const SchemasPoiRest = new SimpleSchema([baseSchema,geoSchema,{
       autoform: {
         type: "select"
       }
-    }
+    },
+    urls : {
+      type : [String],
+      optional:true
+    },
   }]);
 
   export const BlockPoiRest = {};

@@ -203,8 +203,6 @@ Template.actionSheet.events({
       titleText: TAPi18n.__('Actions Poi'),
       buttons: [
         { text: `${TAPi18n.__('edit info')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit description')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit address')} <i class="icon ion-edit"></i>` },
       ],
       cancelText: TAPi18n.__('cancel'),
       cancel: function() {
@@ -213,15 +211,29 @@ Template.actionSheet.events({
       buttonClicked: function(index) {
         if (index === 0) {
           console.log('Edit!');
-          Router.go('poiBlockEdit', {_id:Router.current().params._id,block:'info'});
+          Router.go('poiEdit', {_id:Router.current().params._id});
         }
-        if (index === 1) {
+        return true;
+      }
+    });
+  },
+  "click .action-card-classified" (e, t) {
+    const self=this;
+    e.preventDefault();
+    //info,description,contact
+    IonActionSheet.show({
+      titleText: TAPi18n.__('Actions Classified'),
+      buttons: [
+        { text: `${TAPi18n.__('edit info')} <i class="icon ion-edit"></i>` },
+      ],
+      cancelText: TAPi18n.__('cancel'),
+      cancel: function() {
+        console.log('Cancelled!');
+      },
+      buttonClicked: function(index) {
+        if (index === 0) {
           console.log('Edit!');
-          Router.go('poiBlockEdit', {_id:Router.current().params._id,block:'descriptions'});
-        }
-        if (index === 2) {
-          console.log('Edit!');
-          Router.go('poiBlockEdit', {_id:Router.current().params._id,block:'locality'});
+          Router.go('classifiedEdit', {_id:Router.current().params._id});
         }
         return true;
       }

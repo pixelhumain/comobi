@@ -29,7 +29,7 @@
         <a href="{{pathFor 'detailList' _id=authorNews._id._str scope='citoyens'}}" class="dark">{{#if name}}{{name}}{{else}}{{authorNews.name}}{{/if}}</a>
         {{/if}}
       </h2>
-      <p><i class="icon ion-clock"></i> {{livestamp created}} 
+      <p><i class="icon ion-clock"></i> {{livestamp created}}
         {{#if equals scope.new.scope.type 'public'}}<i class="icon fa fa-globe"></i>{{/if}}
         {{#if equals scope.new.scope.type 'restricted'}}<i class="icon fa fa-connectdevelop"></i>{{/if}}
         {{#if equals scope.new.scope.type 'private'}}<i class="icon fa fa-lock"></i>{{/if}}
@@ -44,7 +44,7 @@
     {{/if}}
     {{#if text}}
     <div class="item item-body">
-      {{{textMentions (autolinker text)}}}
+      {{{autolinker (textMentions text)}}}
       {{#if tags}}
       <p>
       {{#each tags}}

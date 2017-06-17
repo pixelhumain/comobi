@@ -166,7 +166,7 @@ Router.map(function() {
 
   this.route("classifiedEdit", {
     template: "classifiedEdit",
-    path: '/:scope/classified/:_id/edit',
+    path: '/classified/:_id/edit',
     loadingTemplate: 'loading'
   });
 

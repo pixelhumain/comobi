@@ -262,11 +262,12 @@
   {{/if}}
 
   {{#if update}}
-  {{> afQuickField name='shortDescription' rows=8}}
   {{> afQuickField name='description' rows=8}}
   {{else}}
   {{> afQuickField name='description' rows=8}}
   {{/if}}
+
+  {{> afQuickField name='urls'}}
 
   {{> afQuickField name='country' autocomplete="off" value=country }}
   {{#if currentFieldValue "country"}}
@@ -288,8 +289,6 @@
   {{> afQuickField name='regionName' type="hidden" value=regionName}}
   {{> afQuickField name='depName' type="hidden" value=depName}}
   {{/if}}
-  {{#if update}}
-  {{> afQuickField name='preferences'}}
-  {{/if}}
+
   {{/unless}}
 </template>

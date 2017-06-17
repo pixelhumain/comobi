@@ -21,6 +21,7 @@ import { Events } from '../../api/events.js';
 import { Organizations } from '../../api/organizations.js';
 import { Projects } from '../../api/projects.js';
 import { Poi } from '../../api/poi.js';
+import { Classified } from '../../api/classified.js';
 import { Citoyens } from '../../api/citoyens.js';
 import { News,SchemasNewsRestBase } from '../../api/news.js';
 
@@ -36,6 +37,7 @@ window.Events = Events;
 window.Organizations = Organizations;
 window.Projects = Projects;
 window.Poi = Poi;
+window.Classified = Classified;
 window.Citoyens = Citoyens;
 
 let pageSession = new ReactiveDict('pageNews');

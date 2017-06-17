@@ -74,7 +74,9 @@
     {{> Template.dynamic template=selectview data=scope}}
   {{else if equals scope.scopeVar 'poi'}}
     {{> Template.dynamic template=selectview data=scope}}
-  {{/if}}
+    {{else if equals scope.scopeVar 'classified'}}
+    {{> Template.dynamic template=selectview data=scope}}
+    {{/if}}
 
   {{/ionContent}}
   {{/ionView}}
@@ -412,6 +414,12 @@
   {{else}}
   <a href="{{pathFor 'share' _id=_id._str scope=scopeVar}}" class="button button-clear"><i class="icon fa fa-share"></i></a>
   {{/if}}
+  {{else if equals scopeVar 'classified'}}
+  {{#if isAdmin}}
+  <a href="#" class="button button-positive action-card-classified"><i class="icon fa fa-cog"></i></a>
+  {{else}}
+  <a href="{{pathFor 'share' _id=_id._str scope=scopeVar}}" class="button button-clear"><i class="icon fa fa-share"></i></a>
+  {{/if}}
   {{else if equals scopeVar 'organizations'}}
   {{#if isAdmin}}
   <a href="#" class="button button-positive action-card-organizations"><i class="icon fa fa-cog"></i></a>
@@ -479,6 +487,7 @@
       <a href="{{pathFor 'projectsAdd' _id=_id._str scope=scopeVar}}" class="button button-project button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-lightbulb-o"></i></a>
       <a href="{{pathFor 'eventsAdd' _id=_id._str scope=scopeVar}}" class="button button-event button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-calendar"></i></a>
       <a href="{{pathFor 'poiAdd' _id=_id._str scope=scopeVar}}" class="button button-poi button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-map-marker"></i></a>
+      <a href="{{pathFor 'classifiedAdd' _id=_id._str scope=scopeVar}}" class="button button-classified button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-bullhorn"></i></a>
       {{#if isCordova}}
       <button class="button button-small scanner-event">{{> ionIcon icon="ios-barcode"}} {{_ "QR Scanner"}}</button>
       {{/if}}
@@ -543,6 +552,16 @@
 
 </template>
 
+<template name="boutonCardclassified">
+  <div class="button-bar bar-positive">
+    {{> Bouton_card id=_id._str scope=scopeVar isConnect=isFavorites classOff="button-small favorites-link" classOn="button-small favorites-link" iconOff="fa fa-star" iconOn="fa fa-star-o"}}
+  </div>
+</template>
+
+<template name="boutonNewsclassified">
+
+</template>
+
 <template name="boutonCardcitoyens">
     <div class="button-bar bar-positive">
       {{#if isMe}}
@@ -550,6 +569,7 @@
       <a href="{{pathFor 'projectsAdd' _id=_id._str scope=scopeVar}}" class="button button-project button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-lightbulb-o"></i></a>
       <a href="{{pathFor 'eventsAdd' _id=_id._str scope=scopeVar}}" class="button button-event button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-calendar"></i></a>
       <a href="{{pathFor 'poiAdd' _id=_id._str scope=scopeVar}}" class="button button-poi button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-map-marker"></i></a>
+      <a href="{{pathFor 'classifiedAdd' _id=_id._str scope=scopeVar}}" class="button button-classified button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-bullhorn"></i></a>
       <a href="{{pathFor 'directory' _id=_id._str scope=scopeVar}}" class="button button-small"><i class="icon fa fa-connectdevelop"></i></a>
       {{else}}
 
@@ -593,6 +613,11 @@
 
 <template name="listCardpoi">
 {{> boutonCardpoi}}
+{{> listCard}}
+</template>
+
+<template name="listCardclassified">
+{{> boutonCardclassified}}
 {{> listCard}}
 </template>
 

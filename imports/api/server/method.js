@@ -187,6 +187,7 @@ if(doc.typeElement === 'citoyens'){
   if(doc.preferences){
   docRetour.preferences = doc.preferences;
   }
+  docRetour.tags = doc.tags ? doc.tags : '';
 } else if(scope === 'projects'){
   docRetour.name = doc.name;
   docRetour.description = doc.description ? doc.description : '';
@@ -198,18 +199,27 @@ if(doc.typeElement === 'citoyens'){
   if(doc.preferences){
   docRetour.preferences = doc.preferences;
   }
+  docRetour.tags = doc.tags ? doc.tags : '';
 } else if(scope === 'poi'){
   docRetour.name = doc.name;
   docRetour.description = doc.description ? doc.description : '';
-  docRetour.url = doc.url ? doc.url : '';
+  docRetour.shortDescription = doc.shortDescription ? doc.shortDescription : '';
+  docRetour.urls = doc.urls ? doc.urls : '';
   docRetour.parentId = doc.parentId;
   docRetour.parentType = doc.parentType;
+  docRetour.type = doc.type;
+  docRetour.tags = doc.tags ? doc.tags : '';
 } else if(scope === 'classified'){
   docRetour.name = doc.name;
   docRetour.description = doc.description ? doc.description : '';
-  docRetour.url = doc.url ? doc.url : '';
+  docRetour.section = doc.section;
+  docRetour.type = doc.type;
+  docRetour.subtype = doc.subtype ? doc.subtype : '';
+  docRetour.contactInfo = doc.contactInfo ? doc.contactInfo : '';
+  docRetour.price = doc.price ? doc.price : '';
   docRetour.parentId = doc.parentId;
   docRetour.parentType = doc.parentType;
+  docRetour.tags = doc.tags ? doc.tags : '';
 } else {
   if(doc.name){
   docRetour.name = doc.name;
@@ -1086,7 +1096,7 @@ doc.docId=newsDoc._id._str;
       insertDoc.id = idType;
       insertDoc.type = type;
       insertDoc.folder = `${type}/${idType}/album`;
-      insertDoc.moduleId = Meteor.settings.module;
+      insertDoc.moduleId = 'communecter';
       insertDoc.doctype = "image";
       insertDoc.name = retourUpload.name;
       insertDoc.size = retourUpload.size;
@@ -1406,7 +1416,7 @@ doc.docId=newsDoc._id._str;
       insertDoc.id = idType;
       insertDoc.type = scope;
       insertDoc.folder = `${scope}/${idType}`;
-      insertDoc.moduleId = Meteor.settings.module;
+      insertDoc.moduleId = 'communecter';
       insertDoc.author = this.userId;
       insertDoc.doctype = "image";
       insertDoc.name = retourUpload.name;
