@@ -104,12 +104,16 @@ Template.mapCanvas.onRendered(function () {
   if (self.ready.get()) {
   if (Mapbox.loaded()) {
   clearLayers();
+  
   let inputDate = new Date();
   const collection = nameToCollection(Router.current().params.scope);
   let query={};
   query = queryGeoFilter(query);
   //query['created'] = {$gte : inputDate};
   console.log(query);
+  if(Router.current().params.scope === 'events'){
+
+  }
   query['geo'] = {$exists:1};
   self.liveQuery = collection.find(query).observe({
     added: function(event) {
@@ -123,10 +127,7 @@ Template.mapCanvas.onRendered(function () {
           title: event.name,
           latitude : event.geo.latitude,
           longitude : event.geo.longitude,
-          icon: L.mapbox.marker.icon({
-            'marker-size': 'small',
-            'marker-color': selectColor(event)
-          })
+          icon: selectIcon(event)
         }).bindPopup(containerNode).on('click', function(e) {
           console.log(e.target.options._id);
           map.panTo([e.target.options.latitude, e.target.options.longitude]);
@@ -148,10 +149,7 @@ Template.mapCanvas.onRendered(function () {
           title: event.name,
           latitude : event.geo.latitude,
           longitude : event.geo.longitude,
-          icon: L.mapbox.marker.icon({
-            'marker-size': 'small',
-            'marker-color': selectColor(event)
-          })
+          icon: selectIcon(event)
         }).bindPopup(containerNode).on('click', function(e) {
           console.log(e.target.options._id);
           map.panTo([e.target.options.latitude, e.target.options.longitude]);
@@ -190,12 +188,19 @@ const initialize = ( element, zoom, features ) => {
   let city = Session.get('city');
   let geo = position.getLatlng();
   let options = {
-  maxZoom: 18
+  maxZoom: 18,
+  tileLayer:false
   };
   if(geo && geo.latitude){
     L.mapbox.accessToken = Meteor.settings.public.mapbox;
-    map = L.mapbox.map(element,'mapbox.streets',options);
+    const tilejson = {
+      tiles: ['https://api.mapbox.com/styles/v1/communecter/cj4tti8370rbg2smsl2trzmx9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY29tbXVuZWN0ZXIiLCJhIjoiY2l6eTIyNTYzMDAxbTJ3bng1YTBsa3d0aCJ9.elyGqovHs-mrji3ttn_Yjw'],
+      minzoom: 0,
+      maxzoom: 18
+    };
+    map = L.mapbox.map(element,tilejson,options);
     map.setView(new L.LatLng(parseFloat(geo.latitude), parseFloat(geo.longitude)), zoom);
+    const layermapbox = L.tileLayer('https://api.mapbox.com/styles/v1/communecter/cj4tti8370rbg2smsl2trzmx9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY29tbXVuZWN0ZXIiLCJhIjoiY2l6eTIyNTYzMDAxbTJ3bng1YTBsa3d0aCJ9.elyGqovHs-mrji3ttn_Yjw').addTo(map);
 
     /*if(city && city.geoShape && city.geoShape.coordinates){
       console.log(JSON.stringify(city.geoShape));
@@ -340,6 +345,82 @@ const clearLayers = () => {
   clusters.clearLayers();
 }
 
+const selectIcon = (event) => {
+  if(event && event.profilMarkerImageUrl){
+    return L.icon({
+				    iconUrl: `${Meteor.settings.public.urlimage}${event.profilMarkerImageUrl}`,
+				    iconSize: [53, 60], //38, 95],
+				    iconAnchor: [27, 57],//22, 94],
+				    popupAnchor: [0, -55]//-3, -76]
+				});
+  }else{
+
+    const icoMarkersMap = { 			"default" 			: "",
+
+										  	"city" 				: "city-marker-default",
+
+											"news" 				: "NEWS_A",
+											"idea" 				: "NEWS_A",
+											"question" 			: "NEWS_A",
+											"announce" 			: "NEWS_A",
+											"information" 		: "NEWS_A",
+
+											"citoyen" 			: "citizen-marker-default",
+											"citoyens" 			: "citizen-marker-default",
+											"people" 			: "citizen-marker-default",
+
+											"NGO" 				: "ngo-marker-default",
+											"organizations" 	: "ngo-marker-default",
+											"organization" 		: "ngo-marker-default",
+
+											"event" 			: "event-marker-default",
+											"events" 			: "event-marker-default",
+											"meeting" 			: "event-marker-default",
+
+											"project" 			: "project-marker-default",
+											"projects" 			: "project-marker-default",
+
+											"markerPlace" 		: "map-marker",
+
+											"poi" 				: "poi-marker-default",
+											"poi.video" 		: "poi-video-marker-default",
+											"poi.link" 			: "poi-marker-default",
+											"poi.geoJson" 		: "poi-marker-default",
+											"poi.compostPickup" : "poi-marker-default",
+											"poi.sharedLibrary" : "poi-marker-default",
+											"poi.artPiece" 		: "poi-marker-default",
+											"poi.recoveryCenter": "poi-marker-default",
+											"poi.trash" 		: "poi-marker-default",
+											"poi.history" 		: "poi-marker-default",
+											"poi.something2See" : "poi-marker-default",
+											"poi.funPlace" 		: "poi-marker-default",
+											"poi.place" 		: "poi-marker-default",
+											"poi.streetArts" 	: "poi-marker-default",
+											"poi.openScene" 	: "poi-marker-default",
+											"poi.stand" 		: "poi-marker-default",
+											"poi.parking" 		: "poi-marker-default",
+
+											"entry" 			: "entry-marker-default",
+											"action" 			: "action-marker-default",
+
+											"url" 				: "url-marker-default",
+
+											"address" 			: "MARKER",
+
+											"classified" 		: "classified-marker-default"
+
+									  };
+    const assetPath = '/assets/fcb49fcf';
+    const iconUrl = `${assetPath}/images/sig/markers/icons_carto/${icoMarkersMap[Router.current().params.scope]}.png`;
+    return L.icon({
+            iconUrl: `${Meteor.settings.public.urlimage}${iconUrl}`,
+            iconSize: [53, 60], //38, 95],
+            iconAnchor: [27, 57],//22, 94],
+            popupAnchor: [0, -55]//-3, -76]
+        });
+  }
+
+}
 
 const selectColor = (event) => {
   let inputDate = new Date();
