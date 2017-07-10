@@ -4,7 +4,7 @@ import { Push } from 'meteor/raix:push';
 //collection
 import { Citoyens } from '../citoyens.js';
 
-Accounts.registerLoginHandler(function(loginRequest) {
+/*Accounts.registerLoginHandler(function(loginRequest) {
   if(!loginRequest.email || !loginRequest.pwd) {
     return null;
   }
@@ -28,7 +28,7 @@ Accounts.registerLoginHandler(function(loginRequest) {
       }else{
         retourId = response.data.id;
       }
-
+      //console.log(response.data);
       const userC = Citoyens.findOne({ _id: new Mongo.ObjectID(retourId) },{fields:{pwd:0}});
 
       if(!userC) {
@@ -67,6 +67,27 @@ Accounts.registerLoginHandler(function(loginRequest) {
       }
 
     }
+});*/
+
+Accounts.onLogin(function(user) {
+console.log(user.user._id)
+const userC = Citoyens.findOne({ _id: new Mongo.ObjectID(user.user._id) },{fields:{pwd:0}});
+
+if(!userC) {
+  //throw new Meteor.Error(Accounts.LoginCancelledError.numericError, 'Communecter Login Failed');
+} else {
+  //ok valide
+  var userM = Meteor.users.findOne({'_id':userC._id._str});
+  console.log(userM);
+  if(userM && userM.profile &&  userM.profile.pixelhumain){
+    //Meteor.user existe
+    userId= userM._id;
+    Meteor.users.update(userId,{$set: {'profile.pixelhumain': userC}});
+  }else{
+    //username ou emails
+    Meteor.users.update(userId,{$set: {'profile.pixelhumain': userC}});
+  }
+}
 });
 
 Push.debug = true;
