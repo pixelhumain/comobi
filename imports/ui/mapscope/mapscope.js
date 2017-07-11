@@ -104,7 +104,7 @@ Template.mapCanvas.onRendered(function () {
   if (self.ready.get()) {
   if (Mapbox.loaded()) {
   clearLayers();
-  
+
   let inputDate = new Date();
   const collection = nameToCollection(Router.current().params.scope);
   let query={};
@@ -410,8 +410,8 @@ const selectIcon = (event) => {
 											"classified" 		: "classified-marker-default"
 
 									  };
-    const assetPath = '/assets/fcb49fcf';
-    const iconUrl = `${assetPath}/images/sig/markers/icons_carto/${icoMarkersMap[Router.current().params.scope]}.png`;
+    //const assetPath = '/assets/feadb1ba';
+    const iconUrl = `${Meteor.settings.public.assetPath}/images/sig/markers/icons_carto/${icoMarkersMap[Router.current().params.scope]}.png`;
     return L.icon({
             iconUrl: `${Meteor.settings.public.urlimage}${iconUrl}`,
             iconSize: [53, 60], //38, 95],
