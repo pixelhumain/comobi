@@ -1,6 +1,6 @@
 Package.describe({
   name: 'communecter:account',
-  version: '0.0.1',
+  version: '0.0.4',
   // Brief, one-line summary of the package.
   summary: '',
   // URL to the Git repository containing the source code for this package.
@@ -11,7 +11,6 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-  api.versionsFrom('1.4.2.3');
   api.use([
     'ecmascript',
     'ejson',
@@ -19,7 +18,11 @@ Package.onUse(function(api) {
     'accounts-base'
   ]);
 
-  api.add_files('server/config.js', 'server');
-  api.add_files('client/config.js', 'client');
+api.imply('accounts-base', ['client', 'server']);
 
+  //api.add_files('server/config.js', 'server');
+  //api.add_files('client/config.js', 'client');
+
+api.mainModule('server/config.js', 'server');
+api.mainModule('client/config.js', 'client');
 });
