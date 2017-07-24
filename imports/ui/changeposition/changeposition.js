@@ -27,7 +27,7 @@ Template.changePosition.onRendered(function () {
         if(pageSession.get("filter")){
         let query = pageSession.get("filter");
         Meteor.call('searchCities',query,function(error, result){
-          console.log(result);
+          //console.log(result);
           if(result){
             pageSession.set( 'cities', result );
           }

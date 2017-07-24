@@ -22,11 +22,11 @@ Accounts.registerLoginHandler(function(loginRequest) {
       }else{
         retourId = response.data.id;
       }
-      console.log(response.data);
+      //console.log(response.data);
 
       //ok valide
       var userM = Meteor.users.findOne({'_id':retourId});
-      console.log(userM);
+      //console.log(userM);
       if(userM){
         //Meteor.user existe
         userId= userM._id;
@@ -43,7 +43,7 @@ Accounts.registerLoginHandler(function(loginRequest) {
         {$push: {'services.resume.loginTokens': stampedToken}}
       );
       this.setUserId(userId);
-      console.log(userId);
+      //console.log(userId);
       return {
         userId: userId,
         token: stampedToken.token

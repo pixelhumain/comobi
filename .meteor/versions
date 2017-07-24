@@ -24,11 +24,10 @@ callback-hook@1.0.10
 cfs:http-methods@0.0.32
 check@1.2.5
 coffeescript@1.12.6_1
-communecter:account@0.0.4
+communecter:account@0.0.5
 communecter:deep-link@4.0.4
 communecter:mapbox@2.2.3_3
 copleykj:livestamp@1.1.7
-crosswalk@1.7.1
 dburles:collection-helpers@1.1.0
 ddp@1.3.0
 ddp-client@2.0.0
