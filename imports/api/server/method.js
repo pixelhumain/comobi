@@ -530,7 +530,7 @@ followEntity (connectId,parentType,childId){
   return retour;
 },
 shareEntity (doc){
-  console.log(doc);
+  //console.log(doc);
     check(doc, SchemasShareRest);
   if (!this.userId) {
     throw new Meteor.Error("not-authorized");
@@ -614,7 +614,7 @@ collectionsAdd (id,type){
     }
     doc.childId = (typeof childId !== 'undefined' && childId !== null) ?  childId : this.userId;
     doc.parentType=parentType;
-    console.log(doc);
+    //console.log(doc);
     var retour = apiCommunecter.postPixel("link","disconnect",doc);
     return retour;
   },
@@ -677,7 +677,7 @@ collectionsAdd (id,type){
       const responsePost = HTTP.call( 'POST', `${Meteor.settings.endpoint}/${Meteor.settings.module}/person/checkusername`, {
         params: {username: username}
       });
-      console.log(responsePost.data);
+      //console.log(responsePost.data);
       return responsePost.data;
     }else{
       return true
@@ -708,7 +708,7 @@ collectionsAdd (id,type){
     }
     const query = {search: search};
     var retour = apiCommunecter.postPixelMethod("search","searchmemberautocomplete",query);
-    console.log(retour);
+    //console.log(retour);
     return retour.data;
   },
   searchGlobalautocomplete (search){
@@ -884,21 +884,21 @@ updateBlock (modifier,documentId){
   if(modifier["$set"].block === 'locality'){
     docRetour.pk = documentId;
     docRetour.type = modifier["$set"].typeElement;
-    console.log(docRetour);
+    //console.log(docRetour);
     var retour = apiCommunecter.postPixel("element",`updatefields/type/${modifier["$set"].typeElement}`,docRetour);
     return retour;
   }else if(modifier["$set"].block === 'preferences'){
-    console.log('preferences');
+    //console.log('preferences');
     if(modifier["$set"].typeElement === 'citoyens'){
       const fieldsArray = ['email','locality','phone','directory','birthDate','isOpenData'];
         _.each(fieldsArray, (field) => {
-          console.log(`updateSettings,${field},${modifier["$set"][`preferences.${field}`]},${modifier["$set"].typeElement},${documentId}`);
+          //console.log(`updateSettings,${field},${modifier["$set"][`preferences.${field}`]},${modifier["$set"].typeElement},${documentId}`);
           Meteor.call('updateSettings',field,modifier["$set"][`preferences.${field}`],modifier["$set"].typeElement,documentId);
         });
     } else if(modifier["$set"].typeElement=="organizations" || modifier["$set"].typeElement=="projects" || modifier["$set"].typeElement=="events"){
       const fieldsArray = ['isOpenEdition','isOpenData'];
         _.each(fieldsArray, (field) => {
-          console.log(`updateSettings,${field},${modifier["$set"][`preferences.${field}`]},${modifier["$set"].typeElement},${documentId}`);
+          //console.log(`updateSettings,${field},${modifier["$set"][`preferences.${field}`]},${modifier["$set"].typeElement},${documentId}`);
           Meteor.call('updateSettings',field,modifier["$set"][`preferences.${field}`],modifier["$set"].typeElement,documentId);
         });
     }
@@ -907,7 +907,7 @@ updateBlock (modifier,documentId){
     docRetour.id = documentId;
     docRetour.block = modifier["$set"].block;
     docRetour.typeElement = modifier["$set"].typeElement;
-    console.log(docRetour);
+    //console.log(docRetour);
     var retour = apiCommunecter.postPixel("element","updateblock",docRetour);
     return retour;
   }
@@ -928,7 +928,7 @@ updateCitoyen (modifier,documentId){
   docRetour.key='citoyen';
   docRetour.collection='citoyens';
 
-  console.log(docRetour);
+  //console.log(docRetour);
 
   var retour = apiCommunecter.postPixel("element","save",docRetour);
   return retour;
@@ -1103,14 +1103,14 @@ doc.docId=newsDoc._id._str;
       //insertDoc.date = "";
       insertDoc.contentKey = "slider";
       insertDoc.formOrigin = "news";
-      console.log(insertDoc);
+      //console.log(insertDoc);
       let  doc = apiCommunecter.postPixel("document","save",insertDoc);
       if(doc){
         //{"result":true,"msg":"Document bien enregistr\u00e9","id":{"$id":"58df810add04528643014012"},"name":"moon.png"}
         if(typeof newsId !== 'undefined'){
           const array = News.findOne({_id:new Mongo.ObjectID(newsId)});
           if(array && array.media && array.media.images && array.media.images.length > 0 ){
-            console.log(array.media.images.length);
+            //console.log(array.media.images.length);
             let countImages = array.media.images.length + 1;
             News.update({_id:new Mongo.ObjectID(newsId)},{$set: { 'media.countImages': countImages.toString() }, $push: { 'media.images': doc.data.id["$id"] } });
             return {photoret:doc.data.id["$id"],newsId:newsId};
@@ -1153,7 +1153,7 @@ doc.docId=newsDoc._id._str;
     check(doc.organizerType, Match.Where(function(name) {
       return _.contains(['projects','organizations','citoyens'], name);
     }));
-    console.log(doc);
+    //console.log(doc);
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
@@ -1172,7 +1172,7 @@ doc.docId=newsDoc._id._str;
     docRetour.key='event';
     docRetour.collection='events';
 
-    console.log(docRetour);
+    //console.log(docRetour);
 
     var retour = apiCommunecter.postPixel("element","save",docRetour);
     return retour;
@@ -1205,7 +1205,7 @@ doc.docId=newsDoc._id._str;
     docRetour.key='event';
     docRetour.collection='events';
 
-    console.log(docRetour);
+    //console.log(docRetour);
 
     var retour = apiCommunecter.postPixel("element","save",docRetour);
     return retour;
@@ -1234,7 +1234,7 @@ doc.docId=newsDoc._id._str;
     docRetour.key='project';
     docRetour.collection='projects';
 
-    console.log(docRetour);
+    //console.log(docRetour);
 
     var retour = apiCommunecter.postPixel("element","save",docRetour);
     return retour;
@@ -1267,7 +1267,7 @@ doc.docId=newsDoc._id._str;
     docRetour.key='project';
     docRetour.collection='projects';
 
-    console.log(docRetour);
+    //console.log(docRetour);
 
     var retour = apiCommunecter.postPixel("element","save",docRetour);
     return retour;
@@ -1296,7 +1296,7 @@ doc.docId=newsDoc._id._str;
     docRetour.key='poi';
     docRetour.collection='poi';
 
-    console.log(docRetour);
+    //console.log(docRetour);
 
     var retour = apiCommunecter.postPixel("element","save",docRetour);
     return retour;
@@ -1329,7 +1329,7 @@ doc.docId=newsDoc._id._str;
     docRetour.key='poi';
     docRetour.collection='poi';
 
-    console.log(docRetour);
+    //console.log(docRetour);
 
     var retour = apiCommunecter.postPixel("element","save",docRetour);
     return retour;
@@ -1358,7 +1358,7 @@ doc.docId=newsDoc._id._str;
     docRetour.key='classified';
     docRetour.collection='classified';
 
-    console.log(docRetour);
+    //console.log(docRetour);
 
     var retour = apiCommunecter.postPixel("element","save",docRetour);
     return retour;
@@ -1391,7 +1391,7 @@ doc.docId=newsDoc._id._str;
     docRetour.key='classified';
     docRetour.collection='classified';
 
-    console.log(docRetour);
+    //console.log(docRetour);
 
     var retour = apiCommunecter.postPixel("element","save",docRetour);
     return retour;
@@ -1449,7 +1449,7 @@ doc.docId=newsDoc._id._str;
     docRetour.key='organization';
     docRetour.collection='organizations';
 
-    console.log(docRetour);
+    //console.log(docRetour);
 
     var retour = apiCommunecter.postPixel("element","save",docRetour);
     return retour;
@@ -1475,7 +1475,7 @@ doc.docId=newsDoc._id._str;
     return retour;
   },
   createUserAccountRest (user){
-    //console.log(user);
+    ////console.log(user);
     check(user, Object);
     check(user.name, String);
     check(user.username, String);
@@ -1644,7 +1644,7 @@ export const userLocale = new ValidatedMethod({
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
-    console.log(language);
+    //console.log(language);
     if (Meteor.users.update({
       _id: this.userId
     }, {

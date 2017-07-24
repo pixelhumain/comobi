@@ -5,11 +5,13 @@ import { moment } from 'meteor/momentjs:moment';
 
 import { ActivityStream } from '../../api/activitystream.js';
 
+if(Meteor.isDevelopment){
 Push.debug = true;
+}
 
 const pushUser = (title,text,payload,query,badge) => {
   const notId = Math.round(new Date().getTime() / 1000);
-  console.log(payload);
+  //console.log(payload);
   Push.send({
     from: 'push',
     title: title,
@@ -45,8 +47,11 @@ added: function(notification) {
   let notifsId = _.map(notification.notify.id, function(ids,key){
     return key;
   });
-
-  _.each(notifsId,function(value){
+  //verifier que présent dans Meteor.users
+  let notifsIdMeteor = Meteor.users.find({_id:{$in:notifsId}},{fields:{_id:1}}).map((user) => user._id);
+  console.log(notifsIdMeteor);
+  if(notifsIdMeteor && notifsIdMeteor.length > 0){
+  _.each(notifsIdMeteor,function(value){
     let query = {};
     query['userId'] = value;
     let payload = JSON.parse(JSON.stringify(notification));
@@ -54,7 +59,7 @@ added: function(notification) {
     console.log({value,badge});
     pushUser(title,text,payload,query,badge)
   },title,text,notification);
-
+  }
   }
 }
 });

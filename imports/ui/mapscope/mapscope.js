@@ -104,7 +104,7 @@ Template.mapCanvas.onRendered(function () {
   if (self.ready.get()) {
   if (Mapbox.loaded()) {
   clearLayers();
-  
+
   let inputDate = new Date();
   const collection = nameToCollection(Router.current().params.scope);
   let query={};
@@ -194,13 +194,13 @@ const initialize = ( element, zoom, features ) => {
   if(geo && geo.latitude){
     L.mapbox.accessToken = Meteor.settings.public.mapbox;
     const tilejson = {
-      tiles: ['https://api.mapbox.com/styles/v1/communecter/cj4tti8370rbg2smsl2trzmx9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY29tbXVuZWN0ZXIiLCJhIjoiY2l6eTIyNTYzMDAxbTJ3bng1YTBsa3d0aCJ9.elyGqovHs-mrji3ttn_Yjw'],
+      tiles: ['https://api.mapbox.com/styles/v1/communecter/cj4ziz9st0re02qo4xtqu7puz/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY29tbXVuZWN0ZXIiLCJhIjoiY2l6eTIyNTYzMDAxbTJ3bng1YTBsa3d0aCJ9.elyGqovHs-mrji3ttn_Yjw'],
       minzoom: 0,
       maxzoom: 18
     };
     map = L.mapbox.map(element,tilejson,options);
     map.setView(new L.LatLng(parseFloat(geo.latitude), parseFloat(geo.longitude)), zoom);
-    const layermapbox = L.tileLayer('https://api.mapbox.com/styles/v1/communecter/cj4tti8370rbg2smsl2trzmx9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY29tbXVuZWN0ZXIiLCJhIjoiY2l6eTIyNTYzMDAxbTJ3bng1YTBsa3d0aCJ9.elyGqovHs-mrji3ttn_Yjw').addTo(map);
+    const layermapbox = L.tileLayer('https://api.mapbox.com/styles/v1/communecter/cj4ziz9st0re02qo4xtqu7puz/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY29tbXVuZWN0ZXIiLCJhIjoiY2l6eTIyNTYzMDAxbTJ3bng1YTBsa3d0aCJ9.elyGqovHs-mrji3ttn_Yjw').addTo(map);
 
     /*if(city && city.geoShape && city.geoShape.coordinates){
       console.log(JSON.stringify(city.geoShape));
@@ -410,8 +410,8 @@ const selectIcon = (event) => {
 											"classified" 		: "classified-marker-default"
 
 									  };
-    const assetPath = '/assets/fcb49fcf';
-    const iconUrl = `${assetPath}/images/sig/markers/icons_carto/${icoMarkersMap[Router.current().params.scope]}.png`;
+    //const assetPath = '/assets/feadb1ba';
+    const iconUrl = `${Meteor.settings.public.assetPath}/images/sig/markers/icons_carto/${icoMarkersMap[Router.current().params.scope]}.png`;
     return L.icon({
             iconUrl: `${Meteor.settings.public.urlimage}${iconUrl}`,
             iconSize: [53, 60], //38, 95],

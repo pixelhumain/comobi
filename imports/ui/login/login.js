@@ -204,11 +204,11 @@ Template.signin.events({
   pageSession.set( 'loading-signup', true );
   pageSession.set( 'error', null );
   //createUserAccount or createUserAccountRest
-  console.log(user);
+  //console.log(user);
   Meteor.call("createUserAccountRest",user, function (error) {
     if(error){
       pageSession.set( 'loading-signup', false );
-      console.log(error.error);
+      //console.log(error.error);
       pageSession.set( 'error', error.error );
     }else{
       Meteor.loginAsPixel(email,password,function(err){

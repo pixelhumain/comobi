@@ -5,12 +5,14 @@ import { Tracker } from 'meteor/tracker';
 
 import { ActivityStream } from '../../api/activitystream.js';
 
+if(Meteor.isDevelopment){
 Push.debug = true;
+}
 
 Meteor.startup(function () {
 
 	if (Meteor.isDesktop){
-		console.log('DESKTOP');
+		//console.log('DESKTOP');
 
 		const query = {};
 		query['created'] = {$gt: new Date()};
@@ -19,7 +21,7 @@ Meteor.startup(function () {
 		var initNotifystart = ActivityStream.find(query,options).observe({
 			added: function(notification) {
 				if(!initNotifystart) return ;
-				console.log(Desktop.getAssetUrl('\___desktop\icon.png'));
+				//console.log(Desktop.getAssetUrl('\___desktop\icon.png'));
 				Desktop.send('systemNotifications', 'notify', {
 				title: 'notification',
 				text: notification.notify.displayName,
@@ -31,7 +33,7 @@ Meteor.startup(function () {
 		});
 
 Desktop.on('systemNotifications', 'notificationClicked', (sender, data) => {
-	console.log(data);
+	//console.log(data);
 		if(data.notify.url){
 			//Meteor.call('markRead',data._id);
 			//Meteor.call('registerClick', data._id);
@@ -110,7 +112,7 @@ Desktop.on('systemNotifications', 'notificationClicked', (sender, data) => {
 							let n = new Notification('notification',options);
 							n.onclick = function(e) {
 								if(notification.notify.url){
-									console.log(notification.notify.url);
+									//console.log(notification.notify.url);
 									//Meteor.call('markRead',notification._id);
 									//Meteor.call('registerClick', notification._id);
 									//Router.go(notification.link);
@@ -151,7 +153,7 @@ Tracker.autorun(() => {
 			if(Meteor.isCordova){
 				Push.setBadge(Counts.get(`notifications.${Meteor.userId()}.Unseen`));
 			} else {
-				console.log(Counts.get(`notifications.${Meteor.userId()}.Unseen`));
+				//console.log(Counts.get(`notifications.${Meteor.userId()}.Unseen`));
 			}
 		}
 	}

@@ -17,7 +17,7 @@ const callPixelRest = (token,method,controller,action,post) => {
       jar: true
     }
   });
-  console.log(responsePost);
+  //console.log(responsePost);
   if(responsePost && responsePost.data && responsePost.data.result){
     return responsePost;
   }else{
@@ -43,7 +43,7 @@ const callPixelMethodRest = (token,method,controller,action,post) => {
       jar: true
     }
   });
-  console.log(responsePost);
+  //console.log(responsePost);
   if(responsePost && responsePost.data){
     return responsePost;
   }else{

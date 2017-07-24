@@ -41,7 +41,7 @@ Template.searchGlobal.onRendered(function () {
              address:array.address
            };
            });
-           console.log(array);
+           //console.log(array);
           if(result){
             pageSession.set( 'searchGlobal', array );
           }

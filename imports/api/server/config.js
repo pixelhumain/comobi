@@ -70,7 +70,7 @@ import { Citoyens } from '../citoyens.js';
 });*/
 
 Accounts.onLogin(function(user) {
-console.log(user.user._id)
+//console.log(user.user._id)
 const userC = Citoyens.findOne({ _id: new Mongo.ObjectID(user.user._id) },{fields:{pwd:0}});
 
 if(!userC) {
@@ -78,7 +78,7 @@ if(!userC) {
 } else {
   //ok valide
   var userM = Meteor.users.findOne({'_id':userC._id._str});
-  console.log(userM);
+  //console.log(userM);
   if(userM && userM.profile &&  userM.profile.pixelhumain){
     //Meteor.user existe
     userId= userM._id;
@@ -90,7 +90,9 @@ if(!userC) {
 }
 });
 
+if(Meteor.isDevelopment){
 Push.debug = true;
+}
 
 Push.Configure({
   gcm: {

@@ -1,6 +1,6 @@
 {
   "name": "communecter",
-  "version": "0.0.8",
+  "version": "0.0.10",
   "description": "communecter",
   "private": true,
   "scripts": {
@@ -21,7 +21,7 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/aboire/cot/issues"
+    "url": "https://github.com/aboire/co/issues"
   },
   "homepage": "https://github.com/aboire/co#readme",
   "devDependencies": {
