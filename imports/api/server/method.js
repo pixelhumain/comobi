@@ -998,8 +998,8 @@ updateCitoyen (modifier,documentId){
     }
 
     const doc = modifier["$set"];
-    doc.id = documentId;
-    var retour = apiCommunecter.postPixel("news","save",doc);
+    doc.idNews = documentId;
+    var retour = apiCommunecter.postPixel("news","update",doc);
     return retour;
   },
   updateNewOld (modifier,documentId){
