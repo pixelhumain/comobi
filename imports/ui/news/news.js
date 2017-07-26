@@ -524,7 +524,7 @@ return ;
 
 function successCallback (retour){
   const newsId = retour;
-  IonPopup.confirm({title:TAPi18n.__('Photo'),template:TAPi18n.__('Voulez vous ajouter une autre photo à cette news ?'),
+  IonPopup.confirm({title:TAPi18n.__('Photo'),template:TAPi18n.__('Do you want to add another photo to this news'),
   onOk: function(){
     MeteorCameraUI.getPicture(options,function (error, data) {
       if (! error) {
@@ -540,7 +540,9 @@ function successCallback (retour){
     },
     onCancel: function(){
       Router.go('detailList', {_id:self._id._str,scope:scope});
-    }
+    },
+    cancelText:TAPi18n.__('finish'),
+    okText:TAPi18n.__('other picture')
   });
 }
 
@@ -862,7 +864,7 @@ this.$('textarea').atwho('destroy');
 
             function successCallback (retour){
               const newsId = retour;
-              IonPopup.confirm({title:TAPi18n.__('Photo'),template:TAPi18n.__('Voulez vous ajouter une autre photo à cette news ?'),
+              IonPopup.confirm({title:TAPi18n.__('Photo'),template:TAPi18n.__('Do you want to add another photo to this news'),
               onOk: function(){
                 MeteorCameraUI.getPicture(options,function (error, data) {
                   if (! error) {
@@ -878,7 +880,9 @@ this.$('textarea').atwho('destroy');
                 },
                 onCancel: function(){
                   Router.go('newsList', {_id: Session.get('scopeId'),scope:Session.get('scope')});
-                }
+                },
+                cancelText:TAPi18n.__('finish'),
+                okText:TAPi18n.__('other picture')
               });
             }
 
@@ -898,7 +902,9 @@ this.$('textarea').atwho('destroy');
               },
               onCancel: function(){
 
-              }
+              },
+              cancelText:TAPi18n.__('no'),
+              okText:TAPi18n.__('yes')
             });
 
             //Meteor.call('pushNewNewsAttendees',scopeId,selfresult);

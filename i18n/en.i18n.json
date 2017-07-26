@@ -81,7 +81,7 @@
   "settings":"Settings",
   "radius":"Radius",
   "tracking geolocation":"Tracking geolocation",
-  "Invitations contacts":"Invitations contacts",
+  "Invitations contacts":"Phone contact",
   "Change location":"Change location",
   "Search a city or postal code":"Search a city or postal code",
   "accountPending":"You've been invited : please resume the registration process in order to log in.",
@@ -130,6 +130,13 @@
   "wants to become a contributor to the project":"wants to become a contributor to the project",
   "share":"share",
   "share content with your network":"share content with your network",
+  "Photo":"Photo",
+  "Do you want to add another photo to this news":"Do you want to add another photo to this news?",
+  "finish":"Finish",
+  "other picture":"Other picture",
+  "Want to take a picture":"Want to take a picture?",
+  "Use the position of this city":"Use the position of this city",
+  "Use your current location":"Use your current location?",
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] already exists",

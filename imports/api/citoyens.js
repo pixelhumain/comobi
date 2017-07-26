@@ -438,8 +438,8 @@ export const SchemasInviteAttendeesEventRest = new SimpleSchema({
         return News.find(query,options);
       },
       new () {
-        console.log(News.findOne({_id:new Mongo.ObjectID(Router.current().params.newsId)}));
-        return News.findOne({_id:new Mongo.ObjectID(Router.current().params.newsId)});
+        //console.log(News.findOne({_id:new Mongo.ObjectID(Router.current().params.newsId)}));
+        return Router.current().params.newsId && News.findOne({_id:new Mongo.ObjectID(Router.current().params.newsId)});
       }
     });
 

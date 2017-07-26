@@ -97,7 +97,9 @@ Template.dashboard.onRendered(function() {
       },
       onCancel: function(){
         Router.go('changePosition');
-      }
+      },
+      cancelText:TAPi18n.__('no'),
+      okText:TAPi18n.__('yes')
     });
   }
 }

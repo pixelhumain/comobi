@@ -59,7 +59,7 @@ Template.changePosition.onRendered(function () {
     },
     'click .city': function(event,template){
       var self = this;
-      var onOk=IonPopup.confirm({title:TAPi18n.__('Location'),template:TAPi18n.__('Utiliser la position de cette ville'),
+      var onOk=IonPopup.confirm({title:TAPi18n.__('Location'),template:TAPi18n.__('Use the position of this city'),
       onOk: function(){
         Session.set( 'city', self);
         if(self.geoShape && self.geoShape.coordinates){
@@ -80,7 +80,9 @@ Template.changePosition.onRendered(function () {
         const geoIdRandom = Random.id();
         geoId.set('geoId', geoIdRandom);
         Router.go('dashboard');
-    }
+    },
+    cancelText:TAPi18n.__('no'),
+    okText:TAPi18n.__('yes')
     });
 
     }

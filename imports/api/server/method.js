@@ -84,11 +84,7 @@ if(doc.typeElement === 'citoyens'){
   if(doc.block === 'info'){
     docRetour.name = doc.name;
     docRetour.type = doc.type;
-    docRetour.email = doc.email ? doc.email : '';
     docRetour.url = doc.url ? doc.url : '';
-    docRetour.fixe = doc.fixe ? doc.fixe : '';
-    docRetour.mobile = doc.mobile ? doc.mobile : '';
-    docRetour.fax = doc.fax ? doc.fax : '';
   }
   if(doc.block === 'when'){
     docRetour.allDay = doc.allDay;
@@ -112,11 +108,7 @@ if(doc.typeElement === 'citoyens'){
   if(doc.block === 'info'){
     docRetour.name = doc.name;
     docRetour.avancement = doc.avancement ? doc.avancement : '';
-    docRetour.email = doc.email ? doc.email : '';
     docRetour.url = doc.url ? doc.url : '';
-    docRetour.fixe = doc.fixe ? doc.fixe : '';
-    docRetour.mobile = doc.mobile ? doc.mobile : '';
-    docRetour.fax = doc.fax ? doc.fax : '';
   }
   if(doc.block === 'when'){
     docRetour.startDate=moment(doc.startDate).format();
@@ -998,8 +990,8 @@ updateCitoyen (modifier,documentId){
     }
 
     const doc = modifier["$set"];
-    doc.id = documentId;
-    var retour = apiCommunecter.postPixel("news","save",doc);
+    doc.idNews = documentId;
+    var retour = apiCommunecter.postPixel("news","update",doc);
     return retour;
   },
   updateNewOld (modifier,documentId){

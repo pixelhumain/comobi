@@ -100,7 +100,9 @@ Template.listEvents.onRendered(function() {
       },
       onCancel: function(){
         Router.go('changePosition');
-      }
+      },
+      cancelText:TAPi18n.__('no'),
+      okText:TAPi18n.__('yes')
     });
   }
 }
@@ -381,9 +383,9 @@ Template.eventsBlockEdit.helpers({
       if(event.tags){
         eventEdit.tags = event.tags;
       }
-      eventEdit.email = event.email;
+      //eventEdit.email = event.email;
       eventEdit.url = event.url;
-      if(event.telephone){
+      /*if(event.telephone){
         if(event.telephone.fixe){
           eventEdit.fixe = event.telephone.fixe.join();
         }
@@ -393,7 +395,7 @@ Template.eventsBlockEdit.helpers({
         if(event.telephone.fax){
           eventEdit.fax = event.telephone.fax.join();
         }
-      }
+      }*/
     }else if(Router.current().params.block === 'network'){
       if(event.socialNetwork){
         if(event.socialNetwork.instagram){
@@ -663,7 +665,7 @@ Template.eventsFields.onRendered(function() {
 
   let geolocate = Session.get('geolocate');
   if(geolocate && Router.current().route.getName()!="eventsEdit" && Router.current().route.getName()!="eventsBlockEdit"){
-    var onOk=IonPopup.confirm({template:TAPi18n.__('Utiliser votre position actuelle ?'),
+    var onOk=IonPopup.confirm({template:TAPi18n.__('Use your current location'),
     onOk: function(){
       const latlngObj = position.getLatlngObject();
       if (latlngObj) {
@@ -681,7 +683,10 @@ Template.eventsFields.onRendered(function() {
           }
         });
       }
-    }});
+    },
+    cancelText:TAPi18n.__('no'),
+    okText:TAPi18n.__('yes')
+  });
   }
 
   self.autorun(function() {

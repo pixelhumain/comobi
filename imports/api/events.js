@@ -84,7 +84,7 @@ export const SchemasEventsRest = new SimpleSchema([baseSchema,geoSchema, {
 
   export const BlockEventsRest = {};
   BlockEventsRest.descriptions = new SimpleSchema([blockBaseSchema,baseSchema.pick(['shortDescription','description','tags','tags.$'])]);
-  BlockEventsRest.info = new SimpleSchema([blockBaseSchema,baseSchema.pick(['name','url']),SchemasEventsRest.pick(['type','email','fixe','mobile','fax'])]);
+  BlockEventsRest.info = new SimpleSchema([blockBaseSchema,baseSchema.pick(['name','url']),SchemasEventsRest.pick(['type'])]);
   BlockEventsRest.network = new SimpleSchema([blockBaseSchema,{
     github : {
       type : String,

@@ -99,7 +99,9 @@ Template.listCitoyens.onRendered(function() {
       },
       onCancel: function(){
         Router.go('changePosition');
-      }
+      },
+      cancelText:TAPi18n.__('no'),
+      okText:TAPi18n.__('yes')
     });
   }
 }
@@ -475,7 +477,7 @@ Template.citoyensFields.onRendered(function() {
 
   let geolocate = Session.get('geolocate');
   if(geolocate && Router.current().route.getName()!="citoyensEdit" && Router.current().route.getName()!="citoyensBlockEdit"){
-    var onOk=IonPopup.confirm({template:TAPi18n.__('Utiliser votre position actuelle ?'),
+    var onOk=IonPopup.confirm({template:TAPi18n.__('Use your current location'),
     onOk: function(){
       let geo = Location.getReactivePosition();
       if(geo && geo.latitude){
@@ -494,7 +496,10 @@ Template.citoyensFields.onRendered(function() {
           }
         });
       }
-    }});
+    },
+    cancelText:TAPi18n.__('no'),
+    okText:TAPi18n.__('yes')
+  });
   }
 
   self.autorun(function() {
