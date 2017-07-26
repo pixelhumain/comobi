@@ -100,7 +100,9 @@ Template.listProjects.onRendered(function() {
       },
       onCancel: function(){
         Router.go('changePosition');
-      }
+      },
+      cancelText:TAPi18n.__('no'),
+      okText:TAPi18n.__('yes')
     });
   }
 }
@@ -301,9 +303,9 @@ Template.projectsBlockEdit.helpers({
       if(project.properties && project.properties.avancement){
         projectEdit.avancement = project.properties.avancement;
       }
-      projectEdit.email = project.email;
+      //projectEdit.email = project.email;
       projectEdit.url = project.url;
-      if(project.telephone){
+      /*if(project.telephone){
         if(project.telephone.fixe){
           projectEdit.fixe = project.telephone.fixe.join();
         }
@@ -313,7 +315,7 @@ Template.projectsBlockEdit.helpers({
         if(project.telephone.fax){
           projectEdit.fax = project.telephone.fax.join();
         }
-      }
+      }*/
     }else if(Router.current().params.block === 'network'){
       if(project.socialNetwork){
         if(project.socialNetwork.instagram){
@@ -504,7 +506,7 @@ Template.projectsFields.onRendered(function() {
 
   let geolocate = Session.get('geolocate');
   if(geolocate && Router.current().route.getName()!="projectsEdit" && Router.current().route.getName()!="projectsBlockEdit"){
-    var onOk=IonPopup.confirm({template:TAPi18n.__('Utiliser votre position actuelle ?'),
+    var onOk=IonPopup.confirm({template:TAPi18n.__('Use your current location'),
     onOk: function(){
       const latlngObj = position.getLatlngObject();
       if (latlngObj) {
@@ -522,7 +524,10 @@ Template.projectsFields.onRendered(function() {
           }
         });
       }
-    }});
+    },
+    cancelText:TAPi18n.__('no'),
+    okText:TAPi18n.__('yes')
+  });
   }
 
   self.autorun(function() {

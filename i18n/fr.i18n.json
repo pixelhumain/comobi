@@ -81,7 +81,7 @@
   "settings":"Réglages",
   "radius":"Rayon",
   "tracking geolocation":"Suivi géolocalisation",
-  "Invitations contacts":"Invitations contacts",
+  "Invitations contacts":"Contacts du téléphone",
   "Change location":"Changer de position",
   "Search a city or postal code":"Rechercher une ville ou un code postal",
   "accountPending":"Vous avez été invité(e) : vous n'avez plus qu'à finir l'inscription pour vous connecter.",
@@ -130,6 +130,13 @@
   "wants to become a contributor to the project":"Veut devenir un contributeur au projet",
   "share":"Partager",
   "share content with your network":"Partagez le contenu avec votre réseau",
+  "Photo":"Photo",
+  "Do you want to add another photo to this news":"Voulez vous ajouter une autre photo à cette news ?",
+  "finish":"Terminer",
+  "other picture":"Autre photo",
+  "Want to take a picture":"Voulez vous prendre une photo ?",
+  "Use the position of this city":"Utiliser la position de cette ville",
+  "Use your current location":"Utiliser votre position actuelle ?",
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] existe déja",

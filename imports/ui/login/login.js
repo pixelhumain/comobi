@@ -76,7 +76,7 @@ Template.signin.onRendered(function () {
 
   let geolocate = Session.get('geolocate');
   if(geolocate){
-    var onOk=IonPopup.confirm({template:TAPi18n.__('Utiliser votre position actuelle ?'),
+    var onOk=IonPopup.confirm({template:TAPi18n.__('Use your current location'),
     onOk: function(){
       let geo = position.getLatlng()
       if(geo && geo.latitude){
@@ -94,7 +94,10 @@ Template.signin.onRendered(function () {
         }
         });
       }
-    }});
+    },
+    cancelText:TAPi18n.__('no'),
+    okText:TAPi18n.__('yes')
+  });
   }
 });
 

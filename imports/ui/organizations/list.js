@@ -98,7 +98,9 @@ Template.listOrganizations.onRendered(function() {
       },
       onCancel: function(){
         Router.go('changePosition');
-      }
+      },
+      cancelText:TAPi18n.__('no'),
+      okText:TAPi18n.__('yes')
     });
   }
 }
@@ -452,7 +454,7 @@ Template.organizationsFields.onRendered(function() {
 
   let geolocate = Session.get('geolocate');
   if(geolocate && Router.current().route.getName()!="organizationsEdit" && Router.current().route.getName()!="organizationsBlockEdit"){
-    var onOk=IonPopup.confirm({template:TAPi18n.__('Utiliser votre position actuelle ?'),
+    var onOk=IonPopup.confirm({template:TAPi18n.__('Use your current location'),
     onOk: function(){
       const latlngObj = position.getLatlngObject();
       if (latlngObj) {
@@ -470,7 +472,10 @@ Template.organizationsFields.onRendered(function() {
           }
         });
       }
-    }});
+    },
+    cancelText:TAPi18n.__('no'),
+    okText:TAPi18n.__('yes')
+  });
   }
 
   self.autorun(function() {

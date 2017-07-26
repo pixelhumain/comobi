@@ -12,7 +12,11 @@
   {{/contentFor}}
 
   {{#ionView}}
-  {{#ionContent}}
+  {{#ionContent class="scroll-bg"}}
+  <div class="item tabs tabs-icon-left">
+    <a class="tab-item {{#if equals selectview 'scopeContactTemplate'}}tab-item-active{{/if}}" href="" id="scopeContactTemplate"><i class="icon fa fa-phone"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeInviteEmailTemplate'}}tab-item-active{{/if}}" data-ion-modal="_inviteEmailUser" id="scopeInviteEmailTemplate"><i class="icon fa fa-envelope"></i></a>
+  </div>
   {{#ionList}}
   <div class="list list-inset">
     <label class="item item-input">
@@ -73,6 +77,32 @@
     </div>
     {{/autoForm}}
     {{/with}}
+  </div>
+</div>
+  {{/ionModal}}
+</template>
+
+<template name="_inviteEmailUser">
+  {{#ionModal customTemplate=true}}
+  <div class="bar bar-header bar-dark">
+    <button data-dismiss="modal" type="button" class="button button-clear">{{_ "Reset"}}</button>
+    <h2 class="title">{{_ "Invite"}}</h2>
+    <button type="submit" class="button button-positive button-clear" id="inviteNewUser">{{_ "Send"}}</button>
+  </div>
+<div class="content has-header overflow-scroll">
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "Send invite"}}
+    </div>
+    {{#autoForm id="followPerson" schema=SchemasFollowRest type="method" meteormethod="followPerson" template="ionic" class="padding"}}
+    {{> afQuickField name='invitedUserName'}}
+    {{> afQuickField name='invitedUserEmail'}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "send"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
   </div>
 </div>
   {{/ionModal}}
