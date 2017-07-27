@@ -85,6 +85,7 @@ if(!userC) {
     Meteor.users.update(userId,{$set: {'profile.pixelhumain': userC}});
   }else{
     //username ou emails
+    userId= userM._id;
     Meteor.users.update(userId,{$set: {'profile.pixelhumain': userC}});
   }
 }
