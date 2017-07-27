@@ -589,6 +589,7 @@
       <a href="{{pathFor 'newsAdd' _id=_id._str scope=scopeVar}}" class="button button-small">{{> ionIcon icon="compose"}}</a>
       {{/if}}
     </div>
+    {{> scopeFileUploadNews}}
 </template>
 
 <template name="listCardevents">
@@ -670,4 +671,10 @@
   </div>
 </div>
   {{/ionModal}}
+</template>
+
+<template name="scopeFileUploadNews">
+ <form>
+  <input type="file" id="file-upload-new" accept="image/*" style="display: block; opacity: 0;width:0px;height:0px;">
+ </form>
 </template>

@@ -37,6 +37,7 @@
       {{#if isAdmin}}
       {{#unless ../shareVisible}}
       <a href="" class="photo-link-scope"><img src="{{urlImageCommunecter}}{{profilImageUrl}}"></a>
+      {{> scopeFileUpload}}
       {{else}}
       <img src="{{urlImageCommunecter}}{{profilImageUrl}}">
       {{/unless}}
@@ -244,4 +245,10 @@
 {{else}}
 {{#if creatorProfile}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
 {{/if}}
+</template>
+
+<template name="scopeFileUpload">
+ <form>
+  <input type="file" id="file-upload" accept="image/*" style="display: block; opacity: 0;width:0px;height:0px;">
+ </form>
 </template>

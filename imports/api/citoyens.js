@@ -226,6 +226,9 @@ export const SchemasInviteAttendeesEventRest = new SimpleSchema({
       isMe (){
         return this._id._str === Meteor.userId();
       },
+      isAdmin () {
+        return this._id._str === Meteor.userId();
+      },
       isFollows (followId){
         return (this.links && this.links.follows && this.links.follows[followId]) ? true : false;
       },
