@@ -516,73 +516,180 @@ return ;
     var self = this;
     let scopeId=Session.get('scopeId');
     let scope=Session.get('scope');
-    let options = {
-      width: 640,
-      height: 480,
-      quality: 75
-    };
 
-function successCallback (retour){
-  const newsId = retour;
-  IonPopup.confirm({title:TAPi18n.__('Photo'),template:TAPi18n.__('Do you want to add another photo to this news'),
-  onOk: function(){
-    MeteorCameraUI.getPicture(options,function (error, data) {
-      if (! error) {
-        let str = +new Date + Math.floor((Math.random() * 100) + 1) + ".jpg";
-        Meteor.call("photoNews",data,str,scope,self._id._str,newsId, function (error, result) {
-          if (!error) {
-            successCallback(result.newsId);
-          }else{
-            //console.log('error',error);
-          }
-        });
-      }});
-    },
-    onCancel: function(){
-      Router.go('detailList', {_id:self._id._str,scope:scope});
-    },
-    cancelText:TAPi18n.__('finish'),
-    okText:TAPi18n.__('other picture')
-  });
-}
+    if(Meteor.isDesktop){
+      Session.set('newsId',null);
+      template.$('#file-upload-new').trigger('click');
+    }else{
+       if (Meteor.isCordova){
+         let options = {
+           width: 640,
+           height: 480,
+           quality: 75
+         };
 
-    MeteorCameraUI.getPicture(options,function (error, data) {
-      if (! error) {
-        let str = +new Date + Math.floor((Math.random() * 100) + 1) + ".jpg";
-        Meteor.call("photoNews",data,str,scope,self._id._str, function (error, result) {
-          if (!error) {
-            successCallback(result.newsId);
-          }else{
-            //console.log('error',error);
-          }
-        });
-      }});
+     function successCallback (retour){
+       const newsId = retour;
+       IonPopup.confirm({title:TAPi18n.__('Photo'),template:TAPi18n.__('Do you want to add another photo to this news'),
+       onOk: function(){
+         MeteorCameraUI.getPicture(options,function (error, data) {
+           if (! error) {
+             let str = +new Date + Math.floor((Math.random() * 100) + 1) + ".jpg";
+             Meteor.call("photoNews",data,str,scope,self._id._str,newsId, function (error, result) {
+               if (!error) {
+                 successCallback(result.newsId);
+               }else{
+                 //console.log('error',error);
+               }
+             });
+           }});
+         },
+         onCancel: function(){
+           Router.go('detailList', {_id:self._id._str,scope:scope});
+         },
+         cancelText:TAPi18n.__('finish'),
+         okText:TAPi18n.__('other picture')
+       });
+     }
 
+         MeteorCameraUI.getPicture(options,function (error, data) {
+           if (! error) {
+             let str = +new Date + Math.floor((Math.random() * 100) + 1) + ".jpg";
+             Meteor.call("photoNews",data,str,scope,self._id._str, function (error, result) {
+               if (!error) {
+                 successCallback(result.newsId);
+               }else{
+                 //console.log('error',error);
+               }
+             });
+           }});
+
+       } else {
+         Session.set('newsId',null);
+         template.$('#file-upload-new').trigger('click');
+       }
+    }
     },
     "click .photo-link-scope" (event, template) {
       event.preventDefault();
       const self = this;
       const scopeId = Session.get('scopeId');
       const scope = Session.get('scope');
-      const options = {
-        width: 640,
-        height: 480,
-        quality: 75
-      };
-      MeteorCameraUI.getPicture(options,function (error, data) {
-        if (! error) {
-          let str = +new Date + Math.floor((Math.random() * 100) + 1) + ".jpg";
-          let dataURI = data;
-          Meteor.call("photoScope",scope,data,str,self._id._str, function (error, result) {
-            if (!error) {
-              console.log(result);
-            }else{
-              //console.log('error',error);
-            }
-          });
-        }});
+      if(Meteor.isDesktop){
+        template.$('#file-upload').trigger('click');
+      }else{
+         if (Meteor.isCordova){
+           const options = {
+             width: 640,
+             height: 480,
+             quality: 75
+           };
+           MeteorCameraUI.getPicture(options,function (error, data) {
+             if (! error) {
+               let str = +new Date + Math.floor((Math.random() * 100) + 1) + ".jpg";
+               let dataURI = data;
+               Meteor.call("photoScope",scope,data,str,self._id._str, function (error, result) {
+                 if (!error) {
+                   console.log(result);
+                 }else{
+                   console.log('error',error);
+                 }
+               });
+             }});
 
+         } else {
+           template.$('#file-upload').trigger('click');
+         }
       }
+    },
+    "change #file-upload" (event, template) {
+      event.preventDefault();
+      const self = this;
+      const scopeId = Session.get('scopeId');
+      const scope = Session.get('scope');
+      if (window.File && window.FileReader && window.FileList && window.Blob) {
+      _.each(template.find('#file-upload').files, function(file) {
+        if(file.size > 1){
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            //console.log(file.name);
+            //console.log(file.type);
+            //console.log(reader.result);
+            //let str = +new Date + Math.floor((Math.random() * 100) + 1) + ".jpg";
+            let str = file.name;
+            let dataURI = reader.result;
+            Meteor.call("photoScope",scope,dataURI,str,self._id._str, function (error, result) {
+              if (!error) {
+                console.log(result);
+              }else{
+                //console.log('error',error);
+              }
+            });
+          }
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  },
+  "change #file-upload-new" (event, template) {
+    event.preventDefault();
+    var self = this;
+    let scopeId=Session.get('scopeId');
+    let scope=Session.get('scope');
+    let newsId = Session.get('newsId');
+
+    function successCallback (retour){
+      const newsId = retour;
+      IonPopup.confirm({title:TAPi18n.__('Photo'),template:TAPi18n.__('Do you want to add another photo to this news'),
+      onOk: function(){
+        Session.set('newsId',newsId);
+        template.$('#file-upload-new').trigger('click');
+        },
+        onCancel: function(){
+          Router.go('detailList', {_id:self._id._str,scope:scope});
+        },
+        cancelText:TAPi18n.__('finish'),
+        okText:TAPi18n.__('other picture')
+      });
+    }
+
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+    _.each(template.find('#file-upload-new').files, function(file) {
+      if(file.size > 1){
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          //console.log(file.name);
+          //console.log(file.type);
+          //console.log(reader.result);
+          //let str = +new Date + Math.floor((Math.random() * 100) + 1) + ".jpg";
+          let str = file.name;
+          let dataURI = reader.result;
+          if(newsId){
+            Meteor.call("photoNews",dataURI,str,scope,self._id._str,newsId, function (error, result) {
+              if (!error) {
+                successCallback(result.newsId);
+              }else{
+                //console.log('error',error);
+              }
+            });
+          }else{
+            Meteor.call("photoNews",dataURI,str,scope,self._id._str, function (error, result) {
+              if (!error) {
+                successCallback(result.newsId);
+              }else{
+                //console.log('error',error);
+              }
+            });
+          }
+
+
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+}
     });
 
     Template.newsAdd.onCreated(function () {
