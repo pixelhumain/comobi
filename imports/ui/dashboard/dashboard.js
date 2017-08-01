@@ -20,7 +20,7 @@ import { ActivityStream } from '../../api/activitystream.js';
 import { Cities } from '../../api/cities.js';
 
 //submanager
-import { dashboardSubs } from '../../api/client/subsmanager.js';
+import { dashboardSubs,scopeSubscribe } from '../../api/client/subsmanager.js';
 
 import { position } from '../../api/client/position.js';
 
@@ -29,83 +29,11 @@ import { geoId } from '../../api/client/reactive.js';
 import './dashboard.html';
 
 Template.dashboard.onCreated(function () {
-  var self = this;
-  self.ready = new ReactiveVar();
-  if(!geoId.get('geoId')){
-    const geoIdRandom = Random.id();
-    geoId.set('geoId', geoIdRandom);
-    console.log(geoId.get('geoId'));
-  }
-  //mettre sur layer ?
-  Meteor.subscribe('citoyen');
 
-  self.autorun(function(c) {
-    const radius = position.getRadius();
-    const latlngObj = position.getLatlngObject();
-    if (radius && latlngObj) {
-      console.log(geoId.get('geoId'));
-      console.log('sub list dashboard geo radius');
-      let handle = dashboardSubs.subscribe('geo.dashboard',geoId.get('geoId'), latlngObj, radius);
-          self.ready.set(handle.ready());
-    }else{
-      console.log(geoId.get('geoId'));
-      console.log('sub list dashboard city');
-      let city = Session.get('city');
-      if(city && city.geoShape && city.geoShape.coordinates){
-        let handle = dashboardSubs.subscribe('geo.dashboard',geoId.get('geoId'), city.geoShape);
-            self.ready.set(handle.ready());
-      }
-    }
-
-  });
-
-  self.autorun(function(c) {
-    const latlngObj = position.getLatlngObject();
-    if(latlngObj){
-      Meteor.call('getcitiesbylatlng',latlngObj,function(error, result){
-        if(result){
-          //console.log('call city');
-          Session.set('city', result);
-        }
-      });
-    }
-  });
+  scopeSubscribe(this,dashboardSubs,'geo.dashboard','dashboard');
 
 });
 
-Template.dashboard.onRendered(function() {
-
-  const testgeo = () => {
-    let geolocate = Session.get('geolocate');
-    if(!Session.get('GPSstart') && geolocate && !position.getLatlng()){
-
-      IonPopup.confirm({title:TAPi18n.__('Location'),template:TAPi18n.__('Use the location of your profile'),
-      onOk: function(){
-        if(Citoyens.findOne() && Citoyens.findOne().geo && Citoyens.findOne().geo.latitude){
-          Location.setMockLocation({
-            latitude : Citoyens.findOne().geo.latitude,
-            longitude : Citoyens.findOne().geo.longitude,
-            updatedAt : new Date()
-          });
-          //clear cache
-          /*listEventsSubs.clear();
-          listOrganizationsSubs.clear();
-          listProjectsSubs.clear();
-          listCitoyensSubs.clear();
-          dashboardSubs.clear();*/
-        }
-      },
-      onCancel: function(){
-        Router.go('changePosition');
-      },
-      cancelText:TAPi18n.__('no'),
-      okText:TAPi18n.__('yes')
-    });
-  }
-}
-
-Meteor.setTimeout(testgeo, '3000');
-});
 
 Template.dashboard.helpers({
   city (){

@@ -19,7 +19,7 @@ import { Citoyens,BlockCitoyensRest } from '../../api/citoyens.js';
 import { Cities } from '../../api/cities.js';
 
 //submanager
-import { listCitoyensSubs } from '../../api/client/subsmanager.js';
+import { listCitoyensSubs,scopeSubscribe } from '../../api/client/subsmanager.js';
 
 import '../map/map.js';
 import '../components/scope/item.js'
@@ -32,81 +32,11 @@ import { searchQuery,queryGeoFilter } from '../../api/helpers.js';
 
 
 Template.listCitoyens.onCreated(function () {
-  var self = this;
-  self.ready = new ReactiveVar();
+
   pageSession.set('sortCitoyens', null);
   pageSession.set('searchCitoyens', null);
+  scopeSubscribe(this,listCitoyensSubs,'geo.scope','citoyens');
 
-  //mettre sur layer ?
-  Meteor.subscribe('citoyen');
-
-  //sub listCitoyens
-  self.autorun(function(c) {
-    const radius = position.getRadius();
-    const latlngObj = position.getLatlngObject();
-    if (radius && latlngObj) {
-      console.log('sub list citoyens geo radius');
-      let handle = listCitoyensSubs.subscribe('geo.scope','citoyens',latlngObj,radius);
-          self.ready.set(handle.ready());
-    }else{
-      console.log('sub list citoyens city');
-      let city = Session.get('city');
-      if(city && city.geoShape && city.geoShape.coordinates){
-        let handle = listCitoyensSubs.subscribe('geo.scope','citoyens',city.geoShape);
-            self.ready.set(handle.ready());
-      }
-    }
-
-  });
-
-  self.autorun(function(c) {
-    const latlngObj = position.getLatlngObject();
-    if (latlngObj) {
-      Meteor.call('getcitiesbylatlng',latlngObj,function(error, result){
-        if(result){
-          //console.log('call city');
-          Session.set('city', result);
-        }
-      });
-    }
-  });
-
-});
-
-Template.listCitoyens.onRendered(function() {
-
-  const testgeo = () => {
-    let geolocate = Session.get('geolocate');
-    if(!Session.get('GPSstart') && geolocate && !Location.getReactivePosition()){
-
-      IonPopup.confirm({title:TAPi18n.__('Location'),template:TAPi18n.__('Use the location of your profile'),
-      onOk: function(){
-        if(Citoyens.findOne() && Citoyens.findOne().geo && Citoyens.findOne().geo.latitude){
-          Location.setMockLocation({
-            latitude : Citoyens.findOne().geo.latitude,
-            longitude : Citoyens.findOne().geo.longitude,
-            updatedAt : new Date()
-          });
-          //clear cache
-          /*listEventsSubs.clear();
-          listOrganizationsSubs.clear();
-          listProjectsSubs.clear();
-          listCitoyensSubs.clear();
-          dashboardSubs.clear();*/
-          const geoIdRandom = Random.id();
-          geoId.set('geoId', geoIdRandom);
-        }
-      },
-      onCancel: function(){
-        Router.go('changePosition');
-      },
-      cancelText:TAPi18n.__('no'),
-      okText:TAPi18n.__('yes')
-    });
-  }
-}
-
-Meteor.setTimeout(testgeo, '3000');
 });
 
 
@@ -414,8 +344,11 @@ Template.citoyensBlockEdit.helpers({
   }
 });
 
+Template.citoyensFields.inheritsHelpersFrom('organizationsFields');
+Template.citoyensFields.inheritsEventsFrom('organizationsFields');
+Template.citoyensFields.inheritsHooksFrom('organizationsFields');
 
-Template.citoyensFields.helpers({
+/*Template.citoyensFields.helpers({
   optionsInsee () {
     let postalCode = '';
     let country = '';
@@ -630,7 +563,7 @@ Template.citoyensFields.events({
     );
   }
 }, 500)
-});
+});*/
 
 AutoForm.addHooks(['editCitoyen'], {
   after: {

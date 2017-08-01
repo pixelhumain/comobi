@@ -20,7 +20,7 @@ import { Classified } from '../../api/classified.js';
 import { Cities } from '../../api/cities.js';
 
 //submanager
-import { listClassifiedSubs } from '../../api/client/subsmanager.js';
+import { listClassifiedSubs,scopeSubscribe } from '../../api/client/subsmanager.js';
 
 import '../map/map.js';
 import '../components/scope/item.js'
@@ -33,85 +33,10 @@ import { searchQuery,queryGeoFilter } from '../../api/helpers.js';
 
 
 Template.listClassified.onCreated(function () {
-  var self = this;
-  self.ready = new ReactiveVar();
   pageSession.set('sortClassified', null);
   pageSession.set('searchClassified', null);
-
-  //mettre sur layer ?
-  Meteor.subscribe('citoyen');
-
-  //sub listClassified
-  self.autorun(function(c) {
-    const radius = position.getRadius();
-    const latlngObj = position.getLatlngObject();
-    if (radius && latlngObj) {
-      console.log('sub list classified geo radius');
-      let handle = listClassifiedSubs.subscribe('geo.scope','classified',latlngObj,radius);
-          self.ready.set(handle.ready());
-    }else{
-      console.log('sub list classified city');
-      let city = Session.get('city');
-      if(city && city.geoShape && city.geoShape.coordinates){
-        let handle = listClassifiedSubs.subscribe('geo.scope','classified',city.geoShape);
-            self.ready.set(handle.ready());
-      }
-    }
-
-  });
-
-  self.autorun(function(c) {
-    const latlngObj = position.getLatlngObject();
-    if (latlngObj) {
-      Meteor.call('getcitiesbylatlng',latlngObj,function(error, result){
-        if(result){
-          //console.log('call city');
-          Session.set('city', result);
-        }
-      });
-    }
-  });
-
+  scopeSubscribe(this,listClassifiedSubs,'geo.scope','classified');
 });
-
-Template.listClassified.onRendered(function() {
-
-  const testgeo = () => {
-    let geolocate = Session.get('geolocate');
-    if(!Session.get('GPSstart') && geolocate && !position.getLatlng()){
-
-      IonPopup.confirm({title:TAPi18n.__('Location'),template:TAPi18n.__('Use the location of your profile'),
-      onOk: function(){
-        if(Citoyens.findOne() && Citoyens.findOne().geo && Citoyens.findOne().geo.latitude){
-          Location.setMockLocation({
-            latitude : Citoyens.findOne().geo.latitude,
-            longitude : Citoyens.findOne().geo.longitude,
-            updatedAt : new Date()
-          });
-          //clear cache
-          /*listEventsSubs.clear();
-          listOrganizationsSubs.clear();
-          listProjectsSubs.clear();
-          listPoiSubs.clear();
-          listClassifiedSubs.clear();
-          listCitoyensSubs.clear();
-          dashboardSubs.clear();*/
-          const geoIdRandom = Random.id();
-          geoId.set('geoId', geoIdRandom);
-        }
-      },
-      onCancel: function(){
-        Router.go('changePosition');
-      },
-      cancelText:TAPi18n.__('no'),
-      okText:TAPi18n.__('yes')
-    });
-  }
-}
-
-Meteor.setTimeout(testgeo, '3000');
-});
-
 
 Template.listClassified.helpers({
   classified () {
@@ -271,6 +196,9 @@ Template.classifiedEdit.helpers({
   }
 });
 
+Template.classifiedFields.inheritsHelpersFrom('organizationsFields');
+Template.classifiedFields.inheritsEventsFrom('organizationsFields');
+Template.classifiedFields.inheritsHooksFrom('organizationsFields');
 
 Template.classifiedFields.helpers({
   parentType (){
@@ -431,6 +359,7 @@ Template.classifiedFields.helpers({
       return subtype[type];
     }else{return false;}
   },
+  /*
   optionsInsee () {
     let postalCode = '';
     let country = '';
@@ -476,6 +405,7 @@ Template.classifiedFields.helpers({
   depName (){
     return pageSession.get('depName') || AutoForm.getFieldValue('depName');
   },
+  */
   dataReadyParent() {
   return Template.instance().readyParent.get();
   }
@@ -487,7 +417,7 @@ Template.classifiedFields.onCreated(function () {
   template.ready = new ReactiveVar();
   template.readyParent = new ReactiveVar();
 
-  pageSession.set('error', false );
+  /*pageSession.set('error', false );
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
@@ -495,7 +425,7 @@ Template.classifiedFields.onCreated(function () {
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
   pageSession.set('geoPosLatitude', null);
-  pageSession.set('geoPosLongitude', null);
+  pageSession.set('geoPosLongitude', null);*/
 
   self.autorun(function(c) {
     if(Router.current().params._id && Router.current().params.scope){
@@ -511,6 +441,7 @@ Template.classifiedFields.onCreated(function () {
 
 Template.classifiedFields.onRendered(function() {
   const self = this;
+  /*
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
@@ -592,6 +523,7 @@ Template.classifiedFields.onRendered(function() {
         }
       }
       });
+      */
 
       self.autorun(function() {
         let parentType = pageSession.get('parentType');
@@ -616,9 +548,9 @@ Template.classifiedFields.onRendered(function() {
 
 });
 
-Template.classifiedFields.onDestroyed(function () {
+/*Template.classifiedFields.onDestroyed(function () {
 this.$('textarea').atwho('destroy');
-});
+});*/
 
 Template.classifiedFields.events({
   'change select[name="parentType"]': function(e, tmpl) {
@@ -650,6 +582,7 @@ Template.classifiedFields.events({
     console.log(tmpl.$(e.currentTarget).val());
     pageSession.set( 'subtype', tmpl.$(e.currentTarget).val() );
   },
+  /*
   'keyup input[name="postalCode"],change input[name="postalCode"]':_.throttle((e, tmpl) => {
     e.preventDefault();
     pageSession.set( 'postalCode', tmpl.$(e.currentTarget).val() );
@@ -724,6 +657,7 @@ Template.classifiedFields.events({
     );
   }
 }, 500)
+*/
 });
 
 AutoForm.addHooks(['addClassified', 'editClassified'], {

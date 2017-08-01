@@ -63,6 +63,7 @@ Template.changePosition.onRendered(function () {
       onOk: function(){
         Session.set( 'city', self);
         if(self.geoShape && self.geoShape.coordinates){
+          Session.set('oldRadius', Session.get('radius'));
           Session.set('radius', false);
         }
         Session.set('geolocate',  false);

@@ -1,6 +1,7 @@
 <template name="listEvents">
+  {{> testgeo}}
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "events"}} {{#if city}} : {{city.name}}{{/if}}</h1>
+  <h1 class="title">{{_ "events"}} {{> cityTitle}}</h1>
   {{/contentFor}}
   {{#contentFor "headerButtonLeft"}}
   <button class="button button-clear pull-left" data-ion-menu-toggle="left">

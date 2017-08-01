@@ -19,7 +19,7 @@ import { Organizations,BlockOrganizationsRest } from '../../api/organizations.js
 import { Cities } from '../../api/cities.js';
 
 //submanager
-import { listOrganizationsSubs,listsSubs } from '../../api/client/subsmanager.js';
+import { listOrganizationsSubs,listsSubs,scopeSubscribe } from '../../api/client/subsmanager.js';
 
 import '../map/map.js';
 import '../components/scope/item.js'
@@ -31,81 +31,11 @@ import { position } from '../../api/client/position.js';
 import { searchQuery,queryGeoFilter } from '../../api/helpers.js';
 
 Template.listOrganizations.onCreated(function () {
-  var self = this;
-  self.ready = new ReactiveVar();
+
   pageSession.set('sortOrganizations', null);
   pageSession.set('searchOrganizations', null);
+  scopeSubscribe(this,listOrganizationsSubs,'geo.scope','organizations');
 
-  //mettre sur layer ?
-  Meteor.subscribe('citoyen');
-
-  //sub listOrganizations
-  self.autorun(function(c) {
-    const radius = position.getRadius();
-    const latlngObj = position.getLatlngObject();
-    if (radius && latlngObj) {
-      console.log('sub list organizations geo radius');
-      let handle = listOrganizationsSubs.subscribe('geo.scope','organizations',latlngObj,radius);
-          self.ready.set(handle.ready());
-    }else{
-      console.log('sub list organizations city');
-      let city = Session.get('city');
-      if(city && city.geoShape && city.geoShape.coordinates){
-        let handle = listOrganizationsSubs.subscribe('geo.scope','organizations',city.geoShape);
-            self.ready.set(handle.ready());
-      }
-    }
-
-  });
-
-  self.autorun(function(c) {
-    const latlngObj = position.getLatlngObject();
-    if (latlngObj) {
-      Meteor.call('getcitiesbylatlng',latlngObj,function(error, result){
-        if(result){
-          //console.log('call city');
-          Session.set('city', result);
-        }
-      });
-    }
-  });
-
-});
-
-Template.listOrganizations.onRendered(function() {
-
-  const testgeo = () => {
-    let geolocate = Session.get('geolocate');
-    if(!Session.get('GPSstart') && geolocate && !position.getLatlng()){
-
-      IonPopup.confirm({title:TAPi18n.__('Location'),template:TAPi18n.__('Use the location of your profile'),
-      onOk: function(){
-        if(Citoyens.findOne() && Citoyens.findOne().geo && Citoyens.findOne().geo.latitude){
-          Location.setMockLocation({
-            latitude : Citoyens.findOne().geo.latitude,
-            longitude : Citoyens.findOne().geo.longitude,
-            updatedAt : new Date()
-          });
-          //clear cache
-          /*listEventsSubs.clear();
-          listOrganizationsSubs.clear();
-          listProjectsSubs.clear();
-          listCitoyensSubs.clear();
-          dashboardSubs.clear();*/
-          const geoIdRandom = Random.id();
-          geoId.set('geoId', geoIdRandom);
-        }
-      },
-      onCancel: function(){
-        Router.go('changePosition');
-      },
-      cancelText:TAPi18n.__('no'),
-      okText:TAPi18n.__('yes')
-    });
-  }
-}
-
-Meteor.setTimeout(testgeo, '3000');
 });
 
 
@@ -453,7 +383,13 @@ Template.organizationsFields.onRendered(function() {
   pageSession.set('geoPosLongitude', null);
 
   let geolocate = Session.get('geolocate');
-  if(geolocate && Router.current().route.getName()!="organizationsEdit" && Router.current().route.getName()!="organizationsBlockEdit"){
+  console.log('geo');
+  if(geolocate && Router.current().route.getName()!="organizationsEdit" && Router.current().route.getName()!="organizationsBlockEdit"
+  && Router.current().route.getName()!="citoyensEdit" && Router.current().route.getName()!="citoyensBlockEdit"
+  && Router.current().route.getName()!="projectsEdit" && Router.current().route.getName()!="projectsBlockEdit"
+  && Router.current().route.getName()!="eventsEdit" && Router.current().route.getName()!="eventsBlockEdit"
+  && Router.current().route.getName()!="poiEdit" && Router.current().route.getName()!="poiBlockEdit"
+  && Router.current().route.getName()!="classifiedEdit"){
     var onOk=IonPopup.confirm({template:TAPi18n.__('Use your current location'),
     onOk: function(){
       const latlngObj = position.getLatlngObject();
@@ -467,8 +403,8 @@ Template.organizationsFields.onRendered(function() {
             pageSession.set('cityName', result.postalCodes[0].name);
             pageSession.set('regionName', result.regionName);
             pageSession.set('depName', result.depName);
-            pageSession.set('geoPosLatitude', result.geo.latitude);
-            pageSession.set('geoPosLongitude', result.geo.longitude);
+            pageSession.set('geoPosLatitude', latlngObj.latitude);
+            pageSession.set('geoPosLongitude', latlngObj.longitude);
           }
         });
       }
