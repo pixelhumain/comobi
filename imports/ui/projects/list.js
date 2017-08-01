@@ -20,7 +20,7 @@ import { Projects,BlockProjectsRest } from '../../api/projects.js';
 import { Cities } from '../../api/cities.js';
 
 //submanager
-import { listProjectsSubs } from '../../api/client/subsmanager.js';
+import { listProjectsSubs,scopeSubscribe } from '../../api/client/subsmanager.js';
 
 import '../map/map.js';
 import '../components/scope/item.js'
@@ -33,81 +33,11 @@ import { searchQuery,queryGeoFilter } from '../../api/helpers.js';
 
 
 Template.listProjects.onCreated(function () {
-  var self = this;
-  self.ready = new ReactiveVar();
+
   pageSession.set('sortProjects', null);
   pageSession.set('searchProjects', null);
+  scopeSubscribe(this,listProjectsSubs,'geo.scope','projects');
 
-  //mettre sur layer ?
-  Meteor.subscribe('citoyen');
-
-  //sub listProjects
-  self.autorun(function(c) {
-    const radius = position.getRadius();
-    const latlngObj = position.getLatlngObject();
-    if (radius && latlngObj) {
-      console.log('sub list projects geo radius');
-      let handle = listProjectsSubs.subscribe('geo.scope','projects',latlngObj,radius);
-          self.ready.set(handle.ready());
-    }else{
-      console.log('sub list projects city');
-      let city = Session.get('city');
-      if(city && city.geoShape && city.geoShape.coordinates){
-        let handle = listProjectsSubs.subscribe('geo.scope','projects',city.geoShape);
-            self.ready.set(handle.ready());
-      }
-    }
-
-  });
-
-  self.autorun(function(c) {
-    const latlngObj = position.getLatlngObject();
-    if (latlngObj) {
-      Meteor.call('getcitiesbylatlng',latlngObj,function(error, result){
-        if(result){
-          //console.log('call city');
-          Session.set('city', result);
-        }
-      });
-    }
-  });
-
-});
-
-Template.listProjects.onRendered(function() {
-
-  const testgeo = () => {
-    let geolocate = Session.get('geolocate');
-    if(!Session.get('GPSstart') && geolocate && !position.getLatlng()){
-
-      IonPopup.confirm({title:TAPi18n.__('Location'),template:TAPi18n.__('Use the location of your profile'),
-      onOk: function(){
-        if(Citoyens.findOne() && Citoyens.findOne().geo && Citoyens.findOne().geo.latitude){
-          Location.setMockLocation({
-            latitude : Citoyens.findOne().geo.latitude,
-            longitude : Citoyens.findOne().geo.longitude,
-            updatedAt : new Date()
-          });
-          //clear cache
-          /*listEventsSubs.clear();
-          listOrganizationsSubs.clear();
-          listProjectsSubs.clear();
-          listCitoyensSubs.clear();
-          dashboardSubs.clear();*/
-          const geoIdRandom = Random.id();
-          geoId.set('geoId', geoIdRandom);
-        }
-      },
-      onCancel: function(){
-        Router.go('changePosition');
-      },
-      cancelText:TAPi18n.__('no'),
-      okText:TAPi18n.__('yes')
-    });
-  }
-}
-
-Meteor.setTimeout(testgeo, '3000');
 });
 
 
@@ -391,6 +321,10 @@ Template.projectsBlockEdit.helpers({
   }
 });
 
+Template.projectsFields.inheritsHelpersFrom('organizationsFields');
+Template.projectsFields.inheritsEventsFrom('organizationsFields');
+Template.projectsFields.inheritsHooksFrom('organizationsFields');
+
 Template.projectsFields.helpers({
   parentType (){
     return pageSession.get('parentType');
@@ -415,6 +349,7 @@ Template.projectsFields.helpers({
       }
     }else{return false;}
   },
+  /*
   optionsInsee () {
     let postalCode = '';
     let country = '';
@@ -460,6 +395,7 @@ Template.projectsFields.helpers({
   depName (){
     return pageSession.get('depName') || AutoForm.getFieldValue('depName');
   },
+  */
   dataReadyParent() {
   return Template.instance().readyParent.get();
   }
@@ -495,6 +431,7 @@ Template.projectsFields.onCreated(function () {
 
 Template.projectsFields.onRendered(function() {
   const self = this;
+  /*
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
@@ -576,6 +513,7 @@ Template.projectsFields.onRendered(function() {
         }
       }
       });
+      */
 
       self.autorun(function() {
         let parentType = pageSession.get('parentType');
@@ -594,9 +532,9 @@ Template.projectsFields.onRendered(function() {
 
 });
 
-Template.projectsFields.onDestroyed(function () {
+/*Template.projectsFields.onDestroyed(function () {
 this.$('textarea').atwho('destroy');
-});
+});*/
 
 Template.projectsFields.events({
   'change select[name="parentType"]': function(e, tmpl) {
@@ -610,6 +548,7 @@ Template.projectsFields.events({
     //console.log(tmpl.$(e.currentTarget).val());
     pageSession.set( 'parentId', tmpl.$(e.currentTarget).val() );
   },
+  /*
   'keyup input[name="postalCode"],change input[name="postalCode"]':_.throttle((e, tmpl) => {
     e.preventDefault();
     pageSession.set( 'postalCode', tmpl.$(e.currentTarget).val() );
@@ -684,6 +623,7 @@ Template.projectsFields.events({
     );
   }
 }, 500)
+*/
 });
 
 AutoForm.addHooks(['addProject', 'editProject'], {

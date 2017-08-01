@@ -103,7 +103,7 @@ Location = {
         } else {
             //Throw enabled back if client is browser
             callback && callback('Enabled');
-        } 
+        }
     },
     getReactivePosition : function() {
         return reactiveLocation.get();
@@ -130,6 +130,18 @@ Location = {
 
                     callback && callback(fixed)
                 }
+
+            }, failureCallback, this._positionOptions);
+        }
+    },
+    locateNoFilter : function(callback, failureCallback) {
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                Location.debug && console.log("Get Current Position Received New Position: " + JSON.stringify(pos));
+
+                    var fixed = storePosition(pos);
+
+                    callback && callback(fixed)
 
             }, failureCallback, this._positionOptions);
         }
@@ -244,4 +256,3 @@ function isSecondsAway(date, seconds) {
 
     return !((now.getTime() - date.getTime()) <= (seconds * 1000))
 };
-

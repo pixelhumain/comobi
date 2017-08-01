@@ -1,5 +1,6 @@
 import '../imports/startup/client';
 
+import '../imports/ui/global/global.js';
 
 import '../imports/ui/pixel.js';
 
@@ -11,10 +12,6 @@ import '../imports/ui/images/images.js';
 
 import '../imports/ui/dashboard/dashboard.js';
 
-import '../imports/ui/events/attendees/attendees.js';
-import '../imports/ui/events/sousevent/sousevent.js';
-import '../imports/ui/events/list.js';
-
 import '../imports/ui/mapscope/mapscope.js';
 
 import '../imports/ui/news/detail/comments/comments.js';
@@ -23,6 +20,10 @@ import '../imports/ui/news/news.js';
 
 import '../imports/ui/organizations/members/members.js';
 import '../imports/ui/organizations/list.js';
+
+import '../imports/ui/events/attendees/attendees.js';
+import '../imports/ui/events/sousevent/sousevent.js';
+import '../imports/ui/events/list.js';
 
 import '../imports/ui/projects/contributors/contributors.js';
 import '../imports/ui/projects/list.js';

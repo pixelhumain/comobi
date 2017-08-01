@@ -8,12 +8,15 @@ import { listEventsSubs,listOrganizationsSubs,listProjectsSubs,listCitoyensSubs,
 
 import { geoId } from '../../api/client/reactive.js';
 
+import { position } from '../../api/client/position.js';
+
 import './settings.html';
 
 Template.settings.events({
   "change #radius": function(e, t) {
     let value = parseInt(t.find('#radius').value);
     Session.set('radius',  value);
+    Session.set('oldRadius', value);
     //clear cache
     /*listEventsSubs.clear();
     listOrganizationsSubs.clear();
@@ -31,6 +34,8 @@ Template.settings.events({
   'click #geolocate': function(e, t) {
     if(t.find('#geolocate').checked){
       Session.set('geolocate', true);
+      Session.set('radius', Session.get('oldRadius'));
+      position.locateNoFilter();
       //clear cache
       /*listEventsSubs.clear();
       listOrganizationsSubs.clear();

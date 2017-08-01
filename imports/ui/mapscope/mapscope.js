@@ -19,7 +19,7 @@ import { Citoyens } from '../../api/citoyens.js';
 import { nameToCollection } from '../../api/helpers.js';
 
 //submanager
-import { listEventsSubs,listOrganizationsSubs,listProjectsSubs,listPoiSubs,listClassifiedSubs,listCitoyensSubs } from '../../api/client/subsmanager.js';
+import { listEventsSubs,listOrganizationsSubs,listProjectsSubs,listPoiSubs,listClassifiedSubs,listCitoyensSubs,scopeSubscribe } from '../../api/client/subsmanager.js';
 
 import { position } from '../../api/client/position.js';
 import { queryGeoFilter } from '../../api/helpers.js';
@@ -43,30 +43,10 @@ subs.citoyens = listCitoyensSubs;
 
 Template.mapCanvas.onCreated(function () {
   var self = this;
-  self.ready = new ReactiveVar();
-
-  //mettre sur layer ?
-  Meteor.subscribe('citoyen');
+  scopeSubscribe(this,subs[Router.current().params.scope],'geo.scope',Router.current().params.scope);
 
   self.autorun(function(c) {
     Session.set("currentScopeId", Router.current().params._id);
-  });
-
-  //sub listEvents
-  self.autorun(function(c) {
-    const radius = position.getRadius();
-    const latlngObj = position.getLatlngObject();
-    if (radius && latlngObj) {
-      let handle = subs[Router.current().params.scope].subscribe('geo.scope',Router.current().params.scope,latlngObj,radius);
-      self.ready.set(handle.ready());
-    }else{
-      let city = Session.get('city');
-      if(city && city.geoShape && city.geoShape.coordinates){
-        let handle = subs[Router.current().params.scope].subscribe('geo.scope',Router.current().params.scope,city.geoShape);
-        self.ready.set(handle.ready());
-      }
-    }
-
   });
 
 });

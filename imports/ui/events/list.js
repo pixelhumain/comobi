@@ -22,7 +22,7 @@ import { Events,BlockEventsRest } from '../../api/events.js';
 import { Cities } from '../../api/cities.js';
 
 //submanager
-import { listEventsSubs,listsSubs } from '../../api/client/subsmanager.js';
+import { listEventsSubs,listsSubs,scopeSubscribe } from '../../api/client/subsmanager.js';
 
 import '../map/map.js';
 import '../components/scope/item.js'
@@ -34,80 +34,11 @@ import { position } from '../../api/client/position.js';
 import { searchQuery,queryGeoFilter } from '../../api/helpers.js';
 
 Template.listEvents.onCreated(function () {
-  const template = Template.instance();
-  template.ready = new ReactiveVar();
+
   pageSession.set('sortEvents', null);
   pageSession.set('searchEvents', null);
+  scopeSubscribe(this,listEventsSubs,'geo.scope','events');
 
-  //mettre sur layer ?
-  //Meteor.subscribe('citoyen');
-
-  //sub listEvents
-  this.autorun(function(c) {
-    const radius = position.getRadius();
-    const latlngObj = position.getLatlngObject();
-    if (radius && latlngObj) {
-      const handle = listEventsSubs.subscribe('geo.scope','events',latlngObj,radius);
-          template.ready.set(handle.ready());
-    }else{
-      console.log('sub list events city');
-      let city = Session.get('city');
-      if(city && city.geoShape && city.geoShape.coordinates){
-        const handle = listEventsSubs.subscribe('geo.scope','events',city.geoShape);
-            template.ready.set(handle.ready());
-      }
-    }
-
-  });
-
-  this.autorun(function(c) {
-    const latlngObj = position.getLatlngObject();
-    if (latlngObj) {
-      Meteor.call('getcitiesbylatlng',latlngObj,function(error, result){
-        if(result){
-          //console.log('call city');
-          Session.set('city', result);
-        }
-      });
-    }
-  });
-
-});
-
-Template.listEvents.onRendered(function() {
-
-  const testgeo = () => {
-    let geolocate = Session.get('geolocate');
-    if(!Session.get('GPSstart') && geolocate && !position.getLatlng()){
-
-      IonPopup.confirm({title:TAPi18n.__('Location'),template:TAPi18n.__('Use the location of your profile'),
-      onOk: function(){
-        if(Citoyens.findOne() && Citoyens.findOne().geo && Citoyens.findOne().geo.latitude){
-          Location.setMockLocation({
-            latitude : Citoyens.findOne().geo.latitude,
-            longitude : Citoyens.findOne().geo.longitude,
-            updatedAt : new Date()
-          });
-          //clear cache
-          /*listEventsSubs.clear();
-          listOrganizationsSubs.clear();
-          listProjectsSubs.clear();
-          listCitoyensSubs.clear();
-          dashboardSubs.clear();*/
-          const geoIdRandom = Random.id();
-          geoId.set('geoId', geoIdRandom);
-        }
-      },
-      onCancel: function(){
-        Router.go('changePosition');
-      },
-      cancelText:TAPi18n.__('no'),
-      okText:TAPi18n.__('yes')
-    });
-  }
-}
-
-Meteor.setTimeout(testgeo, '3000');
 });
 
 
@@ -471,6 +402,9 @@ Template.eventsBlockEdit.helpers({
   }
 });
 
+Template.eventsFields.inheritsHelpersFrom('organizationsFields');
+Template.eventsFields.inheritsEventsFrom('organizationsFields');
+Template.eventsFields.inheritsHooksFrom('organizationsFields');
 
 
 Template.eventsFields.helpers({
@@ -537,6 +471,7 @@ Template.eventsFields.helpers({
       }
     }else{return false;}
   },
+  /*
   optionsInsee () {
     let postalCode = '';
     let country = '';
@@ -582,6 +517,7 @@ Template.eventsFields.helpers({
   depName (){
     return pageSession.get('depName') || AutoForm.getFieldValue('depName');
   },
+  */
   dataReadyOrganizer() {
   return Template.instance().readyOrganizer.get();
   },
@@ -596,14 +532,14 @@ Template.eventsFields.onCreated(function () {
   template.ready = new ReactiveVar();
   template.readyOrganizer = new ReactiveVar();
   template.readyParent = new ReactiveVar();
-  pageSession.set('postalCode', null);
+  /*pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
   pageSession.set('geoPosLatitude', null);
-  pageSession.set('geoPosLongitude', null);
+  pageSession.set('geoPosLongitude', null);*/
   /*pageSession.set('organizerType', null);
   pageSession.set('organizerId', null);*/
 
@@ -621,6 +557,7 @@ Template.eventsFields.onCreated(function () {
 
 Template.eventsFields.onRendered(function() {
   const self = this;
+  /*
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
@@ -702,6 +639,7 @@ Template.eventsFields.onRendered(function() {
       }
     }
   });
+  */
 
   self.autorun(function() {
     let organizerType = pageSession.get('organizerType');
@@ -733,9 +671,9 @@ Template.eventsFields.onRendered(function() {
 
 });
 
-Template.eventsFields.onDestroyed(function () {
+/*Template.eventsFields.onDestroyed(function () {
 this.$('textarea').atwho('destroy');
-});
+});*/
 
 Template.eventsFields.events({
   'change select[name="organizerType"]': function(e, tmpl) {
@@ -749,6 +687,7 @@ Template.eventsFields.events({
     //console.log(tmpl.$(e.currentTarget).val());
     pageSession.set( 'organizerId', tmpl.$(e.currentTarget).val() );
   },
+  /*
   'keyup input[name="postalCode"],change input[name="postalCode"]':_.throttle((e, tmpl) => {
     e.preventDefault();
     pageSession.set( 'postalCode', tmpl.$(e.currentTarget).val() );
@@ -823,6 +762,7 @@ Template.eventsFields.events({
     );
   }
 }, 500)
+*/
 });
 
 AutoForm.addHooks(['addEvent', 'editEvent'], {
