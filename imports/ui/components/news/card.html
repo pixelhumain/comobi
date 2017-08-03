@@ -48,6 +48,7 @@
       {{#if isAdmin}}
       {{#unless ../shareVisible}}
       <a href="" class="photo-link-scope">{{> imgDoc imageDoc=imageDoc resized="340x340"}}</a>
+      {{> scopeFileUpload}}
       {{else}}
       {{> imgDoc imageDoc=imageDoc resized="340x340"}}
       {{/unless}}
