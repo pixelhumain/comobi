@@ -4,10 +4,27 @@
     <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
   {{else}}
   {{#with this.imageDoc}}
-  <img src="{{urlImageCommunecter}}/{{urlModuleCommunecter}}/document/resized/{{#if ../resized}}{{../resized}}{{else}}50x50{{/if}}/upload/{{moduleId}}/{{folder}}/{{name}}">
+  {{#if equals ../resized '80x80'}}
+  <img src="{{urlImageCommunecter}}/upload/{{moduleId}}/{{folder}}/thumb/{{name}}">
+  {{else if  equals ../resized '50x50'}}
+  <img src="{{urlImageCommunecter}}/upload/{{moduleId}}/{{folder}}/thumb/{{name}}">
+  {{else if  equals ../resized '340x340'}}
+  <img src="{{urlImageCommunecter}}/upload/{{moduleId}}/{{folder}}/thumb/{{name}}">
+  {{else}}
+  <img src="{{urlImageCommunecter}}/upload/{{moduleId}}/{{folder}}/thumb/{{name}}">
+  {{/if}}
+  
   {{else}}
   {{#with imageDoc}}
-  <img src="{{urlImageCommunecter}}/{{urlModuleCommunecter}}/document/resized/{{#if ../resized}}{{../resized}}{{else}}50x50{{/if}}/upload/{{moduleId}}/{{folder}}/{{name}}">
+  {{#if equals ../resized '80x80'}}
+  <img src="{{urlImageCommunecter}}/upload/{{moduleId}}/{{folder}}/thumb/{{name}}">
+  {{else if  equals ../resized '50x50'}}
+  <img src="{{urlImageCommunecter}}/upload/{{moduleId}}/{{folder}}/thumb/{{name}}">
+  {{else if  equals ../resized '340x340'}}
+  <img src="{{urlImageCommunecter}}/upload/{{moduleId}}/{{folder}}/thumb/{{name}}">
+  {{else}}
+  <img src="{{urlImageCommunecter}}/upload/{{moduleId}}/{{folder}}/thumb/{{name}}">
+  {{/if}}
   {{else}}
   <img src="/pas-de-photo{{#if resized}}{{resized}}{{else}}50x50{{/if}}.png">
   {{/with}}

@@ -104,7 +104,7 @@
     {{#transition in="zoomIn" out="bounceOut"}}
     {{#each listMembersToBeValidated}}
     <div class="item item-avatar item-text-wrap animated out">
-      {{> imgDoc imageDoc=(imageDoc _id._str)}}
+      {{> imgDoc profilThumbImageUrl=profilThumbImageUrl }}
       <p><a href="{{pathFor 'detailList' _id=_id._str scope='citoyens'}}" class="dark">{{name}}</a>
         {{#if equals ../scopeVar 'organizations'}}
         {{_ "wants to become a member of the organization"}}
@@ -192,10 +192,10 @@
       {{> imgDoc imageDoc=photoNewsAlbums.[0] resized="80x80"}}
       {{else}}
       {{#if imageDoc}}
-      {{> imgDoc imageDoc=imageDoc resized="80x80"}}
+      {{> imgDoc profilThumbImageUrl=profilThumbImageUrl resized="80x80"}}
       {{else}}
       {{#if imageDoc authorNews._id._str}}
-      {{> imgDoc imageDoc=(imageDoc authorNews._id._str profil=true) resized="80x80"}}
+      {{> imgDoc profilThumbImageUrl=authorNews.profilThumbImageUrl resized="80x80"}}
       {{/if}}
       {{/if}}
       {{/if}}
@@ -253,10 +253,10 @@
       {{> imgDoc imageDoc=photoNewsAlbums.[0] resized="80x80"}}
       {{else}}
       {{#if imageDoc}}
-      {{> imgDoc imageDoc=imageDoc resized="80x80"}}
+      {{> imgDoc profilThumbImageUrl=profilThumbImageUrl resized="80x80"}}
       {{else}}
       {{#if imageDoc authorNews._id._str}}
-      {{> imgDoc imageDoc=(imageDoc authorNews._id._str profil=true) resized="80x80"}}
+      {{> imgDoc profilThumbImageUrl=authorNews.profilThumbImageUrl resized="80x80"}}
       {{/if}}
       {{/if}}
       {{/if}}

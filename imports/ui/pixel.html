@@ -72,17 +72,9 @@
     <h1 class="title"><i class="icon ion-android-notifications"></i> {{_ "notifications"}}</h1>
   </div>
   <div class="content has-header">
-    <div class="list">
-      <div class="item item-stable item-checkbox item-checkbox-right">
-        <label class="checkbox checkbox-positive all-read">
-          <input type="checkbox" checked="{{allReadChecked notificationsCountRead}}">
-        </label>
-        {{_ "All read"}}
-      </div>
-      {{#if currentUser}}
-      {{> notificationsList notifications=notifications}}
-      {{/if}}
-    </div>
+
+    {{> notificationsListSwipMenu notifications=notifications allReadChecked=(allReadChecked notificationsCountRead)}}
+
   </div>
   {{/ionSideMenu}}
 

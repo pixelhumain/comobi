@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { Router } from 'meteor/iron:router';
+import { $ } from 'meteor/jquery';
 
 import { ActivityStream } from '../../api/activitystream.js';
 
@@ -20,6 +21,45 @@ Template.notifications.onCreated(function () {
 
 });
 
+Template.notificationsListSwip.onRendered(function () {
+const self = this;
+  self.autorun(function (c) {
+    if (self.data && self.data.notifications){
+      const list = self.$('.list')[0];
+      new Slip(list)
+      c.stop();
+    }
+  });
+
+});
+
+Template.notificationsListSwip.events({
+'slip:beforeswipe .list .no-swipe': function(e, template) {
+  e.preventDefault();
+},
+'slip:afterswipe .list .item': function(e, template) {
+  console.log('slip:afterswipe');
+  e.preventDefault();
+},
+'slip:swipe .list .item': function(e, template) {
+console.log('slip:swipe');
+console.log(this._id._str);
+    console.log('slip:remove');
+    e.target.parentNode.removeChild(e.target);
+Meteor.call('markRead', this._id._str, function(err, resp) {
+      console.log('mark as read response', resp)
+  });
+},
+'slip:beforewait .list .item': function(e, template) {
+console.log('slip:beforewait');
+},
+});
+
+Template.notificationsListSwipMenu.inheritsHelpersFrom('notificationsListSwip');
+Template.notificationsListSwipMenu.inheritsEventsFrom('notificationsListSwip');
+Template.notificationsListSwipMenu.inheritsHooksFrom('notificationsListSwip');
+
+
 Template.notifications.helpers({
   dataReady() {
   return Template.instance().ready.get();
@@ -31,6 +71,7 @@ Template.notifications.helpers({
     return ActivityStream.api.isUnread();
   }
 });
+
 
 Template.notificationsList.events({
   'click .validateYes': function(event, template) {

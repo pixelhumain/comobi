@@ -14,16 +14,36 @@
 {{#if dataReady}}
   {{#ionView hide-nav-bar="true"}}
   {{#ionContent}}
-  <div class="list">
-    <div class="item item-divider">
-      <i class="icon ion-speakerphone"></i> {{_ "notifications"}} <span class="badge badge-dark">{{notificationsCount}}</span>
-    </div>
-    {{> notificationsList notifications=notifications}}
-  </div>
+  {{> notificationsListSwip notifications=notifications notificationsCount=notificationsCount}}
   {{/ionContent}}
   {{/ionView}}
   {{/if}}
 </template>
+
+
+<template name="notificationsListSwipMenu">
+<div class="list">
+  <div class="item item-stable item-checkbox item-checkbox-right no-swipe">
+    <label class="checkbox checkbox-positive all-read">
+      <input type="checkbox" checked="{{allReadChecked}}">
+    </label>
+    {{_ "All read"}}
+  </div>
+  {{#if currentUser}}
+  {{> notificationsList notifications=notifications}}
+  {{/if}}
+</div>
+</template>
+
+<template name="notificationsListSwip">
+<div class="list">
+  <div class="item item-divider no-swipe">
+    <i class="icon ion-speakerphone"></i> {{_ "notifications"}} <span class="badge badge-dark">{{notificationsCount}}</span>
+  </div>
+  {{> notificationsList notifications=notifications}}
+</div>
+</template>
+
 
 <template name="notificationsList">
 
@@ -45,9 +65,9 @@
 </div>
 {{/if}}
 {{else}}
-{{#ionItem}}
+<div class="item no-swipe">
 {{_ "not notifications"}}
-{{/ionItem}}
+</div>
 {{/each}}
 {{/transition}}
 

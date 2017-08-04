@@ -97,7 +97,8 @@ const queryOptions = {sort: {"name": 1}, fields: {
   '_id': 1,
   'name': 1,
   'links': 1,
-  'tags': 1
+  'tags': 1,
+  'profilThumbImageUrl': 1
 }};
 
 export const searchQuery = (query,search) => {
