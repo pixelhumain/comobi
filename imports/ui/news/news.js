@@ -545,7 +545,7 @@ return ;
            }});
          },
          onCancel: function(){
-           Router.go('detailList', {_id:self._id._str,scope:scope});
+           Router.go('newsList', {_id:self._id._str,scope:scope});
          },
          cancelText:TAPi18n.__('finish'),
          okText:TAPi18n.__('other picture')
@@ -646,7 +646,7 @@ return ;
         template.$('#file-upload-new').trigger('click');
         },
         onCancel: function(){
-          Router.go('detailList', {_id:self._id._str,scope:scope});
+          Router.go('newsList', {_id:self._id._str,scope:scope});
         },
         cancelText:TAPi18n.__('finish'),
         okText:TAPi18n.__('other picture')

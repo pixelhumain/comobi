@@ -167,6 +167,11 @@ Template.registerHelper('equals',
   }
 );
 
+Template.registerHelper('nequals',
+  function(v1, v2) {
+    return (v1 !== v2);
+  }
+);
 
 Template.registerHelper('diffInText',
 function(start, end) {

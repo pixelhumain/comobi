@@ -93,8 +93,6 @@ if(!userC) {
 
 if(Meteor.isDevelopment){
 Push.debug = true;
-}
-
 Push.Configure({
   gcm: {
     apiKey: Meteor.settings.pushapiKey,
@@ -105,7 +103,21 @@ Push.Configure({
   badge: true,
   alert: true,
   vibrate: true,
+  sendInterval: null
 });
+}else{
+  Push.Configure({
+    gcm: {
+      apiKey: Meteor.settings.pushapiKey,
+      projectNumber: 376774334081
+    },
+    production: true,
+    sound: true,
+    badge: true,
+    alert: true,
+    vibrate: true,
+  });
+}
 
 /*Push.Configure({
   apn: {

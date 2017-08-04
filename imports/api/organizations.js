@@ -329,7 +329,7 @@ export const SchemasOrganizationsRest = new SimpleSchema([baseSchema,geoSchema,{
 
       let scopeTypeArray = ['public','restricted'];
       if (this.isMembers(bothUserId)) {
-        //scopeTypeArray.push('private');
+        scopeTypeArray.push('private');
         query['$or'].push({'target.id':targetId,'scope.type':{$in:scopeTypeArray}});
         query['$or'].push({'mentions.id':targetId});
       }else{

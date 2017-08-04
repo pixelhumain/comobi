@@ -789,7 +789,7 @@ indexMax:20*/
       throw new Meteor.Error("not-authorized");
     }
     const doc = {};
-    doc.id = documentId;
+    /*doc.id = documentId;
     doc.content = modifier["$set"].text;
     doc.contextId = modifier["$set"].contextId;
     doc.contextType = modifier["$set"].contextType;
@@ -797,8 +797,13 @@ indexMax:20*/
       doc.parentCommentId = modifier["$set"].parentCommentId;
     }else{
       doc.parentCommentId = "";
-    }
-    var retour = apiCommunecter.postPixel("comment","save",doc);
+    }*/
+
+    doc.name = 'text';
+    doc.value = modifier["$set"].text;
+    doc.pk = documentId._str;
+
+    var retour = apiCommunecter.postPixel("comment","updatefield",doc);
     return retour;
   },
   deleteComment (commentId) {
@@ -807,7 +812,7 @@ indexMax:20*/
       throw new Meteor.Error("not-authorized");
     }
 
-    if (!Comment.findOne({_id:new Mongo.ObjectID(commentId)}).isAuthor()) {
+    if (!Comments.findOne({_id:new Mongo.ObjectID(commentId)}).isAuthor()) {
       throw new Meteor.Error("not-authorized");
     }
 
@@ -985,8 +990,19 @@ updateCitoyen (modifier,documentId){
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
-    if (!News.findOne({_id:new Mongo.ObjectID(documentId)}).isAuthor()) {
-      throw new Meteor.Error("not-authorized");
+
+    const newsOne = News.findOne({_id:new Mongo.ObjectID(newsId)});
+    if(newsOne.target.type=="organizations" || newsOne.target.type=="projects" || newsOne.target.type=="poi" || newsOne.target.type=="events"){
+      const collection = nameToCollection(newsOne.target.type);
+      if (!newsOne.isAuthor()) {
+      if (!collection.findOne({_id:new Mongo.ObjectID(newsOne.target.id)}).isAdmin()) {
+        throw new Meteor.Error("not-authorized");
+      }
+    }
+    }else if(newsOne.target.type=="citoyens"){
+      if (!newsOne.isAuthor()) {
+        throw new Meteor.Error("not-authorized");
+      }
     }
 
     const doc = modifier["$set"];
@@ -1017,12 +1033,20 @@ updateCitoyen (modifier,documentId){
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
-
-    if (!News.findOne({_id:new Mongo.ObjectID(newsId)}).isAuthor()) {
-      throw new Meteor.Error("not-authorized");
+    const newsOne = News.findOne({_id:new Mongo.ObjectID(newsId)});
+    if(newsOne.target.type=="organizations" || newsOne.target.type=="projects" || newsOne.target.type=="poi" || newsOne.target.type=="events"){
+      const collection = nameToCollection(newsOne.target.type);
+      if (!newsOne.isAuthor()) {
+      if (!collection.findOne({_id:new Mongo.ObjectID(newsOne.target.id)}).isAdmin()) {
+        throw new Meteor.Error("not-authorized");
+      }
+    }
+    }else if(newsOne.target.type=="citoyens"){
+      if (!newsOne.isAuthor()) {
+        throw new Meteor.Error("not-authorized");
+      }
     }
 
-const newsOne = News.findOne({_id:new Mongo.ObjectID(newsId)});
 if(newsOne &&newsOne.media && newsOne.media.images){
   let arrayId = newsOne.media.images.map((_id) => {
     return new Mongo.ObjectID(_id)
@@ -1040,6 +1064,7 @@ doc.docId=newsDoc._id._str;
   apiCommunecter.postPixel("document",`delete/dir/${Meteor.settings.module}/type/${newsOne.target.type}/parentId/${newsOne.target.id}`,doc);
 });
 }
+
   const retour = apiCommunecter.postPixel("news",`delete/id/${newsId}`,{});
   return retour;
 },
@@ -1461,7 +1486,7 @@ doc.docId=newsDoc._id._str;
     docRetour.key='organization';
     docRetour.collection='organizations';
 
-    console.log(docRetour);
+    //console.log(docRetour);
 
     var retour = apiCommunecter.postPixel("element","save",docRetour);
     return retour;

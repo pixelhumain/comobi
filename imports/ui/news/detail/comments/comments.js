@@ -30,26 +30,31 @@ let pageSession = new ReactiveDict('pageComments');
 Template.newsDetailComments.onCreated(function () {
   const template = Template.instance();
   template.ready = new ReactiveVar();
+  template.scope = Router.current().params.scope;
+  template._id = Router.current().params._id;
+  template.newsId = Router.current().params.newsId;
   this.autorun(function(c) {
-      Session.set('scopeId', Router.current().params._id);
-      Session.set('scope', Router.current().params.scope);
+      Session.set('scopeId', template._id);
+      Session.set('scope', template.scope);
   });
 
   this.autorun(function(c) {
-      const handle = singleSubs.subscribe('scopeDetail',Router.current().params.scope,Router.current().params._id);
-      const handleScopeDetail = singleSubs.subscribe('newsDetailComments', Router.current().params.scope,Router.current().params._id,Router.current().params.newsId);
+    if(template.scope && template._id && template.newsId){
+      const handle = singleSubs.subscribe('scopeDetail',template.scope,template._id);
+      const handleScopeDetail = singleSubs.subscribe('newsDetailComments', template.scope,template._id,template.newsId);
       if(handle.ready() && handleScopeDetail.ready()){
         template.ready.set(handle.ready());
       }
+    }
   });
 
 });
 
 Template.newsDetailComments.helpers({
   scope () {
-    if(Router.current().params.scope){
-    const collection = nameToCollection(Router.current().params.scope);
-    return collection.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
+    if(Template.instance().scope && Template.instance()._id && Template.instance().newsId && Template.instance().ready.get()){
+    const collection = nameToCollection(Template.instance().scope);
+    return collection.findOne({_id:new Mongo.ObjectID(Template.instance()._id)});
     }
   },
   dataReady() {
@@ -130,7 +135,7 @@ Template.commentsEdit.onCreated(function () {
 
   self.autorun(function(c) {
     const handle = singleSubs.subscribe('scopeDetail',Router.current().params.scope,Router.current().params._id);
-    const handleScopeDetail = singleSubs.subscribe('newsDetailComments', Router.current().params.newsId);
+    const handleScopeDetail = singleSubs.subscribe('newsDetailComments',Router.current().params.scope,Router.current().params._id,Router.current().params.newsId);
       if(handle.ready() && handleScopeDetail.ready()){
         self.ready.set(handle.ready());
       }

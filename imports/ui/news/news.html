@@ -179,7 +179,7 @@
 <template name="scopeFilActusTemplate">
   <div class="list">
     <div class="item item-divider homestead">
-      <i class="icon fa fa-rss"></i>  {{_ "Fil d'actus"}} {{name}} <span class="badge badge-dark">{{countNews}}</span>
+      <i class="icon fa fa-rss"></i>  {{_ "Fil d'actus"}} {{name}}
     </div>
 
     {{> Template.dynamic template=scopeBoutonNewsTemplate data=this}}
@@ -218,6 +218,7 @@
       <a href="{{pathFor 'detailList' _id=object.id scope=object.type}}" class="positive">{{objectNews.name}}</a></p>
       {{else}}
       <p>{{_ "author"}} : {{authorNews.name}}</p>
+      {{#if nequals authorNews.name targetNews.name}}<p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a></p>{{/if}}
       {{/if}}
       <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
     </a>
@@ -277,6 +278,7 @@
       <a href="{{pathFor 'detailList' _id=object.id scope=object.type}}" class="positive">{{objectNews.name}}</a></p>
       {{else}}
       <p>{{_ "author"}} : {{authorNews.name}}</p>
+      {{#if nequals authorNews.name targetNews.name}}<p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a></p>{{/if}}
       {{/if}}
       <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
     </a>
@@ -467,6 +469,7 @@
       <a href="{{pathFor 'newsAdd' _id=_id._str scope=scopeVar}}" class="button button-small">{{> ionIcon icon="compose"}}</a>
       {{/if}}
     </div>
+    {{> scopeFileUploadNews}}
 </template>
 
 <template name="boutonCardorganizations">
@@ -504,6 +507,7 @@
       <a href="{{pathFor 'newsAdd' _id=_id._str scope=scopeVar}}" class="button button-small">{{> ionIcon icon="compose"}}</a>
       {{/if}}
     </div>
+    {{> scopeFileUploadNews}}
 </template>
 
 <template name="boutonCardprojects">
@@ -540,6 +544,7 @@
       <a href="{{pathFor 'newsAdd' _id=_id._str scope=scopeVar}}" class="button button-small">{{> ionIcon icon="compose"}}</a>
       {{/if}}
     </div>
+    {{> scopeFileUploadNews}}
 </template>
 
 <template name="boutonCardpoi">
