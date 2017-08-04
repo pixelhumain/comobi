@@ -22,7 +22,7 @@
   <div class="list card">
     <div class="item {{#if imageDoc authorComments._id._str}}item-avatar{{/if}}">
       {{#if imageDoc authorComments._id._str}}
-      {{> imgDoc imageDoc=(imageDoc authorComments._id._str) resized="80x80"}}
+      {{> imgDoc profilThumbImageUrl=authorComments.profilThumbImageUrl resized="80x80"}}
       {{/if}}
       <p><i class="icon ion-person"></i>  <a href="{{pathFor 'detailList' _id=author scope='citoyens'}}" class="dark">{{authorComments.name}}</a></p>
       <p><i class="icon ion-clock"></i> {{livestamp dateComments}}</p>

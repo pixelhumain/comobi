@@ -21,19 +21,19 @@ import '../imports/ui/news/news.js';
 import '../imports/ui/organizations/members/members.js';
 import '../imports/ui/organizations/list.js';
 
-import '../imports/ui/events/attendees/attendees.js';
-import '../imports/ui/events/sousevent/sousevent.js';
-import '../imports/ui/events/list.js';
+import '../imports/ui/citoyens/follows/follows.js';
+import '../imports/ui/citoyens/list.js';
 
 import '../imports/ui/projects/contributors/contributors.js';
 import '../imports/ui/projects/list.js';
 
+import '../imports/ui/events/attendees/attendees.js';
+import '../imports/ui/events/sousevent/sousevent.js';
+import '../imports/ui/events/list.js';
+
 import '../imports/ui/poi/list.js';
 
 import '../imports/ui/classified/list.js';
-
-import '../imports/ui/citoyens/follows/follows.js';
-import '../imports/ui/citoyens/list.js';
 
 import '../imports/ui/directory/directory.js';
 

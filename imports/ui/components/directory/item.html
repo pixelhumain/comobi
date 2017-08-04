@@ -1,6 +1,6 @@
 <template name="Directory_item">
   <div class="item item-avatar {{#if toBeValidated}}item-icon-right{{else}}item-button-right{{/if}} animated out">
-    {{> imgDoc imageDoc=(imageDoc item._id._str)}}
+    {{> imgDoc profilThumbImageUrl=item.profilThumbImageUrl}}
     <h2><a href="{{pathFor 'detailList' _id=item._id._str scope=scope}}" class="dark">{{item.name}}</a></h2>
     {{#if typeValue}}{{typeValue}}{{/if}}{{#if isAdmin}}<span class="positive"><i class="icon fa fa-circle"></i></span>{{/if}}
     {{#unless notButton}}

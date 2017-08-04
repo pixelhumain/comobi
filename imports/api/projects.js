@@ -177,7 +177,7 @@ export const SchemasProjectsRest = new SimpleSchema([baseSchema,geoSchema,{
       if(bothUserId && this.parentId && this.parentType && _.contains(['organizations'], this.parentType)){
           console.log(this.organizerProject());
           console.log(`${this.parentType}:${this.parentId}`);
-          return this.organizerProject().isAdmin(bothUserId);
+          return this.organizerProject() && this.organizerProject().isAdmin(bothUserId);
         }else{
           return (this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].isAdmin && this.isToBeValidated(bothUserId)) ? true : false;
         }

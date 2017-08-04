@@ -367,7 +367,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 							_id: new Mongo.ObjectID(scopeD.creator)
 						}, {
 							fields: {
-								'name': 1
+								'name': 1,
+								'profilThumbImageUrl': 1
 							}
 						});
 					}
@@ -381,7 +382,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 							fields: {
 								'name': 1,
 								'links': 1,
-								'collections': 1
+								'collections': 1,
+								'profilThumbImageUrl': 1
 							}
 						});
 					}
@@ -397,7 +399,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 						}, {
 							fields: {
 								'name': 1,
-								'links': 1
+								'links': 1,
+								'profilThumbImageUrl': 1
 							}
 						});
 					}
@@ -409,7 +412,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 						}, {
 							fields: {
 								'name': 1,
-								'links': 1
+								'links': 1,
+								'profilThumbImageUrl': 1
 							}
 						});
 					}
@@ -493,7 +497,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 								find: function(news) {
 									const queryOptions = {fields: {
 										'_id': 1,
-										'name': 1
+										'name': 1,
+										'profilThumbImageUrl': 1
 									}};
 										if(news.target && news.target.type && news.target.id){
 											const collection = nameToCollection(news.target.type);
@@ -515,7 +520,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 								find: function(news) {
 									const queryOptions = {fields: {
 										'_id': 1,
-										'name': 1
+										'name': 1,
+										'profilThumbImageUrl': 1
 									}};
 										if(news.object && news.object.type && news.object.id){
 											const collection = nameToCollection(news.object.type);
@@ -806,7 +812,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 										}, {
 											fields: {
 												'name': 1,
-												'links': 1
+												'links': 1,
+												'profilThumbImageUrl': 1
 											}
 										});
 									}
@@ -868,7 +875,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 										}, {
 											fields: {
 												'name': 1,
-												'links': 1
+												'links': 1,
+												'profilThumbImageUrl': 1
 											}
 										});
 									}
@@ -925,7 +933,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 											}, {
 												fields: {
 													'name': 1,
-													'links': 1
+													'links': 1,
+													'profilThumbImageUrl': 1
 												}
 											});
 										}
@@ -982,7 +991,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 												}, {
 													fields: {
 														'name': 1,
-														'links': 1
+														'links': 1,
+														'profilThumbImageUrl': 1
 													}
 												});
 											}
@@ -1233,7 +1243,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 									fields: {
 										'_id': 1,
 										'name': 1,
-										'links.follows': 1
+										'links.follows': 1,
+										'profilThumbImageUrl': 1
 									}
 								});
 							},
@@ -1310,7 +1321,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 							find: function(news) {
 								const queryOptions = {fields: {
 									'_id': 1,
-									'name': 1
+									'name': 1,
+									'profilThumbImageUrl': 1
 								}};
 									if(news.target && news.target.type && news.target.id){
 										const collection = nameToCollection(news.target.type);
@@ -1332,7 +1344,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 							find: function(news) {
 								const queryOptions = {fields: {
 									'_id': 1,
-									'name': 1
+									'name': 1,
+									'profilThumbImageUrl': 1
 								}};
 									if(news.object && news.object.type && news.object.id){
 										const collection = nameToCollection(news.object.type);
@@ -1401,7 +1414,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 									_id: new Mongo.ObjectID(news.author)
 								}, {
 									fields: {
-										'name': 1
+										'name': 1,
+										'profilThumbImageUrl': 1
 									}
 								});
 							},
@@ -1469,7 +1483,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 									_id: new Mongo.ObjectID(news.author)
 								}, {
 									fields: {
-										'name': 1
+										'name': 1,
+										'profilThumbImageUrl': 1
 									}
 								});
 							},
@@ -1494,7 +1509,8 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 											_id: new Mongo.ObjectID(comment.author)
 										}, {
 											fields: {
-												'name': 1
+												'name': 1,
+												'profilThumbImageUrl': 1
 											}
 										});
 									},

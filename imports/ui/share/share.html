@@ -28,7 +28,7 @@
     {{#with scope.new}}
     <div class="item {{#if imageDoc authorNews._id._str}}item-avatar{{/if}}">
       {{#if imageDoc authorNews._id._str}}
-      {{> imgDoc imageDoc=(imageDoc authorNews._id._str profil=true) resized="80x80"}}
+      {{> imgDoc profilThumbImageUrl=authorNews.profilThumbImageUrl resized="80x80"}}
       {{/if}}
       <h2>
         {{#if equals targetIsAuthor 'true'}}

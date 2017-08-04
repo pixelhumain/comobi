@@ -526,6 +526,7 @@ Template.eventsFields.helpers({
   },
 });
 
+
 Template.eventsFields.onCreated(function () {
   const self = this;
   const template = Template.instance();
