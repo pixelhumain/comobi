@@ -1383,9 +1383,9 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 						var query = {};
 						if(scope === 'citoyens'){
 							if(this.userId === scopeId){
-								query['scope.type'] = {$in:['restricted','private']};
+								query['scope.type'] = {$in:['restricted','private','public']};
 							}else{
-								query['scope.type'] = {$in:['restricted']};
+								query['scope.type'] = {$in:['restricted','public']};
 							}
 						} else if(scope === 'projects'){
 							const collection = nameToCollection(scope);
@@ -1402,9 +1402,11 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 								query['scope.type'] = {$in:['restricted','public']};
 							}
 						} else if(scope === 'events'){
-								query['scope.type'] = {$in:['restricted']};
+								query['scope.type'] = {$in:['restricted','public']};
 						}
 						query['_id'] = new Mongo.ObjectID(newsId);
+						//console.log(query);
+						//console.log(News.find(query).fetch())
 						return News.find(query);
 					},
 					children: [
@@ -1431,6 +1433,52 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 							find: function(news) {
 								return news.photoNewsAlbums();
 							}
+						},
+						{
+							find: function(news) {
+								const queryOptions = {fields: {
+									'_id': 1,
+									'name': 1,
+									'profilThumbImageUrl': 1
+								}};
+									if(news.target && news.target.type && news.target.id){
+										const collection = nameToCollection(news.target.type);
+										return collection.find({_id:new Mongo.ObjectID(news.target.id)},queryOptions);
+									}
+							}
+						},
+						{
+							find: function(news) {
+									if(news.target && news.target.type && news.target.id){
+										return Documents.find({
+											id : news.target.id,
+											contentKey : "profil"
+										},{sort: {"created": -1},limit: 1 });
+									}
+							}
+						},
+						{
+							find: function(news) {
+								const queryOptions = {fields: {
+									'_id': 1,
+									'name': 1,
+									'profilThumbImageUrl': 1
+								}};
+									if(news.object && news.object.type && news.object.id){
+										const collection = nameToCollection(news.object.type);
+										return collection.find({_id:new Mongo.ObjectID(news.object.id)},queryOptions);
+									}
+							}
+						},
+						{
+							find: function(news) {
+									if(news.object && news.object.type && news.object.id){
+										return Documents.find({
+											id : news.object.id,
+											contentKey : "profil"
+										},{sort: {"created": -1},limit: 1 });
+									}
+							}
 						}
 					]
 				}
@@ -1452,9 +1500,9 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 						var query = {};
 						if(scope === 'citoyens'){
 							if(this.userId === scopeId){
-								query['scope.type'] = {$in:['restricted','private']};
+								query['scope.type'] = {$in:['restricted','private','public']};
 							}else{
-								query['scope.type'] = {$in:['restricted']};
+								query['scope.type'] = {$in:['restricted','public']};
 							}
 						} else if(scope === 'projects'){
 							const collection = nameToCollection(scope);
@@ -1471,7 +1519,7 @@ Meteor.publishComposite('geo.scope', function(scope,latlng,radius) {
 								query['scope.type'] = {$in:['restricted','public']};
 							}
 						} else if(scope === 'events'){
-								query['scope.type'] = {$in:['restricted']};
+								query['scope.type'] = {$in:['restricted','public']};
 						}
 						query['_id'] = new Mongo.ObjectID(newsId);
 						return News.find(query);

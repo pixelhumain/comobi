@@ -1,20 +1,24 @@
 <template name="Directory_item">
-  <div class="item item-avatar {{#if toBeValidated}}item-icon-right{{else}}item-button-right{{/if}} animated out">
+  <div class="{{classes}}">
     {{> imgDoc profilThumbImageUrl=item.profilThumbImageUrl}}
     <h2><a href="{{pathFor 'detailList' _id=item._id._str scope=scope}}" class="dark">{{item.name}}</a></h2>
     {{#if typeValue}}{{typeValue}}{{/if}}{{#if isAdmin}}<span class="positive"><i class="icon fa fa-circle"></i></span>{{/if}}
     {{#unless notButton}}
-    {{#if toBeValidated}}
-    <i class="icon fa fa-hourglass-half"></i>
-    {{else}}
+
     {{#if equals isConnect 'isFavorites'}}
     {{> Button_toggle id=item._id._str scope=scope isCall=isCall condition=(isConnectFunc isConnect) classOff="button-clear positive favorites-link" classOn="button-clear positive favorites-link" iconOff="fa fa-star" iconOn="fa fa-star-o"}}
     {{else}}
+
+    {{#if toBeValidated}}
+    <i class="icon fa fa-hourglass-half"></i>
+    {{else}}
+
     {{#if equals person true}}
     {{> Button_toggle id=item._id._str scope=scope isCall=isCall condition=(isConnectFunc isConnect) classOff="button-dark followperson-link-js" classOn="button-positive unfollowperson-link-js" iconOff="fa fa-link" iconOn="fa fa-unlink"}}
     {{else}}
     {{> Button_toggle id=item._id._str scope=scope isCall=isCall condition=(isConnectFunc isConnect) classOff="button-dark connectscope-link-js" classOn="button-positive disconnectscope-link-js" iconOff="fa fa-link" iconOn="fa fa-unlink"}}
     {{/if}}
+
     {{/if}}
     {{/if}}
     {{/unless}}

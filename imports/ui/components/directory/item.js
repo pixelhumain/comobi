@@ -24,7 +24,25 @@ Template.Directory_item.helpers({
   },
   isCall() {
   return Template.instance().state.get('call');
+},
+classes: function () {
+  const classes = ['item item-avatar animated out'];
+
+if(this.toBeValidated &&  this.isConnect!=='isFavorites'){
+  classes.push('item-icon-right');
+}else {
+  classes.push('item-button-right');
+}
+
+  if (this.class) {
+    const customClasses = this.class.split(' ');
+    _(customClasses).each(function (customClass) {
+      classes.push(customClass);
+    });
   }
+
+  return classes.join(' ');
+}
 });
 
 Template.Directory_item.events({

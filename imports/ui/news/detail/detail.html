@@ -17,6 +17,134 @@
   {{#ionView}}
   {{#ionContent}}
   <div class="list card">
+    {{> newsDetailData scope=scope}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>
+
+
+<template name="newsDetailData">
+  {{#with scope.new}}
+  <div class="item {{#if imageDoc authorNews._id._str}}item-avatar{{/if}}">
+    {{#if imageDoc authorNews._id._str}}
+    {{> imgDoc profilThumbImageUrl=authorNews.profilThumbImageUrl resized="80x80"}}
+    {{/if}}
+
+    {{#if equals type 'activityStream'}}
+    <h2>{{objectNews.name}}</h2>
+    {{else}}
+    <h2>
+      {{#if equals targetIsAuthor 'true'}}
+      <a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="dark">{{#if name}}{{name}}{{else}}{{authorNews.name}}{{/if}}</a>
+      {{else}}
+      <a href="{{pathFor 'detailList' _id=authorNews._id._str scope='citoyens'}}" class="dark">{{#if name}}{{name}}{{else}}{{authorNews.name}}{{/if}}</a>
+      {{/if}}
+    </h2>
+    {{/if}}
+
+      {{#if nequals authorNews.name targetNews.name}}<p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a></p>{{/if}}
+      
+    <p><i class="icon ion-clock"></i> {{livestamp created}}
+      {{#if equals scope.type 'public'}}<i class="icon fa fa-globe"></i>{{/if}}
+      {{#if equals scope.type 'restricted'}}<i class="icon fa fa-connectdevelop"></i>{{/if}}
+      {{#if equals scope.type 'private'}}<i class="icon fa fa-lock"></i>{{/if}}
+    </p>
+  </div>
+  {{#if photoNewsAlbums}}
+  <div class="item item-body">
+    {{#each photoNewsAlbums}}
+  <img src="{{urlImageCommunecter}}/upload/{{moduleId}}/{{folder}}/{{name}}" class="full-image photo-viewer" />
+    {{/each}}
+  </div>
+  {{/if}}
+
+  {{#if equals type 'activityStream'}}
+  <div class="item item-body">
+  <p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a> {{object.displayName}}
+  <a href="{{pathFor 'detailList' _id=object.id scope=object.type}}" class="positive">{{objectNews.name}}</a></p>
+  {{#if tags}}
+  <p>
+  {{#each tags}}
+  <a href="" class="positive"><i class="icon ion-pound"></i> {{this}}</a>
+  {{/each}}
+</p>
+  {{/if}}
+  </div>
+  {{/if}}
+
+  {{#if text}}
+  <div class="item item-body">
+    {{{autolinker (textMentions text)}}}
+    {{#if tags}}
+    <p>
+    {{#each tags}}
+    <a href="" class="positive"><i class="icon ion-pound"></i> {{this}}</a>
+    {{/each}}
+  </p>
+    {{/if}}
+  </div>
+  {{/if}}
+  <div class="item tabs tabs-secondary tabs-icon-left">
+    <a class="tab-item" href="{{pathFor 'newsDetailComments' _id=../scope._id._str newsId=_id._str scope=../scope.scopeVar}}">
+      <i class="icon fa fa-comment"></i>
+      {{commentsCount}}
+    </a>
+    <a class="tab-item like-news" href="#">
+      <i class="icon ion-thumbsup"></i>
+      {{likesCount}}
+    </a>
+    <a class="tab-item dislike-news" href="#">
+      <i class="icon ion-thumbsdown"></i>
+      {{dislikesCount}}
+    </a>
+    {{#if equals scope.type 'public'}}
+    <a href="{{pathFor 'share' _id=scope._id._str scope=scope.scopeVar newsId=_id._str}}" class="tab-item">
+      <i class="icon fa fa-share"></i>
+    </a>
+    {{/if}}
+    {{#if equals scope.type 'restricted'}}
+    <a href="{{pathFor 'share' _id=scope._id._str scope=scope.scopeVar newsId=_id._str}}" class="tab-item">
+      <i class="icon fa fa-share"></i>
+    </a>
+    {{/if}}
+    {{#if isAuthor}}
+    <a class="tab-item action-news" href="#">
+      <i class="icon fa fa-cog"></i>
+    </a>
+    {{else}}
+    {{#if ../scope.isAdmin}}
+    <a class="tab-item action-news" href="#">
+      <i class="icon fa fa-cog"></i>
+    </a>
+    {{/if}}
+    {{/if}}
+  </div>
+    {{/with}}
+</template>
+
+<template name="newsDetailOld">
+  {{#contentFor "headerButtonLeft"}}
+  {{#if scope._id._str}}
+  {{>ionNavBackButton}}
+  {{/if}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "news"}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list card">
     {{#with scope.new}}
     <div class="item {{#if imageDoc authorNews._id._str}}item-avatar{{/if}}">
       {{#if imageDoc authorNews._id._str}}
@@ -55,7 +183,7 @@
     </div>
     {{/if}}
     <div class="item tabs tabs-secondary tabs-icon-left">
-      <a class="tab-item" href="{{pathFor 'newsDetailComments' _id=scope._id._str newsId=_id._str scope=scope.scopeVar}}">
+      <a class="tab-item" href="{{pathFor 'newsDetailComments' _id=scope._id._str newsId=_id._str scope=scope.Var}}">
         <i class="icon fa fa-comment"></i>
         {{commentsCount}}
       </a>
@@ -68,12 +196,12 @@
         {{dislikesCount}}
       </a>
       {{#if equals scope.new.scope.type 'public'}}
-      <a href="{{pathFor 'share' _id=scope._id._str scope=scope.scopeVar newsId=_id._str}}" class="tab-item">
+      <a href="{{pathFor 'share' _id=scope._id._str scope=scope.Var newsId=_id._str}}" class="tab-item">
         <i class="icon fa fa-share"></i>
       </a>
       {{/if}}
       {{#if equals scope.new.scope.type 'restricted'}}
-      <a href="{{pathFor 'share' _id=scope._id._str scope=scope.scopeVar newsId=_id._str}}" class="tab-item">
+      <a href="{{pathFor 'share' _id=scope._id._str scope=scope.Var newsId=_id._str}}" class="tab-item">
         <i class="icon fa fa-share"></i>
       </a>
       {{/if}}

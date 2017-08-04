@@ -137,6 +137,9 @@
   "Want to take a picture":"Voulez vous prendre une photo ?",
   "Use the position of this city":"Utiliser la position de cette ville",
   "Use your current location":"Utiliser votre position actuelle ?",
+  "edit a comment":"Editer le commentaire",
+  "comment":"Commentaire",
+  "comments":"Commentaires",
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] existe déja",
