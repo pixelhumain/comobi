@@ -11,7 +11,7 @@ import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { _ } from 'meteor/underscore';
 
-//submanager
+// submanager
 import { directoryListSubs } from '../../api/client/subsmanager.js';
 
 import { Events } from '../../api/events.js';
@@ -33,9 +33,9 @@ import { pageDirectory } from '../../api/client/reactive.js';
 
 import '../components/directory/list.js';
 
-//suivant le scope
+// suivant le scope
 
-Template.directory.onCreated(function(){
+Template.directory.onCreated(function() {
   self = this;
   this.ready = new ReactiveVar();
   pageDirectory.set('search', null);
@@ -50,192 +50,185 @@ Template.directory.onCreated(function(){
   }.bind(this));
 });
 
-Template.directory.onRendered(function(){
+Template.directory.onRendered(function() {
   self = this;
-
 });
 
 Template.directory.helpers({
   scope () {
-    if(Router.current().params.scope){
+    if (Router.current().params.scope) {
       const collection = nameToCollection(Router.current().params.scope);
-      return collection.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
+      return collection.findOne({ _id: new Mongo.ObjectID(Router.current().params._id) });
     }
   },
   scopeDirectoryTemplate () {
-    return  'listDirectory'+Router.current().params.scope;
+    return `listDirectory${Router.current().params.scope}`;
   },
   dataReady() {
     return Template.instance().ready.get();
   },
-  search (){
+  search () {
     return pageDirectory.get('search');
-  }
+  },
 });
 
-Template.Directory_view.onCreated(function(){
+Template.Directory_view.onCreated(function() {
   pageDirectory.set('search', null);
   pageDirectory.set('view', 'all');
   pageDirectory.set('selectorga', null);
 });
 
 Template.Directory_view.helpers({
-  search (){
+  search () {
     return pageDirectory.get('search');
   },
-  view (){
+  view () {
     return pageDirectory.get('view');
-  }
+  },
 });
 
 Template.Directory_search.helpers({
-  search (){
+  search () {
     return pageDirectory.get('search');
-  }
+  },
 });
 
 Template.Directory_search.events({
-  'keyup #search, change #search':_.throttle((event,template) => {
-    if(event.currentTarget.value.length>0){
+  'keyup #search, change #search': _.throttle((event, template) => {
+    if (event.currentTarget.value.length > 0) {
       console.log(event.currentTarget.value);
-      pageDirectory.set( 'search', event.currentTarget.value);
-    }else{
-      pageDirectory.set( 'search', null);
+      pageDirectory.set('search', event.currentTarget.value);
+    } else {
+      pageDirectory.set('search', null);
     }
-  }, 500)
+  }, 500),
 });
 
 Template.Directory_button_bar.helpers({
-  search (){
+  search () {
     return pageDirectory.get('search');
   },
-  view (){
+  view () {
     return pageDirectory.get('view');
-  }
+  },
 });
 
 Template.Directory_button_bar.events({
-  "click .all" (evt) {
+  'click .all' (evt) {
     evt.preventDefault();
-    pageDirectory.set('view','all');
+    pageDirectory.set('view', 'all');
   },
-  "click .follows" (evt) {
+  'click .follows' (evt) {
     evt.preventDefault();
-    pageDirectory.set('view','follows');
+    pageDirectory.set('view', 'follows');
   },
-  "click .members" (evt) {
+  'click .members' (evt) {
     evt.preventDefault();
-    pageDirectory.set('view','members');
+    pageDirectory.set('view', 'members');
   },
-  "click .membersorganizations" (evt) {
+  'click .membersorganizations' (evt) {
     evt.preventDefault();
-    pageDirectory.set('view','membersorganizations');
+    pageDirectory.set('view', 'membersorganizations');
   },
-  "click .memberof" (evt) {
+  'click .memberof' (evt) {
     evt.preventDefault();
-    pageDirectory.set('view','memberof');
+    pageDirectory.set('view', 'memberof');
   },
-  "click .events" (evt) {
+  'click .events' (evt) {
     evt.preventDefault();
-    pageDirectory.set('view','events');
+    pageDirectory.set('view', 'events');
   },
-  "click .projects" (evt) {
+  'click .projects' (evt) {
     evt.preventDefault();
-    pageDirectory.set('view','projects');
+    pageDirectory.set('view', 'projects');
   },
-  "click .followers" (evt) {
+  'click .followers' (evt) {
     evt.preventDefault();
-    pageDirectory.set('view','followers');
+    pageDirectory.set('view', 'followers');
   },
-  "click .contributors" (evt) {
+  'click .contributors' (evt) {
     evt.preventDefault();
-    pageDirectory.set('view','contributors');
+    pageDirectory.set('view', 'contributors');
   },
 });
 
 Template.listDirectoryFollows.helpers({
-  search (){
+  search () {
     return pageDirectory.get('search');
-  }
+  },
 });
 
 Template.listDirectoryMemberOf.helpers({
-  search (){
+  search () {
     return pageDirectory.get('search');
   },
-  selectorga (){
+  selectorga () {
     return pageDirectory.get('selectorga');
   },
-  listOrganisationTypes (){
-      const listSelect = Lists.findOne({name:'organisationTypes'});
-      if(listSelect && listSelect.list){
-      return _.map(listSelect.list, (value,key) => {
-        return {label: value, value: key};
-      });
+  listOrganisationTypes () {
+    const listSelect = Lists.findOne({ name: 'organisationTypes' });
+    if (listSelect && listSelect.list) {
+      return _.map(listSelect.list, (value, key) => ({ label: value, value: key }));
     }
-  }
+  },
 });
 
 Template.listDirectoryMembers.helpers({
-  search (){
+  search () {
     return pageDirectory.get('search');
-  }
+  },
 });
 
 Template.listDirectoryMembersOrganizations.helpers({
-  search (){
+  search () {
     return pageDirectory.get('search');
   },
-  selectorga (){
+  selectorga () {
     return pageDirectory.get('selectorga');
   },
-  listOrganisationTypes (){
-      const listSelect = Lists.findOne({name:'organisationTypes'});
-      if(listSelect && listSelect.list){
-      return _.map(listSelect.list, (value,key) => {
-        return {label: value, value: key};
-      });
+  listOrganisationTypes () {
+    const listSelect = Lists.findOne({ name: 'organisationTypes' });
+    if (listSelect && listSelect.list) {
+      return _.map(listSelect.list, (value, key) => ({ label: value, value: key }));
     }
-  }
+  },
 });
 
 Template.listDirectoryContributors.helpers({
-  search (){
+  search () {
     return pageDirectory.get('search');
-  }
+  },
 });
 
 Template.listDirectoryProjects.helpers({
-  search (){
+  search () {
     return pageDirectory.get('search');
-  }
+  },
 });
 
 Template.listDirectoryEvents.helpers({
-  search (){
+  search () {
     return pageDirectory.get('search');
-  }
+  },
 });
 
 Template.listDirectoryFollowers.helpers({
-  search (){
+  search () {
     return pageDirectory.get('search');
-  }
+  },
 });
 
 
 Template.listDirectoryMemberOf.events({
-  "click .selectorga" (evt) {
+  'click .selectorga' (evt) {
     evt.preventDefault();
-    pageDirectory.set( 'selectorga', evt.currentTarget.id);
-    return ;
-  }
+    pageDirectory.set('selectorga', evt.currentTarget.id);
+  },
 });
 
 Template.listDirectoryMembersOrganizations.events({
-  "click .selectorga" (evt) {
+  'click .selectorga' (evt) {
     evt.preventDefault();
-    pageDirectory.set( 'selectorga', evt.currentTarget.id);
-    return ;
-  }
+    pageDirectory.set('selectorga', evt.currentTarget.id);
+  },
 });

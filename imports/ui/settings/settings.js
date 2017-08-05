@@ -1,77 +1,58 @@
+import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { Session } from 'meteor/session';
 import { Push } from 'meteor/raix:push';
 import { Random } from 'meteor/random';
 
-//submanager
-import { listEventsSubs,listOrganizationsSubs,listProjectsSubs,listCitoyensSubs,dashboardSubs } from '../../api/client/subsmanager.js';
-
 import { geoId } from '../../api/client/reactive.js';
 
-import { position } from '../../api/client/position.js';
+import position from '../../api/client/position.js';
 
 import './settings.html';
 
 Template.settings.events({
-  "change #radius": function(e, t) {
-    let value = parseInt(t.find('#radius').value);
-    Session.set('radius',  value);
-    Session.set('oldRadius', value);
-    //clear cache
-    /*listEventsSubs.clear();
-    listOrganizationsSubs.clear();
-    listProjectsSubs.clear();
-    listCitoyensSubs.clear();
-    dashboardSubs.clear();*/
+  'change #radius'(event, instance) {
+    const value = parseInt(instance.find('#radius').value);
+    position.setRadius(value);
+    position.setOldRadius(value);
     const geoIdRandom = Random.id();
     geoId.set('geoId', geoIdRandom);
-    return;
   },
-  'click #clear': function(event) {
+  'click #clear'() {
     Meteor.call('clear');
-    return;
   },
-  'click #geolocate': function(e, t) {
-    if(t.find('#geolocate').checked){
-      Session.set('geolocate', true);
-      Session.set('radius', Session.get('oldRadius'));
+  'click #geolocate'(event, instance) {
+    if (instance.find('#geolocate').checked) {
+      position.setGeolocate(true);
+      position.setRadius(position.getOldRadius());
       position.locateNoFilter();
-      //clear cache
-      /*listEventsSubs.clear();
-      listOrganizationsSubs.clear();
-      listProjectsSubs.clear();
-      listCitoyensSubs.clear();
-      dashboardSubs.clear();*/
       const geoIdRandom = Random.id();
       geoId.set('geoId', geoIdRandom);
-    }else{
-      Session.set('geolocate',  false);
+    } else {
+      position.setGeolocate(false);
     }
-    return;
   },
-  'click #pushenabled': function(e, t) {
-    let state=Push.enabled();
-    if(state===false){
+  'click #pushenabled'() {
+    const state = Push.enabled();
+    if (state === false) {
       Push.enabled(true);
-    }else{
+    } else {
       Push.enabled(false);
     }
-    return;
-  }
+  },
 });
 
 Template.settings.helpers({
-  isSelected: function (radius,select) {
-    return Session.equals("radius", parseInt(select));
+  isSelected (radius, select) {
+    return position.equalsRadius(parseInt(select));
   },
-  radius: function (select) {
-    return Session.get("radius");
+  radius () {
+    return position.getRadius();
   },
-  geolocate:function() {
-    return Session.get("geolocate");
+  geolocate() {
+    return position.getGeolocate();
   },
-  pushEnabled:function() {
-    let state=Push.enabled();
-  return state !== false;
-}
+  pushEnabled() {
+    const state = Push.enabled();
+    return state !== false;
+  },
 });

@@ -1,10 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import { Push } from 'meteor/raix:push';
 
-//collection
+// collection
 import { Citoyens } from '../citoyens.js';
 
-/*Accounts.registerLoginHandler(function(loginRequest) {
+/* Accounts.registerLoginHandler(function(loginRequest) {
   if(!loginRequest.email || !loginRequest.pwd) {
     return null;
   }
@@ -67,49 +67,49 @@ import { Citoyens } from '../citoyens.js';
       }
 
     }
-});*/
+}); */
 
 Accounts.onLogin(function(user) {
-//console.log(user.user._id)
-const userC = Citoyens.findOne({ _id: new Mongo.ObjectID(user.user._id) },{fields:{pwd:0}});
+// console.log(user.user._id)
+  const userC = Citoyens.findOne({ _id: new Mongo.ObjectID(user.user._id) }, { fields: { pwd: 0 } });
 
-if(!userC) {
-  //throw new Meteor.Error(Accounts.LoginCancelledError.numericError, 'Communecter Login Failed');
-} else {
-  //ok valide
-  var userM = Meteor.users.findOne({'_id':userC._id._str});
-  //console.log(userM);
-  if(userM && userM.profile &&  userM.profile.pixelhumain){
-    //Meteor.user existe
-    userId= userM._id;
-    Meteor.users.update(userId,{$set: {'profile.pixelhumain': userC}});
-  }else{
-    //username ou emails
-    userId= userM._id;
-    Meteor.users.update(userId,{$set: {'profile.pixelhumain': userC}});
+  if (!userC) {
+  // throw new Meteor.Error(Accounts.LoginCancelledError.numericError, 'Communecter Login Failed');
+  } else {
+  // ok valide
+    const userM = Meteor.users.findOne({ _id: userC._id._str });
+    // console.log(userM);
+    if (userM && userM.profile && userM.profile.pixelhumain) {
+    // Meteor.user existe
+      userId = userM._id;
+      Meteor.users.update(userId, { $set: { 'profile.pixelhumain': userC } });
+    } else {
+    // username ou emails
+      userId = userM._id;
+      Meteor.users.update(userId, { $set: { 'profile.pixelhumain': userC } });
+    }
   }
-}
 });
 
-if(Meteor.isDevelopment){
-Push.debug = true;
-Push.Configure({
-  gcm: {
-    apiKey: Meteor.settings.pushapiKey,
-    projectNumber: 376774334081
-  },
-  production: true,
-  sound: true,
-  badge: true,
-  alert: true,
-  vibrate: true,
-  sendInterval: null
-});
-}else{
+if (Meteor.isDevelopment) {
+  Push.debug = true;
   Push.Configure({
     gcm: {
       apiKey: Meteor.settings.pushapiKey,
-      projectNumber: 376774334081
+      projectNumber: 376774334081,
+    },
+    production: true,
+    sound: true,
+    badge: true,
+    alert: true,
+    vibrate: true,
+    sendInterval: null,
+  });
+} else {
+  Push.Configure({
+    gcm: {
+      apiKey: Meteor.settings.pushapiKey,
+      projectNumber: 376774334081,
     },
     production: true,
     sound: true,
@@ -119,7 +119,7 @@ Push.Configure({
   });
 }
 
-/*Push.Configure({
+/* Push.Configure({
   apn: {
     certData: Assets.getText('apn-production/PushCommunEventCert.pem'),
     keyData: Assets.getText('apn-production/PushCommunEventKey.pem'),
@@ -139,10 +139,10 @@ Push.Configure({
   // 'sendBatchSize': 1, Configurable number of notifications to send per batch
   // 'keepNotifications': false,
 //
-});*/
+}); */
 
 Push.allow({
-        send: function(userId, notification) {
-            return true;
-        }
+  send(userId, notification) {
+    return true;
+  },
 });

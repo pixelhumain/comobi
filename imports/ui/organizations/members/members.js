@@ -17,46 +17,42 @@ Template.listMembers.onCreated(function () {
   self.ready = new ReactiveVar();
 
   self.autorun(function(c) {
-      Session.set('scopeId', Router.current().params._id);
+    Session.set('scopeId', Router.current().params._id);
   });
 
   self.autorun(function(c) {
-      let handle = Meteor.subscribe('listMembers',Router.current().params._id);
-          self.ready.set(handle.ready());
+    const handle = Meteor.subscribe('listMembers', Router.current().params._id);
+    self.ready.set(handle.ready());
   });
-
 });
 
 Template.listMembers.helpers({
   organizations () {
-    return Organizations.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
+    return Organizations.findOne({ _id: new Mongo.ObjectID(Router.current().params._id) });
   },
   onlineMembers () {
-    let user = Meteor.users.findOne({_id : this._id._str});
+    const user = Meteor.users.findOne({ _id: this._id._str });
     return user && user.profile && user.profile.online;
   },
-  isFollowsMembers (followId){
-    if(Meteor.userId()===followId){
+  isFollowsMembers (followId) {
+    if (Meteor.userId() === followId) {
       return true;
-    }else{
-      let citoyen = Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())},{fields:{links:1}});
-      return citoyen.links && citoyen.links.follows && citoyen.links.follows[followId];
     }
+    const citoyen = Citoyens.findOne({ _id: new Mongo.ObjectID(Meteor.userId()) }, { fields: { links: 1 } });
+    return citoyen.links && citoyen.links.follows && citoyen.links.follows[followId];
   },
   dataReady() {
-  return Template.instance().ready.get();
-  }
+    return Template.instance().ready.get();
+  },
 });
 
 Template.listMembers.events({
-  "click .followperson-link" (evt) {
+  'click .followperson-link' (evt) {
     evt.preventDefault();
-		Meteor.call('followEntity',this._id._str,'citoyens');
-	return ;
-},
-"click .unfollowperson-link" (evt) {
-  evt.preventDefault();
-  Meteor.call('disconnectEntity',this._id._str,'citoyens');
-return ;
-}
+    Meteor.call('followEntity', this._id._str, 'citoyens');
+  },
+  'click .unfollowperson-link' (evt) {
+    evt.preventDefault();
+    Meteor.call('disconnectEntity', this._id._str, 'citoyens');
+  },
 });

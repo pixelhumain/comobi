@@ -1,4 +1,4 @@
-/*import { Meteor } from 'meteor/meteor';
+/* import { Meteor } from 'meteor/meteor';
 import microService from 'meteor/microservice';
 import { SHA256 } from 'meteor/sha';
 
@@ -35,7 +35,7 @@ apiChat.login = function(params){
 };
 */
 
-/*const pwd = 'Djab974Djab974';
+/* const pwd = 'Djab974Djab974';
 const email = 'thomas.craipeau@gmail.com';
 const retourUser= apiChat.login({email,pwd});
 
@@ -53,7 +53,7 @@ Message.find({}).observe({
     changed: function(newDocument, oldDocument){
         console.log(newDocument)
     }
-});*/
+}); */
 
-//apiChat.login({resume});
-//"resume": "auth-token"
+// apiChat.login({resume});
+// "resume": "auth-token"

@@ -11,7 +11,7 @@ import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { _ } from 'meteor/underscore';
 
-//submanager
+// submanager
 import { collectionsListSubs } from '../../api/client/subsmanager.js';
 
 import { Events } from '../../api/events.js';
@@ -37,9 +37,9 @@ import { pageCollections } from '../../api/client/reactive.js';
 
 import '../components/directory/list.js';
 
-//suivant le scope
+// suivant le scope
 
-Template.collections.onCreated(function(){
+Template.collections.onCreated(function() {
   self = this;
   this.ready = new ReactiveVar();
   pageCollections.set('search', null);
@@ -49,137 +49,136 @@ Template.collections.onCreated(function(){
   });
 
   this.autorun(function() {
-    const handle = collectionsListSubs.subscribe('collectionsList', Router.current().params.scope, Router.current().params._id,'favorites');
+    const handle = collectionsListSubs.subscribe('collectionsList', Router.current().params.scope, Router.current().params._id, 'favorites');
     this.ready.set(handle.ready());
   }.bind(this));
 });
 
-Template.collections.onRendered(function(){
+Template.collections.onRendered(function() {
   self = this;
-
 });
 
 Template.collections.helpers({
   scope () {
-    if(Router.current().params.scope){
+    if (Router.current().params.scope) {
       const collection = nameToCollection(Router.current().params.scope);
-      return collection.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
+      return collection.findOne({ _id: new Mongo.ObjectID(Router.current().params._id) });
     }
   },
   scopeCollectionsTemplate () {
-    return  'listCollections'+Router.current().params.scope;
+    return `listCollections${Router.current().params.scope}`;
   },
   dataReady() {
     return Template.instance().ready.get();
   },
-  search (){
+  search () {
     return pageCollections.get('search');
-  }
+  },
 });
 
-Template.Collections_view.onCreated(function(){
+Template.Collections_view.onCreated(function() {
   pageCollections.set('search', null);
   pageCollections.set('view', 'all');
 });
 
 Template.Collections_view.helpers({
-  search (){
+  search () {
     return pageCollections.get('search');
   },
-  view (){
+  view () {
     return pageCollections.get('view');
-  }
+  },
 });
 
 Template.Collections_search.helpers({
-  search (){
+  search () {
     return pageCollections.get('search');
-  }
+  },
 });
 
 Template.Collections_search.events({
-  'keyup #search, change #search':_.throttle((event,template) => {
-    if(event.currentTarget.value.length>0){
+  'keyup #search, change #search': _.throttle((event, template) => {
+    if (event.currentTarget.value.length > 0) {
       console.log(event.currentTarget.value);
-      pageCollections.set( 'search', event.currentTarget.value);
-    }else{
-      pageCollections.set( 'search', null);
+      pageCollections.set('search', event.currentTarget.value);
+    } else {
+      pageCollections.set('search', null);
     }
-  }, 500)
+  }, 500),
 });
 
 Template.Collections_button_bar.helpers({
-  search (){
+  search () {
     return pageCollections.get('search');
   },
-  view (){
+  view () {
     return pageCollections.get('view');
-  }
+  },
 });
 
 Template.Collections_button_bar.events({
-  "click .all" (evt) {
+  'click .all' (evt) {
     evt.preventDefault();
-    pageCollections.set('view','all');
+    pageCollections.set('view', 'all');
   },
-  "click .citoyens" (evt) {
+  'click .citoyens' (evt) {
     evt.preventDefault();
-    pageCollections.set('view','citoyens');
+    pageCollections.set('view', 'citoyens');
   },
-  "click .organizations" (evt) {
+  'click .organizations' (evt) {
     evt.preventDefault();
-    pageCollections.set('view','organizations');
+    pageCollections.set('view', 'organizations');
   },
-  "click .poi" (evt) {
+  'click .poi' (evt) {
     evt.preventDefault();
-    pageCollections.set('view','poi');
+    pageCollections.set('view', 'poi');
   },
-  "click .classified" (evt) {
+  'click .classified' (evt) {
     evt.preventDefault();
-    pageCollections.set('view','classified');
+    pageCollections.set('view', 'classified');
   },
-  "click .events" (evt) {
+  'click .events' (evt) {
     evt.preventDefault();
-    pageCollections.set('view','events');
+    pageCollections.set('view', 'events');
   },
-  "click .projects" (evt) {
+  'click .projects' (evt) {
     evt.preventDefault();
-    pageCollections.set('view','projects');
-  }
+    pageCollections.set('view', 'projects');
+  },
 });
 
 Template.listCollectionsCitoyens.helpers({
-  search (){
+  search () {
     return pageCollections.get('search');
-  }
+  },
 });
 
 Template.listCollectionsOrganizations.helpers({
-  search (){
+  search () {
     return pageCollections.get('search');
-  }
+  },
 });
 
 Template.listCollectionsProjects.helpers({
-  search (){
+  search () {
     return pageCollections.get('search');
-  }
+  },
 });
 
 Template.listCollectionsEvents.helpers({
-  search (){
+  search () {
     return pageCollections.get('search');
-  }
+  },
 });
 
 Template.listCollectionsPoi.helpers({
-  search (){
+  search () {
     return pageCollections.get('search');
-  }
+  },
 });
 
 Template.listCollectionsClassified.helpers({
-  search (){
+  search () {
     return pageCollections.get('search');
-  }
+  },
 });

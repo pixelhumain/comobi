@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 
-import './loading.html'
+import './loading.html';
 
 Template.loading.onRendered(function () {
   IonLoading.show();

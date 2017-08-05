@@ -16,38 +16,35 @@ Template.listFollows.onCreated(function () {
   self.ready = new ReactiveVar();
 
   self.autorun(function(c) {
-      Session.set('scopeId', Router.current().params._id);
+    Session.set('scopeId', Router.current().params._id);
   });
 
   self.autorun(function(c) {
-      let handle = Meteor.subscribe('listFollows',Router.current().params._id);
-          self.ready.set(handle.ready());
+    const handle = Meteor.subscribe('listFollows', Router.current().params._id);
+    self.ready.set(handle.ready());
   });
-
 });
 
 Template.listFollows.helpers({
   citoyens () {
-    return Citoyens.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
+    return Citoyens.findOne({ _id: new Mongo.ObjectID(Router.current().params._id) });
   },
   onlineFollows () {
-    let user = Meteor.users.findOne({_id : this._id._str});
+    const user = Meteor.users.findOne({ _id: this._id._str });
     return user && user.profile && user.profile.online;
   },
   dataReady() {
-  return Template.instance().ready.get();
-  }
+    return Template.instance().ready.get();
+  },
 });
 
 Template.listFollows.events({
-  "click .followperson-link" (evt) {
+  'click .followperson-link' (evt) {
     evt.preventDefault();
-		Meteor.call('followEntity',this._id._str,'citoyens');
-	return ;
-},
-"click .unfollowperson-link" (evt) {
-  evt.preventDefault();
-  Meteor.call('disconnectEntity',this._id._str,'citoyens');
-return ;
-}
+    Meteor.call('followEntity', this._id._str, 'citoyens');
+  },
+  'click .unfollowperson-link' (evt) {
+    evt.preventDefault();
+    Meteor.call('disconnectEntity', this._id._str, 'citoyens');
+  },
 });

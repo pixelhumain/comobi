@@ -5,7 +5,7 @@ import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Router } from 'meteor/iron:router';
 
-//collection
+// collection
 import { Events } from '../../../../api/events.js';
 import { Organizations } from '../../../../api/organizations.js';
 import { Projects } from '../../../../api/projects.js';
@@ -13,8 +13,8 @@ import { Citoyens } from '../../../../api/citoyens.js';
 import { News } from '../../../../api/news.js';
 import { Comments } from '../../../../api/comments.js';
 
-//submanager
-import { singleSubs} from '../../../../api/client/subsmanager.js';
+// submanager
+import { singleSubs } from '../../../../api/client/subsmanager.js';
 
 import { nameToCollection } from '../../../../api/helpers.js';
 
@@ -25,7 +25,7 @@ window.Organizations = Organizations;
 window.Projects = Projects;
 window.Citoyens = Citoyens;
 
-let pageSession = new ReactiveDict('pageComments');
+const pageSession = new ReactiveDict('pageComments');
 
 Template.newsDetailComments.onCreated(function () {
   const template = Template.instance();
@@ -34,37 +34,36 @@ Template.newsDetailComments.onCreated(function () {
   template._id = Router.current().params._id;
   template.newsId = Router.current().params.newsId;
   this.autorun(function(c) {
-      Session.set('scopeId', template._id);
-      Session.set('scope', template.scope);
+    Session.set('scopeId', template._id);
+    Session.set('scope', template.scope);
   });
 
   this.autorun(function(c) {
-    if(template.scope && template._id && template.newsId){
-      const handle = singleSubs.subscribe('scopeDetail',template.scope,template._id);
-      const handleScopeDetail = singleSubs.subscribe('newsDetailComments', template.scope,template._id,template.newsId);
-      if(handle.ready() && handleScopeDetail.ready()){
+    if (template.scope && template._id && template.newsId) {
+      const handle = singleSubs.subscribe('scopeDetail', template.scope, template._id);
+      const handleScopeDetail = singleSubs.subscribe('newsDetailComments', template.scope, template._id, template.newsId);
+      if (handle.ready() && handleScopeDetail.ready()) {
         template.ready.set(handle.ready());
       }
     }
   });
-
 });
 
 Template.newsDetailComments.helpers({
   scope () {
-    if(Template.instance().scope && Template.instance()._id && Template.instance().newsId && Template.instance().ready.get()){
-    const collection = nameToCollection(Template.instance().scope);
-    return collection.findOne({_id:new Mongo.ObjectID(Template.instance()._id)});
+    if (Template.instance().scope && Template.instance()._id && Template.instance().newsId && Template.instance().ready.get()) {
+      const collection = nameToCollection(Template.instance().scope);
+      return collection.findOne({ _id: new Mongo.ObjectID(Template.instance()._id) });
     }
   },
   dataReady() {
-  return Template.instance().ready.get();
-  }
+    return Template.instance().ready.get();
+  },
 });
 
 Template.newsDetailComments.events({
-  "click .action-comment" (e, t) {
-    const self=this;
+  'click .action-comment' (e, t) {
+    const self = this;
     e.preventDefault();
     IonActionSheet.show({
       titleText: TAPi18n.__('Actions Comment'),
@@ -73,35 +72,34 @@ Template.newsDetailComments.events({
       ],
       destructiveText: TAPi18n.__('delete'),
       cancelText: TAPi18n.__('cancel'),
-      cancel: function() {
+      cancel() {
         console.log('Cancelled!');
       },
-      buttonClicked: function(index) {
+      buttonClicked(index) {
         if (index === 0) {
           console.log('Edit!');
-          Router.go('commentsEdit', {_id:Router.current().params._id,newsId:Router.current().params.newsId,scope:Router.current().params.scope,commentId:self._id._str});
+          Router.go('commentsEdit', { _id: Router.current().params._id, newsId: Router.current().params.newsId, scope: Router.current().params.scope, commentId: self._id._str });
         }
         return true;
       },
-      destructiveButtonClicked: function() {
+      destructiveButtonClicked() {
         console.log('Destructive Action!');
-        Meteor.call('deleteComment',self._id._str,function(){
-          Router.go('newsDetail', {_id:Router.current().params._id,newsId:Router.current().params.newsId,scope:Router.current().params.scope});
+        Meteor.call('deleteComment', self._id._str, function() {
+          Router.go('newsDetail', { _id: Router.current().params._id, newsId: Router.current().params.newsId, scope: Router.current().params.scope });
         });
         return true;
-      }
+      },
     });
   },
-  "click .like-comment" (e, t) {
-    Meteor.call('likeScope', this._id._str,'comments');
+  'click .like-comment' (e, t) {
+    Meteor.call('likeScope', this._id._str, 'comments');
     e.preventDefault();
   },
-  "click .dislike-comment" (e, t) {
-    Meteor.call('dislikeScope', this._id._str,'comments');
+  'click .dislike-comment' (e, t) {
+    Meteor.call('dislikeScope', this._id._str, 'comments');
     e.preventDefault();
-  }
+  },
 });
-
 
 
 Template.commentsAdd.onCreated(function () {
@@ -109,23 +107,23 @@ Template.commentsAdd.onCreated(function () {
     Session.set('newsId', Router.current().params.newsId);
   });
 
-  pageSession.set( 'error', false );
+  pageSession.set('error', false);
 });
 
 Template.commentsAdd.onRendered(function () {
-  pageSession.set( 'error', false );
+  pageSession.set('error', false);
 });
 
 Template.commentsAdd.helpers({
   error () {
-    return pageSession.get( 'error' );
-  }
+    return pageSession.get('error');
+  },
 });
 
 Template.commentsEdit.onCreated(function () {
   const self = this;
   self.ready = new ReactiveVar();
-  pageSession.set( 'error', false );
+  pageSession.set('error', false);
 
   self.autorun(function(c) {
     Session.set('scopeId', Router.current().params._id);
@@ -134,61 +132,60 @@ Template.commentsEdit.onCreated(function () {
   });
 
   self.autorun(function(c) {
-    const handle = singleSubs.subscribe('scopeDetail',Router.current().params.scope,Router.current().params._id);
-    const handleScopeDetail = singleSubs.subscribe('newsDetailComments',Router.current().params.scope,Router.current().params._id,Router.current().params.newsId);
-      if(handle.ready() && handleScopeDetail.ready()){
-        self.ready.set(handle.ready());
-      }
+    const handle = singleSubs.subscribe('scopeDetail', Router.current().params.scope, Router.current().params._id);
+    const handleScopeDetail = singleSubs.subscribe('newsDetailComments', Router.current().params.scope, Router.current().params._id, Router.current().params.newsId);
+    if (handle.ready() && handleScopeDetail.ready()) {
+      self.ready.set(handle.ready());
+    }
   });
-
 });
 
 Template.commentsEdit.onRendered(function () {
-  pageSession.set( 'error', false );
+  pageSession.set('error', false);
 });
 
 Template.commentsEdit.helpers({
   comment () {
-    return Comments.findOne({_id:new Mongo.ObjectID(Router.current().params.commentId)});
+    return Comments.findOne({ _id: new Mongo.ObjectID(Router.current().params.commentId) });
   },
   error () {
-    return pageSession.get( 'error' );
+    return pageSession.get('error');
   },
   dataReady() {
-  return Template.instance().ready.get();
-  }
+    return Template.instance().ready.get();
+  },
 });
 
 AutoForm.addHooks(['addComment', 'editComment'], {
   before: {
-    method : function(doc, template) {
-      let newsId = Session.get('newsId');
+    method(doc, template) {
+      const newsId = Session.get('newsId');
       doc.contextType = 'news';
       doc.contextId = newsId;
       return doc;
     },
-    "method-update" : function(modifier, documentId) {
-      let newsId = Session.get('newsId');
-      modifier["$set"].contextType = 'news';
-      modifier["$set"].contextId = newsId;
+    'method-update'(modifier, documentId) {
+      const newsId = Session.get('newsId');
+      modifier.$set.contextType = 'news';
+      modifier.$set.contextId = newsId;
       return modifier;
-    }
+    },
   },
-  onError: function(formType, error) {
+  onError(formType, error) {
     if (error.errorType && error.errorType === 'Meteor.Error') {
-      if (error && error.error === "error_call") {
-        pageSession.set( 'error', error.reason.replace(":", " "));
+      if (error && error.error === 'error_call') {
+        pageSession.set('error', error.reason.replace(':', ' '));
       }
     }
-  }
+  },
 });
 
 AutoForm.addHooks(['editComment'], {
   after: {
-    "method-update" : function(error, result) {
+    'method-update'(error, result) {
       if (!error) {
-        Router.go('newsDetailComments', {_id: Session.get('scopeId'),scope:Session.get('scope'),newsId:Session.get('newsId')});
+        Router.go('newsDetailComments', { _id: Session.get('scopeId'), scope: Session.get('scope'), newsId: Session.get('newsId') });
       }
-    }
-  }
+    },
+  },
 });

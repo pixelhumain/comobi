@@ -1,4 +1,4 @@
-/*let count = 0;
+/* let count = 0;
 const cursor = Meteor.users.find({ 'profile.online': true });
 const handle = cursor.observeChanges({
   added(id, user) {
@@ -11,4 +11,4 @@ const handle = cursor.observeChanges({
   }
 });
 // After five seconds, stop keeping the count.
-setTimeout(() => handle.stop(), 5000);*/
+setTimeout(() => handle.stop(), 5000); */

@@ -13,14 +13,14 @@ Template.scopeCard.helpers({
   },
   issousEvents () {
     return Counts.get(`countSous.${Router.current().params._id}`) > 0;
-  }
+  },
 });
 
 Template.actionSheet.events({
-  "click .action-card-citoyen" (e, t) {
-    const self=this;
+  'click .action-card-citoyen' (e, t) {
+    const self = this;
     e.preventDefault();
-    //info,description,contact
+    // info,description,contact
     IonActionSheet.show({
       titleText: TAPi18n.__('Actions Citoyens'),
       buttons: [
@@ -31,38 +31,38 @@ Template.actionSheet.events({
         { text: `${TAPi18n.__('edit privacy settings')} <i class="icon ion-edit"></i>` },
       ],
       cancelText: TAPi18n.__('cancel'),
-      cancel: function() {
+      cancel() {
         console.log('Cancelled!');
       },
-      buttonClicked: function(index) {
+      buttonClicked(index) {
         if (index === 0) {
           console.log('Edit!');
-          Router.go('citoyensBlockEdit', {_id:Router.current().params._id,block:'info'});
+          Router.go('citoyensBlockEdit', { _id: Router.current().params._id, block: 'info' });
         }
         if (index === 1) {
           console.log('Edit!');
-          Router.go('citoyensBlockEdit', {_id:Router.current().params._id,block:'network'});
+          Router.go('citoyensBlockEdit', { _id: Router.current().params._id, block: 'network' });
         }
         if (index === 2) {
           console.log('Edit!');
-          Router.go('citoyensBlockEdit', {_id:Router.current().params._id,block:'descriptions'});
+          Router.go('citoyensBlockEdit', { _id: Router.current().params._id, block: 'descriptions' });
         }
         if (index === 3) {
           console.log('Edit!');
-          Router.go('citoyensBlockEdit', {_id:Router.current().params._id,block:'locality'});
+          Router.go('citoyensBlockEdit', { _id: Router.current().params._id, block: 'locality' });
         }
         if (index === 4) {
           console.log('Edit!');
-          Router.go('citoyensBlockEdit', {_id:Router.current().params._id,block:'preferences'});
+          Router.go('citoyensBlockEdit', { _id: Router.current().params._id, block: 'preferences' });
         }
         return true;
-      }
+      },
     });
   },
-  "click .action-card-events" (e, t) {
-    const self=this;
+  'click .action-card-events' (e, t) {
+    const self = this;
     e.preventDefault();
-    //info,description,contact
+    // info,description,contact
     IonActionSheet.show({
       titleText: TAPi18n.__('Actions Events'),
       buttons: [
@@ -74,42 +74,42 @@ Template.actionSheet.events({
         { text: `${TAPi18n.__('edit privacy settings')} <i class="icon ion-edit"></i>` },
       ],
       cancelText: TAPi18n.__('cancel'),
-      cancel: function() {
+      cancel() {
         console.log('Cancelled!');
       },
-      buttonClicked: function(index) {
+      buttonClicked(index) {
         if (index === 0) {
           console.log('Edit!');
-          Router.go('eventsBlockEdit', {_id:Router.current().params._id,block:'info'});
+          Router.go('eventsBlockEdit', { _id: Router.current().params._id, block: 'info' });
         }
         if (index === 1) {
           console.log('Edit!');
-          Router.go('eventsBlockEdit', {_id:Router.current().params._id,block:'network'});
+          Router.go('eventsBlockEdit', { _id: Router.current().params._id, block: 'network' });
         }
         if (index === 2) {
           console.log('Edit!');
-          Router.go('eventsBlockEdit', {_id:Router.current().params._id,block:'descriptions'});
+          Router.go('eventsBlockEdit', { _id: Router.current().params._id, block: 'descriptions' });
         }
         if (index === 3) {
           console.log('Edit!');
-          Router.go('eventsBlockEdit', {_id:Router.current().params._id,block:'locality'});
+          Router.go('eventsBlockEdit', { _id: Router.current().params._id, block: 'locality' });
         }
         if (index === 4) {
           console.log('Edit!');
-          Router.go('eventsBlockEdit', {_id:Router.current().params._id,block:'when'});
+          Router.go('eventsBlockEdit', { _id: Router.current().params._id, block: 'when' });
         }
         if (index === 5) {
           console.log('Edit!');
-          Router.go('eventsBlockEdit', {_id:Router.current().params._id,block:'preferences'});
+          Router.go('eventsBlockEdit', { _id: Router.current().params._id, block: 'preferences' });
         }
         return true;
-      }
+      },
     });
   },
-  "click .action-card-organizations" (e, t) {
-    const self=this;
+  'click .action-card-organizations' (e, t) {
+    const self = this;
     e.preventDefault();
-    //info,description,contact
+    // info,description,contact
     IonActionSheet.show({
       titleText: TAPi18n.__('Actions Organizations'),
       buttons: [
@@ -120,38 +120,38 @@ Template.actionSheet.events({
         { text: `${TAPi18n.__('edit privacy settings')} <i class="icon ion-edit"></i>` },
       ],
       cancelText: TAPi18n.__('cancel'),
-      cancel: function() {
+      cancel() {
         console.log('Cancelled!');
       },
-      buttonClicked: function(index) {
+      buttonClicked(index) {
         if (index === 0) {
           console.log('Edit!');
-          Router.go('organizationsBlockEdit', {_id:Router.current().params._id,block:'info'});
+          Router.go('organizationsBlockEdit', { _id: Router.current().params._id, block: 'info' });
         }
         if (index === 1) {
           console.log('Edit!');
-          Router.go('organizationsBlockEdit', {_id:Router.current().params._id,block:'network'});
+          Router.go('organizationsBlockEdit', { _id: Router.current().params._id, block: 'network' });
         }
         if (index === 2) {
           console.log('Edit!');
-          Router.go('organizationsBlockEdit', {_id:Router.current().params._id,block:'descriptions'});
+          Router.go('organizationsBlockEdit', { _id: Router.current().params._id, block: 'descriptions' });
         }
         if (index === 3) {
           console.log('Edit!');
-          Router.go('organizationsBlockEdit', {_id:Router.current().params._id,block:'locality'});
+          Router.go('organizationsBlockEdit', { _id: Router.current().params._id, block: 'locality' });
         }
         if (index === 4) {
           console.log('Edit!');
-          Router.go('organizationsBlockEdit', {_id:Router.current().params._id,block:'preferences'});
+          Router.go('organizationsBlockEdit', { _id: Router.current().params._id, block: 'preferences' });
         }
         return true;
-      }
+      },
     });
   },
-  "click .action-card-projects" (e, t) {
-    const self=this;
+  'click .action-card-projects' (e, t) {
+    const self = this;
     e.preventDefault();
-    //info,description,contact
+    // info,description,contact
     IonActionSheet.show({
       titleText: TAPi18n.__('Actions Projects'),
       buttons: [
@@ -163,80 +163,80 @@ Template.actionSheet.events({
         { text: `${TAPi18n.__('edit privacy settings')} <i class="icon ion-edit"></i>` },
       ],
       cancelText: TAPi18n.__('cancel'),
-      cancel: function() {
+      cancel() {
         console.log('Cancelled!');
       },
-      buttonClicked: function(index) {
+      buttonClicked(index) {
         if (index === 0) {
           console.log('Edit!');
-          Router.go('projectsBlockEdit', {_id:Router.current().params._id,block:'info'});
+          Router.go('projectsBlockEdit', { _id: Router.current().params._id, block: 'info' });
         }
         if (index === 1) {
           console.log('Edit!');
-          Router.go('projectsBlockEdit', {_id:Router.current().params._id,block:'network'});
+          Router.go('projectsBlockEdit', { _id: Router.current().params._id, block: 'network' });
         }
         if (index === 2) {
           console.log('Edit!');
-          Router.go('projectsBlockEdit', {_id:Router.current().params._id,block:'descriptions'});
+          Router.go('projectsBlockEdit', { _id: Router.current().params._id, block: 'descriptions' });
         }
         if (index === 3) {
           console.log('Edit!');
-          Router.go('projectsBlockEdit', {_id:Router.current().params._id,block:'locality'});
+          Router.go('projectsBlockEdit', { _id: Router.current().params._id, block: 'locality' });
         }
         if (index === 4) {
           console.log('Edit!');
-          Router.go('projectsBlockEdit', {_id:Router.current().params._id,block:'when'});
+          Router.go('projectsBlockEdit', { _id: Router.current().params._id, block: 'when' });
         }
         if (index === 5) {
           console.log('Edit!');
-          Router.go('projectsBlockEdit', {_id:Router.current().params._id,block:'preferences'});
+          Router.go('projectsBlockEdit', { _id: Router.current().params._id, block: 'preferences' });
         }
         return true;
-      }
+      },
     });
   },
-  "click .action-card-poi" (e, t) {
-    const self=this;
+  'click .action-card-poi' (e, t) {
+    const self = this;
     e.preventDefault();
-    //info,description,contact
+    // info,description,contact
     IonActionSheet.show({
       titleText: TAPi18n.__('Actions Poi'),
       buttons: [
         { text: `${TAPi18n.__('edit info')} <i class="icon ion-edit"></i>` },
       ],
       cancelText: TAPi18n.__('cancel'),
-      cancel: function() {
+      cancel() {
         console.log('Cancelled!');
       },
-      buttonClicked: function(index) {
+      buttonClicked(index) {
         if (index === 0) {
           console.log('Edit!');
-          Router.go('poiEdit', {_id:Router.current().params._id});
+          Router.go('poiEdit', { _id: Router.current().params._id });
         }
         return true;
-      }
+      },
     });
   },
-  "click .action-card-classified" (e, t) {
-    const self=this;
+  'click .action-card-classified' (e, t) {
+    const self = this;
     e.preventDefault();
-    //info,description,contact
+    // info,description,contact
     IonActionSheet.show({
       titleText: TAPi18n.__('Actions Classified'),
       buttons: [
         { text: `${TAPi18n.__('edit info')} <i class="icon ion-edit"></i>` },
       ],
       cancelText: TAPi18n.__('cancel'),
-      cancel: function() {
+      cancel() {
         console.log('Cancelled!');
       },
-      buttonClicked: function(index) {
+      buttonClicked(index) {
         if (index === 0) {
           console.log('Edit!');
-          Router.go('classifiedEdit', {_id:Router.current().params._id});
+          Router.go('classifiedEdit', { _id: Router.current().params._id });
         }
         return true;
-      }
+      },
     });
   },
 });

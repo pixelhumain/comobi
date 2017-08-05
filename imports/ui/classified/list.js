@@ -14,82 +14,79 @@ import { HTTP } from 'meteor/http';
 import { Mapbox } from 'meteor/communecter:mapbox';
 
 
-//collections
+// collections
 import { Citoyens } from '../../api/citoyens.js';
 import { Classified } from '../../api/classified.js';
 import { Cities } from '../../api/cities.js';
 
-//submanager
-import { listClassifiedSubs,scopeSubscribe } from '../../api/client/subsmanager.js';
+// submanager
+import { listClassifiedSubs, scopeSubscribe } from '../../api/client/subsmanager.js';
 
 import '../map/map.js';
-import '../components/scope/item.js'
+import '../components/scope/item.js';
 
 import './list.html';
 
-import { pageSession,geoId } from '../../api/client/reactive.js';
-import { position } from '../../api/client/position.js';
-import { searchQuery,queryGeoFilter } from '../../api/helpers.js';
+import { pageSession, geoId } from '../../api/client/reactive.js';
+import position from '../../api/client/position.js';
+import { searchQuery, queryGeoFilter } from '../../api/helpers.js';
 
 
 Template.listClassified.onCreated(function () {
   pageSession.set('sortClassified', null);
   pageSession.set('searchClassified', null);
-  scopeSubscribe(this,listClassifiedSubs,'geo.scope','classified');
+  scopeSubscribe(this, listClassifiedSubs, 'geo.scope', 'classified');
 });
 
 Template.listClassified.helpers({
   classified () {
-    let inputDate = new Date();
-    let searchClassified= pageSession.get('searchClassified');
-    let query={};
+    const inputDate = new Date();
+    const searchClassified = pageSession.get('searchClassified');
+    let query = {};
     query = queryGeoFilter(query);
-    if(searchClassified){
-      query = searchQuery(query,searchClassified);
+    if (searchClassified) {
+      query = searchQuery(query, searchClassified);
     }
     return Classified.find(query);
   },
   countClassified () {
-    let inputDate = new Date();
-    let searchClassified= pageSession.get('searchClassified');
-    let query={};
+    const inputDate = new Date();
+    const searchClassified = pageSession.get('searchClassified');
+    let query = {};
     query = queryGeoFilter(query);
-    if(searchClassified){
-      query = searchQuery(query,searchClassified);
+    if (searchClassified) {
+      query = searchQuery(query, searchClassified);
     }
     return Classified.find(query).count();
   },
-  searchClassified (){
+  searchClassified () {
     return pageSession.get('searchClassified');
   },
-  city (){
-    return Session.get('city');
-  },
   dataReady() {
-  return Template.instance().ready.get();
-},
-dataReadyAll() {
-  let query={};
-  query = queryGeoFilter(query);
-return Template.instance().ready.get() && Classified.find(query).count() === Counts.get(`countScopeGeo.classified`);
-},
-dataReadyPourcentage() {
-  let query={};
-  query = queryGeoFilter(query);
-return  `${Classified.find(query).count()}/${Counts.get('countScopeGeo.classified')}`;
-},
-typeI18n(type) {
-return  `schemas.classifiedrest.type.options.${type}`;
-}
+    return Template.instance().ready.get();
+  },
+  dataReadyAll() {
+    let query = {};
+    query = queryGeoFilter(query);
+    return Template.instance().ready.get() && Classified.find(query).count() === Counts.get('countScopeGeo.classified');
+  },
+  dataReadyPourcentage() {
+    let query = {};
+    query = queryGeoFilter(query);
+    return `${Classified.find(query).count()}/${Counts.get('countScopeGeo.classified')}`;
+  },
+  typeI18n(type) {
+    return `schemas.classifiedrest.type.options.${type}`;
+  },
 
 });
 
 Template.listClassified.events({
-  'keyup #search, change #search': function(event,template){
-    if(event.currentTarget.value.length>2){
-      pageSession.set( 'searchClassified', event.currentTarget.value);
-    }else{
-      pageSession.set( 'searchClassified', null);
+  'keyup #search, change #search'(event, template) {
+    if (event.currentTarget.value.length > 2) {
+      pageSession.set('searchClassified', event.currentTarget.value);
+    } else {
+      pageSession.set('searchClassified', null);
     }
   },
 });
@@ -98,7 +95,7 @@ Template.listClassified.events({
 Meteor.call('searchGlobalautocomplete',{name:'test',searchType:['classified']})
 */
 Template.classifiedAdd.onCreated(function () {
-  pageSession.set('error', false );
+  pageSession.set('error', false);
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
@@ -115,7 +112,7 @@ Template.classifiedAdd.onCreated(function () {
 Template.classifiedEdit.onCreated(function () {
   const template = Template.instance();
   template.ready = new ReactiveVar();
-  pageSession.set('error', false );
+  pageSession.set('error', false);
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
@@ -134,39 +131,39 @@ Template.classifiedEdit.onCreated(function () {
   });
 
   this.autorun(function(c) {
-      const handle = Meteor.subscribe('scopeDetail','classified',Router.current().params._id);
-      if(handle.ready()){
-        template.ready.set(handle.ready());
-      }
+    const handle = Meteor.subscribe('scopeDetail', 'classified', Router.current().params._id);
+    if (handle.ready()) {
+      template.ready.set(handle.ready());
+    }
   });
 });
 
 
 Template.classifiedAdd.helpers({
   error () {
-    return pageSession.get( 'error' );
-  }
+    return pageSession.get('error');
+  },
 });
 
 Template.classifiedEdit.helpers({
   classified () {
-    let classified = Classified.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
-    let classifiedEdit = {};
+    const classified = Classified.findOne({ _id: new Mongo.ObjectID(Router.current().params._id) });
+    const classifiedEdit = {};
     classifiedEdit._id = classified._id._str;
     classifiedEdit.name = classified.name;
 
     classifiedEdit.section = classified.section;
-    pageSession.set('section',classified.section);
+    pageSession.set('section', classified.section);
     classifiedEdit.type = classified.type;
-    pageSession.set('type',classified.type);
+    pageSession.set('type', classified.type);
     classifiedEdit.subtype = classified.subtype;
-    pageSession.set('subtype',classified.subtype);
+    pageSession.set('subtype', classified.subtype);
     classifiedEdit.contactInfo = classified.contactInfo;
     classifiedEdit.price = classified.price;
     classifiedEdit.parentType = classified.parentType;
     classifiedEdit.parentId = classified.parentId;
-    pageSession.set('parentType',classified.parentType);
-    pageSession.set('parentId',classified.parentId);
+    pageSession.set('parentType', classified.parentType);
+    pageSession.set('parentId', classified.parentId);
 
     classifiedEdit.tags = classified.tags;
     classifiedEdit.description = classified.description;
@@ -175,13 +172,13 @@ Template.classifiedEdit.helpers({
     classifiedEdit.postalCode = classified.address.postalCode;
     classifiedEdit.city = classified.address.codeInsee;
     classifiedEdit.cityName = classified.address.addressLocality;
-    if(classified && classified.address && classified.address.streetAddress){
+    if (classified && classified.address && classified.address.streetAddress) {
       classifiedEdit.streetAddress = classified.address.streetAddress;
     }
-    if(classified && classified.address && classified.address.regionName){
+    if (classified && classified.address && classified.address.regionName) {
       classifiedEdit.regionName = classified.address.regionName;
     }
-    if(classified && classified.address && classified.address.depName){
+    if (classified && classified.address && classified.address.depName) {
       classifiedEdit.depName = classified.address.depName;
     }
     classifiedEdit.geoPosLatitude = classified.geo.latitude;
@@ -189,11 +186,11 @@ Template.classifiedEdit.helpers({
     return classifiedEdit;
   },
   error () {
-    return pageSession.get( 'error' );
+    return pageSession.get('error');
   },
   dataReady() {
-  return Template.instance().ready.get();
-  }
+    return Template.instance().ready.get();
+  },
 });
 
 Template.classifiedFields.inheritsHelpersFrom('organizationsFields');
@@ -201,47 +198,47 @@ Template.classifiedFields.inheritsEventsFrom('organizationsFields');
 Template.classifiedFields.inheritsHooksFrom('organizationsFields');
 
 Template.classifiedFields.helpers({
-  parentType (){
+  parentType () {
     return pageSession.get('parentType');
   },
-  parentId (){
+  parentId () {
     return pageSession.get('parentId');
   },
   optionsParentId (parentType) {
     let optionsParent = false;
-    if(Meteor.userId() && Citoyens && Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())}) && parentType){
-      console.log(parentType)
-      if(parentType === 'organizations'){
-        optionsParent = Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())}).listOrganizationsCreator();
-      }else if(parentType === 'events'){
-        optionsParent = Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())}).listEventsCreator();
-      }else if(parentType === 'projects'){
-        optionsParent = Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())}).listProjectsCreator();
-      }else if(parentType === 'citoyens'){
-        optionsParent =  Citoyens.find({_id:new Mongo.ObjectID(Meteor.userId())},{fields:{_id:1,name:1}})
+    if (Meteor.userId() && Citoyens && Citoyens.findOne({ _id: new Mongo.ObjectID(Meteor.userId()) }) && parentType) {
+      console.log(parentType);
+      if (parentType === 'organizations') {
+        optionsParent = Citoyens.findOne({ _id: new Mongo.ObjectID(Meteor.userId()) }).listOrganizationsCreator();
+      } else if (parentType === 'events') {
+        optionsParent = Citoyens.findOne({ _id: new Mongo.ObjectID(Meteor.userId()) }).listEventsCreator();
+      } else if (parentType === 'projects') {
+        optionsParent = Citoyens.findOne({ _id: new Mongo.ObjectID(Meteor.userId()) }).listProjectsCreator();
+      } else if (parentType === 'citoyens') {
+        optionsParent = Citoyens.find({ _id: new Mongo.ObjectID(Meteor.userId()) }, { fields: { _id: 1, name: 1 } });
       }
-      if(optionsParent){
+      if (optionsParent) {
         console.log(optionsParent.fetch());
         return optionsParent.map(function (c) {
-          return {label: c.name, value: c._id._str};
+          return { label: c.name, value: c._id._str };
         });
       }
-    }else{return false;}
+    } else { return false; }
   },
-  section (){
+  section () {
     return pageSession.get('section');
   },
-  type (){
+  type () {
     return pageSession.get('type');
   },
   optionsType (section) {
-    if(section){
-      console.log(section)
-      const typeArray = TAPi18n.__(`schemas.classifiedrest.typeArray`,{ returnObjectTrees: true });
-      if(section === 'Emplois'){
+    if (section) {
+      console.log(section);
+      const typeArray = TAPi18n.__('schemas.classifiedrest.typeArray', { returnObjectTrees: true });
+      if (section === 'Emplois') {
         console.log(typeArray);
-        return typeArray['Emplois'];
-        /*return [
+        return typeArray.Emplois;
+        /* return [
           {label: 'Achats-Comptabilité-Gestion', value: 'Achats-Comptabilité-Gestion'},
           {label: 'Arts-Artisanat', value: 'Arts-Artisanat'},
           {label: 'Banque-Assurance', value: 'Banque-Assurance'},
@@ -271,29 +268,28 @@ Template.classifiedFields.helpers({
           {label: 'Spectacle', value: 'Spectacle'},
           {label: 'Sport', value: 'Sport'},
           {label: 'Transport-Logistique', value: 'Transport-Logistique'}
-      ];*/
-      }else{
-        console.log(typeArray);
-        return typeArray['Autres'];
-        /*return [
+      ]; */
+      }
+      console.log(typeArray);
+      return typeArray.Autres;
+      /* return [
           {label: 'Technologie', value: 'Technologie'},
           {label: 'Immobilier', value: 'Immobilier'},
           {label: 'Véhicules', value: 'Véhicules'},
           {label: 'Maison', value: 'Maison'},
           {label: 'Loisirs', value: 'Loisirs'},
           {label: 'Mode', value: 'Mode'}
-      ];*/
-      }
-    }else{return false;}
+      ]; */
+    } return false;
   },
-  subtype (){
+  subtype () {
     return pageSession.get('subtype');
   },
   optionsSubtype (type) {
-    if(type){
+    if (type) {
       console.log(type);
-      const subtype = TAPi18n.__('schemas.classifiedrest.subtypeArray',{ returnObjectTrees: true });
-      /*const subtype = {
+      const subtype = TAPi18n.__('schemas.classifiedrest.subtypeArray', { returnObjectTrees: true });
+      /* const subtype = {
         "Technologie":[
           {label: 'TV / Vidéo', value: 'TV / Vidéo'},
           {label: 'Informatique', value: 'Informatique'},
@@ -354,10 +350,10 @@ Template.classifiedFields.helpers({
           {label: 'Montres', value: 'Montres'},
           {label: 'Bijoux', value: 'Bijoux'}
         ],
-      };*/
+      }; */
 
       return subtype[type];
-    }else{return false;}
+    } return false;
   },
   /*
   optionsInsee () {
@@ -407,8 +403,8 @@ Template.classifiedFields.helpers({
   },
   */
   dataReadyParent() {
-  return Template.instance().readyParent.get();
-  }
+    return Template.instance().readyParent.get();
+  },
 });
 
 Template.classifiedFields.onCreated(function () {
@@ -417,7 +413,7 @@ Template.classifiedFields.onCreated(function () {
   template.ready = new ReactiveVar();
   template.readyParent = new ReactiveVar();
 
-  /*pageSession.set('error', false );
+  /* pageSession.set('error', false );
   pageSession.set('postalCode', null);
   pageSession.set('country', null);
   pageSession.set('city', null);
@@ -425,10 +421,10 @@ Template.classifiedFields.onCreated(function () {
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
   pageSession.set('geoPosLatitude', null);
-  pageSession.set('geoPosLongitude', null);*/
+  pageSession.set('geoPosLongitude', null); */
 
   self.autorun(function(c) {
-    if(Router.current().params._id && Router.current().params.scope){
+    if (Router.current().params._id && Router.current().params.scope) {
       Session.set('scopeId', Router.current().params._id);
       Session.set('scope', Router.current().params.scope);
       pageSession.set('parentType', Router.current().params.scope);
@@ -436,7 +432,6 @@ Template.classifiedFields.onCreated(function () {
       c.stop();
     }
   });
-
 });
 
 Template.classifiedFields.onRendered(function() {
@@ -525,62 +520,60 @@ Template.classifiedFields.onRendered(function() {
       });
       */
 
-      self.autorun(function() {
-        let parentType = pageSession.get('parentType');
-        //console.log(`autorun ${parentType}`);
-          if(parentType && Meteor.userId()){
-            if( parentType === 'organizations'){
-              const handleParent = self.subscribe('directoryListOrganizations','citoyens',Meteor.userId());
-              self.readyParent.set(handleParent.ready());
-            }else if( parentType === 'events'){
-              const handleParent = self.subscribe('directoryListEvents','citoyens',Meteor.userId());
-              self.readyParent.set(handleParent.ready());
-            }else if( parentType === 'projects'){
-              const handleParent = self.subscribe('directoryListProjects','citoyens',Meteor.userId());
-              self.readyParent.set(handleParent.ready());
-            }else if(parentType === 'citoyens'){
-              const handleParent = self.subscribe('citoyen');
-              self.readyParent.set(handleParent.ready());
-            }
-
-          }
-      });
-
+  self.autorun(function() {
+    const parentType = pageSession.get('parentType');
+    // console.log(`autorun ${parentType}`);
+    if (parentType && Meteor.userId()) {
+      if (parentType === 'organizations') {
+        const handleParent = self.subscribe('directoryListOrganizations', 'citoyens', Meteor.userId());
+        self.readyParent.set(handleParent.ready());
+      } else if (parentType === 'events') {
+        const handleParent = self.subscribe('directoryListEvents', 'citoyens', Meteor.userId());
+        self.readyParent.set(handleParent.ready());
+      } else if (parentType === 'projects') {
+        const handleParent = self.subscribe('directoryListProjects', 'citoyens', Meteor.userId());
+        self.readyParent.set(handleParent.ready());
+      } else if (parentType === 'citoyens') {
+        const handleParent = self.subscribe('citoyen');
+        self.readyParent.set(handleParent.ready());
+      }
+    }
+  });
 });
 
-/*Template.classifiedFields.onDestroyed(function () {
+/* Template.classifiedFields.onDestroyed(function () {
 this.$('textarea').atwho('destroy');
-});*/
+}); */
 
 Template.classifiedFields.events({
-  'change select[name="parentType"]': function(e, tmpl) {
+  'change select[name="parentType"]'(e, tmpl) {
     e.preventDefault();
     console.log(tmpl.$(e.currentTarget).val());
-    pageSession.set( 'parentType', tmpl.$(e.currentTarget).val() );
-    pageSession.set( 'parentId', false);
+    pageSession.set('parentType', tmpl.$(e.currentTarget).val());
+    pageSession.set('parentId', false);
   },
-  'change select[name="parentId"]': function(e, tmpl) {
+  'change select[name="parentId"]'(e, tmpl) {
     e.preventDefault();
     console.log(tmpl.$(e.currentTarget).val());
-    pageSession.set( 'parentId', tmpl.$(e.currentTarget).val() );
+    pageSession.set('parentId', tmpl.$(e.currentTarget).val());
   },
-  'change select[name="section"]': function(e, tmpl) {
+  'change select[name="section"]'(e, tmpl) {
     e.preventDefault();
     console.log(tmpl.$(e.currentTarget).val());
-    pageSession.set( 'section', tmpl.$(e.currentTarget).val() );
-    pageSession.set( 'type', false);
-    pageSession.set( 'subtype', false);
+    pageSession.set('section', tmpl.$(e.currentTarget).val());
+    pageSession.set('type', false);
+    pageSession.set('subtype', false);
   },
-  'change select[name="type"]': function(e, tmpl) {
+  'change select[name="type"]'(e, tmpl) {
     e.preventDefault();
     console.log(tmpl.$(e.currentTarget).val());
-    pageSession.set( 'type', tmpl.$(e.currentTarget).val() );
-    pageSession.set( 'subtype', false);
+    pageSession.set('type', tmpl.$(e.currentTarget).val());
+    pageSession.set('subtype', false);
   },
-  'change select[name="subtype"]': function(e, tmpl) {
+  'change select[name="subtype"]'(e, tmpl) {
     e.preventDefault();
     console.log(tmpl.$(e.currentTarget).val());
-    pageSession.set( 'subtype', tmpl.$(e.currentTarget).val() );
+    pageSession.set('subtype', tmpl.$(e.currentTarget).val());
   },
   /*
   'keyup input[name="postalCode"],change input[name="postalCode"]':_.throttle((e, tmpl) => {
@@ -662,19 +655,19 @@ Template.classifiedFields.events({
 
 AutoForm.addHooks(['addClassified', 'editClassified'], {
   after: {
-    method : function(error, result) {
+    method(error, result) {
       if (!error) {
-        Router.go('detailList', {_id:result.data.id,scope:'classified'});
+        Router.go('detailList', { _id: result.data.id, scope: 'classified' });
       }
     },
-    "method-update" : function(error, result) {
+    'method-update'(error, result) {
       if (!error) {
-        Router.go('detailList', {_id:result.data.id,scope:'classified'});
+        Router.go('detailList', { _id: result.data.id, scope: 'classified' });
       }
-    }
+    },
   },
   before: {
-    method : function(doc, template) {
+    method(doc, template) {
       console.log(doc);
       doc.parentType = pageSession.get('parentType');
       doc.parentId = pageSession.get('parentId');
@@ -682,93 +675,89 @@ AutoForm.addHooks(['addClassified', 'editClassified'], {
       const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
       const matches = [];
       let match;
-      if(doc.shortDescription){
+      if (doc.shortDescription) {
         while ((match = regex.exec(doc.shortDescription))) {
           matches.push(match[1]);
         }
       }
-      if(doc.description){
+      if (doc.description) {
         while ((match = regex.exec(doc.description))) {
           matches.push(match[1]);
         }
       }
-      if(pageSession.get('tags')){
-        const arrayTags = _.reject(pageSession.get('tags'), (value) => {
-          return matches[value] === null;
-        }, matches);
-        if(doc.tags){
-          doc.tags = _.uniq(_.union(doc.tags,arrayTags,matches));
-        }else{
-          doc.tags = _.uniq(_.union(arrayTags,matches));
+      if (pageSession.get('tags')) {
+        const arrayTags = _.reject(pageSession.get('tags'), value => matches[value] === null, matches);
+        if (doc.tags) {
+          doc.tags = _.uniq(_.union(doc.tags, arrayTags, matches));
+        } else {
+          doc.tags = _.uniq(_.union(arrayTags, matches));
         }
-      }else{
-        //si on update est ce que la mention reste
-        if(matches.length > 0){
-        if(doc.tags){
-          doc.tags = _.uniq(_.union(doc.tags,matches));
-        }else{
-          doc.tags = _.uniq(matches);
+      } else {
+        // si on update est ce que la mention reste
+        if (matches.length > 0) {
+          if (doc.tags) {
+            doc.tags = _.uniq(_.union(doc.tags, matches));
+          } else {
+            doc.tags = _.uniq(matches);
+          }
         }
-      }
       }
       console.log(doc.tags);
       return doc;
     },
-    "method-update" : function(modifier, documentId) {
-      modifier["$set"].parentType = pageSession.get('parentType');
-      modifier["$set"].parentId = pageSession.get('parentId');
+    'method-update'(modifier, documentId) {
+      modifier.$set.parentType = pageSession.get('parentType');
+      modifier.$set.parentId = pageSession.get('parentId');
 
       const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
       const matches = [];
       let match;
-      if(modifier["$set"].shortDescription){
-        while ((match = regex.exec(modifier["$set"].shortDescription))) {
+      if (modifier.$set.shortDescription) {
+        while ((match = regex.exec(modifier.$set.shortDescription))) {
           matches.push(match[1]);
         }
       }
-      if(modifier["$set"].description){
-        while ((match = regex.exec(modifier["$set"].description))) {
+      if (modifier.$set.description) {
+        while ((match = regex.exec(modifier.$set.description))) {
           matches.push(match[1]);
         }
       }
-      if(pageSession.get('tags')){
-        const arrayTags = _.reject(pageSession.get('tags'), (value) => {
-          return matches[value] === null;
-        }, matches);
-        if(modifier["$set"].tags){
-          modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,arrayTags,matches));
-        }else{
-          modifier["$set"].tags = _.uniq(_.union(arrayTags,matches));
+      if (pageSession.get('tags')) {
+        const arrayTags = _.reject(pageSession.get('tags'), value => matches[value] === null, matches);
+        if (modifier.$set.tags) {
+          modifier.$set.tags = _.uniq(_.union(modifier.$set.tags, arrayTags, matches));
+        } else {
+          modifier.$set.tags = _.uniq(_.union(arrayTags, matches));
         }
-      }else{
-        //si on update est ce que la mention reste
-        if(matches.length > 0){
-        if(modifier["$set"].tags){
-          modifier["$set"].tags = _.uniq(_.union(modifier["$set"].tags,matches));
-        }else{
-          modifier["$set"].tags = _.uniq(matches);
+      } else {
+        // si on update est ce que la mention reste
+        if (matches.length > 0) {
+          if (modifier.$set.tags) {
+            modifier.$set.tags = _.uniq(_.union(modifier.$set.tags, matches));
+          } else {
+            modifier.$set.tags = _.uniq(matches);
+          }
         }
       }
-      }
-      console.log(modifier["$set"].tags);
+      console.log(modifier.$set.tags);
 
       return modifier;
-    }
+    },
   },
-  onError: function(formType, error) {
+  onError(formType, error) {
     if (error.errorType && error.errorType === 'Meteor.Error') {
-      if (error && error.error === "error_call") {
-        pageSession.set( 'error', error.reason.replace(": ", ""));
+      if (error && error.error === 'error_call') {
+        pageSession.set('error', error.reason.replace(': ', ''));
       }
     }
 
-    //let ref;
-    //if (error.errorType && error.errorType === 'Meteor.Error') {
-      //if (error.reason === 'Something went really bad  An classified with the same name allready exists') {
-      //this.addStickyValidationError('name', error.reason.replace(":", " "));
-      //this.addStickyValidationError('name', error.errorType , error.reason)
-      //AutoForm.validateField(this.formId, 'name');
-      //}
-    //}
-  }
+    // let ref;
+    // if (error.errorType && error.errorType === 'Meteor.Error') {
+    // if (error.reason === 'Something went really bad  An classified with the same name allready exists') {
+    // this.addStickyValidationError('name', error.reason.replace(":", " "));
+    // this.addStickyValidationError('name', error.errorType , error.reason)
+    // AutoForm.validateField(this.formId, 'name');
+    // }
+    // }
+  },
 });

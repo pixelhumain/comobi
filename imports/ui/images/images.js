@@ -1,1 +1,1 @@
-import './images.html'
+import './images.html';
