@@ -5,7 +5,46 @@
   "private": true,
   "scripts": {
     "start": "meteor run",
-    "desktop": "meteor-desktop"
+    "desktop": "meteor-desktop",
+    "lint": "eslint .",
+    "pretest": "npm run lint --silent",
+    "fix": "eslint imports/ --fix"
+
+  },
+  "eslintConfig": {
+    "extends": "@meteorjs/eslint-config-meteor",
+    "rules": {
+      "meteor/eventmap-params": [
+        2,
+        {
+          "eventParamName": "event",
+          "templateInstanceParamName": "instance"
+        }
+      ],
+      "no-underscore-dangle": [
+        2,
+        {
+          "allow": [
+            "_id",
+            "_id._str",
+            "_str",
+            "__",
+            "_ensureIndex",
+            "_collection",
+            "__helpers"
+          ]
+        }
+      ],
+      "radix": [
+        "error",
+        "as-needed"
+      ],
+      "max-len": [0, 350, 2, {
+      "ignoreUrls": true
+    }],
+      "no-param-reassign": [2, { "props": false }],
+      "no-cond-assign": [2, "except-parens"]
+    }
   },
   "dependencies": {
     "autolinker": "^1.4.3",
@@ -25,6 +64,15 @@
   },
   "homepage": "https://github.com/aboire/co#readme",
   "devDependencies": {
+    "@meteorjs/eslint-config-meteor": "^1.0.5",
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.3.0",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-import-resolver-meteor": "^0.4.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^5.0.1",
+    "eslint-plugin-meteor": "^4.1.0",
+    "eslint-plugin-react": "^7.1.0",
     "meteor-desktop": "^0.7.2"
   }
 }

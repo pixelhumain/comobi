@@ -1,11 +1,8 @@
 import { Meteor } from 'meteor/meteor';
-import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
-import { _ } from 'meteor/underscore';
-import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { AutoForm } from 'meteor/aldeed:autoform';
 import { Mongo } from 'meteor/mongo';
+import { Router } from 'meteor/iron:router';
 
 import { Citoyens } from '../../../api/citoyens.js';
 
@@ -15,39 +12,32 @@ Template.listFollows.onCreated(function () {
   const self = this;
   self.ready = new ReactiveVar();
 
-  self.autorun(function(c) {
-      Session.set('scopeId', Router.current().params._id);
+  self.autorun(function() {
+    const handle = Meteor.subscribe('listFollows', Router.current().params._id);
+    self.ready.set(handle.ready());
   });
-
-  self.autorun(function(c) {
-      let handle = Meteor.subscribe('listFollows',Router.current().params._id);
-          self.ready.set(handle.ready());
-  });
-
 });
 
 Template.listFollows.helpers({
   citoyens () {
-    return Citoyens.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
+    return Citoyens.findOne({ _id: new Mongo.ObjectID(Router.current().params._id) });
   },
   onlineFollows () {
-    let user = Meteor.users.findOne({_id : this._id._str});
+    const user = Meteor.users.findOne({ _id: this._id._str });
     return user && user.profile && user.profile.online;
   },
   dataReady() {
-  return Template.instance().ready.get();
-  }
+    return Template.instance().ready.get();
+  },
 });
 
 Template.listFollows.events({
-  "click .followperson-link" (evt) {
-    evt.preventDefault();
-		Meteor.call('followEntity',this._id._str,'citoyens');
-	return ;
-},
-"click .unfollowperson-link" (evt) {
-  evt.preventDefault();
-  Meteor.call('disconnectEntity',this._id._str,'citoyens');
-return ;
-}
+  'click .followperson-link' (event) {
+    event.preventDefault();
+    Meteor.call('followEntity', this._id._str, 'citoyens');
+  },
+  'click .unfollowperson-link' (event) {
+    event.preventDefault();
+    Meteor.call('disconnectEntity', this._id._str, 'citoyens');
+  },
 });

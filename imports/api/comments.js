@@ -1,26 +1,26 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { _ } from 'meteor/underscore';
 import { moment } from 'meteor/momentjs:moment';
 
-export const Comments = new Meteor.Collection("comments", {idGeneration : 'MONGO'});
+// collection
+import { Citoyens } from './citoyens.js';
 
+export const Comments = new Meteor.Collection('comments', { idGeneration: 'MONGO' });
 
-
-if(Meteor.isServer){
-//Index
-Comments.rawCollection().createIndex(
-    { contextId : 1},
-    { name: 'contextId', partialFilterExpression: { contextId: { $exists: true }}, background: true }
-  , (e) => {
-    if(e){
-      console.log(e)
-    }
-});
+if (Meteor.isServer) {
+// Index
+  Comments.rawCollection().createIndex(
+    { contextId: 1 },
+    { name: 'contextId', partialFilterExpression: { contextId: { $exists: true } }, background: true }
+    , (e) => {
+      if (e) {
+        // console.log(e);
+      }
+    });
 }
 
-/*{
+/* {
     "_id" : ObjectId("58a6e87e40bb4e187b545623"),
     "contextId" : "58a35bba40bb4e4b2d545623",
     "contextType" : "surveys",
@@ -30,88 +30,85 @@ Comments.rawCollection().createIndex(
     "author" : "573adc7e40bb4ec5659a9f2e",
     "tags" : null,
     "status" : "posted"
-}*/
+} */
 
 
-export const SchemasCommentsRest =   new SimpleSchema({
-  content : {
-    type : String
-  },
-  parentCommentId : {
+export const SchemasCommentsRest = new SimpleSchema({
+  content: {
     type: String,
-    optional: true
   },
-  contextId : {
-    type: String
+  parentCommentId: {
+    type: String,
+    optional: true,
   },
-  contextType : {
-    type: String
-  }
+  contextId: {
+    type: String,
+  },
+  contextType: {
+    type: String,
+  },
 });
 
-export const SchemasCommentsEditRest =   new SimpleSchema({
-  text : {
-    type : String
-  },
-  parentCommentId : {
+export const SchemasCommentsEditRest = new SimpleSchema({
+  text: {
     type: String,
-    optional: true
   },
-  contextId : {
-    type: String
+  parentCommentId: {
+    type: String,
+    optional: true,
   },
-  contextType : {
-    type: String
-  }
+  contextId: {
+    type: String,
+  },
+  contextType: {
+    type: String,
+  },
 });
 
-  //collection
-  if(Meteor.isClient){
-    import { Documents } from './documents.js';
-    import { Citoyens } from './citoyens.js'
-    Comments.helpers({
-      authorComments () {
-        return Citoyens.findOne({_id:new Mongo.ObjectID(this.author)});
-      },
-      dateComments () {
-        return moment.unix(this.created).format("YYYY-MM-DD HH:mm");
-      },
-      likesCount () {
-        if (this.voteUp && this.voteUpCount) {
-          return this.voteUpCount;
-        }
-        return 0;
-      },
-      dislikesCount () {
-        if (this.voteDown && this.voteDownCount) {
-          return this.voteDownCount;
-        }
-        return 0;
-      },
-      isAuthor () {
-        return this.author === Meteor.userId();
+
+if (Meteor.isClient) {
+  Comments.helpers({
+    authorComments () {
+      return Citoyens.findOne({ _id: new Mongo.ObjectID(this.author) });
+    },
+    dateComments () {
+      return moment.unix(this.created).format('YYYY-MM-DD HH:mm');
+    },
+    likesCount () {
+      if (this.voteUp && this.voteUpCount) {
+        return this.voteUpCount;
       }
-    });
-  }else{
-    import { Citoyens } from './citoyens.js'
-    Comments.helpers({
-      authorComments () {
-        return Citoyens.findOne({_id:new Mongo.ObjectID(this.author)});
-      },
-      likesCount () {
-        if (this.voteUp && this.voteUpCount) {
-          return this.voteUpCount;
-        }
-        return 0;
-      },
-      dislikesCount () {
-        if (this.voteDown && this.voteDownCount) {
-          return this.voteDownCount;
-        }
-        return 0;
-      },
-      isAuthor () {
-        return this.author === Meteor.userId();
+      return 0;
+    },
+    dislikesCount () {
+      if (this.voteDown && this.voteDownCount) {
+        return this.voteDownCount;
       }
-    });
-  }
+      return 0;
+    },
+    isAuthor () {
+      return this.author === Meteor.userId();
+    },
+  });
+} else {
+  Comments.helpers({
+    authorComments () {
+      return Citoyens.findOne({ _id: new Mongo.ObjectID(this.author) });
+    },
+    likesCount () {
+      if (this.voteUp && this.voteUpCount) {
+        return this.voteUpCount;
+      }
+      return 0;
+    },
+    dislikesCount () {
+      if (this.voteDown && this.voteDownCount) {
+        return this.voteDownCount;
+      }
+      return 0;
+    },
+    isAuthor () {
+      return this.author === Meteor.userId();
+    },
+  });
+}

@@ -2,7 +2,6 @@ import './client.js';
 import './locale.js';
 import './reload.js';
 import './position.js';
-import './config.js';
 import './routes.js';
 import './push.js';
 import './mapbox.js';

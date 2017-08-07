@@ -140,6 +140,7 @@
   "edit a comment":"Editer le commentaire",
   "comment":"Commentaire",
   "comments":"Commentaires",
+  "Close and reopen the application to get the new version":"Fermez et rouvrez l'application pour obtenir la nouvelle version!",
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] existe déja",
