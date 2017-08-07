@@ -6,7 +6,7 @@
     "devtron": true,
     "desktopHCP": true,
     "desktopHCPIgnoreCompatibilityVersion": false,
-    "autoUpdateFeedUrl": "http://127.0.0.1/update/:platform/:version",
+    "autoUpdateFeedUrl": "https://hazel-zxglorxzzd.now.sh/update/:platform/:version",
     "autoUpdateFeedHeaders": {},
     "autoUpdateCheckOnStart": true,
     "rebuildNativeNodeModules": false,
