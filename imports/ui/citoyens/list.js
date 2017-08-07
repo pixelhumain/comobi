@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { _ } from 'meteor/underscore';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Router } from 'meteor/iron:router';
 import { AutoForm } from 'meteor/aldeed:autoform';
@@ -18,7 +17,7 @@ import '../components/scope/item.js';
 import './list.html';
 
 import { pageSession } from '../../api/client/reactive.js';
-import { searchQuery, queryGeoFilter } from '../../api/helpers.js';
+import { searchQuery, queryGeoFilter, matchTags } from '../../api/helpers.js';
 
 
 Template.listCitoyens.onCreated(function () {
@@ -272,20 +271,35 @@ Template.citoyensBlockEdit.helpers({
         citoyenEdit.preferences = {};
         const fieldsArray = ['email', 'locality', 'phone', 'directory', 'birthDate'];
         if (citoyen && citoyen.preferences && citoyen.preferences.publicFields) {
-          _.each(fieldsArray, (field) => {
+          /* _.each(fieldsArray, (field) => {
+            if (citoyen.isPublicFields(field)) {
+              citoyenEdit.preferences[field] = 'public';
+            }
+          }); */
+          fieldsArray.forEach((field) => {
             if (citoyen.isPublicFields(field)) {
               citoyenEdit.preferences[field] = 'public';
             }
           });
         }
         if (citoyen && citoyen.preferences && citoyen.preferences.privateFields) {
-          _.each(fieldsArray, (field) => {
+          /* _.each(fieldsArray, (field) => {
+            if (citoyen.isPrivateFields(field)) {
+              citoyenEdit.preferences[field] = 'private';
+            }
+          }); */
+          fieldsArray.forEach((field) => {
             if (citoyen.isPrivateFields(field)) {
               citoyenEdit.preferences[field] = 'private';
             }
           });
         }
-        _.each(fieldsArray, (field) => {
+        /* _.each(fieldsArray, (field) => {
+          if (!citoyen.isPrivateFields(field) && !citoyen.isPublicFields(field)) {
+            citoyenEdit.preferences[field] = 'hide';
+          }
+        }); */
+        fieldsArray.forEach((field) => {
           if (!citoyen.isPrivateFields(field) && !citoyen.isPublicFields(field)) {
             citoyenEdit.preferences[field] = 'hide';
           }
@@ -349,36 +363,7 @@ AutoForm.addHooks(['editBlockCitoyen'], {
       const scope = 'citoyens';
       const block = pageSession.get('block');
       if (modifier && modifier.$set) {
-        const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
-        const matches = [];
-        let match;
-        if (modifier.$set.shortDescription) {
-          while ((match = regex.exec(modifier.$set.shortDescription))) {
-            matches.push(match[1]);
-          }
-        }
-        if (modifier.$set.description) {
-          while ((match = regex.exec(modifier.$set.description))) {
-            matches.push(match[1]);
-          }
-        }
-        if (pageSession.get('tags')) {
-          const arrayTags = _.reject(pageSession.get('tags'), value => matches[value] === null, matches);
-          if (modifier.$set.tags) {
-            modifier.$set.tags = _.uniq(_.union(modifier.$set.tags, arrayTags, matches));
-          } else {
-            modifier.$set.tags = _.uniq(_.union(arrayTags, matches));
-          }
-        } else {
-          // si on update est ce que la mention reste
-          if (matches.length > 0) {
-            if (modifier.$set.tags) {
-              modifier.$set.tags = _.uniq(_.union(modifier.$set.tags, matches));
-            } else {
-              modifier.$set.tags = _.uniq(matches);
-            }
-          }
-        }
+        modifier.$set = matchTags(modifier.$set, pageSession.get('tags'));
       } else {
         modifier.$set = {};
       }

@@ -1,11 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { _ } from 'meteor/underscore';
 import { moment } from 'meteor/momentjs:moment';
 
-export const Comments = new Meteor.Collection('comments', { idGeneration: 'MONGO' });
+// collection
+import { Citoyens } from './citoyens.js';
 
+export const Comments = new Meteor.Collection('comments', { idGeneration: 'MONGO' });
 
 if (Meteor.isServer) {
 // Index
@@ -14,7 +15,7 @@ if (Meteor.isServer) {
     { name: 'contextId', partialFilterExpression: { contextId: { $exists: true } }, background: true }
     , (e) => {
       if (e) {
-        console.log(e);
+        // console.log(e);
       }
     });
 }
@@ -64,11 +65,8 @@ export const SchemasCommentsEditRest = new SimpleSchema({
   },
 });
 
-  // collection
-if (Meteor.isClient) {
-  import { Documents } from './documents.js';
-  import { Citoyens } from './citoyens.js';
 
+if (Meteor.isClient) {
   Comments.helpers({
     authorComments () {
       return Citoyens.findOne({ _id: new Mongo.ObjectID(this.author) });
@@ -93,8 +91,6 @@ if (Meteor.isClient) {
     },
   });
 } else {
-  import { Citoyens } from './citoyens.js';
-
   Comments.helpers({
     authorComments () {
       return Citoyens.findOne({ _id: new Mongo.ObjectID(this.author) });

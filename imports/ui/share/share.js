@@ -1,16 +1,15 @@
-import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { Session } from 'meteor/session';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Router } from 'meteor/iron:router';
+import { Mongo } from 'meteor/mongo';
+import { AutoForm } from 'meteor/aldeed:autoform';
 
 // collection
 import { Events } from '../../api/events.js';
 import { Organizations } from '../../api/organizations.js';
 import { Projects } from '../../api/projects.js';
 import { Citoyens } from '../../api/citoyens.js';
-import { News } from '../../api/news.js';
 
 // submanager
 import { singleSubs } from '../../api/client/subsmanager.js';
@@ -31,23 +30,23 @@ const pageSession = new ReactiveDict('pageShare');
 Template.share.onCreated(function () {
   const template = Template.instance();
   template.ready = new ReactiveVar();
-  this.autorun(function(c) {
-    Session.set('scopeId', Router.current().params._id);
-    Session.set('scope', Router.current().params.scope);
+  this.autorun(function() {
+    pageSession.set('scopeId', Router.current().params._id);
+    pageSession.set('scope', Router.current().params.scope);
     if (Router.current().params.newsId) {
-      Session.set('newsId', Router.current().params.newsId);
+      pageSession.set('newsId', Router.current().params.newsId);
     }
   });
   /* share peut être : event,project,organization
   mais aussi une news
 
   */
-  this.autorun(function(c) {
+  this.autorun(function() {
     if (Router.current().params.newsId) {
       const handle = singleSubs.subscribe('scopeDetail', Router.current().params.scope, Router.current().params._id);
       const handleScopeDetail = singleSubs.subscribe('newsDetail', Router.current().params.scope, Router.current().params._id, Router.current().params.newsId);
       if (handle.ready() && handleScopeDetail.ready()) {
-        console.log('subici');
+        // console.log('subici');
         template.ready.set(handle.ready());
       }
     } else {
@@ -65,6 +64,7 @@ Template.share.helpers({
       const collection = nameToCollection(Router.current().params.scope);
       return collection.findOne({ _id: new Mongo.ObjectID(Router.current().params._id) });
     }
+    return undefined;
   },
   newsId() {
     return Router.current().params.newsId;
@@ -91,21 +91,21 @@ Template.shareAdd.helpers({
 
 AutoForm.addHooks(['addShare'], {
   after: {
-    method(error, result) {
+    method(error) {
       if (!error) {
-        console.log('ici');
-        const scope = Session.get('scope');
-        const scopeId = Session.get('scopeId');
+        // console.log('ici');
+        const scope = pageSession.get('scope');
+        const scopeId = pageSession.get('scopeId');
         Router.go('detailList', { _id: scopeId, scope });
       }
     },
   },
   before: {
-    method(doc, template) {
+    method(doc) {
       // console.log(doc);
-      const scope = Session.get('scope');
-      const scopeId = Session.get('scopeId');
-      const newsId = Session.get('newsId');
+      const scope = pageSession.get('scope');
+      const scopeId = pageSession.get('scopeId');
+      const newsId = pageSession.get('newsId');
       if (scope && scopeId && newsId) {
         doc.parentType = 'news';
         doc.parentId = newsId;
@@ -122,12 +122,5 @@ AutoForm.addHooks(['addShare'], {
         pageSession.set('error', error.reason.replace(': ', ''));
       }
     }
-    // let ref;
-    // if (error.errorType && error.errorType === 'Meteor.Error') {
-    // if ((ref = error.reason) === 'Name must be unique') {
-    // this.addStickyValidationError('name', error.reason);
-    // AutoForm.validateField(this.formId, 'name');
-    // }
-    // }
   },
 });

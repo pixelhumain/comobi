@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
+import { Template } from 'meteor/templating';
 import { Helpers } from 'meteor/raix:handlebar-helpers';
 import { TAPi18n } from 'meteor/tap:i18n';
 import { moment } from 'meteor/momentjs:moment';
@@ -20,9 +21,9 @@ Meteor.startup(() => {
     TAPi18n.setLanguage(language)
       .done(() => {
       })
-      .fail((errorMessage) => {
+      .fail(() => {
         // Handle the situation
-        console.log(errorMessage);
+        // console.log(errorMessage);
       });
   });
   // template helpers
@@ -32,8 +33,8 @@ Meteor.startup(() => {
 
 Tracker.autorun(() => {
   if (Meteor.userId() && Meteor.user() && Meteor.user().profile && !Meteor.user().profile.language) {
-    language = languageBrowser();
-    console.log(language);
+    const language = languageBrowser();
+    // console.log(language);
     Meteor.call('userLocale', { language });
   }
 });

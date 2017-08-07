@@ -1,7 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { Session } from 'meteor/session';
 import { Router } from 'meteor/iron:router';
-import { SubsManager } from 'meteor/meteorhacks:subs-manager';
 
 Router.configure({
   layoutTemplate: 'layout',

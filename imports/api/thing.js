@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import { Mongo } from 'meteor/mongo';
 
 export const Thing = new Meteor.Collection('thing', { idGeneration: 'MONGO' });
 

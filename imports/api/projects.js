@@ -5,13 +5,20 @@ import { _ } from 'meteor/underscore';
 import { moment } from 'meteor/momentjs:moment';
 import { Router } from 'meteor/iron:router';
 
-export const Projects = new Meteor.Collection('projects', { idGeneration: 'MONGO' });
-
 // schemas
-import { baseSchema, blockBaseSchema, geoSchema, avancements_SELECT, avancements_SELECT_LABEL, preferences } from './schema.js';
+import { baseSchema, blockBaseSchema, geoSchema, preferences } from './schema.js';
 
 // collection
-import { Lists } from './lists.js';
+import { News } from './news.js';
+import { Citoyens } from './citoyens.js';
+import { Organizations } from './organizations.js';
+import { Documents } from './documents.js';
+import { Events } from './events.js';
+import { Poi } from './poi.js';
+import { ActivityStream } from './activitystream.js';
+import { queryLink, queryLinkToBeValidated, queryOptions, nameToCollection } from './helpers.js';
+
+export const Projects = new Meteor.Collection('projects', { idGeneration: 'MONGO' });
 
 // SimpleSchema.debug = true;
 
@@ -103,17 +110,6 @@ BlockProjectsRest.preferences = new SimpleSchema([blockBaseSchema, {
   },
 }]);
 
-// if(Meteor.isClient){
-// collection
-import { News } from './news.js';
-import { Citoyens } from './citoyens.js';
-import { Organizations } from './organizations.js';
-import { Documents } from './documents.js';
-import { Events } from './events.js';
-import { Poi } from './poi.js';
-import { ActivityStream } from './activitystream.js';
-import { queryLink, queryLinkType, arrayLinkType, queryLinkToBeValidated, arrayLinkToBeValidated, queryOptions, nameToCollection } from './helpers.js';
-
 if (Meteor.isClient) {
   window.Organizations = Organizations;
   window.Citoyens = Citoyens;
@@ -150,7 +146,7 @@ Projects.helpers({
   },
   organizerProject () {
     if (this.parentId && this.parentType && _.contains(['organizations', 'citoyens'], this.parentType)) {
-      console.log(this.parentType);
+      // console.log(this.parentType);
       const collectionType = nameToCollection(this.parentType);
       return collectionType.findOne({
         _id: new Mongo.ObjectID(this.parentId),
@@ -161,6 +157,7 @@ Projects.helpers({
         },
       });
     }
+    return undefined;
   },
   creatorProfile () {
     return Citoyens.findOne({ _id: new Mongo.ObjectID(this.creator) });
@@ -175,8 +172,8 @@ Projects.helpers({
   isAdmin (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     if (bothUserId && this.parentId && this.parentType && _.contains(['organizations'], this.parentType)) {
-      console.log(this.organizerProject());
-      console.log(`${this.parentType}:${this.parentId}`);
+      // console.log(this.organizerProject());
+      // console.log(`${this.parentType}:${this.parentId}`);
       return this.organizerProject() && this.organizerProject().isAdmin(bothUserId);
     }
     return !!((this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].isAdmin && this.isToBeValidated(bothUserId)));
@@ -289,11 +286,11 @@ Projects.helpers({
   },
   listNotifications (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
-  	return ActivityStream.api.isUnseen(bothUserId, this._id._str);
+    return ActivityStream.api.isUnseen(bothUserId, this._id._str);
   },
   listNotificationsAsk (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
-  	return ActivityStream.api.isUnseenAsk(bothUserId, this._id._str);
+    return ActivityStream.api.isUnseenAsk(bothUserId, this._id._str);
   },
   countPopMap () {
     return this.links && this.links.contributors && _.size(this.links.contributors);
@@ -306,7 +303,7 @@ Projects.helpers({
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     const targetId = (typeof target !== 'undefined') ? target : Router.current().params._id;
     if (Meteor.isClient) {
-      const bothLimit = Session.get('limit');
+      // const bothLimit = Session.get('limit');
     } else if (typeof limit !== 'undefined') {
       options.limit = limit;
     }
@@ -325,5 +322,3 @@ Projects.helpers({
     return News.findOne({ _id: new Mongo.ObjectID(Router.current().params.newsId) });
   },
 });
-
-// }

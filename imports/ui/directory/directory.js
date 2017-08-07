@@ -1,15 +1,8 @@
-import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { Session } from 'meteor/session';
 import { Router } from 'meteor/iron:router';
-import { $ } from 'meteor/jquery';
-import { Counts } from 'meteor/tmeasday:publish-counts';
-import { MeteorCameraUI } from 'meteor/aboire:camera-ui';
-import { AutoForm } from 'meteor/aldeed:autoform';
-import { TAPi18n } from 'meteor/tap:i18n';
-import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { _ } from 'meteor/underscore';
+import { Mongo } from 'meteor/mongo';
 
 // submanager
 import { directoryListSubs } from '../../api/client/subsmanager.js';
@@ -24,24 +17,23 @@ import { nameToCollection } from '../../api/helpers.js';
 
 import './directory.html';
 
+import { pageDirectory } from '../../api/client/reactive.js';
+
+import '../components/directory/list.js';
+
 window.Events = Events;
 window.Organizations = Organizations;
 window.Projects = Projects;
 window.Citoyens = Citoyens;
 
-import { pageDirectory } from '../../api/client/reactive.js';
-
-import '../components/directory/list.js';
-
 // suivant le scope
 
 Template.directory.onCreated(function() {
-  self = this;
   this.ready = new ReactiveVar();
   pageDirectory.set('search', null);
   this.autorun(function() {
-    Session.set('scopeId', Router.current().params._id);
-    Session.set('scope', Router.current().params.scope);
+    pageDirectory.set('scopeId', Router.current().params._id);
+    pageDirectory.set('scope', Router.current().params.scope);
   });
 
   this.autorun(function() {
@@ -51,7 +43,7 @@ Template.directory.onCreated(function() {
 });
 
 Template.directory.onRendered(function() {
-  self = this;
+
 });
 
 Template.directory.helpers({
@@ -60,6 +52,7 @@ Template.directory.helpers({
       const collection = nameToCollection(Router.current().params.scope);
       return collection.findOne({ _id: new Mongo.ObjectID(Router.current().params._id) });
     }
+    return undefined;
   },
   scopeDirectoryTemplate () {
     return `listDirectory${Router.current().params.scope}`;
@@ -94,9 +87,9 @@ Template.Directory_search.helpers({
 });
 
 Template.Directory_search.events({
-  'keyup #search, change #search': _.throttle((event, template) => {
+  'keyup #search, change #search': _.throttle((event) => {
     if (event.currentTarget.value.length > 0) {
-      console.log(event.currentTarget.value);
+      // console.log(event.currentTarget.value);
       pageDirectory.set('search', event.currentTarget.value);
     } else {
       pageDirectory.set('search', null);
@@ -114,40 +107,40 @@ Template.Directory_button_bar.helpers({
 });
 
 Template.Directory_button_bar.events({
-  'click .all' (evt) {
-    evt.preventDefault();
+  'click .all' (event) {
+    event.preventDefault();
     pageDirectory.set('view', 'all');
   },
-  'click .follows' (evt) {
-    evt.preventDefault();
+  'click .follows' (event) {
+    event.preventDefault();
     pageDirectory.set('view', 'follows');
   },
-  'click .members' (evt) {
-    evt.preventDefault();
+  'click .members' (event) {
+    event.preventDefault();
     pageDirectory.set('view', 'members');
   },
-  'click .membersorganizations' (evt) {
-    evt.preventDefault();
+  'click .membersorganizations' (event) {
+    event.preventDefault();
     pageDirectory.set('view', 'membersorganizations');
   },
-  'click .memberof' (evt) {
-    evt.preventDefault();
+  'click .memberof' (event) {
+    event.preventDefault();
     pageDirectory.set('view', 'memberof');
   },
-  'click .events' (evt) {
-    evt.preventDefault();
+  'click .events' (event) {
+    event.preventDefault();
     pageDirectory.set('view', 'events');
   },
-  'click .projects' (evt) {
-    evt.preventDefault();
+  'click .projects' (event) {
+    event.preventDefault();
     pageDirectory.set('view', 'projects');
   },
-  'click .followers' (evt) {
-    evt.preventDefault();
+  'click .followers' (event) {
+    event.preventDefault();
     pageDirectory.set('view', 'followers');
   },
-  'click .contributors' (evt) {
-    evt.preventDefault();
+  'click .contributors' (event) {
+    event.preventDefault();
     pageDirectory.set('view', 'contributors');
   },
 });
@@ -170,6 +163,7 @@ Template.listDirectoryMemberOf.helpers({
     if (listSelect && listSelect.list) {
       return _.map(listSelect.list, (value, key) => ({ label: value, value: key }));
     }
+    return undefined;
   },
 });
 
@@ -191,6 +185,7 @@ Template.listDirectoryMembersOrganizations.helpers({
     if (listSelect && listSelect.list) {
       return _.map(listSelect.list, (value, key) => ({ label: value, value: key }));
     }
+    return undefined;
   },
 });
 
@@ -220,15 +215,15 @@ Template.listDirectoryFollowers.helpers({
 
 
 Template.listDirectoryMemberOf.events({
-  'click .selectorga' (evt) {
-    evt.preventDefault();
-    pageDirectory.set('selectorga', evt.currentTarget.id);
+  'click .selectorga' (event) {
+    event.preventDefault();
+    pageDirectory.set('selectorga', event.currentTarget.id);
   },
 });
 
 Template.listDirectoryMembersOrganizations.events({
-  'click .selectorga' (evt) {
-    evt.preventDefault();
-    pageDirectory.set('selectorga', evt.currentTarget.id);
+  'click .selectorga' (event) {
+    event.preventDefault();
+    pageDirectory.set('selectorga', event.currentTarget.id);
   },
 });

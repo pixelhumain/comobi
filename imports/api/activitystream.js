@@ -1,11 +1,8 @@
 import { Meteor } from 'meteor/meteor';
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { _ } from 'meteor/underscore';
 import { Counts } from 'meteor/tmeasday:publish-counts';
 
 export const ActivityStream = new Meteor.Collection('activityStream', { idGeneration: 'MONGO' });
-
 
 ActivityStream.api = {
   Unseen (userId) {
@@ -13,18 +10,21 @@ ActivityStream.api = {
     if (Counts.has(`notifications.${bothUserId}.Unseen`)) {
       return Counts.get(`notifications.${bothUserId}.Unseen`);
     }
+    return undefined;
   },
   UnseenAsk (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     if (Counts.has(`notifications.${bothUserId}.UnseenAsk`)) {
       return Counts.get(`notifications.${bothUserId}.UnseenAsk`);
     }
+    return undefined;
   },
   Unread (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     if (Counts.has(`notifications.${bothUserId}.Unread`)) {
       return Counts.get(`notifications.${bothUserId}.Unread`);
     }
+    return undefined;
   },
   queryUnseen (userId, scopeId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
@@ -53,8 +53,8 @@ ActivityStream.api = {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     const bothScopeId = (typeof scopeId !== 'undefined') ? scopeId : false;
     const queryUnread = {};
-  	queryUnread[`notify.id.${bothUserId}`] = { $exists: 1 };
-  	queryUnread[`notify.id.${bothUserId}.isUnread`] = true;
+    queryUnread[`notify.id.${bothUserId}`] = { $exists: 1 };
+    queryUnread[`notify.id.${bothUserId}.isUnread`] = true;
     if (bothScopeId) {
       queryUnread['target.id'] = bothScopeId;
     }
@@ -174,33 +174,3 @@ ActivityStream.helpers({
     return keyArray[0];
   },
 });
-
-/* {
-"_id" : ObjectId("58a06ec0e2f07e27233ba05e"),
-"type" : "notifications",
-"verb" : "comment",
-"author" : {
-"586f6493e2f07ea55a8b456c" : {
-"name" : "pikachui"
-}
-},
-"date" : ISODate("2017-02-12T14:18:40.000Z"),
-"created" : ISODate("2017-02-12T14:18:40.000Z"),
-"object" : {
-"id" : "58a06149e2f07e3b243ba040",
-"type" : "comments"
-},
-"target" : {
-"type" : "news",
-"id" : "58a060e0e2f07e69233ba03a"
-},
-"notify" : {
-"objectType" : "comments",
-"id" : {
-"586f6493e2f07ea55a8b456b" : {}
-},
-"displayName" : "pikachui a répondu à votre commentaire posté sur votre post",
-"icon" : "fa-comment",
-"url" : "news/detail/id/58a060e0e2f07e69233ba03a"
-}
-} */

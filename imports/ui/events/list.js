@@ -1,25 +1,15 @@
 import { Meteor } from 'meteor/meteor';
-import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
-import { _ } from 'meteor/underscore';
-import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { TAPi18n } from 'meteor/tap:i18n';
 import { Router } from 'meteor/iron:router';
 import { AutoForm } from 'meteor/aldeed:autoform';
-import { Location } from 'meteor/djabatav:geolocation-plus';
 import { Mongo } from 'meteor/mongo';
-import { Random } from 'meteor/random';
-import { HTTP } from 'meteor/http';
-import { Mapbox } from 'meteor/communecter:mapbox';
-
 
 // collections
 import { Citoyens } from '../../api/citoyens.js';
 import { Projects } from '../../api/projects.js';
 import { Organizations } from '../../api/organizations.js';
 import { Events, BlockEventsRest } from '../../api/events.js';
-import { Cities } from '../../api/cities.js';
 
 // submanager
 import { listEventsSubs, listsSubs, scopeSubscribe } from '../../api/client/subsmanager.js';
@@ -29,9 +19,8 @@ import '../components/scope/item.js';
 
 import './list.html';
 
-import { pageSession, geoId } from '../../api/client/reactive.js';
-import position from '../../api/client/position.js';
-import { searchQuery, queryGeoFilter } from '../../api/helpers.js';
+import { pageSession } from '../../api/client/reactive.js';
+import { searchQuery, queryGeoFilter, matchTags } from '../../api/helpers.js';
 
 Template.listEvents.onCreated(function () {
   pageSession.set('sortEvents', null);
@@ -122,25 +111,15 @@ Template.listEvents.helpers({
   dataReady() {
     return Template.instance().ready.get();
   },
-  dataReadyAll() {
-    let query = {};
-    query = queryGeoFilter(query);
-    return Template.instance().ready.get() && Events.find(query).count() === Counts.get('countScopeGeo.events');
-  },
-  dataReadyPourcentage() {
-    let query = {};
-    query = queryGeoFilter(query);
-    return `${Events.find(query).count()}/${Counts.get('countScopeGeo.events')}`;
-  },
 });
 
 Template.listEvents.events({
-  'click .triEvents'(event, template) {
+  'click .triEvents'(event) {
     event.preventDefault();
     pageSession.set('sortEvents', event.target.value);
     // console.log("sortEvents",  event.target.value);
   },
-  'keyup #search, change #search'(event, template) {
+  'keyup #search, change #search'(event) {
     if (event.currentTarget.value.length > 2) {
       pageSession.set('searchEvents', event.currentTarget.value);
     } else {
@@ -162,14 +141,14 @@ Template.eventsAdd.onCreated(function () {
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
-  this.autorun(function(c) {
-    Session.set('scopeId', Router.current().params._id);
-    Session.set('scope', Router.current().params.scope);
+  this.autorun(function() {
+    pageSession.set('scopeId', Router.current().params._id);
+    pageSession.set('scope', Router.current().params.scope);
     pageSession.set('organizerType', Router.current().params.scope);
     pageSession.set('organizerId', Router.current().params._id);
   });
 
-  this.autorun(function(c) {
+  this.autorun(function() {
     const handleList = listsSubs.subscribe('lists', 'eventTypes');
     if (handleList.ready()) {
       template.ready.set(handleList.ready());
@@ -191,12 +170,12 @@ Template.eventsEdit.onCreated(function () {
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
-  this.autorun(function(c) {
-    Session.set('scopeId', Router.current().params._id);
-    Session.set('scope', Router.current().params.scope);
+  this.autorun(function() {
+    pageSession.set('scopeId', Router.current().params._id);
+    pageSession.set('scope', Router.current().params.scope);
   });
 
-  this.autorun(function(c) {
+  this.autorun(function() {
     const handleList = listsSubs.subscribe('lists', 'eventTypes');
     const handle = Meteor.subscribe('scopeDetail', 'events', Router.current().params._id);
     if (handleList.ready() && handle.ready()) {
@@ -218,12 +197,12 @@ Template.eventsBlockEdit.onCreated(function () {
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
-  this.autorun(function(c) {
-    Session.set('scopeId', Router.current().params._id);
-    Session.set('block', Router.current().params.block);
+  this.autorun(function() {
+    pageSession.set('scopeId', Router.current().params._id);
+    pageSession.set('block', Router.current().params.block);
   });
 
-  this.autorun(function(c) {
+  this.autorun(function() {
     const handleList = listsSubs.subscribe('lists', 'eventTypes');
     const handle = Meteor.subscribe('scopeDetail', 'events', Router.current().params._id);
     if (handleList.ready() && handle.ready()) {
@@ -255,12 +234,12 @@ Template.eventsEdit.helpers({
     eventEdit.endDate = event.endDate;
     if (event && event.preferences) {
       eventEdit.preferences = {};
-      if (event.preferences.isOpenData == 'true') {
+      if (event.preferences.isOpenData === 'true') {
         eventEdit.preferences.isOpenData = true;
       } else {
         eventEdit.preferences.isOpenData = false;
       }
-      if (event.preferences.isOpenEdition == 'true') {
+      if (event.preferences.isOpenEdition === 'true') {
         eventEdit.preferences.isOpenEdition = true;
       } else {
         eventEdit.preferences.isOpenEdition = false;
@@ -408,21 +387,22 @@ Template.eventsFields.helpers({
   optionsOrganizerId (organizerType) {
     let optionsOrganizer = false;
     if (Meteor.userId() && Citoyens && Citoyens.findOne({ _id: new Mongo.ObjectID(Meteor.userId()) }) && organizerType) {
-      console.log(organizerType);
+      // console.log(organizerType);
       if (organizerType === 'organizations') {
         optionsOrganizer = Citoyens.findOne({ _id: new Mongo.ObjectID(Meteor.userId()) }).listOrganizationsCreator();
-    	} else if (organizerType === 'projects') {
+      } else if (organizerType === 'projects') {
         optionsOrganizer = Citoyens.findOne({ _id: new Mongo.ObjectID(Meteor.userId()) }).listProjectsCreator();
-    	} else if (organizerType === 'citoyens') {
-    		optionsOrganizer = Citoyens.find({ _id: new Mongo.ObjectID(Meteor.userId()) }, { fields: { _id: 1, name: 1 } });
-    	}
+      } else if (organizerType === 'citoyens') {
+        optionsOrganizer = Citoyens.find({ _id: new Mongo.ObjectID(Meteor.userId()) }, { fields: { _id: 1, name: 1 } });
+      }
       if (optionsOrganizer) {
-        console.log(optionsOrganizer.fetch());
+        // console.log(optionsOrganizer.fetch());
         return optionsOrganizer.map(function (c) {
           return { label: c.name, value: c._id._str };
         });
       }
-    } else { return false; }
+    }
+    return false;
   },
   parentId () {
     return pageSession.get('parentId');
@@ -447,7 +427,7 @@ Template.eventsFields.helpers({
         const optionsParentId = parent.listEventsCreator();
         if (optionsParentId) {
           // console.log(optionsParentId.fetch());
-          console.log(organizerType);
+          // console.log(organizerType);
           // const arrayParent =  optionsParentId.fetch();
           if (optionsParentId.count() > 0) {
             const arrayParent = optionsParentId.map(c => ({ label: c.name, value: c._id._str }));
@@ -456,55 +436,9 @@ Template.eventsFields.helpers({
           return false;
         }
       }
-    } else { return false; }
+    }
+    return false;
   },
-  /*
-  optionsInsee () {
-    let postalCode = '';
-    let country = '';
-    postalCode = pageSession.get('postalCode') || AutoForm.getFieldValue('postalCode');
-    country = pageSession.get('country') || AutoForm.getFieldValue('country');
-    if(postalCode && country){
-      let insee = Cities.find({'postalCodes.postalCode':postalCode,country:country});
-      //console.log(insee.fetch());
-      if(insee){
-        return insee.map(function (c) {
-          return {label: c.alternateName, value: c.insee};
-        });
-      }
-    }else{return false;}
-  },
-  latlng () {
-    let city = pageSession.get('city') || AutoForm.getFieldValue('city');
-    let latitude = pageSession.get('geoPosLatitude') || AutoForm.getFieldValue('geoPosLatitude');
-    let longitude = pageSession.get('geoPosLongitude') || AutoForm.getFieldValue('geoPosLongitude');
-    return city && latitude && longitude;
-  },
-  longitude (){
-    return pageSession.get('geoPosLongitude') || AutoForm.getFieldValue('geoPosLongitude');
-  },
-  latitude (){
-    return pageSession.get('geoPosLatitude') || AutoForm.getFieldValue('geoPosLatitude');
-  },
-  country (){
-    return pageSession.get('country') || AutoForm.getFieldValue('country');
-  },
-  postalCode (){
-    return pageSession.get('postalCode') || AutoForm.getFieldValue('postalCode');
-  },
-  city (){
-    return pageSession.get('city') || AutoForm.getFieldValue('city');
-  },
-  cityName (){
-    return pageSession.get('cityName') || AutoForm.getFieldValue('cityName');
-  },
-  regionName (){
-    return pageSession.get('regionName') || AutoForm.getFieldValue('regionName');
-  },
-  depName (){
-    return pageSession.get('depName') || AutoForm.getFieldValue('depName');
-  },
-  */
   dataReadyOrganizer() {
     return Template.instance().readyOrganizer.get();
   },
@@ -520,21 +454,11 @@ Template.eventsFields.onCreated(function () {
   template.ready = new ReactiveVar();
   template.readyOrganizer = new ReactiveVar();
   template.readyParent = new ReactiveVar();
-  /* pageSession.set('postalCode', null);
-  pageSession.set('country', null);
-  pageSession.set('city', null);
-  pageSession.set('cityName', null);
-  pageSession.set('regionName', null);
-  pageSession.set('depName', null);
-  pageSession.set('geoPosLatitude', null);
-  pageSession.set('geoPosLongitude', null); */
-  /* pageSession.set('organizerType', null);
-  pageSession.set('organizerId', null); */
 
   self.autorun(function(c) {
     if (Router.current().params._id && Router.current().params.scope) {
-      Session.set('scopeId', Router.current().params._id);
-      Session.set('scope', Router.current().params.scope);
+      pageSession.set('scopeId', Router.current().params._id);
+      pageSession.set('scope', Router.current().params.scope);
       pageSession.set('organizerType', Router.current().params.scope);
       pageSession.set('organizerId', Router.current().params._id);
       c.stop();
@@ -544,89 +468,6 @@ Template.eventsFields.onCreated(function () {
 
 Template.eventsFields.onRendered(function() {
   const self = this;
-  /*
-  pageSession.set('postalCode', null);
-  pageSession.set('country', null);
-  pageSession.set('city', null);
-  pageSession.set('cityName', null);
-  pageSession.set('regionName', null);
-  pageSession.set('depName', null);
-  pageSession.set('geoPosLatitude', null);
-  pageSession.set('geoPosLongitude', null);
-
-  //#tags
-  pageSession.set( 'queryTag', false );
-  pageSession.set( 'tags', false );
-  self.$('textarea').atwho({
-    at: "#"
-  }).on("matched.atwho", function(event, flag, query) {
-      console.log(event, "matched " + flag + " and the result is " + query);
-      if(flag === '#' && query){
-    console.log(pageSession.get('queryTag'));
-    if(pageSession.get( 'queryTag') !== query){
-      pageSession.set( 'queryTag', query);
-      Meteor.call('searchTagautocomplete',query, function(error,result) {
-      if (!error) {
-        console.log(result);
-        self.$('textarea').atwho('load', '#', result).atwho('run');
-      }
-    });
-    }
-  }
-    }).on("inserted.atwho", function(event, $li, browser) {
-        console.log(JSON.stringify($li.data('item-data')));
-        if($li.data('item-data')['atwho-at'] == '#'){
-        const tag = $li.data('item-data').name;
-        if(pageSession.get('tags')){
-          let arrayTags = pageSession.get('tags');
-          arrayTags.push(tag);
-          pageSession.set( 'tags', arrayTags);
-        }else{
-          pageSession.set( 'tags', [tag] );
-        }
-      }
-      });
-
-  let geolocate = Session.get('geolocate');
-  if(geolocate && Router.current().route.getName()!="eventsEdit" && Router.current().route.getName()!="eventsBlockEdit"){
-    var onOk=IonPopup.confirm({template:TAPi18n.__('Use your current location'),
-    onOk: function(){
-      const latlngObj = position.getLatlngObject();
-      if (latlngObj) {
-        Meteor.call('getcitiesbylatlng',latlngObj,function(error, result){
-          if(result){
-            //console.log(result);
-            pageSession.set('postalCode', result.postalCodes[0].postalCode);
-            pageSession.set('country', result.country);
-            pageSession.set('city', result.insee);
-            pageSession.set('cityName', result.postalCodes[0].name);
-            pageSession.set('regionName', result.regionName);
-            pageSession.set('depName', result.depName);
-            pageSession.set('geoPosLatitude', result.geo.latitude);
-            pageSession.set('geoPosLongitude', result.geo.longitude);
-          }
-        });
-      }
-    },
-    cancelText:TAPi18n.__('no'),
-    okText:TAPi18n.__('yes')
-  });
-  }
-
-  self.autorun(function() {
-    let postalCode = pageSession.get('postalCode')  || AutoForm.getFieldValue('postalCode');
-    let country = pageSession.get('country')  || AutoForm.getFieldValue('country');
-    let city = pageSession.get('city');
-    if (!!postalCode && !!country) {
-      if(postalCode.length>4){
-        //console.log(`${postalCode} ${country}`);
-        //console.log('recompute');
-        //console.log('subscribs');
-        self.subscribe('cities',postalCode,country);
-      }
-    }
-  });
-  */
 
   self.autorun(function() {
     const organizerType = pageSession.get('organizerType');
@@ -645,10 +486,10 @@ Template.eventsFields.onRendered(function() {
     }
   });
 
-  self.autorun(function(c) {
+  self.autorun(function() {
     const organizerType = pageSession.get('organizerType');
     const organizerId = pageSession.get('organizerId');
-    console.log(`autorun ${organizerType} ${organizerId}`);
+    // console.log(`autorun ${organizerType} ${organizerId}`);
     if (organizerType && organizerId) {
       const handleParent = self.subscribe('directoryListEvents', organizerType, organizerId);
       self.readyParent.set(handleParent.ready());
@@ -656,98 +497,18 @@ Template.eventsFields.onRendered(function() {
   });
 });
 
-/* Template.eventsFields.onDestroyed(function () {
-this.$('textarea').atwho('destroy');
-}); */
-
 Template.eventsFields.events({
-  'change select[name="organizerType"]'(e, tmpl) {
-    e.preventDefault();
+  'change select[name="organizerType"]'(event, instance) {
+    event.preventDefault();
     // console.log(tmpl.$(e.currentTarget).val());
-    pageSession.set('organizerType', tmpl.$(e.currentTarget).val());
+    pageSession.set('organizerType', instance.$(event.currentTarget).val());
     pageSession.set('organizerId', false);
   },
-  'change select[name="organizerId"]'(e, tmpl) {
-    e.preventDefault();
+  'change select[name="organizerId"]'(event, instance) {
+    event.preventDefault();
     // console.log(tmpl.$(e.currentTarget).val());
-    pageSession.set('organizerId', tmpl.$(e.currentTarget).val());
+    pageSession.set('organizerId', instance.$(event.currentTarget).val());
   },
-  /*
-  'keyup input[name="postalCode"],change input[name="postalCode"]':_.throttle((e, tmpl) => {
-    e.preventDefault();
-    pageSession.set( 'postalCode', tmpl.$(e.currentTarget).val() );
-  }, 500)
-  ,
-  'change select[name="country"]': function(e, tmpl) {
-    e.preventDefault();
-    //console.log(tmpl.$(e.currentTarget).val());
-    pageSession.set( 'country', tmpl.$(e.currentTarget).val() );
-  },
-  'change select[name="city"]': function(e, tmpl) {
-    e.preventDefault();
-    //console.log(tmpl.$(e.currentTarget).val());
-    pageSession.set( 'city', tmpl.$(e.currentTarget).val() );
-    let insee = Cities.findOne({insee:tmpl.$(e.currentTarget).val()});
-    pageSession.set( 'geoPosLatitude', insee.geo.latitude);
-    pageSession.set( 'geoPosLongitude', insee.geo.longitude);
-    pageSession.set( 'regionName', insee.regionName);
-    pageSession.set( 'depName', insee.depName);
-    pageSession.set('cityName', e.currentTarget.options[e.currentTarget.selectedIndex].text);
-    //console.log(insee.geo.latitude);
-    //console.log(insee.geo.longitude);
-  },
-  'change input[name="streetAddress"]':_.throttle((event,template) => {
-    function addToRequest(request, dataStr){
-      if(dataStr == "") return request;
-      if(request != "") dataStr = " " + dataStr;
-      return transformNominatimUrl(request + dataStr);
-    }
-
-    //remplace les espaces par des +
-    function transformNominatimUrl(str){
-      var res = "";
-      for(var i = 0; i<str.length; i++){
-        res += (str.charAt(i) == " ") ? "+" : str.charAt(i);
-      }
-      return res;
-    };
-
-
-    let postalCode = '';
-    let country = '';
-    let streetAddress = '';
-    postalCode = AutoForm.getFieldValue('postalCode');
-    country = template.find('select[name="country"]').options[template.find('select[name="country"]').selectedIndex].text;
-    //console.log(country);
-    streetAddress = AutoForm.getFieldValue('streetAddress');
-
-    var request = "";
-
-    request = addToRequest(request, streetAddress);
-    request = addToRequest(request, postalCode);
-    request = addToRequest(request, country);
-    request = transformNominatimUrl(request);
-
-    if(event.currentTarget.value.length>5){
-      HTTP.get( 'https://maps.googleapis.com/maps/api/geocode/json?address=' + request + '&key='+Meteor.settings.public.googlekey, {},
-      function( error, response ) {
-        if ( error ) {
-          //console.log( error );
-        } else {
-          //console.log(response.data);
-          if (response.data.results.length > 0 && response.data.status != "ZERO_RESULTS") {
-            pageSession.set( 'geoPosLatitude', response.data.results[0].geometry.location.lat);
-            pageSession.set( 'geoPosLongitude', response.data.results[0].geometry.location.lng);
-            //console.log(response.data.results[0].geometry.location.lat);
-            //console.log(response.data.results[0].geometry.location.lng);
-          }
-          return;
-        }
-      }
-    );
-  }
-}, 500)
-*/
 });
 
 AutoForm.addHooks(['addEvent', 'editEvent'], {
@@ -764,76 +525,18 @@ AutoForm.addHooks(['addEvent', 'editEvent'], {
     },
   },
   before: {
-    method(doc, template) {
+    method(doc) {
       // console.log(doc);
       doc.organizerType = pageSession.get('organizerType');
       doc.organizerId = pageSession.get('organizerId');
-      const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
-      const matches = [];
-      let match;
-      if (doc.shortDescription) {
-        while ((match = regex.exec(doc.shortDescription))) {
-          matches.push(match[1]);
-        }
-      }
-      if (doc.description) {
-        while ((match = regex.exec(doc.description))) {
-          matches.push(match[1]);
-        }
-      }
-      if (pageSession.get('tags')) {
-        const arrayTags = _.reject(pageSession.get('tags'), value => matches[value] === null, matches);
-        if (doc.tags) {
-          doc.tags = _.uniq(_.union(doc.tags, arrayTags, matches));
-        } else {
-          doc.tags = _.uniq(_.union(arrayTags, matches));
-        }
-      } else {
-        // si on update est ce que la mention reste
-        if (matches.length > 0) {
-          if (doc.tags) {
-            doc.tags = _.uniq(_.union(doc.tags, matches));
-          } else {
-            doc.tags = _.uniq(matches);
-          }
-        }
-      }
-      console.log(doc.tags);
+      doc = matchTags(doc, pageSession.get('tags'));
+      // console.log(doc.tags);
       return doc;
     },
-    'method-update'(modifier, documentId) {
+    'method-update'(modifier) {
       modifier.$set.organizerType = pageSession.get('organizerType');
       modifier.$set.organizerId = pageSession.get('organizerId');
-      const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
-      const matches = [];
-      let match;
-      if (modifier.$set.shortDescription) {
-        while ((match = regex.exec(modifier.$set.shortDescription))) {
-          matches.push(match[1]);
-        }
-      }
-      if (modifier.$set.description) {
-        while ((match = regex.exec(modifier.$set.description))) {
-          matches.push(match[1]);
-        }
-      }
-      if (pageSession.get('tags')) {
-        const arrayTags = _.reject(pageSession.get('tags'), value => matches[value] === null, matches);
-        if (modifier.$set.tags) {
-          modifier.$set.tags = _.uniq(_.union(modifier.$set.tags, arrayTags, matches));
-        } else {
-          modifier.$set.tags = _.uniq(_.union(arrayTags, matches));
-        }
-      } else {
-        // si on update est ce que la mention reste
-        if (matches.length > 0) {
-          if (modifier.$set.tags) {
-            modifier.$set.tags = _.uniq(_.union(modifier.$set.tags, matches));
-          } else {
-            modifier.$set.tags = _.uniq(matches);
-          }
-        }
-      }
+      modifier.$set = matchTags(modifier.$set, pageSession.get('tags'));
       return modifier;
     },
   },
@@ -843,61 +546,25 @@ AutoForm.addHooks(['addEvent', 'editEvent'], {
         pageSession.set('error', error.reason.replace(': ', ''));
       }
     }
-    // let ref;
-    // if (error.errorType && error.errorType === 'Meteor.Error') {
-    // if ((ref = error.reason) === 'Name must be unique') {
-    // this.addStickyValidationError('name', error.reason);
-    // AutoForm.validateField(this.formId, 'name');
-    // }
-    // }
   },
 });
 
 AutoForm.addHooks(['editBlockEvent'], {
   after: {
-    'method-update'(error, result) {
+    'method-update'(error) {
       if (!error) {
-        if (Session.get('block') !== 'preferences') {
-          Router.go('detailList', { _id: Session.get('scopeId'), scope: 'events' });
+        if (pageSession.get('block') !== 'preferences') {
+          Router.go('detailList', { _id: pageSession.get('scopeId'), scope: 'events' });
         }
       }
     },
   },
   before: {
-    'method-update'(modifier, documentId) {
+    'method-update'(modifier) {
       const scope = 'events';
-      const block = Session.get('block');
+      const block = pageSession.get('block');
       if (modifier && modifier.$set) {
-        const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
-        const matches = [];
-        let match;
-        if (modifier.$set.shortDescription) {
-          while ((match = regex.exec(modifier.$set.shortDescription))) {
-            matches.push(match[1]);
-          }
-        }
-        if (modifier.$set.description) {
-          while ((match = regex.exec(modifier.$set.description))) {
-            matches.push(match[1]);
-          }
-        }
-        if (pageSession.get('tags')) {
-          const arrayTags = _.reject(pageSession.get('tags'), value => matches[value] === null, matches);
-          if (modifier.$set.tags) {
-            modifier.$set.tags = _.uniq(_.union(modifier.$set.tags, arrayTags, matches));
-          } else {
-            modifier.$set.tags = _.uniq(_.union(arrayTags, matches));
-          }
-        } else {
-          // si on update est ce que la mention reste
-          if (matches.length > 0) {
-            if (modifier.$set.tags) {
-              modifier.$set.tags = _.uniq(_.union(modifier.$set.tags, matches));
-            } else {
-              modifier.$set.tags = _.uniq(matches);
-            }
-          }
-        }
+        modifier.$set = matchTags(modifier.$set, pageSession.get('tags'));
       } else {
         modifier.$set = {};
       }

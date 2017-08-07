@@ -3,12 +3,23 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { _ } from 'meteor/underscore';
 import { moment } from 'meteor/momentjs:moment';
+import { Router } from 'meteor/iron:router';
+
+// schemas
+import { baseSchema, blockBaseSchema, geoSchema, preferencesSelect } from './schema.js';
+
+import { News } from './news.js';
+import { Events } from './events.js';
+import { Projects } from './projects.js';
+import { Poi } from './poi.js';
+import { Classified } from './classified.js';
+import { Organizations } from './organizations.js';
+import { Documents } from './documents.js';
+import { ActivityStream } from './activitystream.js';
+import { queryLink, queryOptions, nameToCollection } from './helpers.js';
 
 // Person
 export const Citoyens = new Meteor.Collection('citoyens', { idGeneration: 'MONGO' });
-
-// schemas
-import { baseSchema, blockBaseSchema, geoSchema, PostalAddress, GeoCoordinates, GeoPosition, linksCitoyens, preferences_SELECT } from './schema.js';
 
 const baseSchemaCitoyens = baseSchema.pick(['name', 'shortDescription', 'description', 'url', 'tags', 'tags.$']);
 
@@ -18,7 +29,7 @@ const updateSchemaCitoyens = new SimpleSchema({
     custom () {
       if (Meteor.isClient && this.isSet) {
         Meteor.call('checkUsername', this.value, function (error, result) {
-          console.log(result);
+          // console.log(result);
           if (!result) {
             updateSchemaCitoyens.namedContext('editBlockCitoyen').addInvalidKeys([{ name: 'username', type: 'notUnique' }]);
           }
@@ -96,7 +107,7 @@ BlockCitoyensRest.info = new SimpleSchema([blockBaseSchema, baseSchema.pick(['na
     custom () {
       if (Meteor.isClient && this.isSet) {
         Meteor.call('checkUsername', this.value, function (error, result) {
-          console.log(result);
+          // console.log(result);
           if (!result) {
             BlockCitoyensRest.info.namedContext('editBlockCitoyen').addInvalidKeys([{ name: 'username', type: 'usernameNotUnique' }]);
           }
@@ -114,27 +125,27 @@ BlockCitoyensRest.preferences = new SimpleSchema([blockBaseSchema, {
   },
   'preferences.email': {
     type: String,
-    allowedValues: preferences_SELECT,
+    allowedValues: preferencesSelect,
     optional: true,
   },
   'preferences.locality': {
     type: String,
-    allowedValues: preferences_SELECT,
+    allowedValues: preferencesSelect,
     optional: true,
   },
   'preferences.phone': {
     type: String,
-    allowedValues: preferences_SELECT,
+    allowedValues: preferencesSelect,
     optional: true,
   },
   'preferences.directory': {
     type: String,
-    allowedValues: preferences_SELECT,
+    allowedValues: preferencesSelect,
     optional: true,
   },
   'preferences.birthDate': {
     type: String,
-    allowedValues: preferences_SELECT,
+    allowedValues: preferencesSelect,
     optional: true,
   },
   'preferences.isOpenData': {
@@ -169,16 +180,6 @@ export const SchemasInviteAttendeesEventRest = new SimpleSchema({
   },
 });
 
-  // if(Meteor.isClient){
-import { News } from './news.js';
-import { Events } from './events.js';
-import { Projects } from './projects.js';
-import { Poi } from './poi.js';
-import { Classified } from './classified.js';
-import { Organizations } from './organizations.js';
-import { Documents } from './documents.js';
-import { ActivityStream } from './activitystream.js';
-import { queryLink, queryOptions, nameToCollection } from './helpers.js';
 
 if (Meteor.isClient) {
   window.Organizations = Organizations;
@@ -367,7 +368,7 @@ Citoyens.helpers({
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     const targetId = (typeof target !== 'undefined') ? target : Router.current().params._id;
     if (Meteor.isClient) {
-      const bothLimit = Session.get('limit');
+      // const bothLimit = Session.get('limit');
     } else if (typeof limit !== 'undefined') {
       options.limit = limit;
     }
@@ -394,14 +395,15 @@ Citoyens.helpers({
     query.$or = [];
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     if (Meteor.isClient) {
-      const bothLimit = Session.get('limit');
+      // const bothLimit = Session.get('limit');
     } else if (typeof limit !== 'undefined') {
       options.limit = limit;
     }
 
-    let projectsArray,
-      eventsArray,
-      memberOfArray = [];
+    let projectsArray;
+    let eventsArray;
+    let memberOfArray = [];
+
     // projects
     if (this.links && this.links.projects) {
       projectsArray = _.map(this.links.projects, (a, k) => k);
@@ -434,5 +436,3 @@ Citoyens.helpers({
     return Router.current().params.newsId && News.findOne({ _id: new Mongo.ObjectID(Router.current().params.newsId) });
   },
 });
-
-// }

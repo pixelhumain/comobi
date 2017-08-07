@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 import { Push } from 'meteor/raix:push';
-import { moment } from 'meteor/momentjs:moment';
 
 import { ActivityStream } from '../../api/activitystream.js';
 
@@ -47,14 +46,14 @@ Meteor.startup(function() {
         });
         // verifier que présent dans Meteor.users
         const notifsIdMeteor = Meteor.users.find({ _id: { $in: notifsId } }, { fields: { _id: 1 } }).map(user => user._id);
-        console.log(notifsIdMeteor);
+        // console.log(notifsIdMeteor);
         if (notifsIdMeteor && notifsIdMeteor.length > 0) {
           _.each(notifsIdMeteor, function(value) {
             const query = {};
             query.userId = value;
             const payload = JSON.parse(JSON.stringify(notification));
             const badge = ActivityStream.api.queryUnseen(value).count();
-            console.log({ value, badge });
+            // console.log({ value, badge });
             pushUser(title, text, payload, query, badge);
           }, title, text, notification);
         }

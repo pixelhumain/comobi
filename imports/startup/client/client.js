@@ -1,11 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { Tracker } from 'meteor/tracker';
-import { TAPi18n } from 'meteor/tap:i18n';
 import { AutoForm } from 'meteor/aldeed:autoform';
 import { moment } from 'meteor/momentjs:moment';
 import { Router } from 'meteor/iron:router';
 import { DeepLink } from 'meteor/communecter:deep-link';
+import { _ } from 'meteor/underscore';
+import { $ } from 'meteor/jquery';
 
 // collections
 import { ActivityStream } from '../../api/activitystream.js';
@@ -16,7 +16,7 @@ import { SchemasEventsRest, BlockEventsRest } from '../../api/events.js';
 import { SchemasOrganizationsRest, BlockOrganizationsRest } from '../../api/organizations.js';
 import { SchemasProjectsRest, BlockProjectsRest } from '../../api/projects.js';
 import { SchemasPoiRest, BlockPoiRest } from '../../api/poi.js';
-import { SchemasClassifiedRest, BlockClassifiedRest } from '../../api/classified.js';
+import { SchemasClassifiedRest } from '../../api/classified.js';
 import { SchemasFollowRest, SchemasInviteAttendeesEventRest, SchemasCitoyensRest, BlockCitoyensRest } from '../../api/citoyens.js';
 import { SchemasNewsRest, SchemasNewsRestBase } from '../../api/news.js';
 import { SchemasCommentsRest, SchemasCommentsEditRest } from '../../api/comments.js';
@@ -29,10 +29,10 @@ Meteor.startup(function () {
   };
   if (Meteor.isCordova && !Meteor.isDesktop) {
     DeepLink.once('INTENT', function(intent) {
-      console.log('INTENT');
-      console.log(intent);
+      // console.log('INTENT');
+      // console.log(intent);
       if (intent.split('#').length === 2) {
-        console.log('SPLIT');
+        // console.log('SPLIT');
         const urlArray = intent.split('#')[1].split('.');
         if (urlArray && urlArray.length === 4) {
           const type = urlArray[0];
@@ -57,13 +57,13 @@ Meteor.startup(function () {
       }
     });
 
-    DeepLink.once('communecter', function(data, url, scheme, path, querystring) {
-      console.log('communecter');
+    DeepLink.once('communecter', function(data, url, scheme, path) {
+      /*  console.log('communecter');
       console.log(url);
       console.log(scheme);
       console.log(path);
       console.log(querystring);
-      /*
+
     communecter://
     communecter://login
     communecter://signin
@@ -103,10 +103,10 @@ Meteor.startup(function () {
     });
 
     DeepLink.on('https', (data, url, scheme, path) => {
-      console.log('HTTPS');
+      /* console.log('HTTPS');
       console.log(url);
       console.log(scheme);
-      console.log(path);
+      console.log(path); */
     });
   }
 
@@ -158,97 +158,64 @@ Meteor.startup(function () {
   BlockPoiRest.descriptions.i18n('schemas.global');
   BlockPoiRest.locality.i18n('schemas.global');
 
-  Template.registerHelper('equals',
-    function(v1, v2) {
-      return (v1 === v2);
-    },
+  Template.registerHelper('equals', (v1, v2) => (v1 === v2));
+
+  Template.registerHelper('nequals', (v1, v2) => (v1 !== v2));
+
+  Template.registerHelper('diffInText', (start, end) => {
+    const a = moment(start);
+    const b = moment(end);
+    const diffInMs = b.diff(a); // 86400000 milliseconds
+    // const diffInDays = b.diff(a, 'days'); // 1 day
+    const diffInDayText = moment.duration(diffInMs).humanize();
+    return diffInDayText;
+  },
   );
 
-  Template.registerHelper('nequals',
-    function(v1, v2) {
-      return (v1 !== v2);
-    },
-  );
+  Template.registerHelper('isCordova', () => Meteor.isCordova);
 
-  Template.registerHelper('diffInText',
-    function(start, end) {
-      const a = moment(start);
-      const b = moment(end);
-      const diffInMs = b.diff(a); // 86400000 milliseconds
-      const diffInDays = b.diff(a, 'days'); // 1 day
-      const diffInDayText = moment.duration(diffInMs).humanize();
-      return diffInDayText;
-    },
-  );
-
-  Template.registerHelper('isCordova',
-    function() {
-      return Meteor.isCordova;
-    },
-  );
-
-  Template.registerHelper('textTags',
-    function(text, tags) {
-      if (text) {
-        if (tags) {
-          _.each(tags, (value) => {
-            text = text.replace(new RegExp(`#${value}`, 'g'), `<a href="" class="positive">#${value}</a>`);
-          }, text);
-        }
-        return text;
+  Template.registerHelper('textTags', (text, tags) => {
+    if (text) {
+      if (tags) {
+        _.each(tags, (value) => {
+          text = text.replace(new RegExp(`#${value}`, 'g'), `<a href="" class="positive">#${value}</a>`);
+        }, text);
       }
-    },
+      return text;
+    }
+    return undefined;
+  },
   );
 
-  Template.registerHelper('notificationsCount',
-    function() {
-      return ActivityStream.api.Unseen();
-    },
-  );
+  Template.registerHelper('notificationsCount', () => ActivityStream.api.Unseen());
 
-  Template.registerHelper('notificationsCountRead',
-    function() {
-      return ActivityStream.api.Unread();
-    },
-  );
+  Template.registerHelper('notificationsCountRead', () => ActivityStream.api.Unread());
 
-  Template.registerHelper('notificationsScopeCount',
-    function(id) {
-      return ActivityStream.api.Unseen(id);
-    },
-  );
+  Template.registerHelper('notificationsScopeCount', id => ActivityStream.api.Unseen(id));
 
-  Template.registerHelper('notificationsScopeCountAsk',
-    function(id) {
-      return ActivityStream.api.UnseenAsk(id);
-    },
-  );
+  Template.registerHelper('notificationsScopeCountAsk', id => ActivityStream.api.UnseenAsk(id));
 
-  Template.registerHelper('notificationsScopeCountRead',
-    function(id) {
-      return ActivityStream.api.Unread(id);
-    },
-  );
+  Template.registerHelper('notificationsScopeCountRead', id => ActivityStream.api.Unread(id));
 
-  Template.registerHelper('imageDoc',
-    function(id, profil) {
-      const query = {};
-      if (id) {
-        query.id = id;
-        if (profil) {
-          query.contentKey = 'profil';
-        }
-        return Documents.findOne(query, { sort: { created: -1 } });
+  Template.registerHelper('imageDoc', (id, profil) => {
+    const query = {};
+    if (id) {
+      query.id = id;
+      if (profil) {
+        query.contentKey = 'profil';
       }
-      if (this && this._id && this._id._str) {
-        query.id = this._id._str;
-        query.doctype = 'image';
-        if (profil) {
-          query.contentKey = 'profil';
-        }
-        return this && this._id && this._id._str && Documents.findOne(query, { sort: { created: -1 } });
+      return Documents.findOne(query, { sort: { created: -1 } });
+    }
+    if (this && this._id && this._id._str) {
+      query.id = this._id._str;
+      query.doctype = 'image';
+      if (profil) {
+        query.contentKey = 'profil';
       }
-    },
+      return this && this._id && this._id._str && Documents.findOne(query, { sort: { created: -1 } });
+    }
+    return undefined;
+  },
   );
 
 

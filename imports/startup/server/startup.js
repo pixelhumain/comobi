@@ -1,7 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 
-import { Events } from '../../api/events.js';
-
 Meteor.startup(function() {
 
 // var retour =   Meteor.users.find({_id:"562f3e11e41d7546793ba4c6"});

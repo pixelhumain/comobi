@@ -1,11 +1,13 @@
 import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 import { _ } from 'meteor/underscore';
-import { Push } from 'meteor/raix:push';
 import { moment } from 'meteor/momentjs:moment';
+import { HTTP } from 'meteor/http';
 import { URL } from 'meteor/url';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Mongo } from 'meteor/mongo';
+import { ValidEmail, IsValidEmail } from 'meteor/froatsnook:valid-email';
 // collection et schemas
 // import { NotificationHistory } from '../notification_history.js';
 import { ActivityStream } from '../activitystream.js';
@@ -26,10 +28,7 @@ import { SchemasShareRest } from '../schema.js';
 import { apiCommunecter } from './api.js';
 
 // helpers
-import { encodeString } from '../helpers.js';
-import { ValidEmail, IsValidEmail } from 'meteor/froatsnook:valid-email';
-
-import { nameToCollection } from '../helpers.js';
+import { encodeString, nameToCollection } from '../helpers.js';
 
 global.Events = Events;
 global.Organizations = Organizations;
@@ -326,8 +325,8 @@ URL._encodeParams = function(params, prefix) {
   const str = [];
   for (const p in params) {
     if (params.hasOwnProperty(p)) {
-      let k = prefix ? `${prefix}[${p}]` : p,
-        v = params[p];
+      const k = prefix ? `${prefix}[${p}]` : p;
+      const v = params[p];
       if (typeof v === 'object') {
         str.push(this._encodeParams(v, k));
       } else {
@@ -345,6 +344,7 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
+    this.unblock();
     if (Citoyens.update({
       _id: new Mongo.ObjectID(this.userId),
     }, {
@@ -358,8 +358,6 @@ Meteor.methods({
       return true;
     }
     return false;
-
-    this.unblock();
   },
   likeScope (newsId, scope) {
     check(newsId, String);
@@ -436,6 +434,7 @@ Meteor.methods({
     }
   },
   addAction (doc) {
+    check(doc, Object);
     check(doc.id, String);
     check(doc.collection, String);
     check(doc.action, String);
@@ -554,13 +553,13 @@ Meteor.methods({
     const doc = {};
     doc.parentId = connectId;
     doc.childType = 'citoyens';
-    if (parentType == 'organizations') {
+    if (parentType === 'organizations') {
       doc.connectType = 'member';
-    } else if (parentType == 'projects') {
+    } else if (parentType === 'projects') {
       doc.connectType = 'contributor';
-    } else if (parentType == 'citoyens') {
+    } else if (parentType === 'citoyens') {
       doc.connectType = 'followers';
-    } else if (parentType == 'events') {
+    } else if (parentType === 'events') {
       doc.connectType = 'attendee';
     }
     doc.childId = (typeof childId !== 'undefined') ? childId : this.userId;
@@ -588,13 +587,13 @@ Meteor.methods({
     const doc = {};
     doc.parentId = connectId;
     doc.childType = (typeof childType !== 'undefined' && childType !== null) ? childType : 'citoyens';
-    if (parentType == 'organizations') {
+    if (parentType === 'organizations') {
       doc.connectType = (typeof connectType !== 'undefined' && connectType !== null) ? connectType : 'members';
-    } else if (parentType == 'projects') {
+    } else if (parentType === 'projects') {
       doc.connectType = (typeof connectType !== 'undefined' && connectType !== null) ? connectType : 'contributors';
-    } else if (parentType == 'citoyens') {
+    } else if (parentType === 'citoyens') {
       doc.connectType = (typeof connectType !== 'undefined' && connectType !== null) ? connectType : 'followers';
-    } else if (parentType == 'events') {
+    } else if (parentType === 'events') {
       doc.connectType = (typeof connectType !== 'undefined' && connectType !== null) ? connectType : 'attendees';
     }
     doc.childId = (typeof childId !== 'undefined' && childId !== null) ? childId : this.userId;
@@ -726,7 +725,7 @@ indexMax:20 */
       throw new Meteor.Error('not-authorized');
     }
 
-    if (typeEntity == 'organizations' || typeEntity == 'projects' || typeEntity == 'events') {
+    if (typeEntity === 'organizations' || typeEntity === 'projects' || typeEntity === 'events') {
       const collection = nameToCollection(typeEntity);
       if (!collection.findOne({ _id: new Mongo.ObjectID(idEntity) }).isAdmin()) {
         throw new Meteor.Error('not-authorized');
@@ -735,14 +734,14 @@ indexMax:20 */
         return _.contains(['isOpenData', 'isOpenEdition'], name);
       }));
       check(value, Boolean);
-    } else if (typeEntity == 'citoyens') {
+    } else if (typeEntity === 'citoyens') {
       if (this.userId !== idEntity) {
         throw new Meteor.Error('not-authorized');
       }
       check(type, Match.Where(function(name) {
         return _.contains(['directory', 'birthDate', 'email', 'locality', 'phone', 'isOpenData'], name);
       }));
-      if (type == 'isOpenData') {
+      if (type === 'isOpenData') {
         check(value, Boolean);
       } else {
         check(value, Match.Where(function(name) {
@@ -815,12 +814,12 @@ indexMax:20 */
       return _.contains(['events', 'projects', 'poi', 'organizations', 'citoyens'], name);
     }));
 
-    if (modifier.$set.typeElement == 'organizations' || modifier.$set.typeElement == 'projects' || modifier.$set.typeElement == 'poi' || modifier.$set.typeElement == 'events') {
+    if (modifier.$set.typeElement === 'organizations' || modifier.$set.typeElement === 'projects' || modifier.$set.typeElement === 'poi' || modifier.$set.typeElement === 'events') {
       const collection = nameToCollection(modifier.$set.typeElement);
       if (!collection.findOne({ _id: new Mongo.ObjectID(documentId) }).isAdmin()) {
         throw new Meteor.Error('not-authorized');
       }
-    } else if (modifier.$set.typeElement == 'citoyens') {
+    } else if (modifier.$set.typeElement === 'citoyens') {
       if (this.userId !== documentId) {
         throw new Meteor.Error('not-authorized');
       }
@@ -873,7 +872,7 @@ indexMax:20 */
       docRetour.pk = documentId;
       docRetour.type = modifier.$set.typeElement;
       // console.log(docRetour);
-      var retour = apiCommunecter.postPixel('element', `updatefields/type/${modifier.$set.typeElement}`, docRetour);
+      const retour = apiCommunecter.postPixel('element', `updatefields/type/${modifier.$set.typeElement}`, docRetour);
       return retour;
     } else if (modifier.$set.block === 'preferences') {
     // console.log('preferences');
@@ -883,7 +882,7 @@ indexMax:20 */
           // console.log(`updateSettings,${field},${modifier["$set"][`preferences.${field}`]},${modifier["$set"].typeElement},${documentId}`);
           Meteor.call('updateSettings', field, modifier.$set[`preferences.${field}`], modifier.$set.typeElement, documentId);
         });
-      } else if (modifier.$set.typeElement == 'organizations' || modifier.$set.typeElement == 'projects' || modifier.$set.typeElement == 'events') {
+      } else if (modifier.$set.typeElement === 'organizations' || modifier.$set.typeElement === 'projects' || modifier.$set.typeElement === 'events') {
         const fieldsArray = ['isOpenEdition', 'isOpenData'];
         _.each(fieldsArray, (field) => {
           // console.log(`updateSettings,${field},${modifier["$set"][`preferences.${field}`]},${modifier["$set"].typeElement},${documentId}`);
@@ -896,7 +895,7 @@ indexMax:20 */
     docRetour.block = modifier.$set.block;
     docRetour.typeElement = modifier.$set.typeElement;
     // console.log(docRetour);
-    var retour = apiCommunecter.postPixel('element', 'updateblock', docRetour);
+    const retour = apiCommunecter.postPixel('element', 'updateblock', docRetour);
     return retour;
   },
   updateCitoyen (modifier, documentId) {
@@ -980,15 +979,15 @@ indexMax:20 */
       throw new Meteor.Error('not-authorized');
     }
 
-    const newsOne = News.findOne({ _id: new Mongo.ObjectID(newsId) });
-    if (newsOne.target.type == 'organizations' || newsOne.target.type == 'projects' || newsOne.target.type == 'poi' || newsOne.target.type == 'events') {
+    const newsOne = News.findOne({ _id: new Mongo.ObjectID(documentId) });
+    if (newsOne.target.type === 'organizations' || newsOne.target.type === 'projects' || newsOne.target.type === 'poi' || newsOne.target.type === 'events') {
       const collection = nameToCollection(newsOne.target.type);
       if (!newsOne.isAuthor()) {
         if (!collection.findOne({ _id: new Mongo.ObjectID(newsOne.target.id) }).isAdmin()) {
           throw new Meteor.Error('not-authorized');
         }
       }
-    } else if (newsOne.target.type == 'citoyens') {
+    } else if (newsOne.target.type === 'citoyens') {
       if (!newsOne.isAuthor()) {
         throw new Meteor.Error('not-authorized');
       }
@@ -1023,14 +1022,14 @@ indexMax:20 */
       throw new Meteor.Error('not-authorized');
     }
     const newsOne = News.findOne({ _id: new Mongo.ObjectID(newsId) });
-    if (newsOne.target.type == 'organizations' || newsOne.target.type == 'projects' || newsOne.target.type == 'poi' || newsOne.target.type == 'events') {
+    if (newsOne.target.type === 'organizations' || newsOne.target.type === 'projects' || newsOne.target.type === 'poi' || newsOne.target.type === 'events') {
       const collection = nameToCollection(newsOne.target.type);
       if (!newsOne.isAuthor()) {
         if (!collection.findOne({ _id: new Mongo.ObjectID(newsOne.target.id) }).isAdmin()) {
           throw new Meteor.Error('not-authorized');
         }
       }
-    } else if (newsOne.target.type == 'citoyens') {
+    } else if (newsOne.target.type === 'citoyens') {
       if (!newsOne.isAuthor()) {
         throw new Meteor.Error('not-authorized');
       }
@@ -1132,9 +1131,9 @@ indexMax:20 */
         insertNew.media.type = 'gallery_images';
         insertNew.media.countImages = '1';
         insertNew.media.images = [doc.data.id.$id];
-        newsId = Meteor.call('insertNew', insertNew);
+        const newsIdRetour = Meteor.call('insertNew', insertNew);
         if (newsId) {
-          return { photoret: doc.data.id.$id, newsId: newsId.data.id.$id };
+          return { photoret: doc.data.id.$id, newsId: newsIdRetour.data.id.$id };
         }
         throw new Meteor.Error('photoNews error');
       } else {
@@ -1460,7 +1459,7 @@ indexMax:20 */
       throw new Meteor.Error('not-authorized');
     }
 
-    const docRetour = baseDocRetour({}, doc, 'organizations');
+    const docRetour = baseDocRetour({}, modifier.$set, 'organizations');
     docRetour.id = documentId;
     docRetour.key = 'organization';
     docRetour.collection = 'organizations';
@@ -1481,7 +1480,7 @@ indexMax:20 */
     check(user.city, String);
 
     const passwordTest = new RegExp('(?=.{8,}).*', 'g');
-    if (passwordTest.test(user.password) == false) {
+    if (passwordTest.test(user.password) === false) {
       throw new Meteor.Error('Password is Too short');
     }
 

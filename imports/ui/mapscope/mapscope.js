@@ -1,13 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { Session } from 'meteor/session';
-import { ReactiveDict } from 'meteor/reactive-dict';
-import { AutoForm } from 'meteor/aldeed:autoform';
 import { Mapbox } from 'meteor/communecter:mapbox';
 import { $ } from 'meteor/jquery';
 import { Blaze } from 'meteor/blaze';
-import { Location } from 'meteor/djabatav:geolocation-plus';
-import { _ } from 'meteor/underscore';
+import { Router } from 'meteor/iron:router';
 
 import { Events } from '../../api/events.js';
 import { Organizations } from '../../api/organizations.js';
@@ -16,13 +12,13 @@ import { Poi } from '../../api/poi.js';
 import { Classified } from '../../api/classified.js';
 import { Citoyens } from '../../api/citoyens.js';
 
-import { nameToCollection } from '../../api/helpers.js';
+import { queryGeoFilter, nameToCollection } from '../../api/helpers.js';
 
 // submanager
 import { listEventsSubs, listOrganizationsSubs, listProjectsSubs, listPoiSubs, listClassifiedSubs, listCitoyensSubs, scopeSubscribe } from '../../api/client/subsmanager.js';
 
 import position from '../../api/client/position.js';
-import { queryGeoFilter } from '../../api/helpers.js';
+import { pageSession } from '../../api/client/reactive.js';
 
 import './mapscope.html';
 
@@ -41,131 +37,11 @@ subs.poi = listPoiSubs;
 subs.classified = listClassifiedSubs;
 subs.citoyens = listCitoyensSubs;
 
-Template.mapCanvas.onCreated(function () {
-  const self = this;
-  scopeSubscribe(this, subs[Router.current().params.scope], 'geo.scope', Router.current().params.scope);
+let clusters;
+let map;
+const markers = [];
 
-  self.autorun(function(c) {
-    Session.set('currentScopeId', Router.current().params._id);
-  });
-});
-
-Template.mapCanvas.onRendered(function () {
-  const self = this;
-  $(window).resize(function () {
-    let h = $(window).height(),
-      offsetTop = 40;
-    $('#map_canvas').css('height', (h - offsetTop));
-  }).resize();
-
-  self.autorun(function (c) {
-    IonLoading.show();
-    if (self.ready.get()) {
-      if (Mapbox.loaded()) {
-        IonLoading.hide();
-        c.stop();
-      }
-    }
-  });
-
-  self.autorun(function (c) {
-    // if (self.ready.get()) {
-    if (Mapbox.loaded()) {
-      initialize($('#map_canvas')[0], 13);
-      c.stop();
-    }
-    // }
-  });
-
-  if (self.liveQuery) {
-    self.liveQuery.stop();
-  }
-  self.autorun(function (c) {
-    if (self.ready.get()) {
-      if (Mapbox.loaded()) {
-        clearLayers();
-
-        const inputDate = new Date();
-        const collection = nameToCollection(Router.current().params.scope);
-        let query = {};
-        query = queryGeoFilter(query);
-        // query['created'] = {$gte : inputDate};
-        console.log(query);
-        if (Router.current().params.scope === 'events') {
-
-        }
-        query.geo = { $exists: 1 };
-        self.liveQuery = collection.find(query).observe({
-          added(event) {
-            if (event && event.geo && event.geo.latitude) {
-              const containerNode = document.createElement('div');
-
-              Blaze.renderWithData(Template.mapscopepopup, event, containerNode);
-              const marker = new L.Marker([event.geo.latitude, event.geo.longitude], {
-                _id: event._id._str,
-                title: event.name,
-                latitude: event.geo.latitude,
-                longitude: event.geo.longitude,
-                icon: selectIcon(event),
-              }).bindPopup(containerNode).on('click', function(e) {
-                console.log(e.target.options._id);
-                map.panTo([e.target.options.latitude, e.target.options.longitude]);
-                Session.set('selected', e.target.options._id);
-              });
-              addMarker(marker);
-            }
-          },
-          changed(event) {
-            console.log(event._id._str);
-            if (event && event.geo && event.geo.latitude) {
-              var marker = markers[event._id._str];
-              if (marker) {
-                if (map.hasLayer(marker)) map.removeLayer(marker);
-                const containerNode = document.createElement('div');
-                Blaze.renderWithData(Template.mapscopepopup, event, containerNode);
-                var marker = new L.Marker([event.geo.latitude, event.geo.longitude], {
-                  _id: event._id._str,
-                  title: event.name,
-                  latitude: event.geo.latitude,
-                  longitude: event.geo.longitude,
-                  icon: selectIcon(event),
-                }).bindPopup(containerNode).on('click', function(e) {
-                  console.log(e.target.options._id);
-                  map.panTo([e.target.options.latitude, e.target.options.longitude]);
-                  Session.set('selected', e.target.options._id);
-                });
-                addMarker(marker);
-              }
-            }
-          },
-          removed(event) {
-            console.log(event._id._str);
-            removeMarker(event._id._str);
-          },
-        });
-      }
-    }
-  });
-});
-
-Template.mapCanvas.onDestroyed(function () {
-  const self = this;
-  console.log('destroyed');
-  Session.set('currentScopeId', false);
-  map.remove();
-  if (self.liveQuery) {
-    self.liveQuery.stop();
-  }
-});
-
-
-let clusters,
-  map,
-  markers = [];
-
-const initialize = (element, zoom, features) => {
-  const self = this;
-  const city = position.getCity();
+const initialize = (element, zoom) => {
   const geo = position.getLatlng();
   const options = {
     maxZoom: 18,
@@ -183,21 +59,21 @@ const initialize = (element, zoom, features) => {
     const layermapbox = L.tileLayer('https://api.mapbox.com/styles/v1/communecter/cj4ziz9st0re02qo4xtqu7puz/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY29tbXVuZWN0ZXIiLCJhIjoiY2l6eTIyNTYzMDAxbTJ3bng1YTBsa3d0aCJ9.elyGqovHs-mrji3ttn_Yjw').addTo(map);
 
     /* if(city && city.geoShape && city.geoShape.coordinates){
-      console.log(JSON.stringify(city.geoShape));
-      var featureLayer = L.mapbox.featureLayer({
-      type: "FeatureCollection",
-      features: [{
-        type: "Feature",
-        geometry: city.geoShape
-      }]
-    }).addTo(map);
-    console.log(featureLayer.getGeoJSON());
-  } */
+    console.log(JSON.stringify(city.geoShape));
+    var featureLayer = L.mapbox.featureLayer({
+    type: "FeatureCollection",
+    features: [{
+    type: "Feature",
+    geometry: city.geoShape
+  }]
+}).addTo(map);
+console.log(featureLayer.getGeoJSON());
+} */
 
     // var features = L.mapbox.featureLayer('mapbox.dc-markers').addTo(map);
     /* var stamenLayer = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png', {
-    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.'
-  }).addTo(map); */
+attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.'
+}).addTo(map); */
 
     const marker = L.marker(new L.LatLng(parseFloat(geo.latitude), parseFloat(geo.longitude)), { icon: L.mapbox.marker.icon({
       'marker-size': 'small',
@@ -242,25 +118,25 @@ let query={};
 query = queryGeoFilter(query);
 query['geo'] = {$exists:1};
 collection.find({geo:{$exists:1}}).map(function(event){
-  if(event && event.geo && event.geo.latitude){
-  let containerNode = document.createElement('div');
-  Blaze.renderWithData(Template.mapscopepopup, event, containerNode);
-  let marker = new L.Marker([event.geo.latitude, event.geo.longitude], {
-    _id: event._id._str,
-    title: event.name,
-    latitude : event.geo.latitude,
-    longitude : event.geo.longitude,
-    icon: L.mapbox.marker.icon({
-      'marker-size': 'small',
-      'marker-color': selectColor(event)
-    })
-  }).bindPopup(containerNode).on('click', function(e) {
-    console.log(e.target.options._id);
-    map.panTo([e.target.options.latitude, e.target.options.longitude]);
-    Session.set("selected", e.target.options._id);
-  });
-  addMarker(marker);
-  }
+if(event && event.geo && event.geo.latitude){
+let containerNode = document.createElement('div');
+Blaze.renderWithData(Template.mapscopepopup, event, containerNode);
+let marker = new L.Marker([event.geo.latitude, event.geo.longitude], {
+_id: event._id._str,
+title: event.name,
+latitude : event.geo.latitude,
+longitude : event.geo.longitude,
+icon: L.mapbox.marker.icon({
+'marker-size': 'small',
+'marker-color': selectColor(event)
+})
+}).bindPopup(containerNode).on('click', function(e) {
+console.log(e.target.options._id);
+map.panTo([e.target.options.latitude, e.target.options.longitude]);
+Session.set("selected", e.target.options._id);
+});
+addMarker(marker);
+}
 }); */
     map.addLayer(clusters);
 
@@ -282,31 +158,16 @@ directions.query();
   }
 };
 
-
-const inversePolygon = function(polygon) {
-  const inversedPoly = new Array();
-  console.log('inversePolygon');
-  if (typeof polygon !== 'undefined' && polygon != null) {
-    _.each(polygon, function(value) {
-      console.log(value[1]);
-      const lat = value[0];
-      const lng = value[1];
-      inversedPoly.push(new Array(lat, lng));
-    });
-  }
-  return inversedPoly;
-};
-
 const addMarker = (marker) => {
   // map.addLayer(marker);
   clusters.addLayer(marker);
   markers[marker.options._id] = marker;
-  if (Session.get('currentScopeId') === marker.options._id) {
-    console.log('marker open');
+  if (pageSession.get('currentScopeId') === marker.options._id) {
+    // console.log('marker open');
     marker.addTo(map).openPopup();
     map.panTo([marker.options.latitude, marker.options.longitude]);
     map.on('popupclose', function() {
-      console.log('popupclose');
+      // console.log('popupclose');
       map.removeLayer(marker);
     });
   }
@@ -324,16 +185,16 @@ const clearLayers = () => {
 const selectIcon = (event) => {
   if (event && event.profilMarkerImageUrl) {
     return L.icon({
-				    iconUrl: `${Meteor.settings.public.urlimage}${event.profilMarkerImageUrl}`,
-				    iconSize: [53, 60], // 38, 95],
-				    iconAnchor: [27, 57], // 22, 94],
-				    popupAnchor: [0, -55], // -3, -76]
+      iconUrl: `${Meteor.settings.public.urlimage}${event.profilMarkerImageUrl}`,
+      iconSize: [53, 60], // 38, 95],
+      iconAnchor: [27, 57], // 22, 94],
+      popupAnchor: [0, -55], // -3, -76]
     });
   }
 
-  const icoMarkersMap = { 			default: '',
+  const icoMarkersMap = { default: '',
 
-										  	city: 'city-marker-default',
+    city: 'city-marker-default',
 
     news: 'NEWS_A',
     idea: 'NEWS_A',
@@ -385,8 +246,8 @@ const selectIcon = (event) => {
 
     classified: 'classified-marker-default',
 
-									  };
-    // const assetPath = '/assets/feadb1ba';
+  };
+  // const assetPath = '/assets/feadb1ba';
   const iconUrl = `${Meteor.settings.public.assetPath}/images/sig/markers/icons_carto/${icoMarkersMap[Router.current().params.scope]}.png`;
   return L.icon({
     iconUrl: `${Meteor.settings.public.urlimage}${iconUrl}`,
@@ -396,7 +257,7 @@ const selectIcon = (event) => {
   });
 };
 
-const selectColor = (event) => {
+/* const selectColor = (event) => {
   const inputDate = new Date();
   if (event.startDate < inputDate && event.endDate < inputDate) {
     return '#cccccc';
@@ -404,4 +265,120 @@ const selectColor = (event) => {
     return '#33cd5f';
   }
   return '#324553';
-};
+}; */
+
+Template.mapCanvas.onCreated(function () {
+  const self = this;
+  scopeSubscribe(this, subs[Router.current().params.scope], 'geo.scope', Router.current().params.scope);
+
+  self.autorun(function() {
+    pageSession.set('currentScopeId', Router.current().params._id);
+  });
+});
+
+Template.mapCanvas.onRendered(function () {
+  const self = this;
+  $(window).resize(function () {
+    const h = $(window).height();
+    const offsetTop = 40;
+    $('#map_canvas').css('height', (h - offsetTop));
+  }).resize();
+
+  self.autorun(function (c) {
+    IonLoading.show();
+    if (self.ready.get()) {
+      if (Mapbox.loaded()) {
+        IonLoading.hide();
+        c.stop();
+      }
+    }
+  });
+
+  self.autorun(function (c) {
+    // if (self.ready.get()) {
+    if (Mapbox.loaded()) {
+      initialize($('#map_canvas')[0], 13);
+      c.stop();
+    }
+    // }
+  });
+
+  if (self.liveQuery) {
+    self.liveQuery.stop();
+  }
+  self.autorun(function () {
+    if (self.ready.get()) {
+      if (Mapbox.loaded()) {
+        clearLayers();
+
+        const collection = nameToCollection(Router.current().params.scope);
+        let query = {};
+        query = queryGeoFilter(query);
+        // query['created'] = {$gte : inputDate};
+        // console.log(query);
+        if (Router.current().params.scope === 'events') {
+
+        }
+        query.geo = { $exists: 1 };
+        self.liveQuery = collection.find(query).observe({
+          added(event) {
+            if (event && event.geo && event.geo.latitude) {
+              const containerNode = document.createElement('div');
+
+              Blaze.renderWithData(Template.mapscopepopup, event, containerNode);
+              const marker = new L.Marker([event.geo.latitude, event.geo.longitude], {
+                _id: event._id._str,
+                title: event.name,
+                latitude: event.geo.latitude,
+                longitude: event.geo.longitude,
+                icon: selectIcon(event),
+              }).bindPopup(containerNode).on('click', function(e) {
+                // console.log(e.target.options._id);
+                map.panTo([e.target.options.latitude, e.target.options.longitude]);
+                pageSession.set('selected', e.target.options._id);
+              });
+              addMarker(marker);
+            }
+          },
+          changed(event) {
+            // console.log(event._id._str);
+            if (event && event.geo && event.geo.latitude) {
+              const marker = markers[event._id._str];
+              if (marker) {
+                if (map.hasLayer(marker)) map.removeLayer(marker);
+                const containerNode = document.createElement('div');
+                Blaze.renderWithData(Template.mapscopepopup, event, containerNode);
+                const markerAdd = new L.Marker([event.geo.latitude, event.geo.longitude], {
+                  _id: event._id._str,
+                  title: event.name,
+                  latitude: event.geo.latitude,
+                  longitude: event.geo.longitude,
+                  icon: selectIcon(event),
+                }).bindPopup(containerNode).on('click', function(e) {
+                  // console.log(e.target.options._id);
+                  map.panTo([e.target.options.latitude, e.target.options.longitude]);
+                  pageSession.set('selected', e.target.options._id);
+                });
+                addMarker(markerAdd);
+              }
+            }
+          },
+          removed(event) {
+            // console.log(event._id._str);
+            removeMarker(event._id._str);
+          },
+        });
+      }
+    }
+  });
+});
+
+Template.mapCanvas.onDestroyed(function () {
+  const self = this;
+  // console.log('destroyed');
+  pageSession.set('currentScopeId', false);
+  map.remove();
+  if (self.liveQuery) {
+    self.liveQuery.stop();
+  }
+});

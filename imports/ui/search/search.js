@@ -1,8 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
-import { Router } from 'meteor/iron:router';
-import { TAPi18n } from 'meteor/tap:i18n';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { _ } from 'meteor/underscore';
 
@@ -10,17 +7,12 @@ import './search.html';
 
 const pageSession = new ReactiveDict('pageSearchGlobal');
 
-/* Template.searchGlobal.onCreated(function () {
-    pageSession.set( 'searchGlobal', null );
-    pageSession.set('filter', null );
-  }); */
-
 Template.searchGlobal.onRendered(function () {
-  this.autorun(function(c) {
+  this.autorun(function() {
     if (pageSession.get('filter')) {
       const query = pageSession.get('filter');
       const querySearch = {};
-      if (query.charAt(0) == '#' && query.length > 1) {
+      if (query.charAt(0) === '#' && query.length > 1) {
         querySearch.name = query;
         querySearch.searchTag = [query.substr(1)];
       } else {
@@ -31,16 +23,14 @@ Template.searchGlobal.onRendered(function () {
       querySearch.searchType = ['persons', 'organizations', 'projects', 'events'];
       querySearch.searchBy = 'ALL';
       Meteor.call('searchGlobalautocomplete', querySearch, function(error, result) {
-        const array = _.map(result, function(array, key) {
-          return {
-            _id: key,
-            name: array.name,
-            profilThumbImageUrl: array.profilThumbImageUrl,
-            type: array.type,
-            typeSig: array.typeSig,
-            address: array.address,
-          };
-        });
+        const array = _.map(result, (arraySearch, key) => ({
+          _id: key,
+          name: arraySearch.name,
+          profilThumbImageUrl: arraySearch.profilThumbImageUrl,
+          type: arraySearch.type,
+          typeSig: arraySearch.typeSig,
+          address: arraySearch.address,
+        }));
         // console.log(array);
         if (result) {
           pageSession.set('searchGlobal', array);
@@ -70,6 +60,7 @@ Template.searchGlobal.helpers({
     } else if (icone === 'city') {
       return { class: 'icon fa fa-university red' };
     }
+    return undefined;
   },
   urlType() {
     if (this.typeSig === 'citoyens') {
@@ -81,11 +72,12 @@ Template.searchGlobal.helpers({
     } else if (this.typeSig === 'city') {
       return { class: 'icon fa fa-university red' };
     }
+    return undefined;
   },
 });
 
 Template.searchGlobal.events({
-  'keyup #search, change #search': _.throttle((event, template) => {
+  'keyup #search, change #search': _.throttle((event) => {
     if (event.currentTarget.value.length > 2) {
       pageSession.set('filter', event.currentTarget.value);
     }

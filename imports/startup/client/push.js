@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Push } from 'meteor/raix:push';
 import { Router } from 'meteor/iron:router';
 import { Tracker } from 'meteor/tracker';
+import { Counts } from 'meteor/tmeasday:publish-counts';
 
 import { ActivityStream } from '../../api/activitystream.js';
 
@@ -61,7 +62,7 @@ Meteor.startup(function () {
       },
     });
 
-    Push.addListener('startup', function(notification) {
+    Push.addListener('startup', function() {
       Router.go('/notifications');
     });
 

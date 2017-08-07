@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import { _ } from 'meteor/underscore';
 import { Template } from 'meteor/templating';
 
 import Autolinker from 'autolinker';
@@ -23,8 +22,8 @@ export const AutoLinkerMessage = (message) => {
         if (match.getType() === 'url') {
           if (regUrls.test(match.matchedText)) {
             if (match.matchedText.indexOf(Meteor.absoluteUrl()) === 0) {
-              const tag = match.buildTag();				// returns an `Autolinker.HtmlTag` instance for an <a> tag
-              tag.setAttr('target', '');					// sets target to empty, instead of _blank
+              const tag = match.buildTag();
+              tag.setAttr('target', '');
               return tag;
             }
 
@@ -44,6 +43,7 @@ export const AutoLinkerMessage = (message) => {
     });
     return autolinker.link(clean);
   }
+  return undefined;
 };
 
 Meteor.startup(() => {

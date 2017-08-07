@@ -1,10 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { _ } from 'meteor/underscore';
-import { ReactiveDict } from 'meteor/reactive-dict';
-import { ReactiveVar } from 'meteor/reactive-var';
-import { TAPi18n } from 'meteor/tap:i18n';
 import { Mapbox } from 'meteor/communecter:mapbox';
+import { AutoForm } from 'meteor/aldeed:autoform';
 
 import { pageSession } from '../../api/client/reactive.js';
 
@@ -19,8 +16,7 @@ Template.map.onRendered(function () {
   L.mapbox.accessToken = Meteor.settings.public.mapbox;
   const map = L.mapbox.map('map', 'mapbox.streets');
   let marker;
-  self.autorun(function(c) {
-    const city = pageSession.get('city') || AutoForm.getFieldValue('city');
+  self.autorun(function() {
     const latitude = pageSession.get('geoPosLatitude') || AutoForm.getFieldValue('geoPosLatitude');
     const longitude = pageSession.get('geoPosLongitude') || AutoForm.getFieldValue('geoPosLongitude');
     // console.log(`${city} ${latitude} ${longitude}`);

@@ -2,16 +2,23 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { _ } from 'meteor/underscore';
-import { moment } from 'meteor/momentjs:moment';
 import { Router } from 'meteor/iron:router';
 
-export const Organizations = new Meteor.Collection('organizations', { idGeneration: 'MONGO' });
-
 // schemas
-import { baseSchema, blockBaseSchema, geoSchema, roles_SELECT, roles_SELECT_LABEL, preferences } from './schema.js';
+import { baseSchema, blockBaseSchema, geoSchema, preferences } from './schema.js';
 
 // collection
 import { Lists } from './lists.js';
+import { News } from './news.js';
+import { Citoyens } from './citoyens.js';
+import { Documents } from './documents.js';
+import { Events } from './events.js';
+import { Projects } from './projects.js';
+import { Poi } from './poi.js';
+import { ActivityStream } from './activitystream.js';
+import { queryLink, queryLinkType, queryLinkToBeValidated, queryOptions } from './helpers.js';
+
+export const Organizations = new Meteor.Collection('organizations', { idGeneration: 'MONGO' });
 
 // SimpleSchema.debug = true;
 
@@ -29,6 +36,7 @@ export const SchemasOrganizationsRest = new SimpleSchema([baseSchema, geoSchema,
             });
           }
         }
+        return undefined;
       },
     },
   },
@@ -98,16 +106,6 @@ BlockOrganizationsRest.preferences = new SimpleSchema([blockBaseSchema, {
     optional: true,
   },
 }]);
-// if(Meteor.isClient){
-// collection
-import { News } from './news.js';
-import { Citoyens } from './citoyens.js';
-import { Documents } from './documents.js';
-import { Events } from './events.js';
-import { Projects } from './projects.js';
-import { Poi } from './poi.js';
-import { ActivityStream } from './activitystream.js';
-import { queryLink, queryLinkType, arrayLinkType, queryLinkToBeValidated, arrayLinkToBeValidated, queryOptions } from './helpers.js';
 
 Organizations.helpers({
   isVisibleFields (field) {
@@ -189,7 +187,7 @@ Organizations.helpers({
     }
     return false;
   },
-  countFollows () {
+  countFollows (search) {
     // return this.links && this.links.follows && _.size(this.links.follows);
     return this.listFollows(search) && this.listFollows(search).count();
   },
@@ -290,11 +288,11 @@ Organizations.helpers({
   },
   listNotifications (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
-  	return ActivityStream.api.isUnseen(bothUserId, this._id._str);
+    return ActivityStream.api.isUnseen(bothUserId, this._id._str);
   },
   listNotificationsAsk (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
-  	return ActivityStream.api.isUnseenAsk(bothUserId, this._id._str);
+    return ActivityStream.api.isUnseenAsk(bothUserId, this._id._str);
   },
   countPopMap () {
     return this.links && this.links.members && _.size(this.links.members);
@@ -313,7 +311,7 @@ Organizations.helpers({
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     const targetId = (typeof target !== 'undefined') ? target : Router.current().params._id;
     if (Meteor.isClient) {
-      const bothLimit = Session.get('limit');
+      // const bothLimit = Session.get('limit');
     } else if (typeof limit !== 'undefined') {
       options.limit = limit;
     }

@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ReactiveDict } from 'meteor/reactive-dict';
 
 // mixin
@@ -22,10 +21,10 @@ Template.Bouton_card.helpers({
 });
 
 Template.Bouton_card.events({
-  'click .saveattendees-link' (evt, instance) {
-    evt.preventDefault();
+  'click .saveattendees-link' (event, instance) {
+    event.preventDefault();
     instance.state.set('call', true);
-    Meteor.call('saveattendeesEvent', this.id, (error, result) => {
+    Meteor.call('saveattendeesEvent', this.id, (error) => {
       if (error) {
         instance.state.set('call', false);
         alert(error.error);
@@ -34,10 +33,10 @@ Template.Bouton_card.events({
       }
     });
   },
-  'click .inviteattendees-link' (evt, instance) {
-    evt.preventDefault();
+  'click .inviteattendees-link' (event, instance) {
+    event.preventDefault();
     instance.state.set('call', true);
-    Meteor.call('inviteattendeesEvent', this.id, (error, result) => {
+    Meteor.call('inviteattendeesEvent', this.id, (error) => {
       if (error) {
         instance.state.set('call', false);
         alert(error.error);
@@ -46,10 +45,10 @@ Template.Bouton_card.events({
       }
     });
   },
-  'click .connectscope-link' (evt, instance) {
-    evt.preventDefault();
+  'click .connectscope-link' (event, instance) {
+    event.preventDefault();
     instance.state.set('call', true);
-    Meteor.call('connectEntity', this.id, this.scope, (error, result) => {
+    Meteor.call('connectEntity', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
         alert(error.error);
@@ -58,10 +57,10 @@ Template.Bouton_card.events({
       }
     });
   },
-  'click .disconnectscope-link' (evt, instance) {
-    evt.preventDefault();
+  'click .disconnectscope-link' (event, instance) {
+    event.preventDefault();
     instance.state.set('call', true);
-    Meteor.call('disconnectEntity', this.id, this.scope, (error, result) => {
+    Meteor.call('disconnectEntity', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
         alert(error.error);
@@ -70,10 +69,10 @@ Template.Bouton_card.events({
       }
     });
   },
-  'click .followperson-link' (evt, instance) {
-    evt.preventDefault();
+  'click .followperson-link' (event, instance) {
+    event.preventDefault();
     instance.state.set('call', true);
-    Meteor.call('followEntity', this.id, this.scope, (error, result) => {
+    Meteor.call('followEntity', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
         alert(error.error);
@@ -82,10 +81,10 @@ Template.Bouton_card.events({
       }
     });
   },
-  'click .unfollowperson-link' (evt, instance) {
-    evt.preventDefault();
+  'click .unfollowperson-link' (event, instance) {
+    event.preventDefault();
     instance.state.set('call', true);
-    Meteor.call('disconnectEntity', this.id, this.scope, (error, result) => {
+    Meteor.call('disconnectEntity', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
         alert(error.error);
@@ -94,10 +93,10 @@ Template.Bouton_card.events({
       }
     });
   },
-  'click .unfollowscope-link' (evt, instance) {
-    evt.preventDefault();
+  'click .unfollowscope-link' (event, instance) {
+    event.preventDefault();
     instance.state.set('call', true);
-    Meteor.call('disconnectEntity', this.id, this.scope, 'followers', (error, result) => {
+    Meteor.call('disconnectEntity', this.id, this.scope, 'followers', (error) => {
       if (error) {
         instance.state.set('call', false);
         alert(error.error);
@@ -106,10 +105,10 @@ Template.Bouton_card.events({
       }
     });
   },
-  'click .favorites-link' (evt, instance) {
-    evt.preventDefault();
+  'click .favorites-link' (event, instance) {
+    event.preventDefault();
     instance.state.set('call', true);
-    Meteor.call('collectionsAdd', this.id, this.scope, (error, result) => {
+    Meteor.call('collectionsAdd', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
         alert(error.error);

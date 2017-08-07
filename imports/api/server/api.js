@@ -68,7 +68,7 @@ apiCommunecter.postPixelMethod = function(controller, action, params) {
 };
 
 const dataUriToBuffer = (uri) => {
-  if (!/^data\:/i.test(uri)) {
+  if (!/^data:/i.test(uri)) {
     throw new TypeError('`uri` does not appear to be a Data URI (must begin with "data:")');
   }
 
@@ -83,11 +83,10 @@ const dataUriToBuffer = (uri) => {
   const meta = uri.substring(5, firstComma).split(';');
 
   let base64 = false;
-  let charset = 'US-ASCII';
-  for (let i = 0; i < meta.length; i++) {
-    if (meta[i] == 'base64') {
+  for (let i = 0; i < meta.length; i += 1) {
+    if (meta[i] === 'base64') {
       base64 = true;
-    } else if (meta[i].indexOf('charset=') == 0) {
+    } else if (meta[i].indexOf('charset=') === 0) {
       charset = meta[i].substring(8);
     }
   }
@@ -108,7 +107,6 @@ const dataUriToBuffer = (uri) => {
 };
 
 const callPixelUploadRest = (token, folder, ownerId, input, dataURI, name) => {
-  let result;
   const fileBuf = dataUriToBuffer(dataURI);
   const formData = {};
   formData['X-Auth-Token'] = token;
@@ -125,7 +123,7 @@ const callPixelUploadRest = (token, folder, ownerId, input, dataURI, name) => {
     jar: true,
   });
   responsePost.data = JSON.parse(responsePost.response.body);
-  if (responsePost && responsePost.data && responsePost.data.success == true) {
+  if (responsePost && responsePost.data && responsePost.data.success === true) {
     return responsePost.data;
   }
   if (responsePost && responsePost.data && responsePost.data.msg) {

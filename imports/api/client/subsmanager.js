@@ -1,7 +1,6 @@
 import { SubsManager } from 'meteor/meteorhacks:subs-manager';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Meteor } from 'meteor/meteor';
-import { Session } from 'meteor/session';
 import { Random } from 'meteor/random';
 import position from './position.js';
 import { geoId } from './reactive.js';

@@ -1,10 +1,9 @@
-import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Mongo } from 'meteor/mongo';
 
 import './item.js';
 import './list.html';
-
 
 Template.Directory_list.onCreated(function () {
   // console.log(Template.currentData());

@@ -1,20 +1,15 @@
 import { Meteor } from 'meteor/meteor';
-import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
 import { _ } from 'meteor/underscore';
-import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { TAPi18n } from 'meteor/tap:i18n';
 import { Router } from 'meteor/iron:router';
 import { AutoForm } from 'meteor/aldeed:autoform';
-import { Location } from 'meteor/djabatav:geolocation-plus';
 import { Mongo } from 'meteor/mongo';
-import { Random } from 'meteor/random';
 import { HTTP } from 'meteor/http';
-import { Mapbox } from 'meteor/communecter:mapbox';
+
 
 // collections
-import { Citoyens } from '../../api/citoyens.js';
 import { Organizations, BlockOrganizationsRest } from '../../api/organizations.js';
 import { Cities } from '../../api/cities.js';
 
@@ -26,9 +21,9 @@ import '../components/scope/item.js';
 
 import './list.html';
 
-import { pageSession, geoId } from '../../api/client/reactive.js';
+import { pageSession } from '../../api/client/reactive.js';
 import position from '../../api/client/position.js';
-import { searchQuery, queryGeoFilter } from '../../api/helpers.js';
+import { searchQuery, queryGeoFilter, matchTags } from '../../api/helpers.js';
 
 Template.listOrganizations.onCreated(function () {
   pageSession.set('sortOrganizations', null);
@@ -39,7 +34,6 @@ Template.listOrganizations.onCreated(function () {
 
 Template.listOrganizations.helpers({
   organizations () {
-    const inputDate = new Date();
     const searchOrganizations = pageSession.get('searchOrganizations');
     let query = {};
     query = queryGeoFilter(query);
@@ -49,7 +43,6 @@ Template.listOrganizations.helpers({
     return Organizations.find(query);
   },
   countOrganizations () {
-    const inputDate = new Date();
     const searchOrganizations = pageSession.get('searchOrganizations');
     let query = {};
     query = queryGeoFilter(query);
@@ -64,20 +57,10 @@ Template.listOrganizations.helpers({
   dataReady() {
     return Template.instance().ready.get();
   },
-  dataReadyAll() {
-    let query = {};
-    query = queryGeoFilter(query);
-    return Template.instance().ready.get() && Organizations.find(query).count() === Counts.get('countScopeGeo.organizations');
-  },
-  dataReadyPourcentage() {
-    let query = {};
-    query = queryGeoFilter(query);
-    return `${Organizations.find(query).count()}/${Counts.get('countScopeGeo.organizations')}`;
-  },
 });
 
 Template.listOrganizations.events({
-  'keyup #search, change #search'(event, template) {
+  'keyup #search, change #search'(event) {
     if (event.currentTarget.value.length > 2) {
       pageSession.set('searchOrganizations', event.currentTarget.value);
     } else {
@@ -86,9 +69,6 @@ Template.listOrganizations.events({
   },
 });
 
-/*
-Meteor.call('searchGlobalautocomplete',{name:'test',searchType:['organizations']})
-*/
 Template.organizationsAdd.onCreated(function () {
   const template = Template.instance();
   template.ready = new ReactiveVar();
@@ -102,7 +82,7 @@ Template.organizationsAdd.onCreated(function () {
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
-  this.autorun(function(c) {
+  this.autorun(function() {
     const handleList = listsSubs.subscribe('lists', 'organisationTypes');
     if (handleList.ready()) {
       template.ready.set(handleList.ready());
@@ -123,7 +103,7 @@ Template.organizationsEdit.onCreated(function () {
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
-  this.autorun(function(c) {
+  this.autorun(function() {
     const handleList = listsSubs.subscribe('lists', 'organisationTypes');
     const handle = Meteor.subscribe('scopeDetail', 'organizations', Router.current().params._id);
     if (handleList.ready() && handle.ready()) {
@@ -145,12 +125,12 @@ Template.organizationsBlockEdit.onCreated(function () {
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
-  this.autorun(function(c) {
-    Session.set('scopeId', Router.current().params._id);
-    Session.set('block', Router.current().params.block);
+  this.autorun(function() {
+    pageSession.set('scopeId', Router.current().params._id);
+    pageSession.set('block', Router.current().params.block);
   });
 
-  this.autorun(function(c) {
+  this.autorun(function() {
     const handleList = listsSubs.subscribe('lists', 'organisationTypes');
     const handle = Meteor.subscribe('scopeDetail', 'organizations', Router.current().params._id);
     if (handleList.ready() && handle.ready()) {
@@ -183,12 +163,12 @@ Template.organizationsEdit.helpers({
     organizationEdit.shortDescription = organization.shortDescription;
     if (organization && organization.preferences) {
       organizationEdit.preferences = {};
-      if (organization.preferences.isOpenData == 'true') {
+      if (organization.preferences.isOpenData === 'true') {
         organizationEdit.preferences.isOpenData = true;
       } else {
         organizationEdit.preferences.isOpenData = false;
       }
-      if (organization.preferences.isOpenEdition == 'true') {
+      if (organization.preferences.isOpenEdition === 'true') {
         organizationEdit.preferences.isOpenEdition = true;
       } else {
         organizationEdit.preferences.isOpenEdition = false;
@@ -331,7 +311,8 @@ Template.organizationsFields.helpers({
           return { label: c.alternateName, value: c.insee };
         });
       }
-    } else { return false; }
+    }
+    return false;
   },
   latlng () {
     const city = pageSession.get('city') || AutoForm.getFieldValue('city');
@@ -377,15 +358,15 @@ Template.organizationsFields.onRendered(function() {
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
-  const geolocate = Session.get('geolocate');
-  console.log('geo');
-  if (geolocate && Router.current().route.getName() != 'organizationsEdit' && Router.current().route.getName() != 'organizationsBlockEdit'
-  && Router.current().route.getName() != 'citoyensEdit' && Router.current().route.getName() != 'citoyensBlockEdit'
-  && Router.current().route.getName() != 'projectsEdit' && Router.current().route.getName() != 'projectsBlockEdit'
-  && Router.current().route.getName() != 'eventsEdit' && Router.current().route.getName() != 'eventsBlockEdit'
-  && Router.current().route.getName() != 'poiEdit' && Router.current().route.getName() != 'poiBlockEdit'
-  && Router.current().route.getName() != 'classifiedEdit') {
-    const onOk = IonPopup.confirm({ template: TAPi18n.__('Use your current location'),
+  const geolocate = position.getGeolocate();
+  // console.log('geo');
+  if (geolocate && Router.current().route.getName() !== 'organizationsEdit' && Router.current().route.getName() !== 'organizationsBlockEdit'
+  && Router.current().route.getName() !== 'citoyensEdit' && Router.current().route.getName() !== 'citoyensBlockEdit'
+  && Router.current().route.getName() !== 'projectsEdit' && Router.current().route.getName() !== 'projectsBlockEdit'
+  && Router.current().route.getName() !== 'eventsEdit' && Router.current().route.getName() !== 'eventsBlockEdit'
+  && Router.current().route.getName() !== 'poiEdit' && Router.current().route.getName() !== 'poiBlockEdit'
+  && Router.current().route.getName() !== 'classifiedEdit') {
+    IonPopup.confirm({ template: TAPi18n.__('Use your current location'),
       onOk() {
         const latlngObj = position.getLatlngObject();
         if (latlngObj) {
@@ -412,12 +393,8 @@ Template.organizationsFields.onRendered(function() {
   self.autorun(function() {
     const postalCode = pageSession.get('postalCode') || AutoForm.getFieldValue('postalCode');
     const country = pageSession.get('country') || AutoForm.getFieldValue('country');
-    const city = pageSession.get('city');
     if (!!postalCode && !!country) {
       if (postalCode.length > 4) {
-        // console.log(`${postalCode} ${country}`);
-        // console.log('recompute');
-        // console.log('subscribs');
         self.subscribe('cities', postalCode, country);
       }
     }
@@ -429,22 +406,22 @@ Template.organizationsFields.onRendered(function() {
   self.$('textarea').atwho({
     at: '#',
   }).on('matched.atwho', function(event, flag, query) {
-    console.log(event, `matched ${flag} and the result is ${query}`);
+    // console.log(event, `matched ${flag} and the result is ${query}`);
     if (flag === '#' && query) {
-      console.log(pageSession.get('queryTag'));
+      // console.log(pageSession.get('queryTag'));
       if (pageSession.get('queryTag') !== query) {
         pageSession.set('queryTag', query);
         Meteor.call('searchTagautocomplete', query, function(error, result) {
           if (!error) {
-            console.log(result);
+            // console.log(result);
             self.$('textarea').atwho('load', '#', result).atwho('run');
           }
         });
       }
     }
-  }).on('inserted.atwho', function(event, $li, browser) {
-    console.log(JSON.stringify($li.data('item-data')));
-    if ($li.data('item-data')['atwho-at'] == '#') {
+  }).on('inserted.atwho', function(event, $li) {
+    // console.log(JSON.stringify($li.data('item-data')));
+    if ($li.data('item-data')['atwho-at'] === '#') {
       const tag = $li.data('item-data').name;
       if (pageSession.get('tags')) {
         const arrayTags = pageSession.get('tags');
@@ -462,50 +439,50 @@ Template.organizationsFields.onDestroyed(function () {
 });
 
 Template.organizationsFields.events({
-  'keyup input[name="postalCode"],change input[name="postalCode"]': _.throttle((e, tmpl) => {
-    e.preventDefault();
-    pageSession.set('postalCode', tmpl.$(e.currentTarget).val());
+  'keyup input[name="postalCode"],change input[name="postalCode"]': _.throttle((event, instance) => {
+    event.preventDefault();
+    pageSession.set('postalCode', instance.$(event.currentTarget).val());
   }, 500),
-  'change select[name="country"]'(e, tmpl) {
-    e.preventDefault();
+  'change select[name="country"]'(event, instance) {
+    event.preventDefault();
     // console.log(tmpl.$(e.currentTarget).val());
-    pageSession.set('country', tmpl.$(e.currentTarget).val());
+    pageSession.set('country', instance.$(event.currentTarget).val());
   },
-  'change select[name="city"]'(e, tmpl) {
-    e.preventDefault();
+  'change select[name="city"]'(event, instance) {
+    event.preventDefault();
     // console.log(tmpl.$(e.currentTarget).val());
-    pageSession.set('city', tmpl.$(e.currentTarget).val());
-    const insee = Cities.findOne({ insee: tmpl.$(e.currentTarget).val() });
+    pageSession.set('city', instance.$(event.currentTarget).val());
+    const insee = Cities.findOne({ insee: instance.$(event.currentTarget).val() });
     pageSession.set('geoPosLatitude', insee.geo.latitude);
     pageSession.set('geoPosLongitude', insee.geo.longitude);
     pageSession.set('regionName', insee.regionName);
     pageSession.set('depName', insee.depName);
-    pageSession.set('cityName', e.currentTarget.options[e.currentTarget.selectedIndex].text);
+    pageSession.set('cityName', event.currentTarget.options[event.currentTarget.selectedIndex].text);
     // console.log(insee.geo.latitude);
     // console.log(insee.geo.longitude);
   },
-  'change input[name="streetAddress"]': _.throttle((event, template) => {
-    function addToRequest(request, dataStr) {
-      if (dataStr == '') return request;
-      if (request != '') dataStr = ` ${dataStr}`;
-      return transformNominatimUrl(request + dataStr);
-    }
-
+  'change input[name="streetAddress"]': _.throttle((event, instance) => {
     // remplace les espaces par des +
-    function transformNominatimUrl(str) {
+    const transformNominatimUrl = (str) => {
       let res = '';
-      for (let i = 0; i < str.length; i++) {
-        res += (str.charAt(i) == ' ') ? '+' : str.charAt(i);
+      for (let i = 0; i < str.length; i += 1) {
+        res += (str.charAt(i) === ' ') ? '+' : str.charAt(i);
       }
       return res;
-    }
+    };
 
+    const addToRequest = (request, dataStr) => {
+      let dataStrIn = dataStr;
+      if (dataStrIn === '') return request;
+      if (request !== '') dataStrIn = ` ${dataStrIn}`;
+      return transformNominatimUrl(request + dataStrIn);
+    };
 
     let postalCode = '';
     let country = '';
     let streetAddress = '';
     postalCode = AutoForm.getFieldValue('postalCode');
-    country = template.find('select[name="country"]').options[template.find('select[name="country"]').selectedIndex].text;
+    country = instance.find('select[name="country"]').options[instance.find('select[name="country"]').selectedIndex].text;
     // console.log(country);
     streetAddress = AutoForm.getFieldValue('streetAddress');
 
@@ -521,14 +498,11 @@ Template.organizationsFields.events({
         function(error, response) {
           if (error) {
           // console.log( error );
-          } else {
-          // console.log(response.data);
-            if (response.data.results.length > 0 && response.data.status != 'ZERO_RESULTS') {
-              pageSession.set('geoPosLatitude', response.data.results[0].geometry.location.lat);
-              pageSession.set('geoPosLongitude', response.data.results[0].geometry.location.lng);
+          } else if (response.data.results.length > 0 && response.data.status !== 'ZERO_RESULTS') {
+            pageSession.set('geoPosLatitude', response.data.results[0].geometry.location.lat);
+            pageSession.set('geoPosLongitude', response.data.results[0].geometry.location.lng);
             // console.log(response.data.results[0].geometry.location.lat);
             // console.log(response.data.results[0].geometry.location.lng);
-            }
           }
         },
       );
@@ -555,71 +529,33 @@ AutoForm.addHooks(['addOrganization', 'editOrganization'], {
         pageSession.set('error', error.reason.replace(': ', ''));
       }
     }
-
-    // let ref;
-    // if (error.errorType && error.errorType === 'Meteor.Error') {
-    // if (error.reason === 'Something went really bad  An organization with the same name allready exists') {
-    // this.addStickyValidationError('name', error.reason.replace(":", " "));
-    // this.addStickyValidationError('name', error.errorType , error.reason)
-    // AutoForm.validateField(this.formId, 'name');
-    // }
-    // }
   },
 });
 
 AutoForm.addHooks(['addOrganization'], {
   before: {
-    method(doc, template) {
-      return doc;
+    method(doc) {
+      return matchTags(doc, pageSession.get('tags'));
     },
   },
 });
 
 AutoForm.addHooks(['editBlockOrganization'], {
   after: {
-    'method-update'(error, result) {
+    'method-update'(error) {
       if (!error) {
-        if (Session.get('block') !== 'preferences') {
-          Router.go('detailList', { _id: Session.get('scopeId'), scope: 'organizations' });
+        if (pageSession.get('block') !== 'preferences') {
+          Router.go('detailList', { _id: pageSession.get('scopeId'), scope: 'organizations' });
         }
       }
     },
   },
   before: {
-    'method-update'(modifier, documentId) {
+    'method-update'(modifier) {
       const scope = 'organizations';
-      const block = Session.get('block');
+      const block = pageSession.get('block');
       if (modifier && modifier.$set) {
-        const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
-        const matches = [];
-        let match;
-        if (modifier.$set.shortDescription) {
-          while ((match = regex.exec(modifier.$set.shortDescription))) {
-            matches.push(match[1]);
-          }
-        }
-        if (modifier.$set.description) {
-          while ((match = regex.exec(modifier.$set.description))) {
-            matches.push(match[1]);
-          }
-        }
-        if (pageSession.get('tags')) {
-          const arrayTags = _.reject(pageSession.get('tags'), value => matches[value] === null, matches);
-          if (modifier.$set.tags) {
-            modifier.$set.tags = _.uniq(_.union(modifier.$set.tags, arrayTags, matches));
-          } else {
-            modifier.$set.tags = _.uniq(_.union(arrayTags, matches));
-          }
-        } else {
-          // si on update est ce que la mention reste
-          if (matches.length > 0) {
-            if (modifier.$set.tags) {
-              modifier.$set.tags = _.uniq(_.union(modifier.$set.tags, matches));
-            } else {
-              modifier.$set.tags = _.uniq(matches);
-            }
-          }
-        }
+        modifier.$set = matchTags(modifier.$set, pageSession.get('tags'));
       } else {
         modifier.$set = {};
       }

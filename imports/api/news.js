@@ -2,6 +2,15 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { _ } from 'meteor/underscore';
+import { Router } from 'meteor/iron:router';
+
+import { Documents } from './documents.js';
+import { Citoyens } from './citoyens.js';
+import { Organizations } from './organizations.js';
+import { Projects } from './projects.js';
+import { Events } from './events.js';
+import { Comments } from './comments.js';
+import { nameToCollection } from './helpers.js';
 
 export const News = new Meteor.Collection('news', { idGeneration: 'MONGO' });
 
@@ -12,7 +21,7 @@ if (Meteor.isServer) {
     { name: 'target_id', partialFilterExpression: { 'target.id': { $exists: true } }, background: true }
     , (e) => {
       if (e) {
-        console.log(e);
+        // console.log(e);
       }
     });
 
@@ -21,7 +30,7 @@ if (Meteor.isServer) {
     { name: 'mentions_id', partialFilterExpression: { 'mentions.id': { $exists: true } }, background: true }
     , (e) => {
       if (e) {
-        console.log(e);
+        // console.log(e);
       }
     });
 
@@ -30,7 +39,7 @@ if (Meteor.isServer) {
     { name: 'target_id_scope', partialFilterExpression: { 'target.id': { $exists: true }, 'scope.type': { $exists: true } }, background: true }
     , (e) => {
       if (e) {
-        console.log(e);
+        // console.log(e);
       }
     });
 
@@ -39,7 +48,7 @@ if (Meteor.isServer) {
     { name: 'author_id', partialFilterExpression: { author: { $exists: true } }, background: true }
     , (e) => {
       if (e) {
-        console.log(e);
+        // console.log(e);
       }
     });
 
@@ -48,7 +57,7 @@ if (Meteor.isServer) {
     { name: 'author_target_id', partialFilterExpression: { author: { $exists: true }, 'target.id': { $exists: true } }, background: true }
     , (e) => {
       if (e) {
-        console.log(e);
+        // console.log(e);
       }
     });
 
@@ -153,7 +162,7 @@ SchemasNewsRestBase.citoyens = new SimpleSchema([SchemasNewsRest, {
     type: String,
     autoValue() {
       if (this.isSet) {
-        console.log(this.value);
+        // console.log(this.value);
         return this.value;
       }
       return 'restricted';
@@ -166,7 +175,7 @@ SchemasNewsRestBase.projects = new SimpleSchema([SchemasNewsRest, {
     type: String,
     autoValue() {
       if (this.isSet) {
-        console.log(this.value);
+        // console.log(this.value);
         return this.value;
       }
       return 'restricted';
@@ -184,7 +193,7 @@ SchemasNewsRestBase.organizations = new SimpleSchema([SchemasNewsRest, {
     type: String,
     autoValue() {
       if (this.isSet) {
-        console.log(this.value);
+        // console.log(this.value);
         return this.value;
       }
       return 'restricted';
@@ -202,7 +211,7 @@ SchemasNewsRestBase.events = new SimpleSchema([SchemasNewsRest, {
     type: String,
     autoValue() {
       if (this.isSet) {
-        console.log(this.value);
+        // console.log(this.value);
         return this.value;
       }
       return 'restricted';
@@ -213,15 +222,6 @@ SchemasNewsRestBase.events = new SimpleSchema([SchemasNewsRest, {
 
 // collection
 if (Meteor.isClient) {
-  import { Documents } from './documents.js';
-  import { Citoyens } from './citoyens.js';
-  import { Organizations } from './organizations.js';
-  import { Projects } from './projects.js';
-  import { Events } from './events.js';
-  import { Comments } from './comments.js';
-  import { Router } from 'meteor/iron:router';
-  import { nameToCollection } from './helpers.js';
-
   if (Meteor.isClient) {
     window.Organizations = Organizations;
     window.Projects = Projects;
@@ -240,6 +240,7 @@ if (Meteor.isClient) {
       } else {
         return Citoyens.findOne({ _id: new Mongo.ObjectID(this.author) });
       }
+      return undefined;
     },
     targetNews () {
       const queryOptions = { fields: {
@@ -250,6 +251,7 @@ if (Meteor.isClient) {
         const collection = nameToCollection(this.target.type);
         return collection.findOne({ _id: new Mongo.ObjectID(this.target.id) }, queryOptions);
       }
+      return undefined;
     },
     objectNews () {
       const queryOptions = { fields: {
@@ -257,16 +259,18 @@ if (Meteor.isClient) {
         name: 1,
       } };
       if (this.object && this.object.type && this.object.id) {
-        console.log(this.object.type);
+        // console.log(this.object.type);
         const collection = nameToCollection(this.object.type);
         return collection.findOne({ _id: new Mongo.ObjectID(this.object.id) }, queryOptions);
       }
+      return undefined;
     },
     photoNewsAlbums () {
       if (this.media && this.media.images) {
         const arrayId = this.media.images.map(_id => new Mongo.ObjectID(_id));
         return Documents.find({ _id: { $in: arrayId } }).fetch();
       }
+      return undefined;
     },
     likesCount () {
       if (this.voteUp && this.voteUpCount) {
@@ -287,16 +291,17 @@ if (Meteor.isClient) {
       if (this.text) {
         let text = this.text;
         if (this.mentions) {
-          _.each(this.mentions, (array, key) => {
+          _.each(this.mentions, (array) => {
           // text = text.replace(new RegExp(`@${array.value}`, 'g'), `<a href="${Router.path('detailList', {scope:array.type,_id:array.id})}" class="positive">@${array.value}</a>`);
             text = text.replace(new RegExp(`@?${array.value}`, 'g'), `<a href="${Router.path('detailList', { scope: array.type, _id: array.id })}" class="positive">@${array.value}</a>`);
           }, text);
         }
         return text;
       }
+      return undefined;
     },
     listComments () {
-      console.log('listComments');
+      // console.log('listComments');
       return Comments.find({
         contextId: this._id._str,
       }, { sort: { created: -1 } });
@@ -309,15 +314,13 @@ if (Meteor.isClient) {
     },
   });
 } else {
-  import { Citoyens } from './citoyens.js';
-  import { Documents } from './documents.js';
-
   News.helpers({
     photoNewsAlbums () {
       if (this.media && this.media.images) {
         const arrayId = this.media.images.map(_id => new Mongo.ObjectID(_id));
         return Documents.find({ _id: { $in: arrayId } });
       }
+      return undefined;
     },
     authorNews () {
       return Citoyens.findOne({ _id: new Mongo.ObjectID(this.author) });

@@ -1,15 +1,8 @@
-import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { Session } from 'meteor/session';
 import { Router } from 'meteor/iron:router';
-import { $ } from 'meteor/jquery';
-import { Counts } from 'meteor/tmeasday:publish-counts';
-import { MeteorCameraUI } from 'meteor/aboire:camera-ui';
-import { AutoForm } from 'meteor/aldeed:autoform';
-import { TAPi18n } from 'meteor/tap:i18n';
-import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { _ } from 'meteor/underscore';
+import { Mongo } from 'meteor/mongo';
 
 // submanager
 import { collectionsListSubs } from '../../api/client/subsmanager.js';
@@ -20,9 +13,12 @@ import { Projects } from '../../api/projects.js';
 import { Citoyens } from '../../api/citoyens.js';
 import { Poi } from '../../api/poi.js';
 import { Classified } from '../../api/classified.js';
-import { Lists } from '../../api/lists.js';
 
 import { nameToCollection } from '../../api/helpers.js';
+
+import { pageCollections } from '../../api/client/reactive.js';
+
+import '../components/directory/list.js';
 
 import './collections.html';
 
@@ -33,19 +29,15 @@ window.Citoyens = Citoyens;
 window.Poi = Poi;
 window.Classified = Classified;
 
-import { pageCollections } from '../../api/client/reactive.js';
-
-import '../components/directory/list.js';
 
 // suivant le scope
 
 Template.collections.onCreated(function() {
-  self = this;
   this.ready = new ReactiveVar();
   pageCollections.set('search', null);
   this.autorun(function() {
-    Session.set('scopeId', Router.current().params._id);
-    Session.set('scope', Router.current().params.scope);
+    pageCollections.set('scopeId', Router.current().params._id);
+    pageCollections.set('scope', Router.current().params.scope);
   });
 
   this.autorun(function() {
@@ -55,7 +47,6 @@ Template.collections.onCreated(function() {
 });
 
 Template.collections.onRendered(function() {
-  self = this;
 });
 
 Template.collections.helpers({
@@ -64,6 +55,7 @@ Template.collections.helpers({
       const collection = nameToCollection(Router.current().params.scope);
       return collection.findOne({ _id: new Mongo.ObjectID(Router.current().params._id) });
     }
+    return undefined;
   },
   scopeCollectionsTemplate () {
     return `listCollections${Router.current().params.scope}`;
@@ -97,9 +89,9 @@ Template.Collections_search.helpers({
 });
 
 Template.Collections_search.events({
-  'keyup #search, change #search': _.throttle((event, template) => {
+  'keyup #search, change #search': _.throttle((event) => {
     if (event.currentTarget.value.length > 0) {
-      console.log(event.currentTarget.value);
+      // console.log(event.currentTarget.value);
       pageCollections.set('search', event.currentTarget.value);
     } else {
       pageCollections.set('search', null);
@@ -117,32 +109,32 @@ Template.Collections_button_bar.helpers({
 });
 
 Template.Collections_button_bar.events({
-  'click .all' (evt) {
-    evt.preventDefault();
+  'click .all' (event) {
+    event.preventDefault();
     pageCollections.set('view', 'all');
   },
-  'click .citoyens' (evt) {
-    evt.preventDefault();
+  'click .citoyens' (event) {
+    event.preventDefault();
     pageCollections.set('view', 'citoyens');
   },
-  'click .organizations' (evt) {
-    evt.preventDefault();
+  'click .organizations' (event) {
+    event.preventDefault();
     pageCollections.set('view', 'organizations');
   },
-  'click .poi' (evt) {
-    evt.preventDefault();
+  'click .poi' (event) {
+    event.preventDefault();
     pageCollections.set('view', 'poi');
   },
-  'click .classified' (evt) {
-    evt.preventDefault();
+  'click .classified' (event) {
+    event.preventDefault();
     pageCollections.set('view', 'classified');
   },
-  'click .events' (evt) {
-    evt.preventDefault();
+  'click .events' (event) {
+    event.preventDefault();
     pageCollections.set('view', 'events');
   },
-  'click .projects' (evt) {
-    evt.preventDefault();
+  'click .projects' (event) {
+    event.preventDefault();
     pageCollections.set('view', 'projects');
   },
 });

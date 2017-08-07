@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ReactiveDict } from 'meteor/reactive-dict';
 
 // mixin
@@ -36,7 +35,7 @@ Template.Directory_item.helpers({
 
     if (this.class) {
       const customClasses = this.class.split(' ');
-      _(customClasses).each(function (customClass) {
+      customClasses.forEach(function (customClass) {
         classes.push(customClass);
       });
     }
@@ -46,10 +45,10 @@ Template.Directory_item.helpers({
 });
 
 Template.Directory_item.events({
-  'click .disconnectscope-link-js' (evt, instance) {
-    evt.preventDefault();
+  'click .disconnectscope-link-js' (event, instance) {
+    event.preventDefault();
     instance.state.set('call', true);
-    Meteor.call('disconnectEntity', this.id, this.scope, (error, result) => {
+    Meteor.call('disconnectEntity', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
         alert(error.error);
@@ -58,10 +57,10 @@ Template.Directory_item.events({
       }
     });
   },
-  'click .connectscope-link-js' (evt, instance) {
-    evt.preventDefault();
+  'click .connectscope-link-js' (event, instance) {
+    event.preventDefault();
     instance.state.set('call', true);
-    Meteor.call('connectEntity', this.id, this.scope, (error, result) => {
+    Meteor.call('connectEntity', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
         alert(error.error);
@@ -70,10 +69,10 @@ Template.Directory_item.events({
       }
     });
   },
-  'click .unfollowperson-link-js' (evt, instance) {
-    evt.preventDefault();
+  'click .unfollowperson-link-js' (event, instance) {
+    event.preventDefault();
     instance.state.set('call', true);
-    Meteor.call('disconnectEntity', this.id, 'citoyens', (error, result) => {
+    Meteor.call('disconnectEntity', this.id, 'citoyens', (error) => {
       if (error) {
         instance.state.set('call', false);
         alert(error.error);
@@ -82,10 +81,10 @@ Template.Directory_item.events({
       }
     });
   },
-  'click .followperson-link-js' (evt, instance) {
-    evt.preventDefault();
+  'click .followperson-link-js' (event, instance) {
+    event.preventDefault();
     instance.state.set('call', true);
-    Meteor.call('followEntity', this.id, 'citoyens', (error, result) => {
+    Meteor.call('followEntity', this.id, 'citoyens', (error) => {
       if (error) {
         instance.state.set('call', false);
         alert(error.error);
@@ -94,10 +93,10 @@ Template.Directory_item.events({
       }
     });
   },
-  'click .favorites-link' (evt, instance) {
-    evt.preventDefault();
+  'click .favorites-link' (event, instance) {
+    event.preventDefault();
     instance.state.set('call', true);
-    Meteor.call('collectionsAdd', this.id, this.scope, (error, result) => {
+    Meteor.call('collectionsAdd', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
         alert(error.error);

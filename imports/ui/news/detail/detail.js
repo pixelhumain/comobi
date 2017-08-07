@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { Session } from 'meteor/session';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Router } from 'meteor/iron:router';
+import { Mongo } from 'meteor/mongo';
+import { TAPi18n } from 'meteor/tap:i18n';
 
 // collection
 import { Events } from '../../../api/events.js';
@@ -28,12 +29,8 @@ Template.newsDetail.onCreated(function () {
   template.scope = Router.current().params.scope;
   template._id = Router.current().params._id;
   template.newsId = Router.current().params.newsId;
-  this.autorun(function(c) {
-    Session.set('scopeId', template._id);
-    Session.set('scope', template.scope);
-  });
 
-  this.autorun(function(c) {
+  this.autorun(function() {
     if (template.scope && template._id && template.newsId) {
       const handle = singleSubs.subscribe('scopeDetail', template.scope, template._id);
       const handleScopeDetail = singleSubs.subscribe('newsDetail', template.scope, template._id, template.newsId);
@@ -50,6 +47,7 @@ Template.newsDetail.helpers({
       const collection = nameToCollection(Template.instance().scope);
       return collection.findOne({ _id: new Mongo.ObjectID(Template.instance()._id) });
     }
+    return undefined;
   },
   dataReady() {
     return Template.instance().ready.get();
@@ -57,9 +55,9 @@ Template.newsDetail.helpers({
 });
 
 Template.newsDetail.events({
-  'click .action-news' (e, t) {
+  'click .action-news' (event) {
     const self = this;
-    e.preventDefault();
+    event.preventDefault();
     IonActionSheet.show({
       titleText: TAPi18n.__('Actions News'),
       buttons: [
@@ -68,17 +66,17 @@ Template.newsDetail.events({
       destructiveText: TAPi18n.__('delete'),
       cancelText: TAPi18n.__('cancel'),
       cancel() {
-        console.log('Cancelled!');
+        // console.log('Cancelled!');
       },
       buttonClicked(index) {
         if (index === 0) {
-          console.log('Edit!');
+          // console.log('Edit!');
           Router.go('newsEdit', { _id: Router.current().params._id, newsId: self._id._str, scope: Router.current().params.scope });
         }
         return true;
       },
       destructiveButtonClicked() {
-        console.log('Destructive Action!');
+        // console.log('Destructive Action!');
         Meteor.call('deleteNew', self._id._str, function() {
           Router.go('detailList', { _id: Router.current().params._id, scope: Router.current().params.scope });
         });
@@ -86,17 +84,16 @@ Template.newsDetail.events({
       },
     });
   },
-  'click .like-news' (e, t) {
+  'click .like-news' (event) {
     Meteor.call('likeScope', this._id._str, 'news');
-    e.preventDefault();
-  },
-  'click .dislike-news' (e, t) {
-    Meteor.call('dislikeScope', this._id._str, 'news');
-    e.preventDefault();
-  },
-  'click .photo-viewer' (event, template) {
     event.preventDefault();
-    const self = this;
+  },
+  'click .dislike-news' (event) {
+    Meteor.call('dislikeScope', this._id._str, 'news');
+    event.preventDefault();
+  },
+  'click .photo-viewer' (event) {
+    event.preventDefault();
     if (Meteor.isCordova) {
       if (this.moduleId) {
         const url = `${Meteor.settings.public.urlimage}/upload/${this.moduleId}/${this.folder}/${this.name}`;

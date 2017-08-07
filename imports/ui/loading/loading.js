@@ -1,4 +1,3 @@
-import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 
 import './loading.html';
@@ -8,6 +7,6 @@ Template.loading.onRendered(function () {
 });
 
 Template.loading.onDestroyed(function () {
-  console.log('onDestroyed');
+  // console.log('onDestroyed');
   IonLoading.hide();
 });

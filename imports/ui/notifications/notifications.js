@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { Router } from 'meteor/iron:router';
+import { ReactiveVar } from 'meteor/reactive-var';
+import { TAPi18n } from 'meteor/tap:i18n';
 import { $ } from 'meteor/jquery';
 
 import { ActivityStream } from '../../api/activitystream.js';
@@ -14,7 +16,7 @@ Template.notifications.onCreated(function () {
   const self = this;
   self.ready = new ReactiveVar();
 
-  self.autorun(function(c) {
+  self.autorun(function() {
     const handle = singleSubs.subscribe('notificationsUser');
     self.ready.set(handle.ready());
   });
@@ -25,31 +27,29 @@ Template.notificationsListSwip.onRendered(function () {
   self.autorun(function (c) {
     if (self.data && self.data.notifications) {
       const list = self.$('.list')[0];
-      new Slip(list);
+      const slip = new Slip(list);
       c.stop();
     }
   });
 });
 
 Template.notificationsListSwip.events({
-  'slip:beforeswipe .list .no-swipe'(e, template) {
-    e.preventDefault();
+  'slip:beforeswipe .list .no-swipe'(event) {
+    event.preventDefault();
   },
-  'slip:afterswipe .list .item'(e, template) {
-    console.log('slip:afterswipe');
-    e.preventDefault();
+  'slip:afterswipe .list .item'(event) {
+    // console.log('slip:afterswipe');
+    event.preventDefault();
   },
-  'slip:swipe .list .item'(e, template) {
-    console.log('slip:swipe');
-    console.log(this._id._str);
-    console.log('slip:remove');
-    e.target.parentNode.removeChild(e.target);
-    Meteor.call('markRead', this._id._str, function(err, resp) {
-      console.log('mark as read response', resp);
-    });
+  'slip:swipe .list .item'(event) {
+    // console.log('slip:swipe');
+    // console.log(this._id._str);
+    // console.log('slip:remove');
+    event.target.parentNode.removeChild(event.target);
+    Meteor.call('markRead', this._id._str);
   },
-  'slip:beforewait .list .item'(e, template) {
-    console.log('slip:beforewait');
+  'slip:beforewait .list .item'() {
+    // console.log('slip:beforewait');
   },
 });
 
@@ -72,45 +72,43 @@ Template.notifications.helpers({
 
 
 Template.notificationsList.events({
-  'click .validateYes'(event, template) {
+  'click .validateYes'(event) {
     event.preventDefault();
-    console.log(`${this.target.id},${this.target.type},${this.authorId()}`);
-    Meteor.call('validateEntity', this.target.id, this.target.type, this.authorId(), 'citoyens', 'toBeValidated', function(err, resp) {
+    // console.log(`${this.target.id},${this.target.type},${this.authorId()}`);
+    Meteor.call('validateEntity', this.target.id, this.target.type, this.authorId(), 'citoyens', 'toBeValidated', function(err) {
       if (err) {
         if (err.reason) {
           IonPopup.alert({ template: TAPi18n.__(err.reason) });
         }
       } else {
-        console.log('yes validate');
+        // console.log('yes validate');
       }
     });
   },
-  'click .validateNo'(event, template) {
+  'click .validateNo'(event) {
     event.preventDefault();
-    console.log(this._id._str);
-    Meteor.call('disconnectEntity', this.target.id, this.target.type, undefined, this.authorId(), 'citoyens', function(err, resp) {
+    // console.log(this._id._str);
+    Meteor.call('disconnectEntity', this.target.id, this.target.type, undefined, this.authorId(), 'citoyens', function(err) {
       if (err) {
         if (err.reason) {
           IonPopup.alert({ template: TAPi18n.__(err.reason) });
         }
       } else {
-        console.log('no validate');
+        // console.log('no validate');
       }
     });
   },
-  'click .removeMe'(event, template) {
+  'click .removeMe'(event) {
     event.preventDefault();
-    console.log(this._id._str);
-    Meteor.call('markRead', this._id._str, function(err, resp) {
-      console.log('mark as read response', resp);
-    });
+    // console.log(this._id._str);
+    Meteor.call('markRead', this._id._str);
   },
-  'click .clickGo'(event, template) {
+  'click .clickGo'(event) {
     event.preventDefault();
-    console.log(this._id._str);
+    // console.log(this._id._str);
     Meteor.call('markSeen', this._id._str);
 
-    const VERB_VIEW = 'view';
+    /* const VERB_VIEW = 'view';
     const VERB_ADD = 'add';
     const VERB_UPDATE = 'update';
     const VERB_CREATE = 'create';
@@ -139,6 +137,7 @@ Template.notificationsList.events({
 
     const VERB_POST = 'post';
     const VERB_RETURN = 'return';
+    */
 
 
     if (this.verb === 'comment') {

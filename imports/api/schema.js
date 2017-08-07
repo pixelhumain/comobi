@@ -1,8 +1,6 @@
-import { Meteor } from 'meteor/meteor';
-import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
-SimpleSchema.debug = true;
+// SimpleSchema.debug = true;
 
 export const Countries_SELECT = ['FR', 'GP', 'MQ', 'YT', 'NC', 'RE'];
 export const Countries_SELECT_LABEL = [{ label: 'France', value: 'FR' }, { label: 'Guadeloupe', value: 'GP' }, { label: 'Guyanne Française', value: 'GF' }, { label: 'Martinique', value: 'MQ' }, { label: 'Mayotte', value: 'YT' }, { label: 'Nouvelle-Calédonie', value: 'NC' }, { label: 'Réunion', value: 'RE' }, { label: 'St Pierre et Miquelon', value: 'PM' }];
@@ -13,7 +11,7 @@ export const roles_SELECT_LABEL = [{ label: 'Administrateur', value: 'admin' }, 
 export const avancements_SELECT = ['idea', 'concept', 'started', 'development', 'testing', 'mature'];
 export const avancements_SELECT_LABEL = [{ label: 'idea', value: 'idea' }, { label: 'concept', value: 'concept' }, { label: 'started', value: 'started' }, { label: 'development', value: 'development' }, { label: 'testing', value: 'testing' }, { label: 'mature', value: 'mature' }];
 
-export const preferences_SELECT = ['public', 'private', 'hide'];
+export const preferencesSelect = ['public', 'private', 'hide'];
 
 
 export const SchemasShareRest = new SimpleSchema({
@@ -42,7 +40,7 @@ export const preferences = new SimpleSchema({
     type: Boolean,
     autoValue() {
       if (this.isSet) {
-        console.log(this.value);
+        // console.log(this.value);
         return this.value;
       }
       return true;
@@ -53,7 +51,7 @@ export const preferences = new SimpleSchema({
     type: Boolean,
     autoValue() {
       if (this.isSet) {
-        console.log(this.value);
+        // console.log(this.value);
         return this.value;
       }
       return true;

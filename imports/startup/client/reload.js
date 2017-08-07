@@ -1,5 +1,6 @@
 import { Reload } from 'meteor/reload';
 import { Tracker } from 'meteor/tracker';
+import { TAPi18n } from 'meteor/tap:i18n';
 
 Tracker.autorun(() => {
   if (Reload.isWaitingForResume()) {

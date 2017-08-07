@@ -15,7 +15,7 @@ Package.onUse(function(api) {
     "templating",
     "underscore",
     "fastclick",
-    "iron:router@1.0.0",
+    "iron:router",
     "tracker",
     "session",
     "jquery"

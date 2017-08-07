@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { Router } from 'meteor/iron:router';
+import { TAPi18n } from 'meteor/tap:i18n';
 
 import { ActivityStream } from '../api/activitystream.js';
 
@@ -14,18 +15,18 @@ Template.layout.onCreated(function() {
 });
 
 Template.layout.events({
-  'change .all-read input'(event, template) {
+  'change .all-read input'() {
     Meteor.call('allRead');
   },
-  'click .all-seen'(event, template) {
+  'click .all-seen'() {
     Meteor.call('allSeen');
   },
-  'click .scanner'(event, template) {
+  'click .scanner'(event) {
     event.preventDefault();
     if (Meteor.isCordova) {
       cordova.plugins.barcodeScanner.scan(
         function (result) {
-          if (result.cancelled == false && result.text && result.format == 'QR_CODE') {
+          if (result.cancelled === false && result.text && result.format === 'QR_CODE') {
             // console.log(result.text);
             // en fonction de ce qu'il y a dans le qr code
             // ex {type:"events",_id:""} ou url
@@ -45,18 +46,18 @@ Template.layout.events({
             }
 
             if (qr && qr.type && qr._id) {
-              if (qr.type == 'citoyens') {
+              if (qr.type === 'citoyens') {
                 Router.go('detailList', { scope: qr.type, _id: qr._id });
                 IonPopup.confirm({ title: TAPi18n.__('Scanner QRcode'),
                   template: TAPi18n.__('would you like to connect to this'),
                   onOk() {
-                    Meteor.call('followPersonExist', qr._id, function (error, result) {
+                    Meteor.call('followPersonExist', qr._id, function (error) {
                       if (!error) {
                         window.alert(TAPi18n.__('successful connection'));
                       // Router.go('detailList', {scope:qr.type,_id:qr._id});
                       } else {
                         window.alert(error.reason);
-                        console.log('error', error);
+                        // console.log('error', error);
                       }
                     });
                   },
@@ -66,18 +67,18 @@ Template.layout.events({
                   cancelText: TAPi18n.__('no'),
                   okText: TAPi18n.__('yes'),
                 });
-              } else if (qr.type == 'events') {
+              } else if (qr.type === 'events') {
                 Router.go('detailList', { scope: qr.type, _id: qr._id });
                 IonPopup.confirm({ title: TAPi18n.__('Scanner QRcode'),
                   template: TAPi18n.__('would you like to connect to this'),
                   onOk() {
-                    Meteor.call('saveattendeesEvent', qr._id, function (error, result) {
+                    Meteor.call('saveattendeesEvent', qr._id, function (error) {
                       if (!error) {
                         window.alert(TAPi18n.__('successful connection'));
                       // Router.go("detailList",{scope:qr.type,_id:qr._id});
                       } else {
                         window.alert(error.reason);
-                        console.log('error', error);
+                        // console.log('error', error);
                       }
                     });
                   },
@@ -87,18 +88,18 @@ Template.layout.events({
                   cancelText: TAPi18n.__('no'),
                   okText: TAPi18n.__('yes'),
                 });
-              } else if (qr.type == 'organizations') {
+              } else if (qr.type === 'organizations') {
                 Router.go('detailList', { scope: qr.type, _id: qr._id });
                 IonPopup.confirm({ title: TAPi18n.__('Scanner QRcode'),
                   template: TAPi18n.__('would you like to connect to this'),
                   onOk() {
-                    Meteor.call('connectEntity', qr._id, qr.type, function (error, result) {
+                    Meteor.call('connectEntity', qr._id, qr.type, function (error) {
                       if (!error) {
                         window.alert(TAPi18n.__('successful connection'));
                       // Router.go("detailList",{scope:qr.type,_id:qr._id});
                       } else {
                         window.alert(error.reason);
-                        console.log('error', error);
+                        // console.log('error', error);
                       }
                     });
                   },
@@ -108,19 +109,19 @@ Template.layout.events({
                   cancelText: TAPi18n.__('no'),
                   okText: TAPi18n.__('yes'),
                 });
-              } else if (qr.type == 'projects') {
+              } else if (qr.type === 'projects') {
                 Router.go('detailList', { scope: qr.type, _id: qr._id });
 
                 IonPopup.confirm({ title: TAPi18n.__('Scanner QRcode'),
                   template: TAPi18n.__('would you like to connect to this'),
                   onOk() {
-                    Meteor.call('connectEntity', qr._id, qr.type, function (error, result) {
+                    Meteor.call('connectEntity', qr._id, qr.type, function (error) {
                       if (!error) {
                         window.alert(TAPi18n.__('successful connection'));
                       // Router.go("detailList",{scope:qr.type,_id:qr._id});
                       } else {
                         window.alert(error.reason);
-                        console.log('error', error);
+                        // console.log('error', error);
                       }
                     });
                   },
@@ -134,8 +135,6 @@ Template.layout.events({
             } else {
             // Router.go("detailList",{scope:'events',_id:result.text});
             }
-          } else {
-
           }
         },
         function (error) {
@@ -148,7 +147,10 @@ Template.layout.events({
 
 Template.layout.helpers({
   allReadChecked (notificationsCount) {
-    if (notificationsCount == 0) return 'checked';
+    if (notificationsCount === 0) {
+      return 'checked';
+    }
+    return undefined;
   },
   notifications () {
     return ActivityStream.api.isUnread();

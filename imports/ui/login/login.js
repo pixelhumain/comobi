@@ -1,10 +1,7 @@
 import { Meteor } from 'meteor/meteor';
-import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
-import { ReactiveDict } from 'meteor/reactive-dict';
 import { TAPi18n } from 'meteor/tap:i18n';
 import { Router } from 'meteor/iron:router';
-import { Location } from 'meteor/djabatav:geolocation-plus';
 
 // helpers
 import { IsValidEmail } from 'meteor/froatsnook:valid-email';
@@ -24,7 +21,7 @@ Template.login.onRendered(function () {
 });
 
 Template.login.events({
-  'submit .login-form' (event, template) {
+  'submit .login-form' (event) {
     event.preventDefault();
     const email = event.target.email.value;
     const password = event.target.password.value;
@@ -74,9 +71,9 @@ Template.signin.onRendered(function () {
   pageSession.set('codepostal', null);
   pageSession.set('cityselect', null);
 
-  const geolocate = Session.get('geolocate');
+  const geolocate = position.getGeolocate();
   if (geolocate) {
-    const onOk = IonPopup.confirm({ template: TAPi18n.__('Use your current location'),
+    IonPopup.confirm({ template: TAPi18n.__('Use your current location'),
       onOk() {
         const geo = position.getLatlng();
         if (geo && geo.latitude) {
@@ -86,7 +83,7 @@ Template.signin.onRendered(function () {
             if (result) {
               pageSession.set('codepostal', result.postalCodes[0].postalCode);
               pageSession.set('cityselect', result.insee);
-              Meteor.call('getcitiesbypostalcode', result.postalCodes[0].postalCode, function(error, data) {
+              Meteor.call('getcitiesbypostalcode', result.postalCodes[0].postalCode, function(errorPostal, data) {
                 if (data) {
                   pageSession.set('cities', data);
                 }
@@ -102,8 +99,8 @@ Template.signin.onRendered(function () {
 });
 
 Template.signin.events({
-  'keyup #codepostal, change #codepostal' (event, template) {
-    if (event.currentTarget.value.length == 5) {
+  'keyup #codepostal, change #codepostal' (event) {
+    if (event.currentTarget.value.length === 5) {
       Meteor.call('getcitiesbypostalcode', event.currentTarget.value, function(error, data) {
         pageSession.set('cities', data);
       });
@@ -111,7 +108,7 @@ Template.signin.events({
       pageSession.set('cities', null);
     }
   },
-  'submit .signup-form' (event, template) {
+  'submit .signup-form' (event) {
     event.preventDefault();
     pageSession.set('error', null);
     const trimInput = val => val.replace(/^\s*|\s*$/g, '');
@@ -180,7 +177,7 @@ Template.signin.events({
     if (!isValidCodepostal(codepostal)) {
       return;
     }
-    if (password != repassword) {
+    if (password !== repassword) {
       pageSession.set('error', 'Not the same password');
       return;
     }
@@ -233,9 +230,10 @@ Template.signin.helpers({
     return pageSession.get('cities');
   },
   citySelected () {
-    if (pageSession.get('cityselect') == this.insee) {
+    if (pageSession.get('cityselect') === this.insee) {
       return 'selected';
     }
+    return undefined;
   },
   codepostal () {
     return pageSession.get('codepostal');

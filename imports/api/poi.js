@@ -2,16 +2,19 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { _ } from 'meteor/underscore';
-import { moment } from 'meteor/momentjs:moment';
-import { Router } from 'meteor/iron:router';
-
-export const Poi = new Meteor.Collection('poi', { idGeneration: 'MONGO' });
 
 // schemas
-import { baseSchema, blockBaseSchema, geoSchema, preferences } from './schema.js';
+import { baseSchema, blockBaseSchema, geoSchema } from './schema.js';
 
 // collection
-import { Lists } from './lists.js';
+import { Citoyens } from './citoyens.js';
+import { Organizations } from './organizations.js';
+import { Documents } from './documents.js';
+import { Events } from './events.js';
+import { Projects } from './projects.js';
+import { nameToCollection } from './helpers.js';
+
+export const Poi = new Meteor.Collection('poi', { idGeneration: 'MONGO' });
 
 // SimpleSchema.debug = true;
 
@@ -46,17 +49,6 @@ BlockPoiRest.info = new SimpleSchema([blockBaseSchema, baseSchema.pick(['name'])
 BlockPoiRest.locality = new SimpleSchema([blockBaseSchema, geoSchema]);
 
 
-// if(Meteor.isClient){
-// collection
-import { News } from './news.js';
-import { Citoyens } from './citoyens.js';
-import { Organizations } from './organizations.js';
-import { Documents } from './documents.js';
-import { Events } from './events.js';
-import { Projects } from './projects.js';
-import { ActivityStream } from './activitystream.js';
-import { queryLink, queryLinkType, arrayLinkType, queryLinkToBeValidated, arrayLinkToBeValidated, queryOptions, nameToCollection } from './helpers.js';
-
 if (Meteor.isClient) {
   window.Organizations = Organizations;
   window.Citoyens = Citoyens;
@@ -89,7 +81,7 @@ Poi.helpers({
   },
   organizerPoi () {
     if (this.parentId && this.parentType && _.contains(['events', 'projects', 'organizations', 'citoyens'], this.parentType)) {
-      console.log(this.parentType);
+      // console.log(this.parentType);
       const collectionType = nameToCollection(this.parentType);
       return collectionType.findOne({
         _id: new Mongo.ObjectID(this.parentId),
@@ -100,6 +92,7 @@ Poi.helpers({
         },
       });
     }
+    return undefined;
   },
   creatorProfile () {
     return Citoyens.findOne({ _id: new Mongo.ObjectID(this.creator) });
@@ -120,6 +113,7 @@ Poi.helpers({
       // console.log(this.organizerPoi());
       return this.organizerPoi() && this.organizerPoi().isAdmin(bothUserId);
     }
+    return undefined;
   },
   scopeVar () {
     return 'poi';

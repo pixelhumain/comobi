@@ -1,11 +1,10 @@
-import './contacts.html';
-
 import { Meteor } from 'meteor/meteor';
-import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
 import { _ } from 'meteor/underscore';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { AutoForm } from 'meteor/aldeed:autoform';
+
+import './contacts.html';
 
 const pageSession = new ReactiveDict('pageContacts');
 
@@ -26,24 +25,23 @@ Template.contacts.onRendered(function () {
     pageSession.set('contacts', '');
     pageSession.set('contact', '');
     pageSession.set('filter', '');
-    function onSuccess(contacts) {
-      const retour = [];
+    const onSuccess = (contacts) => {
       const contactsFilter = _.filter(contacts, function(o) { return o.emails !== null; });
       const contactsSortby = _.sortBy(contactsFilter, function(o) { return o.name.givenName; });
       const contactsMap = _.map(contactsSortby, function(o) { return { id: o.id, displayName: o.displayName, emails: o.emails }; });
       pageSession.set('contacts', contactsMap);
-    }
-    function onError(contactError) {
+    };
+    const onError = (contactError) => {
       pageSession.set('contacts', '');
-    }
+    };
 
-    this.autorun(function(c) {
+    this.autorun(function() {
       if (pageSession.get('filter')) {
         const options = new ContactFindOptions();
         options.filter = pageSession.get('filter');
         options.multiple = true;
         const fields = ['displayName', 'name', 'emails'];
-        const contactsFind = navigator.contacts.find(fields, onSuccess, onError, options);
+        navigator.contacts.find(fields, onSuccess, onError, options);
       }
     });
   } else {
@@ -64,13 +62,13 @@ Template.contacts.helpers({
 });
 
 Template.contacts.events({
-  'keyup #search, change #search'(event, template) {
+  'keyup #search, change #search'(event) {
     if (event.currentTarget.value.length > 3) {
       pageSession.set('filter', event.currentTarget.value);
     }
   },
-  'click .contact'(event, template) {
-    pageSession.set('contact', _.find(pageSession.get('contacts'), function(o) { return o.id == this.id; }, this));
+  'click .contact'() {
+    pageSession.set('contact', _.find(pageSession.get('contacts'), function(o) { return o.id === this.id; }, this));
   },
 });
 
@@ -88,9 +86,9 @@ Template._contactsUser.helpers({
 
 AutoForm.addHooks(['followPerson'], {
   after: {
-    method(error, result) {
+    method(error) {
       if (error) {
-        console.log('Insert Error:', error);
+        // console.log('Insert Error:', error);
       } else {
         IonModal.close();
         pageSession.set('contact', null);
@@ -98,7 +96,6 @@ AutoForm.addHooks(['followPerson'], {
     },
   },
   onError(formType, error) {
-    let ref;
     if (error.errorType && error.errorType === 'Meteor.Error') {
 
     }
