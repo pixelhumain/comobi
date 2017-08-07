@@ -45,6 +45,7 @@ const initialize = (element, zoom) => {
   const geo = position.getLatlng();
   const options = {
     maxZoom: 18,
+    minzoom: 0,
     tileLayer: false,
   };
   if (geo && geo.latitude) {
@@ -168,7 +169,7 @@ const addMarker = (marker) => {
     map.panTo([marker.options.latitude, marker.options.longitude]);
     map.on('popupclose', function() {
       // console.log('popupclose');
-      map.removeLayer(marker);
+      // map.removeLayer(marker);
     });
   }
 };
@@ -335,7 +336,7 @@ Template.mapCanvas.onRendered(function () {
               }).bindPopup(containerNode).on('click', function(e) {
                 // console.log(e.target.options._id);
                 map.panTo([e.target.options.latitude, e.target.options.longitude]);
-                pageSession.set('selected', e.target.options._id);
+                // pageSession.set('currentScopeId', e.target.options._id);
               });
               addMarker(marker);
             }
@@ -357,7 +358,7 @@ Template.mapCanvas.onRendered(function () {
                 }).bindPopup(containerNode).on('click', function(e) {
                   // console.log(e.target.options._id);
                   map.panTo([e.target.options.latitude, e.target.options.longitude]);
-                  pageSession.set('selected', e.target.options._id);
+                  // pageSession.set('currentScopeId', e.target.options._id);
                 });
                 addMarker(markerAdd);
               }
