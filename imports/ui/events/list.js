@@ -515,12 +515,12 @@ AutoForm.addHooks(['addEvent', 'editEvent'], {
   after: {
     method(error, result) {
       if (!error) {
-        Router.go('detailList', { _id: result.data.id, scope: 'events' });
+        Router.go('detailList', { _id: result.data.id, scope: 'events' }, { replaceState: true });
       }
     },
     'method-update'(error, result) {
       if (!error) {
-        Router.go('detailList', { _id: result.data.id, scope: 'events' });
+        Router.go('detailList', { _id: result.data.id, scope: 'events' }, { replaceState: true });
       }
     },
   },
@@ -554,7 +554,7 @@ AutoForm.addHooks(['editBlockEvent'], {
     'method-update'(error) {
       if (!error) {
         if (pageSession.get('block') !== 'preferences') {
-          Router.go('detailList', { _id: pageSession.get('scopeId'), scope: 'events' });
+          Router.go('detailList', { _id: pageSession.get('scopeId'), scope: 'events' }, { replaceState: true });
         }
       }
     },

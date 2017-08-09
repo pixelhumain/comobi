@@ -335,7 +335,7 @@ AutoForm.addHooks(['editCitoyen'], {
   after: {
     'method-update'(error, result) {
       if (!error) {
-        Router.go('detailList', { _id: result.data.id, scope: 'citoyens' });
+        Router.go('detailList', { _id: result.data.id, scope: 'citoyens' }, { replaceState: true });
       }
     },
   },
@@ -353,7 +353,7 @@ AutoForm.addHooks(['editBlockCitoyen'], {
     'method-update'(error) {
       if (!error) {
         if (pageSession.get('block') !== 'preferences') {
-          Router.go('detailList', { _id: pageSession.get('scopeId'), scope: 'citoyens' });
+          Router.go('detailList', { _id: pageSession.get('scopeId'), scope: 'citoyens' }, { replaceState: true });
         }
       }
     },

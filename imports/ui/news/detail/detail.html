@@ -47,18 +47,23 @@
     {{/if}}
 
       {{#if nequals authorNews.name targetNews.name}}<p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a></p>{{/if}}
-      
+
     <p><i class="icon ion-clock"></i> {{livestamp created}}
       {{#if equals scope.type 'public'}}<i class="icon fa fa-globe"></i>{{/if}}
       {{#if equals scope.type 'restricted'}}<i class="icon fa fa-connectdevelop"></i>{{/if}}
       {{#if equals scope.type 'private'}}<i class="icon fa fa-lock"></i>{{/if}}
     </p>
   </div>
+
   {{#if photoNewsAlbums}}
-  <div class="item item-body">
-    {{#each photoNewsAlbums}}
+  <div class="item item-body" data-snap-ignore="true">
+  {{#ionSlideBox}}
+  {{#each photoNewsAlbums}}
+  {{#ionSlide class="light-bg"}}
   <img src="{{urlImageCommunecter}}/upload/{{moduleId}}/{{folder}}/{{name}}" class="full-image photo-viewer" />
-    {{/each}}
+  {{/ionSlide}}
+  {{/each}}
+  {{/ionSlideBox}}
   </div>
   {{/if}}
 

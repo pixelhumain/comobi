@@ -1,6 +1,7 @@
 import { Reload } from 'meteor/reload';
 import { Tracker } from 'meteor/tracker';
 import { TAPi18n } from 'meteor/tap:i18n';
+import { IonPopup } from 'meteor/meteoric:ionic';
 
 Tracker.autorun(() => {
   if (Reload.isWaitingForResume()) {

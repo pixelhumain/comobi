@@ -4,6 +4,7 @@ import { Router } from 'meteor/iron:router';
 import { TAPi18n } from 'meteor/tap:i18n';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { Random } from 'meteor/random';
+import { IonPopup } from 'meteor/meteoric:ionic';
 
 import position from '../../api/client/position.js';
 
@@ -59,7 +60,7 @@ Template.changePosition.events({
         position.setMockLocation(self.geo);
         const geoIdRandom = Random.id();
         geoId.set('geoId', geoIdRandom);
-        Router.go('dashboard');
+        Router.go('dashboard', { replaceState: true });
       },
       cancelText: TAPi18n.__('no'),
       okText: TAPi18n.__('yes'),

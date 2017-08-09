@@ -1,4 +1,5 @@
 import { Template } from 'meteor/templating';
+import { IonLoading } from 'meteor/meteoric:ionic';
 
 import './loading.html';
 

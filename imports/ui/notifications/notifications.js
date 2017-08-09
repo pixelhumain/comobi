@@ -4,6 +4,7 @@ import { Router } from 'meteor/iron:router';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { TAPi18n } from 'meteor/tap:i18n';
 import { $ } from 'meteor/jquery';
+import { IonPopup } from 'meteor/meteoric:ionic';
 
 import { ActivityStream } from '../../api/activitystream.js';
 

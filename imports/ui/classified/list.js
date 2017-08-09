@@ -312,12 +312,12 @@ AutoForm.addHooks(['addClassified', 'editClassified'], {
   after: {
     method(error, result) {
       if (!error) {
-        Router.go('detailList', { _id: result.data.id, scope: 'classified' });
+        Router.go('detailList', { _id: result.data.id, scope: 'classified' }, { replaceState: true });
       }
     },
     'method-update'(error, result) {
       if (!error) {
-        Router.go('detailList', { _id: result.data.id, scope: 'classified' });
+        Router.go('detailList', { _id: result.data.id, scope: 'classified' }, { replaceState: true });
       }
     },
   },

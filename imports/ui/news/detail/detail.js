@@ -4,6 +4,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { Router } from 'meteor/iron:router';
 import { Mongo } from 'meteor/mongo';
 import { TAPi18n } from 'meteor/tap:i18n';
+import { IonActionSheet } from 'meteor/meteoric:ionic';
 
 // collection
 import { Events } from '../../../api/events.js';
@@ -40,6 +41,11 @@ Template.newsDetail.onCreated(function () {
     }
   });
 });
+
+Template.newsDetail.onRendered(function () {
+  // console.log(window.history.state);
+});
+
 
 Template.newsDetail.helpers({
   scope () {
@@ -78,7 +84,7 @@ Template.newsDetail.events({
       destructiveButtonClicked() {
         // console.log('Destructive Action!');
         Meteor.call('deleteNew', self._id._str, function() {
-          Router.go('detailList', { _id: Router.current().params._id, scope: Router.current().params.scope });
+          Router.go('detailList', { _id: Router.current().params._id, scope: Router.current().params.scope }, { replaceState: true });
         });
         return true;
       },

@@ -5,6 +5,7 @@ import { $ } from 'meteor/jquery';
 import { Blaze } from 'meteor/blaze';
 import { Router } from 'meteor/iron:router';
 import { ReactiveVar } from 'meteor/reactive-var';
+import { IonLoading } from 'meteor/meteoric:ionic';
 
 import { Events } from '../../api/events.js';
 import { Organizations } from '../../api/organizations.js';

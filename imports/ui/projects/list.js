@@ -384,12 +384,12 @@ AutoForm.addHooks(['addProject', 'editProject'], {
   after: {
     method(error, result) {
       if (!error) {
-        Router.go('detailList', { _id: result.data.id, scope: 'projects' });
+        Router.go('detailList', { _id: result.data.id, scope: 'projects' }, { replaceState: true });
       }
     },
     'method-update'(error, result) {
       if (!error) {
-        Router.go('detailList', { _id: result.data.id, scope: 'projects' });
+        Router.go('detailList', { _id: result.data.id, scope: 'projects' }, { replaceState: true });
       }
     },
   },
@@ -422,7 +422,7 @@ AutoForm.addHooks(['editBlockProject'], {
     'method-update'(error) {
       if (!error) {
         if (pageSession.get('block') !== 'preferences') {
-          Router.go('detailList', { _id: pageSession.get('scopeId'), scope: 'projects' });
+          Router.go('detailList', { _id: pageSession.get('scopeId'), scope: 'projects' }, { replaceState: true });
         }
       }
     },

@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { Router } from 'meteor/iron:router';
 import { TAPi18n } from 'meteor/tap:i18n';
+import { IonPopup } from 'meteor/meteoric:ionic';
 
 import { ActivityStream } from '../api/activitystream.js';
 
