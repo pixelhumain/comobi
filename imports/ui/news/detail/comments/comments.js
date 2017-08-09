@@ -6,6 +6,7 @@ import { Router } from 'meteor/iron:router';
 import { Mongo } from 'meteor/mongo';
 import { TAPi18n } from 'meteor/tap:i18n';
 import { AutoForm } from 'meteor/aldeed:autoform';
+import { IonActionSheet } from 'meteor/meteoric:ionic';
 
 // collection
 import { Events } from '../../../../api/events.js';
@@ -87,7 +88,7 @@ Template.newsDetailComments.events({
       destructiveButtonClicked() {
         // console.log('Destructive Action!');
         Meteor.call('deleteComment', self._id._str, function() {
-          Router.go('newsDetail', { _id: Router.current().params._id, newsId: Router.current().params.newsId, scope: Router.current().params.scope });
+          Router.go('newsDetail', { _id: Router.current().params._id, newsId: Router.current().params.newsId, scope: Router.current().params.scope }, { replaceState: true });
         });
         return true;
       },
@@ -186,7 +187,7 @@ AutoForm.addHooks(['editComment'], {
   after: {
     'method-update'(error) {
       if (!error) {
-        Router.go('newsDetailComments', { _id: pageSession.get('scopeId'), scope: pageSession.get('scope'), newsId: pageSession.get('newsId') });
+        Router.go('newsDetailComments', { _id: pageSession.get('scopeId'), scope: pageSession.get('scope'), newsId: pageSession.get('newsId') }, { replaceState: true });
       }
     },
   },

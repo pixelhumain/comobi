@@ -7,7 +7,7 @@ import { Router } from 'meteor/iron:router';
 import { AutoForm } from 'meteor/aldeed:autoform';
 import { Mongo } from 'meteor/mongo';
 import { HTTP } from 'meteor/http';
-
+import { IonPopup } from 'meteor/meteoric:ionic';
 
 // collections
 import { Organizations, BlockOrganizationsRest } from '../../api/organizations.js';
@@ -514,12 +514,12 @@ AutoForm.addHooks(['addOrganization', 'editOrganization'], {
   after: {
     method(error, result) {
       if (!error) {
-        Router.go('detailList', { _id: result.data.id, scope: 'organizations' });
+        Router.go('detailList', { _id: result.data.id, scope: 'organizations' }, { replaceState: true });
       }
     },
     'method-update'(error, result) {
       if (!error) {
-        Router.go('detailList', { _id: result.data.id, scope: 'organizations' });
+        Router.go('detailList', { _id: result.data.id, scope: 'organizations' }, { replaceState: true });
       }
     },
   },
@@ -545,7 +545,7 @@ AutoForm.addHooks(['editBlockOrganization'], {
     'method-update'(error) {
       if (!error) {
         if (pageSession.get('block') !== 'preferences') {
-          Router.go('detailList', { _id: pageSession.get('scopeId'), scope: 'organizations' });
+          Router.go('detailList', { _id: pageSession.get('scopeId'), scope: 'organizations' }, { replaceState: true });
         }
       }
     },

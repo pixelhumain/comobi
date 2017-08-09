@@ -352,12 +352,12 @@ AutoForm.addHooks(['addPoi', 'editPoi'], {
   after: {
     method(error, result) {
       if (!error) {
-        Router.go('detailList', { _id: result.data.id, scope: 'poi' });
+        Router.go('detailList', { _id: result.data.id, scope: 'poi' }, { replaceState: true });
       }
     },
     'method-update'(error, result) {
       if (!error) {
-        Router.go('detailList', { _id: result.data.id, scope: 'poi' });
+        Router.go('detailList', { _id: result.data.id, scope: 'poi' }, { replaceState: true });
       }
     },
   },
@@ -389,7 +389,7 @@ AutoForm.addHooks(['editBlockPoi'], {
     'method-update'(error) {
       if (!error) {
         if (pageSession.get('block') !== 'preferences') {
-          Router.go('detailList', { _id: pageSession.get('scopeId'), scope: 'poi' });
+          Router.go('detailList', { _id: pageSession.get('scopeId'), scope: 'poi' }, { replaceState: true });
         }
       }
     },

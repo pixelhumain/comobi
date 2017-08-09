@@ -3,6 +3,7 @@ import { Template } from 'meteor/templating';
 import { _ } from 'meteor/underscore';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { AutoForm } from 'meteor/aldeed:autoform';
+import { IonModal } from 'meteor/meteoric:ionic';
 
 import './contacts.html';
 

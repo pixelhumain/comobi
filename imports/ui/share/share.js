@@ -96,7 +96,7 @@ AutoForm.addHooks(['addShare'], {
         // console.log('ici');
         const scope = pageSession.get('scope');
         const scopeId = pageSession.get('scopeId');
-        Router.go('detailList', { _id: scopeId, scope });
+        Router.go('detailList', { _id: scopeId, scope }, { replaceState: true });
       }
     },
   },

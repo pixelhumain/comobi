@@ -1132,7 +1132,7 @@ indexMax:20 */
         insertNew.media.countImages = '1';
         insertNew.media.images = [doc.data.id.$id];
         const newsIdRetour = Meteor.call('insertNew', insertNew);
-        if (newsId) {
+        if (newsIdRetour) {
           return { photoret: doc.data.id.$id, newsId: newsIdRetour.data.id.$id };
         }
         throw new Meteor.Error('photoNews error');

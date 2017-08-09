@@ -10,6 +10,7 @@ import { TAPi18n } from 'meteor/tap:i18n';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Mongo } from 'meteor/mongo';
+import { IonPopup, IonModal, IonLoading } from 'meteor/meteoric:ionic';
 
 import '../qrcode/qrcode.js';
 
@@ -123,8 +124,12 @@ Template.scopeNewsTemplate.onCreated(function() {
 
   this.autorun(function() {
     if (pageSession.get('limit')) {
+      IonLoading.show();
       const handle = newsListSubs.subscribe('newsList', Router.current().params.scope, Router.current().params._id, pageSession.get('limit'));
-      this.ready.set(handle.ready());
+      if (handle.ready()) {
+        IonLoading.hide();
+        this.ready.set(handle.ready());
+      }
     }
   }.bind(this));
 });
@@ -176,8 +181,12 @@ Template.scopeFilActusTemplate.onCreated(function() {
 
   this.autorun(function() {
     if (pageSession.get('limitFilActus')) {
+      IonLoading.show();
       const handle = filActusSubs.subscribe('citoyenActusList', pageSession.get('limitFilActus'));
-      this.ready.set(handle.ready());
+      if (handle.ready()) {
+        IonLoading.hide();
+        this.ready.set(handle.ready());
+      }
     }
   }.bind(this));
 });
@@ -480,9 +489,12 @@ Template.newsList.events({
     const newLimit = pageSession.get('limit') + 5;
     pageSession.set('limit', newLimit);
   },
+  'click .give-me-more-actus' () {
+    const newLimit = pageSession.get('limitFilActus') + 5;
+    pageSession.set('limitFilActus', newLimit);
+  },
   'click .photo-link-new' (event, instance) {
     const self = this;
-    const scopeId = pageSession.get('scopeId');
     const scope = pageSession.get('scope');
 
     if (Meteor.isDesktop) {
@@ -541,7 +553,6 @@ Template.newsList.events({
   'click .photo-link-scope' (event, instance) {
     event.preventDefault();
     const self = this;
-    const scopeId = pageSession.get('scopeId');
     const scope = pageSession.get('scope');
     if (Meteor.isDesktop) {
       instance.$('#file-upload').trigger('click');
@@ -554,7 +565,6 @@ Template.newsList.events({
       MeteorCameraUI.getPicture(options, function (error, data) {
         if (!error) {
           const str = `${+new Date() + Math.floor((Math.random() * 100) + 1)}.jpg`;
-          const dataURI = data;
           Meteor.call('photoScope', scope, data, str, self._id._str, function (errorPhoto) {
             if (!errorPhoto) {
               // console.log(result);
@@ -571,20 +581,19 @@ Template.newsList.events({
   'change #file-upload' (event, instance) {
     event.preventDefault();
     const self = this;
-    const scopeId = pageSession.get('scopeId');
     const scope = pageSession.get('scope');
     if (window.File && window.FileReader && window.FileList && window.Blob) {
       _.each(instance.find('#file-upload').files, function(file) {
         if (file.size > 1) {
           const reader = new FileReader();
-          reader.onload = function(e) {
+          reader.onload = function() {
             // console.log(file.name);
             // console.log(file.type);
             // console.log(reader.result);
             // let str = +new Date + Math.floor((Math.random() * 100) + 1) + ".jpg";
             const str = file.name;
             const dataURI = reader.result;
-            Meteor.call('photoScope', scope, dataURI, str, self._id._str, function (error, result) {
+            Meteor.call('photoScope', scope, dataURI, str, self._id._str, function (error) {
               if (!error) {
                 // console.log(result);
               } else {
@@ -600,7 +609,6 @@ Template.newsList.events({
   'change #file-upload-new' (event, instance) {
     event.preventDefault();
     const self = this;
-    const scopeId = pageSession.get('scopeId');
     const scope = pageSession.get('scope');
     const newsId = pageSession.get('newsId');
 
@@ -721,35 +729,36 @@ Template.newsAdd.onRendered(function () {
         });
       }
     }
-  }).on('inserted.atwho', function(event, $li) {
+  })
+    .on('inserted.atwho', function(event, $li) {
     // console.log(JSON.stringify($li.data('item-data')));
 
-    if ($li.data('item-data')['atwho-at'] === '@') {
-      const mentions = {};
-      // const arrayMentions = [];
-      mentions.name = $li.data('item-data').name;
-      mentions.id = $li.data('item-data').id;
-      mentions.type = $li.data('item-data').type;
-      mentions.avatar = $li.data('item-data').avatar;
-      mentions.value = $li.data('item-data').name;
-      if (pageSession.get('mentions')) {
-        const arrayMentions = pageSession.get('mentions');
-        arrayMentions.push(mentions);
-        pageSession.set('mentions', arrayMentions);
-      } else {
-        pageSession.set('mentions', [mentions]);
+      if ($li.data('item-data')['atwho-at'] === '@') {
+        const mentions = {};
+        // const arrayMentions = [];
+        mentions.name = $li.data('item-data').name;
+        mentions.id = $li.data('item-data').id;
+        mentions.type = $li.data('item-data').type;
+        mentions.avatar = $li.data('item-data').avatar;
+        mentions.value = $li.data('item-data').name;
+        if (pageSession.get('mentions')) {
+          const arrayMentions = pageSession.get('mentions');
+          arrayMentions.push(mentions);
+          pageSession.set('mentions', arrayMentions);
+        } else {
+          pageSession.set('mentions', [mentions]);
+        }
+      } else if ($li.data('item-data')['atwho-at'] === '#') {
+        const tag = $li.data('item-data').name;
+        if (pageSession.get('tags')) {
+          const arrayTags = pageSession.get('tags');
+          arrayTags.push(tag);
+          pageSession.set('tags', arrayTags);
+        } else {
+          pageSession.set('tags', [tag]);
+        }
       }
-    } else if ($li.data('item-data')['atwho-at'] === '#') {
-      const tag = $li.data('item-data').name;
-      if (pageSession.get('tags')) {
-        const arrayTags = pageSession.get('tags');
-        arrayTags.push(tag);
-        pageSession.set('tags', arrayTags);
-      } else {
-        pageSession.set('tags', [tag]);
-      }
-    }
-  });
+    });
 });
 
 Template.newsAdd.onDestroyed(function () {
@@ -844,35 +853,36 @@ Template.newsFields.onRendered(function () {
         });
       }
     }
-  }).on('inserted.atwho', function(event, $li) {
+  })
+    .on('inserted.atwho', function(event, $li) {
     // console.log(JSON.stringify($li.data('item-data')));
 
-    if ($li.data('item-data')['atwho-at'] === '@') {
-      const mentions = {};
-      // const arrayMentions = [];
-      mentions.name = $li.data('item-data').name;
-      mentions.id = $li.data('item-data').id;
-      mentions.type = $li.data('item-data').type;
-      mentions.avatar = $li.data('item-data').avatar;
-      mentions.value = $li.data('item-data').name;
-      if (pageSession.get('mentions')) {
-        const arrayMentions = pageSession.get('mentions');
-        arrayMentions.push(mentions);
-        pageSession.set('mentions', arrayMentions);
-      } else {
-        pageSession.set('mentions', [mentions]);
+      if ($li.data('item-data')['atwho-at'] === '@') {
+        const mentions = {};
+        // const arrayMentions = [];
+        mentions.name = $li.data('item-data').name;
+        mentions.id = $li.data('item-data').id;
+        mentions.type = $li.data('item-data').type;
+        mentions.avatar = $li.data('item-data').avatar;
+        mentions.value = $li.data('item-data').name;
+        if (pageSession.get('mentions')) {
+          const arrayMentions = pageSession.get('mentions');
+          arrayMentions.push(mentions);
+          pageSession.set('mentions', arrayMentions);
+        } else {
+          pageSession.set('mentions', [mentions]);
+        }
+      } else if ($li.data('item-data')['atwho-at'] === '#') {
+        const tag = $li.data('item-data').name;
+        if (pageSession.get('tags')) {
+          const arrayTags = pageSession.get('tags');
+          arrayTags.push(tag);
+          pageSession.set('tags', arrayTags);
+        } else {
+          pageSession.set('tags', [tag]);
+        }
       }
-    } else if ($li.data('item-data')['atwho-at'] === '#') {
-      const tag = $li.data('item-data').name;
-      if (pageSession.get('tags')) {
-        const arrayTags = pageSession.get('tags');
-        arrayTags.push(tag);
-        pageSession.set('tags', arrayTags);
-      } else {
-        pageSession.set('tags', [tag]);
-      }
-    }
-  });
+    });
 });
 
 Template.newsFields.onDestroyed(function () {
@@ -968,12 +978,12 @@ AutoForm.addHooks(['addNew', 'editNew'], {
         });
 
         // Meteor.call('pushNewNewsAttendees',scopeId,selfresult);
-        Router.go('newsList', { _id: pageSession.get('scopeId'), scope: pageSession.get('scope') });
+        Router.go('newsList', { _id: pageSession.get('scopeId'), scope: pageSession.get('scope') }, { replaceState: true });
       }
     },
     'method-update'(error) {
       if (!error) {
-        Router.go('newsList', { _id: pageSession.get('scopeId'), scope: pageSession.get('scope') });
+        Router.go('newsList', { _id: pageSession.get('scopeId'), scope: pageSession.get('scope') }, { replaceState: true });
       }
     },
   },

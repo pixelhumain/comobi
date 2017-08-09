@@ -2,6 +2,7 @@ import { Template } from 'meteor/templating';
 import { Router } from 'meteor/iron:router';
 import { Counts } from 'meteor/tmeasday:publish-counts';
 import { TAPi18n } from 'meteor/tap:i18n';
+import { IonActionSheet } from 'meteor/meteoric:ionic';
 
 import './card.html';
 

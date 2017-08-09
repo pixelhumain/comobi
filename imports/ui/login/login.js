@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { TAPi18n } from 'meteor/tap:i18n';
 import { Router } from 'meteor/iron:router';
+import { IonPopup } from 'meteor/meteoric:ionic';
 
 // helpers
 import { IsValidEmail } from 'meteor/froatsnook:valid-email';
@@ -35,18 +36,17 @@ Template.login.events({
       return;
     }
     pageSession.set('loading-logging', true);
-    Meteor.loginAsPixel(email, password, function(error) {
+    Meteor.loginAsPixel(email, password, (error) => {
       if (!error) {
         Meteor.logoutOtherClients();
         pageSession.set('loading-logging', false);
         pageSession.set('error', null);
-        Router.go('/');
-      } else {
-        // console.log(error);
-        pageSession.set('loading-logging', false);
-        pageSession.set('error', error.reason);
-        return null;
+        return Router.go('/');
       }
+      // console.log(error);
+      pageSession.set('loading-logging', false);
+      pageSession.set('error', error.reason);
+      return null;
     });
   },
 });
@@ -203,16 +203,15 @@ Template.signin.events({
         // console.log(error.error);
         pageSession.set('error', error.error);
       } else {
-        Meteor.loginAsPixel(email, password, function(err) {
+        Meteor.loginAsPixel(email, password, (err) => {
           if (!err) {
             pageSession.set('loading-signup', false);
             pageSession.set('error', null);
-            Router.go('/');
-          } else {
-            pageSession.set('loading-signup', false);
-            pageSession.set('error', err.error);
-            return false;
+            return Router.go('/');
           }
+          pageSession.set('loading-signup', false);
+          pageSession.set('error', err.error);
+          return false;
         });
       }
     });
