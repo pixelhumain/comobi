@@ -477,7 +477,7 @@ Template.newsList.events({
     }
   },
   'click .give-me-more' () {
-    const newLimit = pageSession.get('limit') + 10;
+    const newLimit = pageSession.get('limit') + 5;
     pageSession.set('limit', newLimit);
   },
   'click .photo-link-new' (event, instance) {

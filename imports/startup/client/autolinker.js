@@ -25,6 +25,15 @@ export const AutoLinkerMessage = (message) => {
               const tag = match.buildTag();
               tag.setAttr('target', '');
               return tag;
+            } else {
+              const tag = match.buildTag();
+              if (Meteor.isDesktop) {
+                tag.setAttr('target', '_blank');
+              } else if (Meteor.isCordova) {
+                tag.setAttr('target', '_system');
+              } else {
+                tag.setAttr('target', '_blank');
+              }
             }
 
             return true;
