@@ -75,6 +75,13 @@ if (Meteor.isServer) {
 export const SchemasNewsRest = new SimpleSchema({
   text: {
     type: String,
+    optional: true,
+    custom() {
+      if (!this.isSet && !this.field('media').isSet) {
+        return 'required';
+      }
+      return null;
+    },
   },
   parentId: {
     type: String,
