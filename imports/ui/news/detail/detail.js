@@ -42,10 +42,6 @@ Template.newsDetail.onCreated(function () {
   });
 });
 
-Template.newsDetail.onRendered(function () {
-  // console.log(window.history.state);
-});
-
 
 Template.newsDetail.helpers({
   scope () {
@@ -84,7 +80,8 @@ Template.newsDetail.events({
       destructiveButtonClicked() {
         // console.log('Destructive Action!');
         Meteor.call('deleteNew', self._id._str, function() {
-          Router.go('detailList', { _id: Router.current().params._id, scope: Router.current().params.scope }, { replaceState: true });
+          // window.history.back();
+          Router.go('actusList', { _id: Router.current().params._id, scope: Router.current().params.scope }, { replaceState: true });
         });
         return true;
       },

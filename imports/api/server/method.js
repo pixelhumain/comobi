@@ -1035,7 +1035,7 @@ indexMax:20 */
       }
     }
 
-    if (newsOne && newsOne.media && newsOne.media.images) {
+/* if (newsOne && newsOne.media && newsOne.media.images) {
       const arrayId = newsOne.media.images.map(_id => new Mongo.ObjectID(_id));
       const newsDocs = Documents.find({
         _id: { $in: arrayId },
@@ -1049,7 +1049,7 @@ indexMax:20 */
         doc.docId = newsDoc._id._str;
         apiCommunecter.postPixel('document', `delete/dir/${Meteor.settings.module}/type/${newsOne.target.type}/parentId/${newsOne.target.id}`, doc);
       });
-    }
+    } */
 
     const retour = apiCommunecter.postPixel('news', `delete/id/${newsId}`, {});
     return retour;
@@ -1126,7 +1126,7 @@ indexMax:20 */
         const insertNew = {};
         insertNew.parentId = idType;
         insertNew.parentType = type;
-        insertNew.text = 'photo';
+        insertNew.text = ' ';
         insertNew.media = {};
         insertNew.media.type = 'gallery_images';
         insertNew.media.countImages = '1';
