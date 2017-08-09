@@ -4,6 +4,7 @@ import { Mapbox } from 'meteor/communecter:mapbox';
 import { $ } from 'meteor/jquery';
 import { Blaze } from 'meteor/blaze';
 import { Router } from 'meteor/iron:router';
+import { ReactiveVar } from 'meteor/reactive-var';
 
 import { Events } from '../../api/events.js';
 import { Organizations } from '../../api/organizations.js';
@@ -272,8 +273,13 @@ Template.mapCanvas.onCreated(function () {
   const self = this;
   scopeSubscribe(this, subs[Router.current().params.scope], 'geo.scope', Router.current().params.scope);
 
+  self.readyDetail = new ReactiveVar();
   self.autorun(function() {
     pageSession.set('currentScopeId', Router.current().params._id);
+    const handleDetail = Meteor.subscribe('scopeDetail', Router.current().params.scope, Router.current().params._id);
+    if (handleDetail.ready()) {
+      self.readyDetail.set(handleDetail.ready());
+    }
   });
 });
 
@@ -315,12 +321,16 @@ Template.mapCanvas.onRendered(function () {
         const collection = nameToCollection(Router.current().params.scope);
         let query = {};
         query = queryGeoFilter(query);
+        if (pageSession.get('currentScopeId')) {
+          query.$or = [{ _id: pageSession.get('currentScopeId') }];
+        }
         // query['created'] = {$gte : inputDate};
-        // console.log(query);
+
         if (Router.current().params.scope === 'events') {
 
         }
         query.geo = { $exists: 1 };
+        // console.log(query);
         self.liveQuery = collection.find(query).observe({
           added(event) {
             if (event && event.geo && event.geo.latitude) {

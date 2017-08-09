@@ -63,9 +63,6 @@ Template.collections.helpers({
   dataReady() {
     return Template.instance().ready.get();
   },
-  search () {
-    return pageCollections.get('search');
-  },
 });
 
 Template.Collections_view.onCreated(function() {
@@ -77,14 +74,11 @@ Template.Collections_view.helpers({
   search () {
     return pageCollections.get('search');
   },
+  viewArray () {
+    return ['citoyens', 'organizations', 'projects', 'events', 'poi', 'classified'];
+  },
   view () {
     return pageCollections.get('view');
-  },
-});
-
-Template.Collections_search.helpers({
-  search () {
-    return pageCollections.get('search');
   },
 });
 
@@ -97,15 +91,6 @@ Template.Collections_search.events({
       pageCollections.set('search', null);
     }
   }, 500),
-});
-
-Template.Collections_button_bar.helpers({
-  search () {
-    return pageCollections.get('search');
-  },
-  view () {
-    return pageCollections.get('view');
-  },
 });
 
 Template.Collections_button_bar.events({
@@ -136,41 +121,5 @@ Template.Collections_button_bar.events({
   'click .projects' (event) {
     event.preventDefault();
     pageCollections.set('view', 'projects');
-  },
-});
-
-Template.listCollectionsCitoyens.helpers({
-  search () {
-    return pageCollections.get('search');
-  },
-});
-
-Template.listCollectionsOrganizations.helpers({
-  search () {
-    return pageCollections.get('search');
-  },
-});
-
-Template.listCollectionsProjects.helpers({
-  search () {
-    return pageCollections.get('search');
-  },
-});
-
-Template.listCollectionsEvents.helpers({
-  search () {
-    return pageCollections.get('search');
-  },
-});
-
-Template.listCollectionsPoi.helpers({
-  search () {
-    return pageCollections.get('search');
-  },
-});
-
-Template.listCollectionsClassified.helpers({
-  search () {
-    return pageCollections.get('search');
   },
 });
