@@ -15,7 +15,7 @@
   {{#ionView}}
   {{#ionContent}}
 
-  {{> Template.dynamic template="Collections_view" data=scope}}
+  {{> Collections_view scope=scope}}
 
   {{/ionContent}}
   {{/ionView}}
@@ -35,8 +35,8 @@
   <div class="button-bar button-positive">
     {{> Button_toggle condition=(equals view 'all') classOff="button button-small button-dark all" classOn="button button-small button-dark all activated" iconOff="icon fa fa-th-list" iconOn="icon fa fa-th-list positive"}}
 
-    {{> Button_toggle condition=(equals view 'citoyens') classOff="button button-small button-person follows" classOn="button button-small button-person follows activated" iconOff="icon fa fa-user" iconOn="icon fa fa-user positive"}}
-    {{> Button_toggle condition=(equals view 'organizations') classOff="button button-small button-organization memberof" classOn="button button-small button-organization memberof activated" iconOff="icon fa fa-users" iconOn="icon fa fa-users positive"}}
+    {{> Button_toggle condition=(equals view 'citoyens') classOff="button button-small button-person citoyens" classOn="button button-small button-person citoyens activated" iconOff="icon fa fa-user" iconOn="icon fa fa-user positive"}}
+    {{> Button_toggle condition=(equals view 'organizations') classOff="button button-small button-organization organizations" classOn="button button-small button-organization organizations activated" iconOff="icon fa fa-users" iconOn="icon fa fa-users positive"}}
     {{> Button_toggle condition=(equals view 'projects') classOff="button button-small button-project projects" classOn="button button-small button-project projects activated" iconOff="icon fa fa-lightbulb-o" iconOn="icon fa fa-lightbulb-o positive"}}
     {{> Button_toggle condition=(equals view 'events') classOff="button button-small button-event events" classOn="button button-small button-event events activated" iconOff="icon fa fa-calendar" iconOn="icon fa fa-calendar positive"}}
     {{> Button_toggle condition=(equals view 'poi') classOff="button button-small button-poi poi" classOn="button button-small button-poi poi activated" iconOff="icon fa fa-map-marker" iconOn="icon fa fa-map-marker positive"}}
@@ -47,89 +47,32 @@
 
 <template name="Collections_view">
   <div class="list">
-  {{> Collections_search}}
-  {{> Collections_button_bar}}
+  {{> Collections_search search=search}}
+  {{> Collections_button_bar view=view}}
   {{#if equals view 'all'}}
-  {{> listCollectionsCitoyens}}
-  {{> listCollectionsOrganizations}}
-  {{> listCollectionsProjects}}
-  {{> listCollectionsEvents}}
-  {{> listCollectionsPoi}}
-  {{> listCollectionsClassified}}
-  {{else}}
+  {{#each viewItem in viewArray}}
+
   {{#if equals view 'citoyens'}}
-  {{> listCollectionsCitoyens}}
+  {{> listCollections count=(scope.countCollections 'favorites' viewItem search) listCollections=(scope.listCollections 'favorites' viewItem search) view=viewItem person=true }}
+  {{else}}
+  {{> listCollections count=(scope.countCollections 'favorites' viewItem search) listCollections=(scope.listCollections 'favorites' viewItem search) view=viewItem person=false }}
   {{/if}}
-  {{#if equals view 'organizations'}}
-  {{> listCollectionsOrganizations}}
-  {{/if}}
-  {{#if equals view 'projects'}}
-  {{> listCollectionsProjects}}
-  {{/if}}
-  {{#if equals view 'events'}}
-  {{> listCollectionsEvents}}
-  {{/if}}
-  {{#if equals view 'poi'}}
-  {{> listCollectionsPoi}}
-  {{/if}}
-  {{#if equals view 'classified'}}
-  {{> listCollectionsClassified}}
-  {{/if}}
+  {{/each}}
+
+  {{else if equals view 'citoyens'}}
+  {{> listCollections count=(scope.countCollections 'favorites' view search) listCollections=(scope.listCollections 'favorites' view search) view=view person=true }}
+  {{else}}
+  {{> listCollections count=(scope.countCollections 'favorites' view search) listCollections=(scope.listCollections 'favorites' view search) view=view person=false }}
   {{/if}}
   </div>
 </template>
 
 
-<template name="listCollectionsCitoyens">
-  {{#if countCollections 'favorites' 'citoyens' search}}
+<template name="listCollections ">
+  {{#if count}}
       <div class="item item-divider">
-        <i class="icon fa fa-user"></i> {{_ "citoyens"}} <span class="badge badge-dark">{{countCollections 'favorites' 'citoyens' search}}</span>
+        <i class="icon fa fa-map-marker"></i> {{_ view}} <span class="badge badge-dark">{{count}}</span>
       </div>
-      {{> Directory_list list=(listCollections 'favorites' 'citoyens' search) isConnect="isFavorites" person=true scope="citoyens"}}
-  {{/if}}
-</template>
-
-<template name="listCollectionsOrganizations">
-  {{#if countCollections 'favorites' 'organizations' search}}
-      <div class="item item-divider">
-        <i class="icon fa fa-users"></i> {{_ "organizations"}} <span class="badge badge-dark">{{countCollections 'favorites' 'organizations' search}}</span>
-      </div>
-      {{> Directory_list list=(listCollections 'favorites' 'organizations' search) isConnect="isFavorites" person=false scope="organizations"}}
-  {{/if}}
-</template>
-
-<template name="listCollectionsProjects">
-  {{#if countCollections 'favorites' 'projects' search}}
-      <div class="item item-divider">
-        <i class="icon fa fa-lightbulb-o"></i> {{_ "projects"}} <span class="badge badge-dark">{{countCollections 'favorites' 'projects' search}}</span>
-      </div>
-      {{> Directory_list list=(listCollections 'favorites' 'projects' search) isConnect="isFavorites" person=false scope="projects"}}
-  {{/if}}
-</template>
-
-<template name="listCollectionsEvents">
-  {{#if countCollections 'favorites' 'events' search}}
-      <div class="item item-divider">
-        <i class="icon fa fa-calendar"></i> {{_ "events"}} <span class="badge badge-dark">{{countCollections 'favorites' 'events' search}}</span>
-      </div>
-      {{> Directory_list list=(listCollections 'favorites' 'events' search) isConnect="isFavorites" person=false scope="events"}}
-  {{/if}}
-</template>
-
-<template name="listCollectionsPoi">
-  {{#if countCollections 'favorites' 'poi' search}}
-      <div class="item item-divider">
-        <i class="icon fa fa-map-marker"></i> {{_ "poi"}} <span class="badge badge-dark">{{countCollections 'favorites' 'poi' search}}</span>
-      </div>
-      {{> Directory_list list=(listCollections 'favorites' 'poi' search) isConnect="isFavorites" person=false scope="poi"}}
-  {{/if}}
-</template>
-
-<template name="listCollectionsClassified">
-  {{#if countCollections 'favorites' 'classified' search}}
-      <div class="item item-divider">
-        <i class="icon fa fa-bullhorn"></i> {{_ "classified"}} <span class="badge badge-dark">{{countCollections 'favorites' 'classified' search}}</span>
-      </div>
-      {{> Directory_list list=(listCollections 'favorites' 'classified' search) isConnect="isFavorites" person=false scope="classified"}}
+      {{> Directory_list list=listCollections isConnect="isFavorites" person=person scope=view}}
   {{/if}}
 </template>
