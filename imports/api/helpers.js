@@ -141,7 +141,10 @@ if (Meteor.isClient) {
 }
 
 export const matchTags = (doc, tags) => {
-  const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
+  // const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
+  // const regex = /(?:^|\s)(?:#)([^\s!@#$%^&*()=+./,\[{\]};:'"?><]+)/gm;
+  const regex = /(?:#)([^\s!@#$%^&*()=+./,\[{\]};:'"?><]+)/gm;
+
   const matches = [];
   let match;
   if (doc.shortDescription) {
@@ -154,6 +157,7 @@ export const matchTags = (doc, tags) => {
       matches.push(match[1]);
     }
   }
+
   if (tags) {
     const arrayTags = _.reject(tags, value => matches[value] === null, matches);
     if (doc.tags) {

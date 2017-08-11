@@ -88,7 +88,7 @@
 {{#if dataReady}}
   {{#ionView}}
   {{#ionContent}}
-  <div class="list">
+  <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
       {{_ "Edit a citoyen"}}
     </div>
@@ -138,7 +138,7 @@
 {{#if dataReady}}
   {{#ionView}}
   {{#ionContent}}
-  <div class="list">
+  <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
       {{_ "Edit a citoyen"}}
     </div>
@@ -188,8 +188,8 @@
   {{/if}}
 
   {{#if equals block 'descriptions'}}
-  {{> afQuickField name='shortDescription' type="textarea" label-type='stacked' rows=8}}
-  {{> afQuickField name='description' type="textarea" label-type='stacked' rows=8}}
+  {{> afQuickField name='shortDescription' type="textarea" label-type='stacked' rows=8 autocorrect="off" spellcheck="false" autocapitalize="off"}}
+  {{> afQuickField name='description' type="textarea" label-type='stacked' rows=8 autocorrect="off" spellcheck="false" autocapitalize="off"}}
   {{/if}}
 
   {{#if equals block 'preferences'}}

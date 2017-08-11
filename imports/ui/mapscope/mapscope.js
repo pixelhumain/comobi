@@ -4,6 +4,7 @@ import { Mapbox } from 'meteor/communecter:mapbox';
 import { $ } from 'meteor/jquery';
 import { Blaze } from 'meteor/blaze';
 import { Router } from 'meteor/iron:router';
+import { Mongo } from 'meteor/mongo';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { IonLoading } from 'meteor/meteoric:ionic';
 
@@ -314,24 +315,76 @@ Template.mapCanvas.onRendered(function () {
   if (self.liveQuery) {
     self.liveQuery.stop();
   }
+  if (self.liveQueryCurrent) {
+    self.liveQueryCurrent.stop();
+  }
   self.autorun(function () {
     if (self.ready.get()) {
       if (Mapbox.loaded()) {
         clearLayers();
 
         const collection = nameToCollection(Router.current().params.scope);
+
+        if (pageSession.get('currentScopeId')) {
+          self.liveQueryCurrent = collection.find({ _id: new Mongo.ObjectID(pageSession.get('currentScopeId')), geo: { $exists: 1 } }).observe({
+            added(event) {
+              if (event && event.geo && event.geo.latitude) {
+                const containerNode = document.createElement('div');
+
+                Blaze.renderWithData(Template.mapscopepopup, event, containerNode);
+                const marker = new L.Marker([event.geo.latitude, event.geo.longitude], {
+                  _id: event._id._str,
+                  title: event.name,
+                  latitude: event.geo.latitude,
+                  longitude: event.geo.longitude,
+                  icon: selectIcon(event),
+                }).bindPopup(containerNode).on('click', function(e) {
+                // console.log(e.target.options._id);
+                  map.panTo([e.target.options.latitude, e.target.options.longitude]);
+                // pageSession.set('currentScopeId', e.target.options._id);
+                });
+                addMarker(marker);
+              }
+            },
+            changed(event) {
+            // console.log(event._id._str);
+              if (event && event.geo && event.geo.latitude) {
+                const marker = markers[event._id._str];
+                if (marker) {
+                  if (map.hasLayer(marker)) map.removeLayer(marker);
+                  const containerNode = document.createElement('div');
+                  Blaze.renderWithData(Template.mapscopepopup, event, containerNode);
+                  const markerAdd = new L.Marker([event.geo.latitude, event.geo.longitude], {
+                    _id: event._id._str,
+                    title: event.name,
+                    latitude: event.geo.latitude,
+                    longitude: event.geo.longitude,
+                    icon: selectIcon(event),
+                  }).bindPopup(containerNode).on('click', function(e) {
+                  // console.log(e.target.options._id);
+                    map.panTo([e.target.options.latitude, e.target.options.longitude]);
+                  // pageSession.set('currentScopeId', e.target.options._id);
+                  });
+                  addMarker(markerAdd);
+                }
+              }
+            },
+            removed(event) {
+            // console.log(event._id._str);
+              removeMarker(event._id._str);
+            },
+          });
+        }
+
         let query = {};
         query = queryGeoFilter(query);
-        if (pageSession.get('currentScopeId')) {
-          query.$or = [{ _id: pageSession.get('currentScopeId') }];
-        }
         // query['created'] = {$gte : inputDate};
 
-        if (Router.current().params.scope === 'events') {
+        /* if (Router.current().params.scope === 'events') {
 
-        }
+        } */
         query.geo = { $exists: 1 };
-        // console.log(query);
+
         self.liveQuery = collection.find(query).observe({
           added(event) {
             if (event && event.geo && event.geo.latitude) {
@@ -392,5 +445,8 @@ Template.mapCanvas.onDestroyed(function () {
   map.remove();
   if (self.liveQuery) {
     self.liveQuery.stop();
+  }
+  if (self.liveQueryCurrent) {
+    self.liveQueryCurrent.stop();
   }
 });
