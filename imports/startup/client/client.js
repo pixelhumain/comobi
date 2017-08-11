@@ -177,8 +177,9 @@ Meteor.startup(function () {
   Template.registerHelper('textTags', (text, tags) => {
     if (text) {
       if (tags) {
+        tags.sort((a, b) => b.length - a.length);
         _.each(tags, (value) => {
-          text = text.replace(new RegExp(`#${value}`, 'g'), `<a href="" class="positive">#${value}</a>`);
+          text = text.replace(new RegExp(`#${value}`, 'g'), `<a href="" class="positive"><i class="icon fa fa-tag"></i>${value}</a>`);
         }, text);
       }
       return text;

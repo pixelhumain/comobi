@@ -321,7 +321,7 @@ const baseDocRetour = (docRetour, doc, scope) => {
   return docRetour;
 };
 
-URL._encodeParams = function(params, prefix) {
+/* URL._encodeParams = function(params, prefix) {
   const str = [];
   for (const p in params) {
     if (params.hasOwnProperty(p)) {
@@ -336,7 +336,7 @@ URL._encodeParams = function(params, prefix) {
     }
   }
   return str.join('&').replace(/%20/g, '+');
-};
+}; */
 
 Meteor.methods({
   userup (geo) {

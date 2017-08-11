@@ -363,6 +363,7 @@ AutoForm.addHooks(['editBlockCitoyen'], {
       const scope = 'citoyens';
       const block = pageSession.get('block');
       if (modifier && modifier.$set) {
+        console.log(pageSession.get('tags'));
         modifier.$set = matchTags(modifier.$set, pageSession.get('tags'));
       } else {
         modifier.$set = {};
