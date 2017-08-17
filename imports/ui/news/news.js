@@ -382,6 +382,16 @@ Template.scopeEventsTemplate.helpers({
   },
 });
 
+Template.addMenuScopePopover.helpers({
+  scopeVar () {
+    return pageSession.get('scope');
+  },
+  scopeId() {
+    return pageSession.get('scopeId');
+  },
+});
+
+
 Template.newsList.events({
   'click .selectview' (event) {
     event.preventDefault();

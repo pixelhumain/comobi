@@ -142,6 +142,13 @@
   "comment":"Commentaire",
   "comments":"Commentaires",
   "Close and reopen the application to get the new version":"Fermez et rouvrez l'application pour obtenir la nouvelle version!",
+  "Add":"Ajouter",
+  "a organization":"une organisation",
+  "a project":"un projet",
+  "a event":"un évenement",
+  "a point of interest":"un point d'intérêt",
+  "a classified":"une annonce",
+  "organizer":"organisateur",
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] existe déja",
@@ -342,6 +349,18 @@
       },
       "url":{
         "label": "Url"
+      },
+      "fixe":{
+        "label": "Téléphone fixe",
+        "placeholder": "téléphone fixe"
+      },
+      "mobile":{
+        "label": "Téléphone mobile",
+        "placeholder": "téléphone mobile"
+      },
+      "fax":{
+        "label": "Fax",
+        "placeholder": "fax"
       },
       "tags":{
         "label": "Tags"

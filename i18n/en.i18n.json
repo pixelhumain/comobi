@@ -142,6 +142,13 @@
   "comment":"comment",
   "comments":"comments",
   "Close and reopen the application to get the new version":"Close and reopen the application to get the new version!",
+  "Add":"Add",
+  "a organization":"a organization",
+  "a project":"a project",
+  "a event":"a event",
+  "a point of interest":"a point of interest",
+  "a classified":"a classified",
+  "organizer":"organizer",
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] already exists",
@@ -344,6 +351,18 @@
       },
       "url":{
         "label": "url"
+      },
+      "fixe":{
+        "label": "phone",
+        "placeholder": "phone"
+      },
+      "mobile":{
+        "label": "mobile phone",
+        "placeholder": "mobile phone"
+      },
+      "fax":{
+        "label": "fax",
+        "placeholder": "fax"
       },
       "tags":{
         "label": "tags"

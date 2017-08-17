@@ -38,7 +38,7 @@
     <div class="list list-inset">
 
       <div class="item item-divider">
-        <i class="ion-android-calendar"></i> {{_ "point of interest"}} <span class="badge badge-dark">{{countPoi}}</span>
+        <i class="icon fa fa-map-marker"></i> {{_ "point of interest"}} <span class="badge badge-dark">{{countPoi}}</span>
       </div>
       {{#if dataReady}}
       {{#transition in="zoomIn" out="bounceOut"}}
@@ -50,6 +50,12 @@
       {{/transition}}
       {{/if}}
     </div>
+
+    <ul id="floating-button">
+      <li class="poi-bg"><a href="{{pathFor 'poiAdd' _id=currentUser._id scope='citoyens'}}" style="color:white;">
+        <i class="icon menu-icon ion-plus"></i></a>
+      </li>
+    </ul>
 
   {{/ionContent}}
   {{/ionView}}

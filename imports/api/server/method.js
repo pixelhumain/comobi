@@ -174,6 +174,9 @@ const baseDocRetour = (docRetour, doc, scope) => {
     docRetour.role = doc.role;
     docRetour.email = doc.email ? doc.email : '';
     docRetour.url = doc.url ? doc.url : '';
+    docRetour.fixe = doc.fixe ? doc.fixe : '';
+    docRetour.mobile = doc.mobile ? doc.mobile : '';
+    docRetour.fax = doc.fax ? doc.fax : '';
     if (doc.preferences) {
       docRetour.preferences = doc.preferences;
     }
@@ -1434,6 +1437,7 @@ indexMax:20 */
     }
   },
   insertOrganization (doc) {
+    console.log(doc);
     SchemasOrganizationsRest.clean(doc);
     check(doc, SchemasOrganizationsRest);
     if (!this.userId) {
@@ -1444,7 +1448,7 @@ indexMax:20 */
     docRetour.key = 'organization';
     docRetour.collection = 'organizations';
 
-    // console.log(docRetour);
+    console.log(docRetour);
 
     const retour = apiCommunecter.postPixel('element', 'save', docRetour);
     return retour;
@@ -1641,6 +1645,39 @@ export const userLocale = new ValidatedMethod({
     }, {
       $set: {
         'profile.language': language,
+      },
+    })) {
+      return true;
+    }
+
+    return false;
+  },
+});
+
+export const userDevice = new ValidatedMethod({
+  name: 'userDevice',
+  validate: new SimpleSchema({
+    available: { type: Boolean },
+    cordova: { type: String },
+    model: { type: String },
+    platform: { type: String },
+    uuid: { type: String },
+    version: { type: String },
+    manufacturer: { type: String },
+    isVirtual: { type: Boolean },
+    serial: { type: String },
+  }).validator(),
+  run( device ) {
+    this.unblock();
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    console.log(device);
+    if (Meteor.users.update({
+      _id: this.userId,
+    }, {
+      $addToSet: {
+        'profile.device': device,
       },
     })) {
       return true;

@@ -314,6 +314,42 @@ $button-follower-active-border:   darken($assertive, 10%) !default;
   }
 }
 
+.organization, a.organization {
+  color: $color-orga;
+}
+.organization-bg {
+  background-color: $color-orga;
+}
+.person, a.person {
+  color: $color-person;
+}
+.person-bg {
+  background-color: $color-person;
+}
+.event, a.event {
+  color: $color-event;
+}
+.event-bg {
+  background-color: $color-event;
+}
+.project, a.project {
+  color: $color-project;
+}
+.project-bg {
+  background-color: $color-project;
+}
+.poi, a.poi {
+  color: $color-poi;
+}
+.poi-bg {
+  background-color: $color-poi;
+}
+.classified, a.classified {
+  color: $color-classified;
+}
+.classified-bg {
+  background-color: $color-classified;
+}
 // BUTTONS END
 
 .yellow{

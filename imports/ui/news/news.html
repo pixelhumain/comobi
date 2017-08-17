@@ -447,8 +447,7 @@
       <a href="{{pathFor 'listAttendees' _id=_id._str}}" class="button button-small">{{> ionIcon icon="ios-people"}}</a>
       <button class="button button-small" data-ion-modal="_inviteattendeesEvent">{{> ionIcon icon="person-add"}}</button>
       {{#if isAdmin}}
-      <a href="{{pathFor 'eventsAdd' _id=_id._str scope=scopeVar}}" class="button button-event button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-calendar"></i></a>
-      <a href="{{pathFor 'poiAdd' _id=currentUser._id scope=scopeVar}}" class="button button-poi button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-map-marker"></i></a>
+      <a href="" class="button button-small" data-ion-popover="addMenuScopePopover"><i class="icon fa fa-plus"></i></a>
       {{else}}
       {{> Bouton_card id=_id._str scope=scopeVar isConnect=isAttendees classOff="button-small saveattendees-link" classOn="button-small disconnectscope-link" iconOff="fa fa-link" iconOn="fa fa-unlink" titleOff=(_ "Participate")}}
       {{/if}}
@@ -487,10 +486,7 @@
 
       {{#if isMembers}}
       {{#if isAdmin}}
-      <a href="{{pathFor 'projectsAdd' _id=_id._str scope=scopeVar}}" class="button button-project button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-lightbulb-o"></i></a>
-      <a href="{{pathFor 'eventsAdd' _id=_id._str scope=scopeVar}}" class="button button-event button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-calendar"></i></a>
-      <a href="{{pathFor 'poiAdd' _id=_id._str scope=scopeVar}}" class="button button-poi button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-map-marker"></i></a>
-      <a href="{{pathFor 'classifiedAdd' _id=_id._str scope=scopeVar}}" class="button button-classified button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-bullhorn"></i></a>
+      <a href="" class="button button-small" data-ion-popover="addMenuScopePopover"><i class="icon fa fa-plus"></i></a>
       {{#if isCordova}}
       <button class="button button-small scanner-event">{{> ionIcon icon="ios-barcode"}} {{_ "QR Scanner"}}</button>
       {{/if}}
@@ -515,7 +511,6 @@
       {{> Bouton_card id=_id._str scope=scopeVar isConnect=isFollowersMe classOff="button-small followperson-link" classOn="button-small unfollowscope-link" iconOff="fa fa-rss" iconOn="fa fa-rss-square"}}
       {{> Bouton_card id=_id._str scope=scopeVar isConnect=isFavorites classOff="button-small favorites-link" classOn="button-small favorites-link" iconOff="fa fa-star" iconOn="fa fa-star-o"}}
 
-
       {{#if toBeValidated}}
       <button class="button button-small disabled">
         <i class="icon fa fa-hourglass-half"></i> {{_ "Pending"}}
@@ -526,8 +521,7 @@
 
       {{#if isContributors}}
       {{#if isAdmin}}
-      <a href="{{pathFor 'eventsAdd' _id=_id._str scope=scopeVar}}" class="button button-event button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-calendar"></i></a>
-      <a href="{{pathFor 'poiAdd' _id=_id._str scope=scopeVar}}" class="button button-poi button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-map-marker"></i></a>
+      <a href="" class="button button-small" data-ion-popover="addMenuScopePopover"><i class="icon fa fa-plus"></i></a>
       {{#if isCordova}}
       <button class="button button-small scanner-event">{{> ionIcon icon="ios-barcode"}} {{_ "QR Scanner"}}</button>
       {{/if}}
@@ -567,14 +561,12 @@
 
 </template>
 
+
+
 <template name="boutonCardcitoyens">
     <div class="button-bar bar-positive">
       {{#if isMe}}
-      <a href="{{pathFor 'organizationsAdd' _id=_id._str scope=scopeVar}}" class="button button-organization button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-users"></i></a>
-      <a href="{{pathFor 'projectsAdd' _id=_id._str scope=scopeVar}}" class="button button-project button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-lightbulb-o"></i></a>
-      <a href="{{pathFor 'eventsAdd' _id=_id._str scope=scopeVar}}" class="button button-event button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-calendar"></i></a>
-      <a href="{{pathFor 'poiAdd' _id=_id._str scope=scopeVar}}" class="button button-poi button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-map-marker"></i></a>
-      <a href="{{pathFor 'classifiedAdd' _id=_id._str scope=scopeVar}}" class="button button-classified button-small"><i class="icon fa fa-plus"></i> <i class="icon fa fa-bullhorn"></i></a>
+      <a href="" class="button button-small" data-ion-popover="addMenuScopePopover"><i class="icon fa fa-plus"></i></a>
       <a href="{{pathFor 'directory' _id=_id._str scope=scopeVar}}" class="button button-small"><i class="icon fa fa-connectdevelop"></i></a>
       {{else}}
 
@@ -600,21 +592,55 @@
 <template name="listCardevents">
 {{> boutonCardevents}}
 {{> listCard}}
+{{#if isAttendees}}
+{{#if isAdmin}}
+<ul id="floating-button">
+  <li class="event-bg"><a href="" class="" data-ion-popover="addMenuScopePopover" style="color:white;">
+    <i class="icon menu-icon ion-plus"></i></a>
+  </li>
+</ul>
+{{/if}}
+{{/if}}
 </template>
 
 <template name="listCardorganizations">
 {{> boutonCardorganizations}}
 {{> listCard}}
+{{#if isMembers}}
+{{#if isAdmin}}
+<ul id="floating-button">
+  <li class="organization-bg"><a href="" class="" data-ion-popover="addMenuScopePopover" style="color:white;">
+    <i class="icon menu-icon ion-plus"></i></a>
+  </li>
+</ul>
+{{/if}}
+{{/if}}
 </template>
 
 <template name="listCardprojects">
 {{> boutonCardprojects}}
 {{> listCard}}
+{{#if isContributors}}
+{{#if isAdmin}}
+<ul id="floating-button">
+  <li class="project-bg"><a href="" class="" data-ion-popover="addMenuScopePopover" style="color:white;">
+    <i class="icon menu-icon ion-plus"></i></a>
+  </li>
+</ul>
+{{/if}}
+{{/if}}
 </template>
 
 <template name="listCardcitoyens">
 {{> boutonCardcitoyens}}
 {{> listCard}}
+{{#if isMe}}
+<ul id="floating-button">
+  <li class="person-bg"><a href="" class="" data-ion-popover="addMenuScopePopover" style="color:white;">
+    <i class="icon menu-icon ion-plus"></i></a>
+  </li>
+</ul>
+{{/if}}
 </template>
 
 <template name="listCardpoi">
@@ -627,22 +653,36 @@
 {{> listCard}}
 </template>
 
-<template name="_myPopover">
+
+<template name="addMenuScopePopover">
   {{#ionPopover}}
     <div class="content">
       <div class="list">
-        <a class="item item-icon-right" href="http://www.meteor.com/" target="_blank">
-          Meteor
-          {{> ionIcon icon="ios-arrow-right"}}
-        </a>
-        <a class="item item-icon-right" href="http://ionicframework.com/" target="_blank">
-          Ionic
-          {{> ionIcon icon="ios-arrow-right"}}
-        </a>
-        <a class="item item-icon-right" href="http://meteoric.github.io/" target="_blank">
-          Meteoric
-          {{> ionIcon icon="ios-arrow-right"}}
-        </a>
+        <div class="item item-divider homestead">
+          <i class="icon fa fa-plus-circle"></i> {{_ "Add"}}
+        </div>
+        {{#if equals 'citoyens' scopeVar}}
+        <a href="{{pathFor 'organizationsAdd' _id=scopeId scope=scopeVar}}" class="item organization popover-backdrop"><i class="icon fa fa-users"></i> {{_ "a organization"}}</a>
+        <a href="{{pathFor 'projectsAdd' _id=scopeId scope=scopeVar}}" class="item project popover-backdrop"><i class="icon fa fa-lightbulb-o"></i> {{_ "a project"}}</a>
+        <a href="{{pathFor 'eventsAdd' _id=scopeId scope=scopeVar}}" class="item event popover-backdrop"><i class="icon fa fa-calendar"></i> {{_ "a event"}}</a>
+        <a href="{{pathFor 'poiAdd' _id=scopeId scope=scopeVar}}" class="item poi popover-backdrop"><i class="icon fa fa-map-marker"></i> {{_ "a point of interest"}}</a>
+        <a href="{{pathFor 'classifiedAdd' _id=scopeId scope=scopeVar}}" class="item classified popover-backdrop"><i class="icon fa fa-bullhorn"></i> {{_ "a classified"}}</a>
+        {{else if equals 'organizations' scopeVar}}
+        <a href="{{pathFor 'projectsAdd' _id=scopeId scope=scopeVar}}" class="item project popover-backdrop"><i class="icon fa fa-lightbulb-o"></i> {{_ "a project"}}</a>
+        <a href="{{pathFor 'eventsAdd' _id=scopeId scope=scopeVar}}" class="item event popover-backdrop"><i class="icon fa fa-calendar"></i> {{_ "a event"}}</a>
+        <a href="{{pathFor 'poiAdd' _id=scopeId scope=scopeVar}}" class="item poi popover-backdrop"><i class="icon fa fa-map-marker"></i> {{_ "a point of interest"}}</a>
+        <a href="{{pathFor 'classifiedAdd' _id=scopeId scope=scopeVar}}" class="item classified popover-backdrop"><i class="icon fa fa-bullhorn"></i> {{_ "a classified"}}</a>
+        {{else if equals 'projects' scopeVar}}
+        <a href="{{pathFor 'eventsAdd' _id=scopeId scope=scopeVar}}" class="item event popover-backdrop"><i class="icon fa fa-calendar"></i> {{_ "a event"}}</a>
+        <a href="{{pathFor 'poiAdd' _id=scopeId scope=scopeVar}}" class="item poi popover-backdrop"><i class="icon fa fa-map-marker"></i> {{_ "a point of interest"}}</a>
+        {{else if equals 'events' scopeVar}}
+        <a href="{{pathFor 'eventsAdd' _id=scopeId scope=scopeVar}}" class="item event popover-backdrop"><i class="icon fa fa-calendar"></i> {{_ "a event"}}</a>
+        <a href="{{pathFor 'poiAdd' _id=scopeId scope=scopeVar}}" class="item poi popover-backdrop"><i class="icon fa fa-map-marker"></i> {{_ "a point of interest"}}</a>
+        {{else if equals 'poi' scopeVar}}
+
+        {{else if equals 'classified' scopeVar}}
+
+        {{/if}}
       </div>
     </div>
   {{/ionPopover}}

@@ -51,6 +51,12 @@
       {{/if}}
     </div>
 
+    <ul id="floating-button">
+      <li class="organization-bg"><a href="{{pathFor 'organizationsAdd' _id=currentUser._id scope='citoyens'}}" style="color:white;">
+        <i class="icon menu-icon ion-plus"></i></a>
+      </li>
+    </ul>
+
   {{/ionContent}}
   {{/ionView}}
 
@@ -277,6 +283,9 @@
   {{> afQuickField name='role'}}
   {{> afQuickField name='email'}}
   {{> afQuickField name='url'}}
+  {{> afQuickField name='fixe'}}
+  {{> afQuickField name='mobile'}}
+  {{> afQuickField name='fax'}}
   {{> afQuickField name='country' autocomplete="off" value=country }}
   {{#if currentFieldValue "country"}}
   {{> afQuickField name='postalCode' value=postalCode autocomplete="off"}}
