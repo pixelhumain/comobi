@@ -1509,7 +1509,7 @@ indexMax:20 */
           email: user.email,
           username: user.username,
           pwd: user.password,
-          cp: insee.cp,
+          cp: insee.postalCodes[0].postalCode,
           city: insee.insee,
           geoPosLatitude: insee.geo.latitude,
           geoPosLongitude: insee.geo.longitude,
