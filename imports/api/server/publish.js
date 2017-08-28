@@ -282,6 +282,15 @@ Meteor.publishComposite('geo.scope', function(scope, latlng, radius) {
     children: [
       {
         find(scopeD) {
+          if (scope === 'events') {
+            return scopeD.listEventTypes();
+          } else if (scope === 'organizations') {
+            return scopeD.listOrganisationTypes();
+          }
+        },
+      },
+      {
+        find(scopeD) {
           return scopeD.documents();
         },
       },

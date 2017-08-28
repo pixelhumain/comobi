@@ -168,8 +168,8 @@ const addMarker = (marker) => {
   markers[marker.options._id] = marker;
   if (pageSession.get('currentScopeId') === marker.options._id) {
     // console.log('marker open');
-    marker.addTo(map).openPopup();
     map.panTo([marker.options.latitude, marker.options.longitude]);
+    marker.addTo(map).openPopup();
     map.on('popupclose', function() {
       // console.log('popupclose');
       // map.removeLayer(marker);

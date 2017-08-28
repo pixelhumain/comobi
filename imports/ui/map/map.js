@@ -33,7 +33,7 @@ Template.map.onRendered(function () {
           longitude: parseFloat(longitude),
           draggable: true,
           icon: L.mapbox.marker.icon({
-            'marker-size': 'small',
+            'marker-size': 'large',
             'marker-color': '#fa0',
           }) }).addTo(map);
 

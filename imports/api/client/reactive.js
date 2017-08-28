@@ -9,3 +9,5 @@ export const pageCollections = new ReactiveDict('pageCollections');
 export const geoId = new ReactiveDict('geoId');
 
 export const SessionGeo = new ReactiveDict('sessionGeo');
+
+export const SessionSensors = new ReactiveDict('SessionSensors');

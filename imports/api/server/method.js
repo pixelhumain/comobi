@@ -324,7 +324,7 @@ const baseDocRetour = (docRetour, doc, scope) => {
   return docRetour;
 };
 
-/* URL._encodeParams = function(params, prefix) {
+URL._encodeParams = function(params, prefix) {
   const str = [];
   for (const p in params) {
     if (params.hasOwnProperty(p)) {
@@ -339,7 +339,7 @@ const baseDocRetour = (docRetour, doc, scope) => {
     }
   }
   return str.join('&').replace(/%20/g, '+');
-}; */
+};
 
 Meteor.methods({
   userup (geo) {
@@ -1437,7 +1437,7 @@ indexMax:20 */
     }
   },
   insertOrganization (doc) {
-    console.log(doc);
+    // console.log(doc);
     SchemasOrganizationsRest.clean(doc);
     check(doc, SchemasOrganizationsRest);
     if (!this.userId) {
@@ -1448,7 +1448,7 @@ indexMax:20 */
     docRetour.key = 'organization';
     docRetour.collection = 'organizations';
 
-    console.log(docRetour);
+    // console.log(docRetour);
 
     const retour = apiCommunecter.postPixel('element', 'save', docRetour);
     return retour;
@@ -1667,12 +1667,12 @@ export const userDevice = new ValidatedMethod({
     isVirtual: { type: Boolean },
     serial: { type: String },
   }).validator(),
-  run( device ) {
+  run(device) {
     this.unblock();
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
-    console.log(device);
+    // console.log(device);
     if (Meteor.users.update({
       _id: this.userId,
     }, {

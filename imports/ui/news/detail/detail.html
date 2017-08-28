@@ -93,6 +93,7 @@
     {{/if}}
   </div>
   {{/if}}
+  {{#unless ../share}}
   <div class="item tabs tabs-secondary tabs-icon-left">
     <a class="tab-item" href="{{pathFor 'newsDetailComments' _id=../scope._id._str newsId=_id._str scope=../scope.scopeVar}}">
       <i class="icon fa fa-comment"></i>
@@ -107,12 +108,12 @@
       {{dislikesCount}}
     </a>
     {{#if equals scope.type 'public'}}
-    <a href="{{pathFor 'share' _id=scope._id._str scope=scope.scopeVar newsId=_id._str}}" class="tab-item">
+    <a href="{{pathFor 'share' _id=../scope._id._str scope=../scope.scopeVar newsId=_id._str}}" class="tab-item">
       <i class="icon fa fa-share"></i>
     </a>
     {{/if}}
     {{#if equals scope.type 'restricted'}}
-    <a href="{{pathFor 'share' _id=scope._id._str scope=scope.scopeVar newsId=_id._str}}" class="tab-item">
+    <a href="{{pathFor 'share' _id=../scope._id._str scope=../scope.scopeVar newsId=_id._str}}" class="tab-item">
       <i class="icon fa fa-share"></i>
     </a>
     {{/if}}
@@ -128,6 +129,7 @@
     {{/if}}
     {{/if}}
   </div>
+  {{/unless}}
     {{/with}}
 </template>
 

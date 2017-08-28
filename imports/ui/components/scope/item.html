@@ -8,11 +8,25 @@
   {{#if ../count}}
   <span class="badge {{#if isStart}}badge-balanced{{else}}badge-dark{{/if}}"><i class="icon ion-person"></i> {{../count}}</span>
   {{/if}}
+
   {{#if equals scopeVar 'poi'}}
   {{#if type}}
   <p>{{_ (typeI18n type)}}</p>
   {{/if}}
   {{/if}}
+
+  {{#if equals scopeVar 'organizations'}}
+  {{#if typeValue}}
+  <p>{{typeValue}}</p>
+  {{/if}}
+  {{/if}}
+
+  {{#if equals scopeVar 'events'}}
+  {{#if typeValue}}
+  <p>{{typeValue}}</p>
+  {{/if}}
+  {{/if}}
+
   {{#if startDate}}
   <p>
     {{#if isStart}}

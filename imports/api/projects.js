@@ -279,7 +279,7 @@ Projects.helpers({
   listPoiCreator () {
     const query = {};
     query.parentId = this._id._str;
-    return Poi.find(query, queryOptions);
+    return Poi.find(query);
   },
   countPoiCreator () {
     return this.listPoiCreator() && this.listPoiCreator().count();

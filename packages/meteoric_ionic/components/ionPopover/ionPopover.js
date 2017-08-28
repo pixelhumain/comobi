@@ -32,13 +32,15 @@ IonPopover = {
 
     if (buttonPosition.top + buttonHeight + popoverHeight > bodyHeight) {
       popoverCSS.top = buttonPosition.top - popoverHeight;
-      $popover.addClass('popover-bottom');
+      $popover.addClass('popover-bottom animated slideInUp');
     } else {
       popoverCSS.top = buttonPosition.top + buttonHeight;
       $popover.removeClass('popover-bottom');
+      $popover.addClass('popover-bottom animated slideInDown');
     }
 
     $backdrop.addClass('active');
+
     $arrow.css({
       left: buttonPosition.left + buttonWidth / 2 - $arrow.outerWidth() / 2 - popoverCSS.left + 'px'
     });
@@ -48,11 +50,13 @@ IonPopover = {
   hide: function () {
     if (typeof this.view !== 'undefined') {
       var $backdrop = $(this.view.firstNode());
-      $backdrop.removeClass('active');
-  
+
+
       var $popover = $backdrop.find('.popover');
-      $popover.css({opacity: 0});
-  
+      $popover.addClass('fadeOut');
+      $popover.removeClass('slideInDown');
+      //$popover.css({opacity: 0});
+      //$backdrop.removeClass('active');
       Blaze.remove(this.view);
     }
   }

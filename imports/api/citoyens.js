@@ -317,10 +317,10 @@ Citoyens.helpers({
   },
   listPoiCreator () {
     const query = {};
-    query.parentId = this._id._str;
+    query.parentId = this._id._str
     // query[`links.contributors.${this._id._str}.isAdmin`] = true;
     // query[`links.contributors.${this._id._str}.toBeValidated`] = {$exists: false};
-    return Poi.find(query, queryOptions);
+    return Poi.find(query);
   },
   countPoiCreator () {
     return this.listPoiCreator() && this.listPoiCreator().count();
