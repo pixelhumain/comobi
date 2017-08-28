@@ -669,6 +669,26 @@ Meteor.methods({
     }
     return true;
   },
+  getUser (callerId) {
+    check(callerId, String);
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const user = Citoyens.findOne({ _id: new Mongo.ObjectID(callerId) }, {
+      fields: {
+        _id: 1,
+        name: 1,
+        profilThumbImageUrl: 1,
+      },
+    });
+
+    if (user && user._id) {
+      return user;
+    } else{
+      throw new Meteor.Error('not user');
+    }
+  },
   searchTagautocomplete (query, options) {
     check(query, String);
     if (!query) return [];
@@ -1038,7 +1058,7 @@ indexMax:20 */
       }
     }
 
-/* if (newsOne && newsOne.media && newsOne.media.images) {
+    /* if (newsOne && newsOne.media && newsOne.media.images) {
       const arrayId = newsOne.media.images.map(_id => new Mongo.ObjectID(_id));
       const newsDocs = Documents.find({
         _id: { $in: arrayId },

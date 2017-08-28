@@ -149,6 +149,12 @@
   "a point of interest":"un point d'intérêt",
   "a classified":"une annonce",
   "organizer":"organisateur",
+  "video call":"Appel vidéo",
+  "endPhoneCall":"Terminé appel",
+  "You are receiving a phone call":"Vous recevez un appel vidéo",
+  "Answer":"Répondre",
+  "Ignore":"Ignorer",
+  "onTerminateCall":"Appel terminé",
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] existe déja",

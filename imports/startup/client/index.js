@@ -8,3 +8,4 @@ import './routes.js';
 import './push.js';
 import './mapbox.js';
 import './autolinker.js';
+import './videortc.js';

@@ -1614,6 +1614,49 @@ Meteor.publish('users', function() {
   ];
 });
 
+Meteor.publishComposite('callUsers', function() {
+  if (!this.userId) {
+    return null;
+  }
+  return {
+    find() {
+      return Citoyens.find({ _id: new Mongo.ObjectID(this.userId) }, {
+        fields: {
+          _id: 1,
+          name: 1,
+          'links.follows': 1,
+          profilThumbImageUrl: 1,
+        },
+      });
+    },
+    children: [
+      {
+        find(citoyen) {
+          return citoyen.listFollows();
+        },
+        children: [
+          {
+            find(citoyen) {
+              return Meteor.users.find({
+                _id: citoyen._id._str,
+              }, {
+                fields: {
+                  'profile.online': 1,
+                  status: 1
+                },
+              });
+            },
+          },
+          {
+            find(citoyen) {
+              return citoyen.documents();
+            },
+          },
+        ],
+      },
+    ] };
+});
+
 Meteor.publish('thing', function(limit, boardId) {
   check(limit, Number);
   check(boardId, Match.Maybe(String));
