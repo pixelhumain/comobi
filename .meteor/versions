@@ -46,6 +46,7 @@ ecmascript-runtime@0.4.1
 ecmascript-runtime-client@0.4.3
 ecmascript-runtime-server@0.4.1
 ejson@1.0.13
+elmarti:video-chat@1.0.9
 es5-shim@4.6.15
 fastclick@1.0.13
 fourseven:scss@3.13.0
@@ -90,6 +91,8 @@ meteorspark:util@0.2.0
 minifier-css@1.2.16
 minifier-js@2.1.1
 minimongo@1.2.1
+mizzao:timesync@0.3.4
+mizzao:user-status@0.6.7
 mobile-experience@1.0.4
 mobile-status-bar@1.0.14
 modules@0.9.2
@@ -118,6 +121,7 @@ reactive-var@1.0.11
 reload@1.1.11
 retry@1.0.9
 reywood:publish-composite@1.5.2
+rocketchat:streamer@0.5.0
 routepolicy@1.0.12
 rzymek:moment-locale-fr@2.14.1
 service-configuration@1.0.11
