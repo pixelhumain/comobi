@@ -174,7 +174,9 @@ Projects.helpers({
     if (bothUserId && this.parentId && this.parentType && _.contains(['organizations'], this.parentType)) {
       // console.log(this.organizerProject());
       // console.log(`${this.parentType}:${this.parentId}`);
-      return this.organizerProject() && this.organizerProject().isAdmin(bothUserId);
+      if (this.organizerProject() && this.organizerProject().isAdmin(bothUserId)) {
+        return true;
+      }
     }
     return !!((this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].isAdmin && this.isToBeValidated(bothUserId)));
   },

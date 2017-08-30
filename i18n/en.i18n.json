@@ -155,6 +155,18 @@
   "Answer":"Answer",
   "Ignore":"Ignore",
   "onTerminateCall":"call terminated",
+  "activitystream":{
+    "verb":{
+      "share":"shared",
+      "create":"created"
+    },
+    "type":{
+      "organizations":"an organization",
+      "events":"an event",
+      "projects":"an project",
+      "news":"a publication of"
+    }
+  },
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] already exists",

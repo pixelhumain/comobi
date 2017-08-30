@@ -155,6 +155,18 @@
   "Answer":"Répondre",
   "Ignore":"Ignorer",
   "onTerminateCall":"Appel terminé",
+  "activitystream":{
+    "verb":{
+      "share":"a partagé",
+      "create":"a créé"
+    },
+    "type":{
+      "organizations":"une organisation",
+      "events":"un événement",
+      "projects":"un projet",
+      "news": "une publication de"
+    }
+  },
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] existe déja",

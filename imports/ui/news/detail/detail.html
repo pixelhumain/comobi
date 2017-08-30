@@ -29,8 +29,8 @@
 
 <template name="newsDetailData">
   {{#with scope.new}}
-  <div class="item {{#if imageDoc authorNews._id._str}}item-avatar{{/if}}">
-    {{#if imageDoc authorNews._id._str}}
+  <div class="item {{#if authorNews.profilThumbImageUrl}}item-avatar{{/if}}">
+    {{#if authorNews.profilThumbImageUrl}}
     {{> imgDoc profilThumbImageUrl=authorNews.profilThumbImageUrl resized="80x80"}}
     {{/if}}
 
@@ -68,9 +68,11 @@
   {{/if}}
 
   {{#if equals type 'activityStream'}}
+  {{#if equals verb 'share'}}
+  {{#if equals object.type 'news'}}
   <div class="item item-body">
-  <p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a> {{object.displayName}}
-  <a href="{{pathFor 'detailList' _id=object.id scope=object.type}}" class="positive">{{objectNews.name}}</a></p>
+    <p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a> <a href="{{pathFor 'newsDetail' _id=object.authorId newsId=object.id scope=object.authorType}}">{{i18npref 'activitystream.verb' verb}} {{i18npref 'activitystream.type' object.type}}</a> :
+    <a href="{{pathFor 'detailList' _id=object.authorId scope=object.authorType}}" class="positive">{{objectNews.authorName}}</a></p>
   {{#if tags}}
   <p>
   {{#each tags}}
@@ -79,6 +81,32 @@
 </p>
   {{/if}}
   </div>
+  {{else}}
+  <div class="item item-body">
+    <p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a> {{i18npref 'activitystream.verb' verb}}
+    {{i18npref 'activitystream.type' object.type}} : <a href="{{pathFor 'detailList' _id=object.id scope=object.type}}" class="positive">{{objectNews.name}}</a></p>
+  {{#if tags}}
+  <p>
+  {{#each tags}}
+  <a href="" class="positive"><i class="icon ion-pound"></i> {{this}}</a>
+  {{/each}}
+</p>
+  {{/if}}
+  </div>
+  {{/if}}
+  {{else}}
+  <div class="item item-body">
+    <p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a> {{i18npref 'activitystream.verb' verb}}
+    {{i18npref 'activitystream.type' object.type}} : <a href="{{pathFor 'detailList' _id=object.id scope=object.type}}" class="positive">{{objectNews.name}}</a></p>
+  {{#if tags}}
+  <p>
+  {{#each tags}}
+  <a href="" class="positive"><i class="icon ion-pound"></i> {{this}}</a>
+  {{/each}}
+</p>
+  {{/if}}
+  </div>
+  {{/if}}
   {{/if}}
 
   {{#if text}}
@@ -132,6 +160,7 @@
   {{/unless}}
     {{/with}}
 </template>
+
 
 <template name="newsDetailOld">
   {{#contentFor "headerButtonLeft"}}

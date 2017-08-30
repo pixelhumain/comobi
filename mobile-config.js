@@ -4,8 +4,8 @@ App.info({
   description: 'communecter mobile',
   author: 'thomas',
   email: 'thomas.craipeau@gmail.com',
-  version: '0.0.11',
-  buildNumber: '111'
+  version: '0.0.13',
+  buildNumber: '113'
 });
 
 App.setPreference('android-targetSdkVersion', '23');
@@ -61,6 +61,7 @@ App.launchScreens({
 App.setPreference('StatusBarOverlaysWebView', 'false');
 App.setPreference('StatusBarBackgroundColor', '#324553');
 App.setPreference('Orientation', 'portrait');
+
 
 App.accessRule('*');
 App.accessRule('http://*');

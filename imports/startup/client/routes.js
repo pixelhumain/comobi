@@ -46,7 +46,13 @@ Router.map(function() {
     template: 'videoRTC',
     loadingTemplate: 'loading',
   });
-  
+
+  this.route('sensors', {
+    path: '/sensors',
+    template: 'sensors',
+    loadingTemplate: 'loading',
+  });
+
   this.route('listEvents', {
     path: '/events',
     template: 'listEvents',

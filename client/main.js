@@ -12,6 +12,8 @@ import '../imports/ui/images/images.js';
 
 import '../imports/ui/video/video.js';
 
+import '../imports/ui/sensors/sensors.js';
+
 import '../imports/ui/dashboard/dashboard.js';
 
 import '../imports/ui/mapscope/mapscope.js';

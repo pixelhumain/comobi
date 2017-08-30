@@ -99,6 +99,7 @@ export const queryOptions = { sort: { name: 1 },
     name: 1,
     links: 1,
     tags: 1,
+    type: 1,
     profilThumbImageUrl: 1,
   } };
 

@@ -35,11 +35,11 @@ const services = {
         check(_id, String);
         const meteorUser = Meteor.user();
         if (!meteorUser) {
-            const err = new Meteor.Error(403, "TARGET_NOT_LOGGED_IN", {
+            const err = new Meteor.Error(403, "USER_NOT_LOGGED_IN", {
                 caller: meteorUser._id,
                 target: _id
             });
-            this.onError(err);
+            Meteor.VideoCallServices.onError(err);
             throw err;
         }
         if (services.checkConnect(meteorUser._id, _id)) {
@@ -49,7 +49,7 @@ const services = {
             });
             if (inCall) {
                 const err = new Meteor.Error(500, "TARGET_IN_CALL", inCall);
-                this.onError(err, Meteor.userId());
+                Meteor.VideoCallServices.onError(err, inCall, Meteor.userId());
                 throw err;
             }
             else {
@@ -86,7 +86,7 @@ const services = {
                 target: meteorUser._id,
                 caller: _id
             });
-            this.onError(err, meteorUser);
+            Meteor.VideoCallServices.onError(err, _id, meteorUser);
             throw err;
         }
 
@@ -107,7 +107,7 @@ const services = {
         const user = Meteor.user();
         if (!user) {
             const err = new Meteor.Error(403, "USER_NOT_LOGGED_IN");
-            this.onError(err);
+            Meteor.VideoCallServices.onError(err);
             throw err;
         }
         const session = CallLog.findOne({
@@ -118,7 +118,7 @@ const services = {
             const err = new Meteor.Error(500, 'SESSION_NOT_FOUND', {
                 target: user._id
             });
-            this.onError(err, Meteor.user());
+            Meteor.VideoCallServices.onError(err, undefined, user);
             throw err;
         }
 
@@ -157,18 +157,19 @@ const services = {
                     status: 'FINISHED'
                 }
             }));
-    },
-    /**
-     * Error callback for all server side errors
-     * @param err {Error}
-     * @param user {Object}
-     */
-    onError(err, user){
-
     }
-}
+};
 Meteor.methods({
     'VideoCallServices/call': services.call,
     'VideoCallServices/answer': services.answer,
     'VideoCallServices/end': services.end
 });
+Meteor.VideoCallServices = {
+    /**
+    * Callback envoked on error
+     * @param err {Error}
+     * @param data {Object}
+     * @param user {Object}
+     */
+    onError(err, data, user){}
+};

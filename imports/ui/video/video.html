@@ -47,13 +47,13 @@
 <div class="item item-avatar animated out item-button-right">
   {{> imgDoc profilThumbImageUrl=user.profilThumbImageUrl}}
   <h2>{{user.name}}</h2>
-  <a class="button button-positive callUser" href=""><i class="icon fa fa-video-camera"></i></a>
+  <a class="button button-balanced callUser" href=""><i class="icon fa fa-video-camera"></i></a>
 </div>
 </template>
 
 <template name="callRTC">
   <div class="button-bar bar-stable">
-    <a class="button button-dark button-small endPhoneCall" href=""><i class="icon fa fa-stop"></i> {{_ "endPhoneCall"}}</a>
+    <a class="button button-assertive button-small endPhoneCall" href=""><i class="icon fa fa-stop"></i> {{_ "endPhoneCall"}}</a>
   </div>
 
 {{#if showTarget}}

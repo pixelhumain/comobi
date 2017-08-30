@@ -1,5 +1,4 @@
 import { Tracker } from 'meteor/tracker';
-require("webrtc-adapter");
 class VideoCallServices {
     RTCConfiguration = {};
     constructor(){
@@ -45,7 +44,7 @@ class VideoCallServices {
                             });
                     }
                 });
-                this.onReceivePhoneCall(callLog);
+                this.onReceivePhoneCall(callLog.caller);
             }
             if( msg.collection === 'VideoChatCallLog'
                 && msg.msg === 'added'
@@ -80,7 +79,7 @@ class VideoCallServices {
      * @param remoteDescription {RTCPeerConnection}
      */
     setupPeerConnection( stream, remoteDescription ){
-        this.peerConnection = new RTCPeerConnection(this.RTCConfiguration, {"optional": [ {'googIPv6': 'false'} ] } );
+        this.peerConnection = new RTCPeerConnection(this.RTCConfiguration, {"optional": [ {'googIPv6': false} ] } );
         this.onPeerConnectionCreated();
         this.setPeerConnectionCallbacks();
         this.peerConnection.addStream( stream );

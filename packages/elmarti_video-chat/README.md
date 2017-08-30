@@ -65,11 +65,8 @@ Meteor.VideoCallServices.onError = (err, data, user) => {
 }
 ```
 
-Current issues:
-- Cross browser compatibility not checked
-
-Cross browser won't be a problem when I get to test with BrowserStack
-
-
+This project is sponsored by the following:
 
 [![BrowserStack](https://www.browserstack.com/images/layout/browserstack-logo-600x315.png)](https://www.browserstack.com/)
+
+[![Sentry.io](https://sentry.io/_assets/branding/png/sentry-horizontal-black-6aaf82e66456a21249eb5bef3d3e65754cadfd498f31469002bc603d966d08ef.png)](https://sentry.io/)

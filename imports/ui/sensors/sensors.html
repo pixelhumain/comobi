@@ -1,0 +1,42 @@
+<template name="sensors">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "Sensors"}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+
+<div class="list" data-snap-ignore="true">
+
+  <div class="item item-button-right">
+    <i class="icon fa fa-sun-o"></i> {{_ "Sensors"}} <button class="button button-positive refreshSensors"><i class="icon fa fa-refresh"></i></button>
+  </div>
+{{#if getTemperature}}
+<div class='item item-icon-right'>{{_ 'temperature'}} <span class="badge badge-positive">{{getTemperature}} °C</span></div>
+{{/if}}
+{{#if getHumidity}}
+<div class='item item-icon-right'>{{_ 'humidity'}} <span class="badge badge-positive">{{getHumidity}} %</span></div>
+{{/if}}
+{{#if getPressure}}
+<div class='item item-icon-right'>{{_ 'pressure'}} <span class="badge badge-positive">{{getPressure}} hPa</span></div>
+{{/if}}
+{{#if getLight}}
+<div class='item item-icon-right'>{{_ 'light'}} <span class="badge badge-positive">{{getLight}} lux</span> </div>
+{{/if}}
+
+</div>
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>

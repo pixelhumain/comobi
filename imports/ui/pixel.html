@@ -58,6 +58,8 @@
       <a class="item item-stable item-icon-right" href="{{pathFor 'notifications'}}" data-ion-menu-close>{{_ "Notifications"}} <span class="badge badge-positive">{{#if notificationsCount}}{{notificationsCount}}{{else}}0{{/if}}</span></a>
       {{#if isCordova}}
       <a class="item item-stable item-icon-right scanner" href="" data-ion-menu-close>{{_ "scanner QR"}} {{> ionIcon icon="ios-barcode"}}</a>
+      <a class="item item-stable item-icon-right" href="{{pathFor 'sensors'}}" data-ion-menu-close>{{_ "Sensors"}} <i class="icon fa fa fa-sun-o"></i></a>
+
       {{/if}}
       {{> settings}}
       {{/if}}

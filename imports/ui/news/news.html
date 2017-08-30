@@ -186,42 +186,7 @@
 
     {{#transition in="zoomIn" out="bounceOut"}}
     {{#each newsActus}}
-    <a href="{{pathFor 'newsDetail' _id=target.id newsId=_id._str scope=target.type}}" class="item animated in {{#if photoNewsAlbums.[0].name}}item-thumbnail-left{{else}}{{#if imageDoc authorNews._id._str}}item-avatar{{/if}}{{/if}}">
-
-      {{#if photoNewsAlbums.[0].name}}
-      {{> imgDoc imageDoc=photoNewsAlbums.[0] resized="80x80"}}
-      {{else}}
-      {{#if imageDoc}}
-      {{> imgDoc profilThumbImageUrl=profilThumbImageUrl resized="80x80"}}
-      {{else}}
-      {{#if imageDoc authorNews._id._str}}
-      {{> imgDoc profilThumbImageUrl=authorNews.profilThumbImageUrl resized="80x80"}}
-      {{/if}}
-      {{/if}}
-      {{/if}}
-
-      {{#if equals type 'activityStream'}}
-      <h2>{{objectNews.name}}</h2>
-      {{else}}
-      <h2>{{#if name}}{{cutString name 50}}{{/if}}</h2>
-      {{#if text}}<p>{{cutString text 140}}</p>{{/if}}
-      {{/if}}
-
-      {{#if tags}}
-      {{#each tags}}
-      <span class=""><i class="icon ion-pound"></i> {{this}}</span>
-      {{/each}}
-      {{/if}}
-
-      {{#if equals type 'activityStream'}}
-      <p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a> {{object.displayName}}
-      <a href="{{pathFor 'detailList' _id=object.id scope=object.type}}" class="positive">{{objectNews.name}}</a></p>
-      {{else}}
-      <p>{{_ "author"}} : {{authorNews.name}}</p>
-      {{#if nequals authorNews.name targetNews.name}}<p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a></p>{{/if}}
-      {{/if}}
-      <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
-    </a>
+    {{> newsItem}}
 
     {{/each}}
     {{/transition}}
@@ -248,40 +213,7 @@
 
     {{#transition in="zoomIn" out="bounceOut"}}
     {{#each newsJournal}}
-    <a href="{{pathFor 'newsDetail' _id=target.id newsId=_id._str scope=target.type}}" class="item animated in {{#if photoNewsAlbums.[0].name}}item-thumbnail-left{{else}}{{#if imageDoc authorNews._id._str}}item-avatar{{/if}}{{/if}}">
-
-      {{#if photoNewsAlbums.[0].name}}
-      {{> imgDoc imageDoc=photoNewsAlbums.[0] resized="80x80"}}
-      {{else}}
-      {{#if imageDoc}}
-      {{> imgDoc profilThumbImageUrl=profilThumbImageUrl resized="80x80"}}
-      {{else}}
-      {{#if imageDoc authorNews._id._str}}
-      {{> imgDoc profilThumbImageUrl=authorNews.profilThumbImageUrl resized="80x80"}}
-      {{/if}}
-      {{/if}}
-      {{/if}}
-
-      {{#if equals type 'activityStream'}}
-      <h2>{{objectNews.name}}</h2>
-      {{else}}
-      <h2>{{#if name}}{{cutString name 50}}{{/if}}</h2>
-      {{#if text}}<p>{{cutString text 140}}</p>{{/if}}
-      {{/if}}
-
-      {{#each tags}}
-      <span class=""><i class="icon ion-pound"></i> {{this}}</span>
-      {{/each}}
-
-      {{#if equals type 'activityStream'}}
-      <p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a> {{object.displayName}}
-      <a href="{{pathFor 'detailList' _id=object.id scope=object.type}}" class="positive">{{objectNews.name}}</a></p>
-      {{else}}
-      <p>{{_ "author"}} : {{authorNews.name}}</p>
-      {{#if nequals authorNews.name targetNews.name}}<p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a></p>{{/if}}
-      {{/if}}
-      <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
-    </a>
+    {{> newsItem}}
 
     {{/each}}
     {{/transition}}
@@ -295,6 +227,54 @@
     </button>
   </div>
   {{/if}}
+  {{/if}}
+</template>
+
+<template name="newsItem">
+  <a href="{{pathFor 'newsDetail' _id=target.id newsId=_id._str scope=target.type}}" class="item animated in {{#if photoNewsAlbums.[0].name}}item-thumbnail-left{{else if authorNews.profilThumbImageUrl}}item-avatar{{/if}}">
+
+    {{#if photoNewsAlbums.[0].name}}
+    {{> imgDoc imageDoc=photoNewsAlbums.[0] resized="80x80"}}
+    {{else if profilThumbImageUrl}}
+    {{> imgDoc profilThumbImageUrl=profilThumbImageUrl resized="80x80"}}
+    {{else if authorNews.profilThumbImageUrl}}
+    {{> imgDoc profilThumbImageUrl=authorNews.profilThumbImageUrl resized="80x80"}}
+    {{/if}}
+
+    {{#if equals type 'activityStream'}}
+    <h2>{{objectNews.name}}</h2>
+    {{else}}
+    <h2>{{#if name}}{{cutString name 50}}{{/if}}</h2>
+    {{#if text}}<p>{{cutString text 140}}</p>{{/if}}
+    {{/if}}
+
+    {{#each tags}}
+    <span class=""><i class="icon ion-pound"></i> {{this}}</span>
+    {{/each}}
+
+    {{#if equals type 'activityStream'}}
+    {{> newsActivityStream}}
+    {{else}}
+    <p>{{_ "author"}} : {{authorNews.name}}</p>
+    {{#if nequals authorNews.name targetNews.name}}<p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a></p>{{/if}}
+    {{/if}}
+    <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
+  </a>
+
+</template>
+
+<template name="newsActivityStream">
+  {{#if equals verb 'share'}}
+  {{#if equals object.type 'news'}}
+  <p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a> <a href="{{pathFor 'newsDetail' _id=object.authorId newsId=object.id scope=object.authorType}}">{{i18npref 'activitystream.verb' verb}} {{i18npref 'activitystream.type' object.type}}</a> :
+  <a href="{{pathFor 'detailList' _id=object.authorId scope=object.authorType}}" class="positive">{{objectNews.authorName}}</a></p>
+  {{else}}
+  <p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a> {{i18npref 'activitystream.verb' verb}}
+  {{i18npref 'activitystream.type' object.type}} : <a href="{{pathFor 'detailList' _id=object.id scope=object.type}}" class="positive">{{objectNews.name}}</a></p>
+  {{/if}}
+  {{else}}
+  <p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a> {{i18npref 'activitystream.verb' verb}}
+  {{i18npref 'activitystream.type' object.type}} : <a href="{{pathFor 'detailList' _id=object.id scope=object.type}}" class="positive">{{objectNews.name}}</a></p>
   {{/if}}
 </template>
 

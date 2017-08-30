@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="me.dispatch.crosswalk-permissions"
+    version="0.1">
+  <name>Cordova Crosswalk Permissions</name>
+  <license>Apache 2.0 License</license>
+  <author>Dispatch</author>
+  <description>
+    Request the necessary crosswalk permissions on Android for a Cordova project.
+  </description>
+
+  <info>
+    This plugin replaces the need for adding permisions to the AndroidManifest.xml
+    file when using Crosswalk with Cordova.
+  </info>
+
+  <platform name="android">
+    <config-file target="AndroidManifest.xml" parent="/manifest">
+      <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    </config-file>
+  </platform>
+</plugin>

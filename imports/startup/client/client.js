@@ -4,6 +4,7 @@ import { AutoForm } from 'meteor/aldeed:autoform';
 import { moment } from 'meteor/momentjs:moment';
 import { Router } from 'meteor/iron:router';
 import { DeepLink } from 'meteor/communecter:deep-link';
+import { TAPi18n } from 'meteor/tap:i18n';
 import { _ } from 'meteor/underscore';
 import { $ } from 'meteor/jquery';
 
@@ -171,6 +172,9 @@ Meteor.startup(function () {
     return diffInDayText;
   },
   );
+
+  Template.registerHelper('i18npref', (prefix, text) => TAPi18n.__(`${prefix}.${text}`));
+
 
   Template.registerHelper('isCordova', () => Meteor.isCordova);
 
