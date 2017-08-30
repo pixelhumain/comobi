@@ -25,40 +25,7 @@
 
 {{#if newsId}}
   <div class="card">
-    {{#with scope.new}}
-    <div class="item {{#if imageDoc authorNews._id._str}}item-avatar{{/if}}">
-      {{#if imageDoc authorNews._id._str}}
-      {{> imgDoc profilThumbImageUrl=authorNews.profilThumbImageUrl resized="80x80"}}
-      {{/if}}
-      <h2>
-        {{#if equals targetIsAuthor 'true'}}
-        <a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="dark">{{#if name}}{{name}}{{else}}{{authorNews.name}}{{/if}}</a>
-        {{else}}
-        <a href="{{pathFor 'detailList' _id=authorNews._id._str scope='citoyens'}}" class="dark">{{#if name}}{{name}}{{else}}{{authorNews.name}}{{/if}}</a>
-        {{/if}}
-      </h2>
-      <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
-    </div>
-    {{#if photoNewsAlbums}}
-    <div class="item item-body">
-      {{#each photoNewsAlbums}}
-    <img src="{{urlImageCommunecter}}/upload/{{moduleId}}/{{folder}}/{{name}}" class="full-image photo-viewer" />
-      {{/each}}
-    </div>
-    {{/if}}
-    {{#if text}}
-    <div class="item item-body">
-      {{{textMentions (autolinker text)}}}
-      {{#if tags}}
-      <p>
-      {{#each tags}}
-      <a href="" class="positive"><i class="icon ion-pound"></i> {{this}}</a>
-      {{/each}}
-    </p>
-      {{/if}}
-    </div>
-    {{/if}}
-      {{/with}}
+    {{> newsDetailData scope=scope share="1"}}
   </div>
   {{else}}
   {{> scopeCard class="card" scope=scope shareVisible=true}}

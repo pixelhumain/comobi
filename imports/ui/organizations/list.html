@@ -33,15 +33,22 @@
       <i class="icon ion-search placeholder-icon"></i>
       <input id="search" type="text" placeholder="{{_ "searchPlaceholder"}}" value="{{searchOrganizations}}">
     </label>
+    <div class="button-bar button-small">
+    {{#each listOrganisationTypes}}
+      <a class="button button-small {{#if equals selectorga value}}button-positive activated{{else}}button-positive{{/if}} selectorga" id="{{value}}" data-id="{{value}}">{{label}}</a>
+    {{/each}}
+    </div>
   </div>
 
     <div class="list list-inset">
 
       <div class="item item-divider">
-        <i class="ion-android-calendar"></i> {{_ "organizations"}} <span class="badge badge-dark">{{countOrganizations}}</span>
+        <i class="icon fa fa-users"></i> {{_ "organizations"}} <span class="badge badge-dark">{{countOrganizations}}</span>
       </div>
+
       {{#if dataReady}}
       {{#transition in="zoomIn" out="bounceOut"}}
+
       {{#each item in organizations}}
       {{> scopeItemList item=item count=(item.countMembers '')}}
        {{else}}
@@ -50,6 +57,12 @@
       {{/transition}}
       {{/if}}
     </div>
+
+    <ul id="floating-button">
+      <li class="organization-bg"><a href="{{pathFor 'organizationsAdd' _id=currentUser._id scope='citoyens'}}" style="color:white;">
+        <i class="icon menu-icon ion-plus"></i></a>
+      </li>
+    </ul>
 
   {{/ionContent}}
   {{/ionView}}
@@ -277,6 +290,9 @@
   {{> afQuickField name='role'}}
   {{> afQuickField name='email'}}
   {{> afQuickField name='url'}}
+  {{> afQuickField name='fixe'}}
+  {{> afQuickField name='mobile'}}
+  {{> afQuickField name='fax'}}
   {{> afQuickField name='country' autocomplete="off" value=country }}
   {{#if currentFieldValue "country"}}
   {{> afQuickField name='postalCode' value=postalCode autocomplete="off"}}

@@ -250,8 +250,25 @@ Meteor.publishComposite('geo.scope', function(scope, latlng, radius) {
       const options = {};
       options._disableOplog = true;
       if (scope === 'citoyens') {
-        options.fields = { pwd: 0 };
+        // options.fields = { pwd: 0 };
       }
+
+      options.fields = { _id: 1,
+        profilThumbImageUrl: 1,
+        type: 1,
+        startDate: 1,
+        endDate: 1,
+        geo: 1,
+        name: 1,
+        organizerType: 1,
+        organizerId: 1,
+        parentType: 1,
+        parentId: 1,
+        creator: 1,
+        geoPosition: 1,
+        'address.codeInsee': 1,
+        tags: 1 };
+
       const query = {};
       if (radius) {
         query.geoPosition = {
@@ -282,9 +299,17 @@ Meteor.publishComposite('geo.scope', function(scope, latlng, radius) {
     children: [
       {
         find(scopeD) {
+          if (scope === 'events') {
+            return scopeD.listEventTypes();
+          } else if (scope === 'organizations') {
+            return scopeD.listOrganisationTypes();
+          }
+        },
+      }, /* ,      {
+        find(scopeD) {
           return scopeD.documents();
         },
-      },
+      } */
       {
         find(scopeD) {
           if (scope === 'events') {
@@ -416,12 +441,12 @@ Meteor.publishComposite('scopeDetail', function(scope, scopeId) {
             });
           }
         },
-      },
+      }, /* ,
       {
         find(scopeD) {
           return scopeD.documents();
         },
-      },
+      }, */
     ] };
 });
 
@@ -444,12 +469,12 @@ Meteor.publishComposite('citoyenActusList', function(limit) {
             });
           }
         },
-      },
+      }, /*
       {
         find(scopeD) {
           return scopeD.documents();
         },
-      },
+      }, */
       {
         find(scopeD) {
           Counts.publish(this, `countActus.${this.userId}`, scopeD.newsActus(this.userId), { noReady: true });
@@ -467,14 +492,14 @@ Meteor.publishComposite('citoyenActusList', function(limit) {
                   profilThumbImageUrl: 1,
                 },
               });
-            },
+            }, /* ,
             children: [
               {
                 find(citoyen) {
                   return citoyen.documents();
                 },
               },
-            ],
+            ], */
           },
           {
             find(news) {
@@ -493,7 +518,7 @@ Meteor.publishComposite('citoyenActusList', function(limit) {
                 return collection.find({ _id: new Mongo.ObjectID(news.target.id) }, queryOptions);
               }
             },
-          },
+          }, /*
           {
             find(news) {
               if (news.target && news.target.type && news.target.id) {
@@ -503,7 +528,7 @@ Meteor.publishComposite('citoyenActusList', function(limit) {
                 }, { sort: { created: -1 }, limit: 1 });
               }
             },
-          },
+          }, */
           {
             find(news) {
               const queryOptions = { fields: {
@@ -516,7 +541,7 @@ Meteor.publishComposite('citoyenActusList', function(limit) {
                 return collection.find({ _id: new Mongo.ObjectID(news.object.id) }, queryOptions);
               }
             },
-          },
+          }, /*
           {
             find(news) {
               if (news.object && news.object.type && news.object.id) {
@@ -526,7 +551,7 @@ Meteor.publishComposite('citoyenActusList', function(limit) {
                 }, { sort: { created: -1 }, limit: 1 });
               }
             },
-          },
+          }, */
         ],
       },
     ] };
@@ -561,80 +586,80 @@ Meteor.publishComposite('collectionsList', function(scope, scopeId, type) {
       {
         find(scopeD) {
           return scopeD.listCollections(type, 'citoyens');
-        },
+        }, /* ,
         children: [
           {
             find(scopeD) {
               return scopeD.documents();
             },
           },
-        ],
+        ], */
       },
       {
         find(scopeD) {
           return scopeD.listCollections(type, 'organizations');
-        },
+        }, /* ,
         children: [
           {
             find(scopeD) {
               return scopeD.documents();
             },
           },
-        ],
+        ], */
       },
       {
         find(scopeD) {
           return scopeD.listCollections(type, 'projects');
-        },
+        }, /* ,
         children: [
           {
             find(scopeD) {
               return scopeD.documents();
             },
           },
-        ],
+        ], */
       },
       {
         find(scopeD) {
           return scopeD.listCollections(type, 'events');
-        },
+        }, /* ,
         children: [
           {
             find(scopeD) {
               return scopeD.documents();
             },
           },
-        ],
+        ], */
       },
       {
         find(scopeD) {
           return scopeD.listCollections(type, 'poi');
-        },
+        }, /* ,
         children: [
           {
             find(scopeD) {
               return scopeD.documents();
             },
           },
-        ],
+        ], */
       },
       {
         find(scopeD) {
           return scopeD.listCollections(type, 'classified');
-        },
+        }, /* ,
         children: [
           {
             find(scopeD) {
               return scopeD.documents();
             },
           },
-        ],
-      },
+        ], */
+      }, /* ,
       {
         find(scopeD) {
           return scopeD.documents();
         },
-      },
+      }, */
     ] };
 });
 
@@ -653,8 +678,21 @@ Meteor.publishComposite('directoryList', function(scope, scopeId) {
       const options = {};
       // options['_disableOplog'] = true;
       if (scope === 'citoyens') {
-        options.fields = { pwd: 0 };
+        // options.fields = { pwd: 0 };
       }
+
+      options.fields = { _id: 1,
+        profilThumbImageUrl: 1,
+        type: 1,
+        name: 1,
+        organizerType: 1,
+        organizerId: 1,
+        parentType: 1,
+        parentId: 1,
+        creator: 1,
+        tags: 1,
+        links: 1 };
+
       if (scope === 'events') {
         // Counts.publish(this, `countSous.${scopeId}`, Events.find({parentId:scopeId}), { noReady: true });
       }
@@ -675,14 +713,14 @@ Meteor.publishComposite('directoryList', function(scope, scopeId) {
           } else if (scope === 'projects') {
             return scopeD.listFollowers();
           }
-        },
+        }, /* ,
         children: [
           {
             find(scopeD) {
               return scopeD.documents();
             },
           },
-        ],
+        ], */
       },
       {
         find(scopeD) {
@@ -693,14 +731,14 @@ Meteor.publishComposite('directoryList', function(scope, scopeId) {
           } else if (scope === 'projects') {
             return scopeD.listContributors();
           }
-        },
+        }, /* ,
         children: [
           {
             find(scopeD) {
               return scopeD.documents();
             },
           },
-        ],
+        ], */
       },
       {
         find(scopeD) {
@@ -709,48 +747,48 @@ Meteor.publishComposite('directoryList', function(scope, scopeId) {
           } else if (scope === 'organizations') {
             return scopeD.listMembersOrganizations();
           }
-        },
+        }, /* ,
         children: [
           {
             find(scopeD) {
               return scopeD.documents();
             },
           },
-        ],
+        ], */
       },
       {
         find(scopeD) {
           if (scope === 'citoyens' || scope === 'organizations') {
             return scopeD.listProjects();
           }
-        },
+        }, /* ,
         children: [
           {
             find(scopeD) {
               return scopeD.documents();
             },
           },
-        ],
+        ], */
       },
       {
         find(scopeD) {
           if (scope === 'citoyens' || scope === 'organizations' || scope === 'projects') {
             return scopeD.listEvents();
           }
-        },
+        }, /* ,
         children: [
           {
             find(scopeD) {
               return scopeD.documents();
             },
           },
-        ],
-      },
+        ], */
+      }, /* ,
       {
         find(scopeD) {
           return scopeD.documents();
         },
-      },
+      }, */
     ] };
 });
 
@@ -804,19 +842,19 @@ Meteor.publishComposite('directoryListEvents', function(scope, scopeId) {
                 });
               }
             },
-          },
+          }, /* ,
           {
             find(scopeD) {
               return scopeD.documents();
             },
-          },
+          }, */
         ],
-      },
+      }, /* ,
       {
         find(scopeD) {
           return scopeD.documents();
         },
-      },
+      }, */
     ] };
 });
 
@@ -867,19 +905,19 @@ Meteor.publishComposite('directoryListProjects', function(scope, scopeId) {
                 });
               }
             },
-          },
+          }, /* ,
           {
             find(scopeD) {
               return scopeD.documents();
             },
-          },
+          }, */
         ],
-      },
+      }, /* ,
       {
         find(scopeD) {
           return scopeD.documents();
         },
-      },
+      }, */
     ] };
 });
 
@@ -925,19 +963,19 @@ Meteor.publishComposite('directoryListPoi', function(scope, scopeId) {
                 });
               }
             },
-          },
+          }, /* ,
           {
             find(scopeD) {
               return scopeD.documents();
             },
-          },
+          }, */
         ],
-      },
+      }, /* ,
       {
         find(scopeD) {
           return scopeD.documents();
         },
-      },
+      }, */
     ] };
 });
 
@@ -983,19 +1021,19 @@ Meteor.publishComposite('directoryListClassified', function(scope, scopeId) {
                 });
               }
             },
-          },
+          }, /* ,
           {
             find(scopeD) {
               return scopeD.documents();
             },
-          },
+          }, */
         ],
-      },
+      }, /* ,
       {
         find(scopeD) {
           return scopeD.documents();
         },
-      },
+      }, */
     ] };
 });
 
@@ -1029,20 +1067,20 @@ Meteor.publishComposite('directoryListOrganizations', function(scope, scopeId) {
           if (scope === 'citoyens') {
             return scopeD.listOrganizationsCreator();
           }
-        },
+        }, /* ,
         children: [
           {
             find(scopeD) {
               return scopeD.documents();
             },
           },
-        ],
-      },
+        ], */
+      }, /* ,
       {
         find(scopeD) {
           return scopeD.documents();
         },
-      },
+      }, */
     ] };
 });
 
@@ -1055,14 +1093,14 @@ Meteor.publishComposite('listeventSous', function(scopeId) {
     find() {
       Counts.publish(this, `countSous.${scopeId}`, Events.find({ parentId: scopeId }), { noReady: true });
       return Events.find({ parentId: scopeId });
-    },
+    }, /* ,
     children: [
       {
         find(event) {
           return event.documents();
         },
       },
-    ] };
+    ] */ };
 });
 
 Meteor.publishComposite('listAttendees', function(scopeId) {
@@ -1091,12 +1129,12 @@ Meteor.publishComposite('listAttendees', function(scopeId) {
                 },
               });
             },
-          },
+          }, /* ,
           {
             find(citoyen) {
               return citoyen.documents();
             },
-          },
+          }, */
         ],
       },
     ] };
@@ -1128,12 +1166,12 @@ Meteor.publishComposite('listMembers', function(scopeId) {
                 },
               });
             },
-          },
+          }, /* ,
           {
             find(citoyen) {
               return citoyen.documents();
             },
-          },
+          }, */
         ],
       },
     ] };
@@ -1169,12 +1207,12 @@ Meteor.publishComposite('listMembersToBeValidated', function(scope, scopeId) {
                 },
               });
             },
-          },
+          }, /* ,
           {
             find(citoyen) {
               return citoyen.documents();
             },
-          },
+          }, */
         ],
       },
     ] };
@@ -1206,12 +1244,12 @@ Meteor.publishComposite('listContributors', function(scopeId) {
                 },
               });
             },
-          },
+          }, /* ,
           {
             find(citoyen) {
               return citoyen.documents();
             },
-          },
+          }, */
         ],
       },
     ] };
@@ -1250,12 +1288,12 @@ Meteor.publishComposite('listFollows', function(scopeId) {
                 },
               });
             },
-          },
+          }, /* ,
           {
             find(citoyen) {
               return citoyen.documents();
             },
-          },
+          }, */
         ],
       },
     ] };
@@ -1289,14 +1327,14 @@ Meteor.publishComposite('newsList', function(scope, scopeId, limit) {
               profilThumbImageUrl: 1,
             },
           });
-        },
+        }, /* ,
         children: [
           {
             find(citoyen) {
               return citoyen.documents();
             },
           },
-        ],
+        ], */
       },
       {
         find(news) {
@@ -1315,8 +1353,7 @@ Meteor.publishComposite('newsList', function(scope, scopeId, limit) {
             return collection.find({ _id: new Mongo.ObjectID(news.target.id) }, queryOptions);
           }
         },
-      },
-      {
+      }, /* ,      {
         find(news) {
           if (news.target && news.target.type && news.target.id) {
             return Documents.find({
@@ -1325,7 +1362,7 @@ Meteor.publishComposite('newsList', function(scope, scopeId, limit) {
             }, { sort: { created: -1 }, limit: 1 });
           }
         },
-      },
+      } */
       {
         find(news) {
           const queryOptions = { fields: {
@@ -1338,7 +1375,7 @@ Meteor.publishComposite('newsList', function(scope, scopeId, limit) {
             return collection.find({ _id: new Mongo.ObjectID(news.object.id) }, queryOptions);
           }
         },
-      },
+      }, /* ,
       {
         find(news) {
           if (news.object && news.object.type && news.object.id) {
@@ -1348,7 +1385,7 @@ Meteor.publishComposite('newsList', function(scope, scopeId, limit) {
             }, { sort: { created: -1 }, limit: 1 });
           }
         },
-      },
+      }, */
     ],
   };
 });
@@ -1406,14 +1443,14 @@ Meteor.publishComposite('newsDetail', function(scope, scopeId, newsId) {
               profilThumbImageUrl: 1,
             },
           });
-        },
+        }, /* ,
         children: [
           {
             find(citoyen) {
               return citoyen.documents();
             },
           },
-        ],
+        ], */
       },
       {
         find(news) {
@@ -1432,7 +1469,7 @@ Meteor.publishComposite('newsDetail', function(scope, scopeId, newsId) {
             return collection.find({ _id: new Mongo.ObjectID(news.target.id) }, queryOptions);
           }
         },
-      },
+      }, /*
       {
         find(news) {
           if (news.target && news.target.type && news.target.id) {
@@ -1442,7 +1479,7 @@ Meteor.publishComposite('newsDetail', function(scope, scopeId, newsId) {
             }, { sort: { created: -1 }, limit: 1 });
           }
         },
-      },
+      }, */
       {
         find(news) {
           const queryOptions = { fields: {
@@ -1455,7 +1492,7 @@ Meteor.publishComposite('newsDetail', function(scope, scopeId, newsId) {
             return collection.find({ _id: new Mongo.ObjectID(news.object.id) }, queryOptions);
           }
         },
-      },
+      }, /* ,
       {
         find(news) {
           if (news.object && news.object.type && news.object.id) {
@@ -1465,7 +1502,7 @@ Meteor.publishComposite('newsDetail', function(scope, scopeId, newsId) {
             }, { sort: { created: -1 }, limit: 1 });
           }
         },
-      },
+      }, */
     ],
   };
 });
@@ -1521,14 +1558,14 @@ Meteor.publishComposite('newsDetailComments', function(scope, scopeId, newsId) {
               profilThumbImageUrl: 1,
             },
           });
-        },
+        }, /* ,
         children: [
           {
             find(citoyen) {
               return citoyen.documents();
             },
           },
-        ],
+        ], */
       },
       {
         find(news) {
@@ -1547,14 +1584,14 @@ Meteor.publishComposite('newsDetailComments', function(scope, scopeId, newsId) {
                   profilThumbImageUrl: 1,
                 },
               });
-            },
+            }, /* ,
             children: [
               {
                 find(citoyen) {
                   return citoyen.documents();
                 },
               },
-            ],
+            ], */
           },
         ],
       },
@@ -1603,6 +1640,49 @@ Meteor.publish('users', function() {
     Meteor.users.find({ 'profile.online': true }, { fields: { profile: 1, username: 1 } }),
     Citoyens.find({ _id: new Mongo.ObjectID(this.userId) }, { _disableOplog: true, fields: { pwd: 0 } }),
   ];
+});
+
+Meteor.publishComposite('callUsers', function() {
+  if (!this.userId) {
+    return null;
+  }
+  return {
+    find() {
+      return Citoyens.find({ _id: new Mongo.ObjectID(this.userId) }, {
+        fields: {
+          _id: 1,
+          name: 1,
+          'links.follows': 1,
+          profilThumbImageUrl: 1,
+        },
+      });
+    },
+    children: [
+      {
+        find(citoyen) {
+          return citoyen.listFollows();
+        },
+        children: [
+          {
+            find(citoyen) {
+              return Meteor.users.find({
+                _id: citoyen._id._str,
+              }, {
+                fields: {
+                  'profile.online': 1,
+                  status: 1,
+                },
+              });
+            },
+          }, /* ,
+          {
+            find(citoyen) {
+              return citoyen.documents();
+            },
+          }, */
+        ],
+      },
+    ] };
 });
 
 Meteor.publish('thing', function(limit, boardId) {

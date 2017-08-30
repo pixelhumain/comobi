@@ -200,7 +200,9 @@ Events.helpers({
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     if (bothUserId && this.organizerId && this.organizerType && _.contains(['events', 'projects', 'organizations'], this.organizerType)) {
       // console.log(this.organizerEvent());
-      return this.organizerEvent() && this.organizerEvent().isAdmin(bothUserId);
+      if (this.organizerEvent() && this.organizerEvent().isAdmin(bothUserId)) {
+        return true;
+      }
     }
     return !!((this.links && this.links.attendees && this.links.attendees[bothUserId] && this.links.attendees[bothUserId].isAdmin));
   },
@@ -252,7 +254,7 @@ Events.helpers({
   listPoiCreator () {
     const query = {};
     query.parentId = this._id._str;
-    return Poi.find(query, queryOptions);
+    return Poi.find(query);
   },
   countPoiCreator () {
     return this.listPoiCreator() && this.listPoiCreator().count();

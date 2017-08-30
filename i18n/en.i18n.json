@@ -142,6 +142,31 @@
   "comment":"comment",
   "comments":"comments",
   "Close and reopen the application to get the new version":"Close and reopen the application to get the new version!",
+  "Add":"Add",
+  "a organization":"a organization",
+  "a project":"a project",
+  "a event":"a event",
+  "a point of interest":"a point of interest",
+  "a classified":"a classified",
+  "organizer":"organizer",
+  "video call":"video call",
+  "endPhoneCall":"Finished calling",
+  "You are receiving a phone call":"You are receiving a video phone call",
+  "Answer":"Answer",
+  "Ignore":"Ignore",
+  "onTerminateCall":"call terminated",
+  "activitystream":{
+    "verb":{
+      "share":"shared",
+      "create":"created"
+    },
+    "type":{
+      "organizations":"an organization",
+      "events":"an event",
+      "projects":"an project",
+      "news":"a publication of"
+    }
+  },
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] already exists",
@@ -344,6 +369,18 @@
       },
       "url":{
         "label": "url"
+      },
+      "fixe":{
+        "label": "phone",
+        "placeholder": "phone"
+      },
+      "mobile":{
+        "label": "mobile phone",
+        "placeholder": "mobile phone"
+      },
+      "fax":{
+        "label": "fax",
+        "placeholder": "fax"
       },
       "tags":{
         "label": "tags"

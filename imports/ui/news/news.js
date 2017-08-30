@@ -83,7 +83,7 @@ Template.newsList.helpers({
       const collection = nameToCollection(Router.current().params.scope);
       return collection.findOne({ _id: new Mongo.ObjectID(Router.current().params._id) });
     }
-    return undefined;
+    //return undefined;
   },
   scopeCardTemplate () {
     return `listCard${Router.current().params.scope}`;
@@ -381,6 +381,16 @@ Template.scopeEventsTemplate.helpers({
     return Template.instance().ready.get();
   },
 });
+
+Template.addMenuScopePopover.helpers({
+  scopeVar () {
+    return pageSession.get('scope');
+  },
+  scopeId() {
+    return pageSession.get('scopeId');
+  },
+});
+
 
 Template.newsList.events({
   'click .selectview' (event) {

@@ -12,6 +12,7 @@ import { IonPopup } from 'meteor/meteoric:ionic';
 // collections
 import { Organizations, BlockOrganizationsRest } from '../../api/organizations.js';
 import { Cities } from '../../api/cities.js';
+import { Lists } from '../../api/lists.js';
 
 // submanager
 import { listOrganizationsSubs, listsSubs, scopeSubscribe } from '../../api/client/subsmanager.js';
@@ -28,6 +29,7 @@ import { searchQuery, queryGeoFilter, matchTags } from '../../api/helpers.js';
 Template.listOrganizations.onCreated(function () {
   pageSession.set('sortOrganizations', null);
   pageSession.set('searchOrganizations', null);
+  pageSession.set('selectorga', null);
   scopeSubscribe(this, listOrganizationsSubs, 'geo.scope', 'organizations');
 });
 
@@ -35,19 +37,27 @@ Template.listOrganizations.onCreated(function () {
 Template.listOrganizations.helpers({
   organizations () {
     const searchOrganizations = pageSession.get('searchOrganizations');
+    const selectorga = pageSession.get('selectorga');
     let query = {};
     query = queryGeoFilter(query);
     if (searchOrganizations) {
       query = searchQuery(query, searchOrganizations);
     }
+    if (selectorga) {
+      query.type = selectorga;
+    }
     return Organizations.find(query);
   },
   countOrganizations () {
     const searchOrganizations = pageSession.get('searchOrganizations');
+    const selectorga = pageSession.get('selectorga');
     let query = {};
     query = queryGeoFilter(query);
     if (searchOrganizations) {
       query = searchQuery(query, searchOrganizations);
+    }
+    if (selectorga) {
+      query.type = selectorga;
     }
     return Organizations.find(query).count();
   },
@@ -56,6 +66,16 @@ Template.listOrganizations.helpers({
   },
   dataReady() {
     return Template.instance().ready.get();
+  },
+  selectorga () {
+    return pageSession.get('selectorga');
+  },
+  listOrganisationTypes () {
+    const listSelect = Lists.findOne({ name: 'organisationTypes' });
+    if (listSelect && listSelect.list) {
+      return _.map(listSelect.list, (value, key) => ({ label: value, value: key }));
+    }
+    return undefined;
   },
 });
 
@@ -66,6 +86,10 @@ Template.listOrganizations.events({
     } else {
       pageSession.set('searchOrganizations', null);
     }
+  },
+  'click .selectorga' (event) {
+    event.preventDefault();
+    pageSession.set('selectorga', event.currentTarget.id);
   },
 });
 

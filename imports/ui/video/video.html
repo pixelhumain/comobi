@@ -1,0 +1,85 @@
+<template name="videoRTC">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "video call"}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+
+<div class="list" data-snap-ignore="true">
+
+  <div class="item item-divider">
+    <i class="icon fa fa-share"></i> {{_ "video call"}}
+  </div>
+
+
+{{#if showChat}}
+{{> callRTC showChat=showChat showTarget=showTarget showCaller=showCaller}}
+{{else}}
+
+{{#transition in="zoomIn" out="bounceOut"}}
+{{#each user in listUsers}}
+{{#if onlineUser user._id._str }}
+{{> itemUserCall user=user}}
+{{/if}}
+{{/each}}
+{{/transition}}
+
+{{/if}}
+</div>
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>
+
+<template name="itemUserCall">
+<div class="item item-avatar animated out item-button-right">
+  {{> imgDoc profilThumbImageUrl=user.profilThumbImageUrl}}
+  <h2>{{user.name}}</h2>
+  <a class="button button-balanced callUser" href=""><i class="icon fa fa-video-camera"></i></a>
+</div>
+</template>
+
+<template name="callRTC">
+  <div class="button-bar bar-stable">
+    <a class="button button-assertive button-small endPhoneCall" href=""><i class="icon fa fa-stop"></i> {{_ "endPhoneCall"}}</a>
+  </div>
+
+{{#if showTarget}}
+{{> callTargetRTC}}
+{{/if}}
+
+{{#if showCaller}}
+{{> callCallerRTC}}
+{{/if}}
+
+</template>
+
+<template name="callTargetRTC">
+  <div class="card">
+    <video id="target" style="width:100%"></video>
+  </div>
+<div class="card">
+  <video id="caller" style="width:100%"></video>
+</div>
+</template>
+
+<template name="callCallerRTC">
+  <div class="card">
+    <video id="target" style="width:100%"></video>
+  </div>
+  <div class="card">
+    <video id="caller" style="width:100%"></video>
+  </div>
+</template>
