@@ -7,7 +7,7 @@ Package.describe({
 
 Cordova.depends({
   "cordova-plugin-actionsheet": "2.2.2",
-  "cordova-plugin-device": "1.1.4"
+  "cordova-plugin-device": "1.1.6"
 });
 
 Package.onUse(function (api) {

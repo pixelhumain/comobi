@@ -4,7 +4,7 @@ Package.describe({
 });
 
 Cordova.depends({
-    "cordova-plugin-geolocation": "2.4.1",
+    "cordova-plugin-geolocation": "2.4.3",
     "org.flybuy.nativeutils": "https://github.com/pmwisdom/NativeUtils/tarball/64460ce4e28a346245beb2c5a7413bd67a6c148d"
 });
 
