@@ -5,9 +5,12 @@ const sensorApi = {
   Motion: ['ACCELEROMETER', 'GRAVITY', 'GYROSCOPE', 'ROTATION_VECTOR', 'STEP_COUNTER'],
   Environmental: ['AMBIENT_TEMPERATURE', 'RELATIVE_HUMIDITY', 'PRESSURE', 'LIGHT', 'TEMPERATURE'],
   Position: ['MAGNETIC_FIELD', 'GAME_ROTATION_VECTOR', 'PROXIMITY'],
-  allSensors: [...this.Motion, ...this.Environmental, ...this.Position],
+  // allSensors: [...this.Motion, ...this.Environmental, ...this.Position],
   config() {
     this.setWatch(null);
+  },
+  allSensors() {
+    return [...this.Motion, ...this.Environmental, ...this.Position];
   },
   disable(typeSensor) {
     SessionSensors.set('typeSensor', null);
@@ -16,7 +19,7 @@ const sensorApi = {
     });
   },
   listener(event) {
-    //console.log(event);
+    // console.log(event);
     if (event && event.values) {
       console.log(event.values);
       // SessionSensors.set(SessionSensors.get('typeSensor'), `${event.values.join(',')}`);
@@ -47,7 +50,8 @@ const sensorApi = {
   },
   disables() {
     const self = this;
-    this.allSensors.map((typeSensor) => {
+    const allSensors = this.allSensors();
+    allSensors.map((typeSensor) => {
       SessionSensors.set(typeSensor, null);
       self.disable(typeSensor);
     });

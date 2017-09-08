@@ -14,5 +14,5 @@ private/*
 .desktop-package/
 public/i18n/
 node_modules/
-
+cordova-build-override/platforms/android/google-services.json
 version.desktop

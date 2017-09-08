@@ -1,13 +1,14 @@
 com-sarriaroman-photoviewer@1.1.5
 cordova-custom-config@2.0.3
-cordova-plugin-android-permissions@https://github.com/NeoLSN/cordova-plugin-android-permissions/tarball/789574937c97c6959db49341b2d901789affb364
+cordova-plugin-android-permissions@https://github.com/NeoLSN/cordova-plugin-android-permissions/tarball/master
 cordova-plugin-android-sensor-listeners@https://github.com/QuentinRoy/cordova-plugin-android-sensor-listeners/tarball/master
-cordova-plugin-compat@1.0.0
+cordova-plugin-compat@https://github.com/apache/cordova-plugin-compat/tarball/master
 cordova-plugin-contacts@2.3.1
 cordova-plugin-device@1.1.6
 cordova-plugin-dialogs@1.3.3
+cordova-plugin-geofence@file://./packages/cordova-plugin-geofence
 cordova-plugin-media-capture@1.4.3
 cordova-plugin-meteor-webapp@1.4.1
 cordova-plugin-crosswalk-webview@2.3.0
 me.dispatch.crosswalk-permissions@file://./packages
-phonegap-plugin-barcodescanner@https://github.com/JrontEnd/phonegap-plugin-barcodescanner/tarball/3a4b4ea69c8bff86f9749f7af332fc5b58c88601
+phonegap-plugin-barcodescanner@https://github.com/phonegap/phonegap-plugin-barcodescanner/tarball/master

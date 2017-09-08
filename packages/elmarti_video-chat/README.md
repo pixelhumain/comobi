@@ -2,7 +2,9 @@
 This extension allows you to implement user-to-user video calling in React, Angular and Blaze.
 
 
-[Example](https://meteorvideochat.herokuapp.com) - Click register to create a user
+[Example](https://meteorvideochat.herokuapp.com) - Try creating 2 user accounts (one incognito) and calling one another. 
+
+[Click here for the example source code.](https://github.com/elmarti/meteor-video-chat-example)
 
 [![Stories in Ready](https://badge.waffle.io/elmarti/meteor-video-chat.svg?label=ready&title=Ready)](http://waffle.io/elmarti/meteor-video-chat)
 [![Travis CI](https://travis-ci.org/elmarti/meteor-video-chat.svg?branch=master)](https://travis-ci.org/elmarti/meteor-video-chat)
@@ -38,7 +40,7 @@ Meteor.VideoCallServices.answerPhoneCall(this.refs.caller, this.refs.target);
 #### Ending phone call
 Simply call
 ```
-Meteor.VideoCallServices.end();
+Meteor.VideoCallServices.endPhoneCall();
 ```
 #### Other events
 The following method is invoked when the callee accepts the phone call.
@@ -64,6 +66,9 @@ User is only passed on the server
 Meteor.VideoCallServices.onError = (err, data, user) => {
 }
 ```
+The onError section can also be used for handling errors thrown when obtaining the user media (Webcam/audio).
+[See here for more info](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia#Exceptions), or checkout the example.
+
 
 This project is sponsored by the following:
 
