@@ -28,7 +28,6 @@ const position = {
     Location.getGPSState(success, failure, options);
     Location.enableDistanceFilter(5);
     Location.enableTimeFilter(60);
-    this.locateNoFilter();
   },
   start() {
     Location.startWatching(() => {
@@ -65,6 +64,12 @@ const position = {
   },
   setCity(city) {
     SessionGeo.set('city', city);
+  },
+  setPermissions(state) {
+    SessionGeo.set('permissions', state);
+  },
+  getPermissions() {
+    return SessionGeo.get('permissions');
   },
   locate() {
     Location.locate(function() {

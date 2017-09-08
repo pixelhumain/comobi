@@ -1,6 +1,6 @@
 Package.describe({
   name: 'elmarti:video-chat',
-  version: '1.1.1',
+  version: '1.1.4',
   // Brief, one-line summary of the package.
   summary: 'Simple WebRTC Video Chat for your app.',
   // URL to the Git repository containing the source code for this package.

@@ -24,16 +24,24 @@ Meteor.startup(() => {
     }
     return false;
   });
-});
 
+  Tracker.autorun((c) => {
+    if (position.getPermissions() === true) {
+      position.locateNoFilter();
+      c.stop();
+    }
+  });
+});
 
 Tracker.autorun(() => {
   // if (Meteor.userId() && Meteor.user()) {
-  const geolocate = position.getGeolocate();
-  if (geolocate) {
-    position.start();
-  } else {
-    position.stop();
+  if (position.getPermissions() === true) {
+    const geolocate = position.getGeolocate();
+    if (geolocate) {
+      position.start();
+    } else {
+      position.stop();
+    }
   }
   // }
 });
