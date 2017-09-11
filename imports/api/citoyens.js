@@ -308,7 +308,9 @@ Citoyens.helpers({
   listProjectsCreator () {
     const query = {};
     // query['creator'] = this._id._str;
-    query[`links.contributors.${this._id._str}.isAdmin`] = true;
+    /* query[`links.contributors.${this._id._str}.isAdmin`] = true;
+    query[`links.contributors.${this._id._str}.toBeValidated`] = { $exists: false }; */
+    query[`links.contributors.${this._id._str}`] = { $exists: true };
     query[`links.contributors.${this._id._str}.toBeValidated`] = { $exists: false };
     return Projects.find(query, queryOptions);
   },
@@ -327,9 +329,11 @@ Citoyens.helpers({
   },
   listEventsCreator () {
     const query = {};
-    query.organizerId = this._id._str;
+    // query.organizerId = this._id._str;
     // query[`links.organizer.${this._id._str}`] = {$exist:1};
     queryOptions.fields.organizerId = 1;
+    query[`links.attendees.${this._id._str}`] = { $exists: true };
+    query[`links.attendees.${this._id._str}.toBeValidated`] = { $exists: false };
     return Events.find(query, queryOptions);
   },
   countEventsCreator () {
@@ -339,7 +343,9 @@ Citoyens.helpers({
   listOrganizationsCreator () {
     const query = {};
     // query['creator'] = this._id._str;
-    query[`links.members.${this._id._str}.isAdmin`] = true;
+    /* query[`links.members.${this._id._str}.isAdmin`] = true;
+    query[`links.members.${this._id._str}.toBeValidated`] = { $exists: false }; */
+    query[`links.members.${this._id._str}`] = { $exists: true };
     query[`links.members.${this._id._str}.toBeValidated`] = { $exists: false };
     return Organizations.find(query, queryOptions);
   },
