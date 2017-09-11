@@ -58,7 +58,14 @@ The following method invoked when the RTCPeerConnection instance has been create
 Meteor.VideoCallServices.onPeerConnectionCreated = () => {
 }
 
+``` 
+The retry count can but used to limit the amount of reconnection attempts when ICE fails 
 ```
+Meteor.VideoCallServices.RetryLimit = 5;  //defaulted to 5
+
+```
+
+
 The following method is invoked on both the client and server whenever an error is caught.
 User is only passed on the server
 

@@ -1,32 +1,9 @@
 import {Meteor} from 'meteor/meteor';
 import {check} from 'meteor/check';
 import CallLog from './call_log';
-Meteor.users.find({"status.online": true}).observe({
-    removed: function ({_id}) {
-        CallLog.find({
-            $or: [{
-                status: {
-                    $ne: 'FINISHED'
-                },
-                target: _id
-            }, {
-                status: {
-                    $ne: 'FINISHED'
-                },
-                caller: _id
-            }]
-        }).forEach(call =>
-            CallLog.update({
-                _id: call._id
-            }, {
-                $set: {
-                    status: 'FINISHED'
-                }
-            }));
-    }
-});
+
 const streams = {};
-const services = {
+const Services = {
     /**
      * Call allows you to call a remote user using their userId
      * @param _id {string}
@@ -42,7 +19,7 @@ const services = {
             Meteor.VideoCallServices.onError(err);
             throw err;
         }
-        if (services.checkConnect(meteorUser._id, _id)) {
+        if (Services.checkConnect(meteorUser._id, _id)) {
             const inCall = CallLog.findOne({
                 status: "CONNECTED",
                 target: _id
@@ -159,17 +136,7 @@ const services = {
             }));
     }
 };
-Meteor.methods({
-    'VideoCallServices/call': services.call,
-    'VideoCallServices/answer': services.answer,
-    'VideoCallServices/end': services.end
-});
-Meteor.VideoCallServices = {
-    /**
-    * Callback envoked on error
-     * @param err {Error}
-     * @param data {Object}
-     * @param user {Object}
-     */
-    onError(err, data, user){}
+
+export {
+    Services
 };

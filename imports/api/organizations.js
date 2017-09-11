@@ -264,6 +264,7 @@ Organizations.helpers({
   listProjectsCreator () {
     const query = {};
     query.parentId = this._id._str;
+    queryOptions.fields.parentId = 1;
     return Projects.find(query, queryOptions);
   },
   countProjectsCreator () {
@@ -280,6 +281,7 @@ Organizations.helpers({
   listEventsCreator () {
     const query = {};
     query.organizerId = this._id._str;
+    queryOptions.fields.organizerId = 1;
     return Events.find(query, queryOptions);
   },
   countEventsCreator () {
