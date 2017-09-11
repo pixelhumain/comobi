@@ -329,6 +329,7 @@ Citoyens.helpers({
     const query = {};
     query.organizerId = this._id._str;
     // query[`links.organizer.${this._id._str}`] = {$exist:1};
+    queryOptions.fields.organizerId = 1;
     return Events.find(query, queryOptions);
   },
   countEventsCreator () {

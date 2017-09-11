@@ -20,6 +20,8 @@ Meteor.startup(() => {
 
   const sound = new Howl.Howl({
     src: ['sounds/highbell.mp3'],
+    preload: false,
+    html5: true,
   });
 
 
