@@ -20,6 +20,11 @@ import { Classified } from '../classified.js';
 import { Comments } from '../comments.js';
 import { Lists } from '../lists.js';
 import { Thing } from '../thing.js';
+// DDA
+import { Actions } from '../actions.js';
+import { Resolutions } from '../resolutions.js';
+import { Rooms } from '../rooms.js';
+import { Proposals } from '../proposals.js';
 
 import { nameToCollection } from '../helpers.js';
 
@@ -30,6 +35,10 @@ global.Poi = Poi;
 global.Classified = Classified;
 global.Citoyens = Citoyens;
 global.News = News;
+global.Actions = Actions;
+global.Resolutions = Resolutions;
+global.Rooms = Rooms;
+global.Proposals = Proposals;
 
 Events._ensureIndex({
   geoPosition: '2dsphere',
@@ -345,7 +354,7 @@ Meteor.publishComposite('scopeDetail', function(scope, scopeId) {
   check(scopeId, String);
   check(scope, String);
   check(scope, Match.Where(function(name) {
-    return _.contains(['events', 'projects', 'poi', 'classified', 'organizations', 'citoyens'], name);
+    return _.contains(['events', 'projects', 'poi', 'classified', 'organizations', 'citoyens', 'actions', 'rooms', 'proposals', 'resolutions'], name);
   }));
   const collection = nameToCollection(scope);
   if (!this.userId) {
@@ -537,6 +546,7 @@ Meteor.publishComposite('citoyenActusList', function(limit) {
                 profilThumbImageUrl: 1,
               } };
               if (news.object && news.object.type && news.object.id) {
+                console.log(news.object.type);
                 const collection = nameToCollection(news.object.type);
                 return collection.find({ _id: new Mongo.ObjectID(news.object.id) }, queryOptions);
               }
