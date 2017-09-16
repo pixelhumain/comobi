@@ -164,7 +164,10 @@
       "organizations":"an organization",
       "events":"an event",
       "projects":"an project",
-      "news":"a publication of"
+      "news":"a publication of",
+      "actions":"an action",
+      "proposals":"a proposal",
+      "rooms":"a cooperative space"
     }
   },
   "simpleschema": {

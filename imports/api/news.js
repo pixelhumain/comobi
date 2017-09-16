@@ -10,6 +10,11 @@ import { Organizations } from './organizations.js';
 import { Projects } from './projects.js';
 import { Events } from './events.js';
 import { Comments } from './comments.js';
+// DDA
+import { Actions } from './actions.js';
+import { Resolutions } from './resolutions.js';
+import { Rooms } from './rooms.js';
+import { Proposals } from './proposals.js';
 import { nameToCollection } from './helpers.js';
 
 export const News = new Meteor.Collection('news', { idGeneration: 'MONGO' });
@@ -235,6 +240,10 @@ if (Meteor.isClient) {
     window.Citoyens = Citoyens;
     window.Events = Events;
     window.News = News;
+    window.Actions = Actions;
+    window.Resolutions = Resolutions;
+    window.Rooms = Rooms;
+    window.Proposals = Proposals;
   }
 
   News.helpers({
