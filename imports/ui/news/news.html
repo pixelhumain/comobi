@@ -69,6 +69,7 @@
     <a class="tab-item {{#if equals selectview 'scopeNotificationsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'notificationsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNotificationsTemplate"><i class="icon fa fa-bell"></i></a>
     {{/if}}
     <a class="tab-item {{#if equals selectview 'scopeNewsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'newsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNewsTemplate"><i class="icon fa fa-rss"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeEventsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'eventsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeEventsTemplate"><i class="icon fa fa-calendar"></i></a>
     <a class="tab-item {{#if equals selectview 'scopePoiTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'poiList' _id=scope._id._str scope=scope.scopeVar}}" id="scopePoiTemplate"><i class="icon fa fa-map-marker"></i></a>
   </div>
     {{> Template.dynamic template=selectview data=scope}}
@@ -155,6 +156,23 @@
 </template>
 
 <template name="scopeEventsTemplate">
+  <div class="list">
+    <div class="item item-divider homestead">
+      <i class="icon fa fa-calendar"></i>  {{_ "events"}} {{name}} <span class="badge badge-dark">{{countEventsCreator}}</span>
+    </div>
+    {{> Template.dynamic template=scopeBoutonEventsTemplate data=this}}
+
+    {{#transition in="zoomIn" out="bounceOut"}}
+    {{#each item in listEventsCreator}}
+    {{> scopeItemList item=item count=item.countAttendeesSimple}}
+    {{else}}
+
+    {{/each}}
+    {{/transition}}
+  </div>
+</template>
+
+<template name="scopeEventsTemplateCopy">
   <div class="list">
     <div class="item item-divider homestead">
       <i class="icon fa fa-calendar"></i>  {{_ "events"}} {{name}} <span class="badge badge-dark">{{countEventsCreator}}</span>
@@ -425,20 +443,42 @@
 
       {{#if isAttendees}}
       <a href="{{pathFor 'listAttendees' _id=_id._str}}" class="button button-small">{{> ionIcon icon="ios-people"}}</a>
-      <button class="button button-small" data-ion-modal="_inviteattendeesEvent">{{> ionIcon icon="person-add"}}</button>
+      <a href="{{pathFor 'invitations' _id=_id._str scope=scopeVar}}" class="button button-small">{{> ionIcon icon="person-add"}}</a>
       {{#if isAdmin}}
       <a href="" class="button button-small" data-ion-popover="addMenuScopePopover"><i class="icon fa fa-plus"></i></a>
       {{else}}
       {{> Bouton_card id=_id._str scope=scopeVar isConnect=isAttendees classOff="button-small saveattendees-link" classOn="button-small disconnectscope-link" iconOff="fa fa-link" iconOn="fa fa-unlink" titleOff=(_ "Participate")}}
       {{/if}}
       {{else}}
+      {{#if isInviting 'attendees' currentUser._id}}
+      <button class="button button-small disabled">
+        <i class="icon fa fa-hourglass-half"></i> {{_ "Pending"}}
+      </button>
+      {{else}}
       {{> Bouton_card id=_id._str scope=scopeVar isConnect=isAttendees classOff="button-small saveattendees-link" classOn="button-small disconnectscope-link" iconOff="fa fa-link" iconOn="fa fa-unlink" titleOff=(_ "Participate")}}
-
+      {{/if}}
       {{#if isCordova}}
       <button class="button button-small scanner-event">{{> ionIcon icon="ios-barcode"}} {{_ "QR Scanner"}}</button>
       {{/if}}
       {{/if}}
     </div>
+    {{#if isInviting 'attendees' currentUser._id}}
+    {{#transition in="zoomIn" out="bounceOut"}}
+    <div class="list">
+      {{#with InvitingUser 'attendees' currentUser._id}}
+    <div class="item item-text-wrap animated out">
+      <p><a href="{{pathFor 'detailList' _id=invitorId scope=type}}" class="dark">{{invitorName}}</a>
+        {{_ "invited you"}}
+      </p>
+    </div>
+    {{/with}}
+    <div class="button-bar bar-clear">
+      {{> Bouton_card id=_id._str scope=scopeVar isConnect=(isInviting 'attendees' currentUser._id) classOff="button-small disconnectscope-link" classOn="button-small validatescope-link" iconOff="fa fa-remove positive" iconOn="fa fa-check balanced" titleOff=""}}
+      {{> Bouton_card id=_id._str scope=scopeVar isConnect=(isInviting 'attendees' currentUser._id) classOff="button-small validatescope-link" classOn="button-small disconnectscope-link" iconOff="fa fa-check balanced" iconOn="fa fa-remove positive" titleOff=""}}
+    </div>
+    </div>
+    {{/transition}}
+    {{/if}}
 </template>
 
 <template name="boutonNewsevents">
@@ -461,7 +501,14 @@
         <i class="icon fa fa-hourglass-half"></i> {{_ "Pending"}}
       </button>
       {{else}}
+      {{#if isInviting 'members' currentUser._id}}
+      <button class="button button-small disabled">
+        <i class="icon fa fa-hourglass-half"></i> {{_ "Pending"}}
+      </button>
+      {{else}}
       {{> Bouton_card id=_id._str scope=scopeVar isConnect=isMembers classOff="button-small connectscope-link" classOn="button-small disconnectscope-link" iconOff="fa fa-link" iconOn="fa fa-unlink"}}
+      <a href="{{pathFor 'invitations' _id=_id._str scope=scopeVar}}" class="button button-small">{{> ionIcon icon="person-add"}}</a>
+      {{/if}}
       {{/if}}
 
       {{#if isMembers}}
@@ -474,6 +521,23 @@
       {{/if}}
       <a href="{{pathFor 'directory' _id=_id._str scope=scopeVar}}" class="button button-small"><i class="icon fa fa-connectdevelop"></i></a>
     </div>
+    {{#if isInviting 'members' currentUser._id}}
+    {{#transition in="zoomIn" out="bounceOut"}}
+    <div class="list">
+      {{#with InvitingUser 'members' currentUser._id}}
+    <div class="item item-text-wrap animated out">
+      <p><a href="{{pathFor 'detailList' _id=invitorId scope=type}}" class="dark">{{invitorName}}</a>
+        {{_ "invited you"}}
+      </p>
+    </div>
+    {{/with}}
+    <div class="button-bar bar-clear">
+      {{> Bouton_card id=_id._str scope=scopeVar isConnect=(isInviting 'members' currentUser._id) classOff="button-small disconnectscope-link" classOn="button-small validatescope-link" iconOff="fa fa-remove positive" iconOn="fa fa-check balanced" titleOff=""}}
+      {{> Bouton_card id=_id._str scope=scopeVar isConnect=(isInviting 'members' currentUser._id) classOff="button-small validatescope-link" classOn="button-small disconnectscope-link" iconOff="fa fa-check balanced" iconOn="fa fa-remove positive" titleOff=""}}
+    </div>
+    </div>
+    {{/transition}}
+    {{/if}}
 </template>
 
 <template name="boutonNewsorganizations">
@@ -496,7 +560,14 @@
         <i class="icon fa fa-hourglass-half"></i> {{_ "Pending"}}
       </button>
       {{else}}
-      {{> Bouton_card id=_id._str scope=scopeVar isConnect=isContributors classOff="button-small connectscope-link" classOn="button-small disconnectscope-link" iconOff="fa fa-link" iconOn="fa fa-unlink" titleOff=(_ "Become a contributor")}}
+      {{#if isInviting 'contributors' currentUser._id}}
+      <button class="button button-small disabled">
+        <i class="icon fa fa-hourglass-half"></i> {{_ "Pending"}}
+      </button>
+      {{else}}
+      {{> Bouton_card id=_id._str scope=scopeVar isConnect=isContributors classOff="button-small connectscope-link" classOn="button-small disconnectscope-link" iconOff="fa fa-link" iconOn="fa fa-unlink" titleOff=""}}
+      <a href="{{pathFor 'invitations' _id=_id._str scope=scopeVar}}" class="button button-small">{{> ionIcon icon="person-add"}}</a>
+      {{/if}}
       {{/if}}
 
       {{#if isContributors}}
@@ -509,6 +580,23 @@
       {{/if}}
       <a href="{{pathFor 'directory' _id=_id._str scope=scopeVar}}" class="button button-small"><i class="icon fa fa-connectdevelop"></i></a>
     </div>
+    {{#if isInviting 'contributors' currentUser._id}}
+    {{#transition in="zoomIn" out="bounceOut"}}
+    <div class="list">
+      {{#with InvitingUser 'contributors' currentUser._id}}
+    <div class="item item-text-wrap animated out">
+      <p><a href="{{pathFor 'detailList' _id=invitorId scope=type}}" class="dark">{{invitorName}}</a>
+        {{_ "invited you"}}
+      </p>
+    </div>
+    {{/with}}
+    <div class="button-bar bar-clear">
+      {{> Bouton_card id=_id._str scope=scopeVar isConnect=(isInviting 'contributors' currentUser._id) classOff="button-small disconnectscope-link" classOn="button-small validatescope-link" iconOff="fa fa-remove positive" iconOn="fa fa-check balanced" titleOff=""}}
+      {{> Bouton_card id=_id._str scope=scopeVar isConnect=(isInviting 'contributors' currentUser._id) classOff="button-small validatescope-link" classOn="button-small disconnectscope-link" iconOff="fa fa-check balanced" iconOn="fa fa-remove positive" titleOff=""}}
+    </div>
+    </div>
+    {{/transition}}
+    {{/if}}
 </template>
 
 <template name="boutonNewsprojects">

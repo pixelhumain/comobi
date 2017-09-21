@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveDict } from 'meteor/reactive-dict';
+import { TAPi18n } from 'meteor/tap:i18n';
+import { IonPopup } from 'meteor/meteoric:ionic';
 
 // mixin
 import '../mixin/button-toggle.js';
@@ -27,7 +29,7 @@ Template.Bouton_card.events({
     Meteor.call('saveattendeesEvent', this.id, (error) => {
       if (error) {
         instance.state.set('call', false);
-        alert(error.error);
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -39,7 +41,7 @@ Template.Bouton_card.events({
     Meteor.call('inviteattendeesEvent', this.id, (error) => {
       if (error) {
         instance.state.set('call', false);
-        alert(error.error);
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -51,7 +53,19 @@ Template.Bouton_card.events({
     Meteor.call('connectEntity', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
-        alert(error.error);
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+      } else {
+        instance.state.set('call', false);
+      }
+    });
+  },
+  'click .validatescope-link' (event, instance) {
+    event.preventDefault();
+    instance.state.set('call', true);
+    Meteor.call('validateEntity', this.id, this.scope, Meteor.userId(), 'citoyens', 'isInviting', (error) => {
+      if (error) {
+        instance.state.set('call', false);
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -59,14 +73,25 @@ Template.Bouton_card.events({
   },
   'click .disconnectscope-link' (event, instance) {
     event.preventDefault();
+    const self = this;
     instance.state.set('call', true);
-    Meteor.call('disconnectEntity', this.id, this.scope, (error) => {
-      if (error) {
+    IonPopup.confirm({ title: TAPi18n.__('Disconnect'),
+      template: TAPi18n.__('Want to remove the link between you and the entity'),
+      onOk() {
+        Meteor.call('disconnectEntity', self.id, self.scope, (error) => {
+          if (error) {
+            instance.state.set('call', false);
+            IonPopup.alert({ template: TAPi18n.__(error.reason) });
+          } else {
+            instance.state.set('call', false);
+          }
+        });
+      },
+      onCancel() {
         instance.state.set('call', false);
-        alert(error.error);
-      } else {
-        instance.state.set('call', false);
-      }
+      },
+      cancelText: TAPi18n.__('No'),
+      okText: TAPi18n.__('Yes'),
     });
   },
   'click .followperson-link' (event, instance) {
@@ -75,7 +100,7 @@ Template.Bouton_card.events({
     Meteor.call('followEntity', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
-        alert(error.error);
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -83,26 +108,48 @@ Template.Bouton_card.events({
   },
   'click .unfollowperson-link' (event, instance) {
     event.preventDefault();
+    const self = this;
     instance.state.set('call', true);
-    Meteor.call('disconnectEntity', this.id, this.scope, (error) => {
-      if (error) {
+    IonPopup.confirm({ title: TAPi18n.__('Unfollow'),
+      template: TAPi18n.__('no longer follow that person'),
+      onOk() {
+        Meteor.call('disconnectEntity', self.id, self.scope, (error) => {
+          if (error) {
+            instance.state.set('call', false);
+            IonPopup.alert({ template: TAPi18n.__(error.reason) });
+          } else {
+            instance.state.set('call', false);
+          }
+        });
+      },
+      onCancel() {
         instance.state.set('call', false);
-        alert(error.error);
-      } else {
-        instance.state.set('call', false);
-      }
+      },
+      cancelText: TAPi18n.__('No'),
+      okText: TAPi18n.__('Yes'),
     });
   },
   'click .unfollowscope-link' (event, instance) {
     event.preventDefault();
+    const self = this;
     instance.state.set('call', true);
-    Meteor.call('disconnectEntity', this.id, this.scope, 'followers', (error) => {
-      if (error) {
+    IonPopup.confirm({ title: TAPi18n.__('Unfollow'),
+      template: TAPi18n.__('no longer follow this entity'),
+      onOk() {
+        Meteor.call('disconnectEntity', self.id, self.scope, 'followers', (error) => {
+          if (error) {
+            instance.state.set('call', false);
+            IonPopup.alert({ template: TAPi18n.__(error.reason) });
+          } else {
+            instance.state.set('call', false);
+          }
+        });
+      },
+      onCancel() {
         instance.state.set('call', false);
-        alert(error.error);
-      } else {
-        instance.state.set('call', false);
-      }
+      },
+      cancelText: TAPi18n.__('No'),
+      okText: TAPi18n.__('Yes'),
     });
   },
   'click .favorites-link' (event, instance) {
@@ -111,11 +158,27 @@ Template.Bouton_card.events({
     Meteor.call('collectionsAdd', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
-        alert(error.error);
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
     });
   },
-
+  'click .invitations-link' (event, instance) {
+    event.preventDefault();
+    instance.state.set('call', true);
+    // invitationScope (parentId, parentType, connectType, childType, childEmail, childName, childId)
+    let connectType = null;
+    if (this.connectType) {
+      connectType = this.connectType;
+    }
+    Meteor.call('invitationScope', this.id, this.scope, connectType, this.childType, null, null, this.childId, (error) => {
+      if (error) {
+        instance.state.set('call', false);
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+      } else {
+        instance.state.set('call', false);
+      }
+    });
+  },
 });

@@ -11,6 +11,7 @@
 
       {{#if equals scopeVar 'events'}}
       {{> scopeCreator organizerType=organizerType organizerId=organizerId organizer=organizerEvent creator=creatorProfile }}
+      {{> scopeEventsParent eventsParent=eventsParent }}
       {{else if equals scopeVar 'projects'}}
       {{> scopeCreator organizerType=parentType organizerId=parentId organizer=organizerProject creator=creatorProfile }}
       {{else if equals scopeVar 'poi'}}
@@ -234,7 +235,6 @@
       {{#if isVisibleFields 'locality'}}
       {{#if geo}}<a class="tab-item" href="{{pathFor 'mapWith' _id=_id._str scope=scopeVar}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a>{{/if}}
       {{/if}}
-      {{#if issousEvents}}<a class="tab-item" href="{{pathFor 'listeventSous' _id=_id._str}}"><i class="icon ion-calendar"></i> {{countsousEvents}} {{_ "events"}} </a>{{/if}}
     </div>
     {{/with}}
   </div>
@@ -247,6 +247,13 @@
 {{#if creatorProfile}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
 {{/if}}
 </template>
+
+<template name="scopeEventsParent">
+{{#if eventsParent}}
+<p>{{_ "on the program of"}} <a href="{{pathFor 'detailList' _id=eventsParent._id._str scope='events'}}" class="positive">{{eventsParent.name}}</a></p>
+{{/if}}
+</template>
+
 
 <template name="scopeFileUpload">
  <form>

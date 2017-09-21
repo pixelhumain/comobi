@@ -57,6 +57,10 @@ export const listsSubs = new SubsManager({
   cacheLimit: 500,
   expireIn: 60,
 });
+export const invitationsSubs = new SubsManager({
+  cacheLimit: 500,
+  expireIn: 60,
+});
 
 export const singleSubs = new SubsManager();
 

@@ -281,6 +281,12 @@ Router.map(function() {
     loadingTemplate: 'loading',
   });
 
+  this.route('invitations', {
+    template: 'Page_invitations',
+    path: '/:scope/invitations/:_id',
+    loadingTemplate: 'loading',
+  });
+
   this.route('listeventSous', {
     template: 'listeventSous',
     path: '/events/sous/:_id',

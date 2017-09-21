@@ -14,39 +14,80 @@
 {{#if dataReady}}
   {{#ionView}}
   {{#ionContent}}
-  <div class="padding">
-    <div class="list">
-      <div class="item item-divider">
-        <i class="icon ion-ios-people"></i> {{_ "attendees"}} <span class="badge badge-dark">{{events.countAttendees}}</span>
-      </div>
-      {{#transition in="zoomIn" out="bounceOut"}}
-      {{#each events.listAttendees}}
-      <div class="item item-avatar item-button-right animated out">
-        {{> imgDoc}}
-        <h2><a href="{{pathFor 'detailList' _id=_id._str scope='citoyens'}}" class="dark">{{name}}</a></h2>
-        {{#if isFollowsAttendees _id._str}}
-        <button class="button button-positive unfollowperson-link">
-          <i class="icon fa fa-unlink"></i>
-        </button>
-        {{#if onlineAttendees}}
-        <span class="badge badge-balanced">{{_ "online"}}</span>
-        {{else}}
 
-        {{/if}}
-        {{else}}
-        <button class="button button-positive followperson-link">
-          <i class="icon fa fa-link"></i>
-        </button>
-        {{/if}}
-      </div>
-      {{/each}}
-      {{/transition}}
-    </div>
-  </div>
+  {{> Template.dynamic template="listAttendees_view" data=events}}
 
   {{/ionContent}}
   {{/ionView}}
   {{else}}
 {{> loading}}
 {{/if}}
+</template>
+
+
+<template name="listAttendees_search">
+  <label class="item item-input">
+    <i class="icon ion-search placeholder-icon"></i>
+    <input id="search" type="text" placeholder="{{_ "Search..."}}" value="{{search}}">
+  </label>
+</template>
+
+<template name="listAttendees_button_bar">
+  <div class="button-bar button-positive">
+    {{> Button_toggle condition=(equals view 'all') classOff="button button-small button-dark all" classOn="button button-small button-dark all activated" iconOff="icon fa fa-th-list" iconOn="icon fa fa-th-list positive"}}
+
+    {{> Button_toggle condition=(equals view 'citoyens') classOff="button button-small button-person citoyens" classOn="button button-small button-person citoyens activated" iconOff="icon fa fa-user" iconOn="icon fa fa-user positive"}}
+    {{> Button_toggle condition=(equals view 'organizations') classOff="button button-small button-organization organizations" classOn="button button-small button-organization organizations activated" iconOff="icon fa fa-users" iconOn="icon fa fa-users positive"}}
+    {{> Button_toggle condition=(equals view 'invite') classOff="button button-small button-invite invite" classOn="button button-small button-invite invite activated" iconOff="icon fa fa-send" iconOn="icon fa fa-send positive"}}
+
+  </div>
+</template>
+
+<template name="listAttendees_view">
+  <div class="list">
+  {{> listAttendees_search}}
+  {{> listAttendees_button_bar}}
+  {{#if equals view 'all'}}
+  {{> listAttendeesValidate}}
+  {{> listAttendeesOrgaValidate}}
+  {{> listAttendeesIsInviting}}
+  {{else}}
+  {{#if equals view 'citoyens'}}
+  {{> listAttendeesValidate}}
+  {{/if}}
+  {{#if equals view 'organizations'}}
+  {{> listAttendeesOrgaValidate}}
+  {{/if}}
+  {{#if equals view 'invite'}}
+  {{> listAttendeesIsInviting}}
+  {{/if}}
+  {{/if}}
+  </div>
+</template>
+
+<template name="listAttendeesValidate">
+  {{#if countAttendeesValidate search}}
+      <div class="item item-divider">
+        <i class="icon fa fa-user"></i> {{_ "persons"}} <span class="badge badge-dark">{{countAttendeesValidate search}}</span>
+      </div>
+      {{> Directory_list list=(listAttendeesValidate search) isConnect="isFollowersMe" person=true scope="citoyens"}}
+  {{/if}}
+</template>
+
+<template name="listAttendeesOrgaValidate">
+  {{#if countAttendeesOrgaValidate search}}
+      <div class="item item-divider">
+        <i class="icon fa fa-users"></i> {{_ "organizations"}} <span class="badge badge-dark">{{countAttendeesOrgaValidate search}}</span>
+      </div>
+      {{> Directory_list list=(listAttendeesOrgaValidate search) isConnect="isMembers" person=false scope="organizations"}}
+  {{/if}}
+</template>
+
+<template name="listAttendeesIsInviting">
+  {{#if countAttendeesIsInviting search}}
+      <div class="item item-divider">
+        <i class="icon fa fa-send"></i> {{_ "guests"}} <span class="badge badge-dark">{{countAttendeesIsInviting search}}</span>
+      </div>
+      {{> Directory_list list=(listAttendeesIsInviting search) isConnect="isFollowersMe" person=true scope="citoyens"}}
+  {{/if}}
 </template>

@@ -169,6 +169,18 @@ Projects.helpers({
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     return Citoyens.findOne({ _id: new Mongo.ObjectID(bothUserId) }).isFavorites('projects', this._id._str);
   },
+  isScope (scope, scopeId) {
+    return !!((this.links && this.links[scope] && this.links[scope][scopeId] && this.links[scope][scopeId].type && this.isIsInviting(scope, scopeId)));
+  },
+  isIsInviting (scope, scopeId) {
+    return !((this.links && this.links[scope] && this.links[scope][scopeId] && this.links[scope][scopeId].isInviting));
+  },
+  isInviting (scope, scopeId) {
+    return !!((this.links && this.links[scope] && this.links[scope][scopeId] && this.links[scope][scopeId].isInviting));
+  },
+  InvitingUser (scope, scopeId) {
+    return this.links && this.links[scope] && this.links[scope][scopeId];
+  },
   isAdmin (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     if (bothUserId && this.parentId && this.parentType && _.contains(['organizations'], this.parentType)) {
@@ -178,7 +190,7 @@ Projects.helpers({
         return true;
       }
     }
-    return !!((this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].isAdmin && this.isToBeValidated(bothUserId)));
+    return !!((this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].isAdmin && this.isToBeValidated(bothUserId) && this.isIsInviting('contributors', bothUserId)));
   },
   isToBeValidated (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
@@ -240,7 +252,7 @@ Projects.helpers({
   },
   isContributors (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
-    return !!((this.links && this.links.contributors && this.links.contributors[bothUserId] && this.isToBeValidated(bothUserId)));
+    return !!((this.links && this.links.contributors && this.links.contributors[bothUserId] && this.isToBeValidated(bothUserId) && this.isIsInviting('contributors', bothUserId)));
   },
   listContributors (search) {
     if (this.links && this.links.contributors) {
@@ -273,6 +285,10 @@ Projects.helpers({
     const query = {};
     query.organizerId = this._id._str;
     queryOptions.fields.organizerId = 1;
+    queryOptions.fields.parentId = 1;
+    queryOptions.fields.startDate = 1;
+    queryOptions.fields.startDate = 1;
+    queryOptions.fields.geo = 1;
     return Events.find(query, queryOptions);
   },
   countEventsCreator () {

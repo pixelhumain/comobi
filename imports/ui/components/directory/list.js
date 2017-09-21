@@ -14,6 +14,8 @@ Template.Directory_list.onCreated(function () {
       person: { type: Boolean, optional: true },
       notButton: { type: Boolean, optional: true },
       scope: { type: String },
+      scopeId: { type: String, optional: true },
+      scopeCible: { type: String, optional: true },
     }).validate(Template.currentData());
   });
 });

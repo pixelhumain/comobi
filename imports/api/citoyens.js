@@ -8,6 +8,7 @@ import { Router } from 'meteor/iron:router';
 // schemas
 import { baseSchema, blockBaseSchema, geoSchema, preferencesSelect } from './schema.js';
 
+import { Lists } from './lists.js';
 import { News } from './news.js';
 import { Events } from './events.js';
 import { Projects } from './projects.js';
@@ -180,6 +181,60 @@ export const SchemasInviteAttendeesEventRest = new SimpleSchema({
   },
 });
 
+export const SchemasInvitationsRest = new SimpleSchema({
+  childId: {
+    type: String,
+    optional: true,
+  },
+  childName: {
+    type: String,
+  },
+  childEmail: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Email,
+  },
+  childType: {
+    type: String,
+  },
+  organizationType: {
+    type: String,
+    optional: true,
+    autoform: {
+      type: 'select',
+      options () {
+        if (Meteor.isClient) {
+          const listSelect = Lists.findOne({ name: 'organisationTypes' });
+          if (listSelect && listSelect.list) {
+            return _.map(listSelect.list, function (value, key) {
+              return { label: value, value: key };
+            });
+          }
+        }
+        return undefined;
+      },
+    },
+  },
+  parentType: {
+    type: String,
+  },
+  parentId: {
+    type: String,
+  },
+  connectType: {
+    type: String,
+    optional: true,
+  },
+});
+
+/* childId:
+childName:thomas
+childEmail:thomas@kgbo.com
+childType:citoyens
+organizationType:NGO
+parentType:events
+parentId:59c1f2fedd04528a6c695ede
+connectType:member */
+
 
 if (Meteor.isClient) {
   window.Organizations = Organizations;
@@ -220,6 +275,34 @@ Citoyens.helpers({
   },
   isFavorites (scope, scopeId) {
     return !!((this.collections && this.collections.favorites && this.collections.favorites[scope] && this.collections.favorites[scope][scopeId]));
+  },
+  isScope (scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return !!((this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].type && this.isIsInviting(scopeCible, scopeId)));
+  },
+  isIsInviting (scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return !((this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].isInviting));
+  },
+  isInviting (scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return !!((this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].isInviting));
+  },
+  InvitingUser (scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return this.links && this.links[scopeCible] && this.links[scopeCible][scopeId];
   },
   isMe () {
     return this._id._str === Meteor.userId();
@@ -312,6 +395,7 @@ Citoyens.helpers({
     query[`links.contributors.${this._id._str}.toBeValidated`] = { $exists: false }; */
     query[`links.contributors.${this._id._str}`] = { $exists: true };
     query[`links.contributors.${this._id._str}.toBeValidated`] = { $exists: false };
+    query[`links.contributors.${this._id._str}.isInviting`] = { $exists: false };
     return Projects.find(query, queryOptions);
   },
   countProjectsCreator () {
@@ -319,7 +403,7 @@ Citoyens.helpers({
   },
   listPoiCreator () {
     const query = {};
-    query.parentId = this._id._str
+    query.parentId = this._id._str;
     // query[`links.contributors.${this._id._str}.isAdmin`] = true;
     // query[`links.contributors.${this._id._str}.toBeValidated`] = {$exists: false};
     return Poi.find(query);
@@ -332,8 +416,13 @@ Citoyens.helpers({
     // query.organizerId = this._id._str;
     // query[`links.organizer.${this._id._str}`] = {$exist:1};
     queryOptions.fields.organizerId = 1;
+    queryOptions.fields.parentId = 1;
+    queryOptions.fields.startDate = 1;
+    queryOptions.fields.startDate = 1;
+    queryOptions.fields.geo = 1;
     query[`links.attendees.${this._id._str}`] = { $exists: true };
     query[`links.attendees.${this._id._str}.toBeValidated`] = { $exists: false };
+    query[`links.attendees.${this._id._str}.isInviting`] = { $exists: false };
     return Events.find(query, queryOptions);
   },
   countEventsCreator () {
@@ -347,6 +436,7 @@ Citoyens.helpers({
     query[`links.members.${this._id._str}.toBeValidated`] = { $exists: false }; */
     query[`links.members.${this._id._str}`] = { $exists: true };
     query[`links.members.${this._id._str}.toBeValidated`] = { $exists: false };
+    query[`links.members.${this._id._str}.isInviting`] = { $exists: false };
     return Organizations.find(query, queryOptions);
   },
   countOrganizationsCreator () {

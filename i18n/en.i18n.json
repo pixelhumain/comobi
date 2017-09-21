@@ -22,8 +22,6 @@
   "loggin":"Sign in",
   "create an account":"Create an account",
   "name":"Name",
-  "email":"Email",
-  "password":"Password",
   "repassword":"Re-password",
   "postcode":"Postcode",
   "signin":"Sign up",
@@ -170,6 +168,16 @@
       "rooms":"a cooperative space"
     }
   },
+  "on the program of":"on the program of :",
+  "Disconnect":"Disconnect",
+  "Want to remove the link between you and the entity":"Want to remove the link between you and the entity?",
+  "Unfollow":"Unfollow",
+  "no longer follow that person":"no longer follow that person",
+  "no longer follow this entity":"no longer follow this entity",
+  "guests":"Guests",
+  "invited you":"invited you",
+  "Pending":"pending",
+  "searchInvitationPlaceholder":"Search by name, email...",
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] already exists",
@@ -239,6 +247,35 @@
     }
   },
   "schemas":{
+    "invitations":{
+      "childName":{
+          "label": "name",
+          "placeholder": "his name"
+      },
+      "childEmail":{
+          "label": "email",
+          "placeholder": "his email"
+      },
+      "childType":{
+          "label": "Type",
+          "placeholder": "Select one...",
+          "options": {
+            "citoyens": "Citizens",
+            "organizations": "Organizations"
+          }
+      },
+      "organizationType":{
+          "label": "Organizations Type",
+          "placeholder": "Select one...",
+          "options": {
+
+          }
+      },
+      "connectType":{
+          "label": "Add as admin",
+          "placeholder": "Add as admin"
+      }
+    },
     "followrest":{
       "invitedUserName":{
           "label": "name"

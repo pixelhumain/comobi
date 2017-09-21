@@ -10,6 +10,8 @@ import { Events } from '../../../api/events.js';
 import { listSousEventsSubs } from '../../../api/client/subsmanager.js';
 
 import { pageSession } from '../../../api/client/reactive.js';
+
+import '../../components/scope/item.js';
 import './sousevent.html';
 
 Template.listeventSous.onCreated(function () {
@@ -22,7 +24,8 @@ Template.listeventSous.onCreated(function () {
 
   // sub listEvents
   self.autorun(function() {
-    const handle = listSousEventsSubs.subscribe('listeventSous', Router.current().params._id);
+    //const handle = listSousEventsSubs.subscribe('listeventSous', Router.current().params._id);
+    const handle = listSousEventsSubs.subscribe('directoryListEvents', 'events', Router.current().params._id);
     self.ready.set(handle.ready());
   });
 });
@@ -32,7 +35,7 @@ Template.listeventSous.helpers({
     return Events.find({ parentId: Router.current().params._id });
   },
   countEvents () {
-    return Counts.get(`countSous.${Router.current().params._id}`);
+    return Events.find({ parentId: Router.current().params._id }).count();
   },
   dataReady() {
     return Template.instance().ready.get();

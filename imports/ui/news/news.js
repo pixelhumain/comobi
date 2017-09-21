@@ -83,7 +83,7 @@ Template.newsList.helpers({
       const collection = nameToCollection(Router.current().params.scope);
       return collection.findOne({ _id: new Mongo.ObjectID(Router.current().params._id) });
     }
-    //return undefined;
+    // return undefined;
   },
   scopeCardTemplate () {
     return `listCard${Router.current().params.scope}`;
@@ -397,6 +397,7 @@ Template.newsList.events({
     event.preventDefault();
     pageSession.set('selectview', event.currentTarget.id);
   },
+  /*
   'click .saveattendees-link' (event) {
     event.preventDefault();
     const scopeId = pageSession.get('scopeId');
@@ -412,13 +413,15 @@ Template.newsList.events({
     const scopeId = pageSession.get('scopeId');
     const scope = pageSession.get('scope');
     Meteor.call('connectEntity', scopeId, scope);
-  },
+  }
+  ,
   'click .disconnectscope-link' (event) {
     event.preventDefault();
     const scopeId = pageSession.get('scopeId');
     const scope = pageSession.get('scope');
     Meteor.call('disconnectEntity', scopeId, scope);
-  },
+  }
+  ,
   'click .followperson-link' (event) {
     event.preventDefault();
     const scopeId = pageSession.get('scopeId');
@@ -436,7 +439,7 @@ Template.newsList.events({
     const scopeId = pageSession.get('scopeId');
     const scope = pageSession.get('scope');
     Meteor.call('disconnectEntity', scopeId, scope, 'followers');
-  },
+  }, */
   'click .scanner-event'(event) {
     event.preventDefault();
     if (Meteor.isCordova) {
