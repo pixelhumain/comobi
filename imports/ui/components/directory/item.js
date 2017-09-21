@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveDict } from 'meteor/reactive-dict';
+import { TAPi18n } from 'meteor/tap:i18n';
+import { IonPopup } from 'meteor/meteoric:ionic';
 
 // mixin
 import '../mixin/button-toggle.js';
@@ -100,6 +102,23 @@ Template.Directory_item.events({
       if (error) {
         instance.state.set('call', false);
         alert(error.error);
+      } else {
+        instance.state.set('call', false);
+      }
+    });
+  },
+  'click .invitations-link' (event, instance) {
+    event.preventDefault();
+    instance.state.set('call', true);
+    // invitationScope (parentId, parentType, connectType, childType, childEmail, childName, childId)
+    let connectType = null;
+    if (this.connectType) {
+      connectType = this.connectType;
+    }
+    Meteor.call('invitationScope', this.id, this.scope, connectType, this.childType, null, null, this.childId, (error) => {
+      if (error) {
+        instance.state.set('call', false);
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }

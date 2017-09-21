@@ -210,7 +210,7 @@ Template.signin.events({
             return Router.go('/');
           }
           pageSession.set('loading-signup', false);
-          pageSession.set('error', err.error);
+          pageSession.set('error', err.reason);
           return false;
         });
       }

@@ -444,6 +444,23 @@ Meteor.publishComposite('scopeDetail', function(scope, scopeId) {
       },
       {
         find(scopeD) {
+          if (scope === 'events') {
+            if (scopeD.parentId) {
+              return Events.find({
+                _id: new Mongo.ObjectID(scopeD.parentId),
+              }, {
+                fields: {
+                  name: 1,
+                  links: 1,
+                  profilThumbImageUrl: 1,
+                },
+              });
+            }
+          }
+        },
+      },
+      {
+        find(scopeD) {
           if (scopeD && scopeD.address && scopeD.address.postalCode) {
             return Cities.find({
               'postalCodes.postalCode': scopeD.address.postalCode,
@@ -806,7 +823,7 @@ Meteor.publishComposite('directoryListEvents', function(scope, scopeId) {
   check(scopeId, String);
   check(scope, String);
   check(scope, Match.Where(function(name) {
-    return _.contains(['projects', 'organizations', 'citoyens'], name);
+    return _.contains(['projects', 'organizations', 'citoyens', 'events'], name);
   }));
   const collection = nameToCollection(scope);
   if (!this.userId) {
@@ -832,14 +849,14 @@ Meteor.publishComposite('directoryListEvents', function(scope, scopeId) {
       },
       {
         find(scopeD) {
-          if (scope === 'citoyens' || scope === 'organizations' || scope === 'projects') {
+          if (scope === 'citoyens' || scope === 'organizations' || scope === 'projects' || scope === 'events') {
             return scopeD.listEventsCreator();
           }
         },
         children: [
           {
             find(scopeD) {
-              if (scopeD.organizerType && scopeD.organizerId && _.contains(['citoyens', 'organizations', 'projects'], scopeD.organizerType)) {
+              if (scopeD.organizerType && scopeD.organizerId && _.contains(['citoyens', 'organizations', 'projects', 'events'], scopeD.organizerType)) {
                 const collectionType = nameToCollection(scopeD.organizerType);
                 return collectionType.find({
                   _id: new Mongo.ObjectID(scopeD.organizerId),
@@ -1077,20 +1094,62 @@ Meteor.publishComposite('directoryListOrganizations', function(scope, scopeId) {
           if (scope === 'citoyens') {
             return scopeD.listOrganizationsCreator();
           }
-        }, /* ,
-        children: [
-          {
-            find(scopeD) {
-              return scopeD.documents();
-            },
-          },
-        ], */
-      }, /* ,
+        },
+      },
+    ] };
+});
+
+Meteor.publishComposite('directoryListInvitations', function(scope, scopeId) {
+  check(scopeId, String);
+  check(scope, String);
+  check(scope, Match.Where(function(name) {
+    return _.contains(['citoyens'], name);
+  }));
+  const collection = nameToCollection(scope);
+  if (!this.userId) {
+    return null;
+  }
+  return {
+    find() {
+      const options = {};
+      // options['_disableOplog'] = true;
+      if (scope === 'citoyens') {
+        options.fields = { pwd: 0 };
+      }
+      return collection.find({ _id: new Mongo.ObjectID(scopeId) }, options);
+    },
+    children: [
       {
         find(scopeD) {
-          return scopeD.documents();
+          return Lists.find({ name: { $in: ['organisationTypes'] } });
         },
-      }, */
+      },
+      {
+        find(scopeD) {
+          if (scope === 'citoyens') {
+            console.log(JSON.stringify(scopeD.listOrganizationsCreator().fetch()));
+            return scopeD.listOrganizationsCreator();
+          }
+        },
+      },
+      {
+        find(citoyen) {
+          return citoyen.listFollows();
+        },
+        children: [
+          {
+            find(citoyen) {
+              return Meteor.users.find({
+                _id: citoyen._id._str,
+              }, {
+                fields: {
+                  'profile.online': 1,
+                },
+              });
+            },
+          },
+        ],
+      },
     ] };
 });
 
@@ -1125,8 +1184,13 @@ Meteor.publishComposite('listAttendees', function(scopeId) {
     },
     children: [
       {
+        find(scopeD) {
+          return Lists.find({ name: { $in: ['organisationTypes'] } });
+        },
+      },
+      {
         find(event) {
-          return event.listAttendees();
+          return event.listAttendeesValidate();
         },
         children: [
           {
@@ -1146,6 +1210,34 @@ Meteor.publishComposite('listAttendees', function(scopeId) {
             },
           }, */
         ],
+      },
+      {
+        find(event) {
+          return event.listAttendeesIsInviting();
+        },
+        children: [
+          {
+            find(citoyen) {
+              return Meteor.users.find({
+                _id: citoyen._id._str,
+              }, {
+                fields: {
+                  'profile.online': 1,
+                },
+              });
+            },
+          }, /* ,
+          {
+            find(citoyen) {
+              return citoyen.documents();
+            },
+          }, */
+        ],
+      },
+      {
+        find(event) {
+          return event.listAttendeesOrgaValidate();
+        },
       },
     ] };
 });

@@ -51,3 +51,4 @@ import '../imports/ui/contacts/contacts.js';
 import '../imports/ui/notifications/notifications.js';
 import '../imports/ui/qrcode/qrcode.js';
 import '../imports/ui/settings/settings.js';
+import '../imports/ui/invitations/invitations.js';

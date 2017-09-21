@@ -48,7 +48,7 @@
       {{#if dataReady}}
       {{#transition in="zoomIn" out="bounceOut"}}
       {{#each item in events}}
-      {{> scopeItemList item=item count=item.countAttendees}}
+      {{> scopeItemList item=item count=item.countAttendeesSimple}}
        {{else}}
 
       {{/each}}

@@ -22,8 +22,6 @@
   "loggin":"S'identifier",
   "create an account":"Créer un compte",
   "name":"Nom",
-  "email":"Email",
-  "password":"Mot de passe",
   "repassword":"Vérification mot de passe",
   "postcode":"Code postal",
   "signin":"S'inscrire",
@@ -170,6 +168,16 @@
       "rooms":"un espace coopératif"
     }
   },
+  "on the program of":"au programme de:",
+  "Disconnect":"Déconnecter",
+  "Want to remove the link between you and the entity":"Voulez-vous supprimer le lien entre vous et l'entité?",
+  "Unfollow":"Ne plus suivre",
+  "no longer follow that person":"ne plus suivre cette personne ?",
+  "no longer follow this entity":"ne plus suivre cette entité",
+  "guests":"Invités",
+  "invited you":"vous a invité",
+  "Pending":"En attente",
+  "searchInvitationPlaceholder":"Chercher par nom, email...",
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] existe déja",
@@ -239,6 +247,35 @@
     }
   },
   "schemas":{
+    "invitations":{
+      "childName":{
+          "label": "Nom",
+          "placeholder": "son nom"
+      },
+      "childEmail":{
+          "label": "Email",
+          "placeholder": "som email"
+      },
+      "childType":{
+          "label": "Type",
+          "placeholder": "Sélectionnez un...",
+          "options": {
+            "citoyens": "un citoyens",
+            "organizations": "une organisation"
+          }
+      },
+      "organizationType":{
+          "label": "Organizations Type",
+          "placeholder": "Sélectionnez un...",
+          "options": {
+
+          }
+      },
+      "connectType":{
+          "label": "Ajouter en tant qu’admin",
+          "placeholder": "Ajouter en tant qu’admin"
+      }
+    },
     "followrest":{
       "invitedUserName":{
           "label": "Nom"

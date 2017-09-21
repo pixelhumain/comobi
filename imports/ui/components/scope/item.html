@@ -1,6 +1,6 @@
 <template name="scopeItemList">
   {{#with item}}
-<a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in" href="{{pathFor 'detailList' _id=_id._str scope=scopeVar}}">
+<a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in out" href="{{pathFor 'detailList' _id=_id._str scope=scopeVar}}">
   {{#if profilThumbImageUrl}}
     <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
   {{/if}}
@@ -43,7 +43,9 @@
     {{/if}}
   </p>
   {{/if}}
+  {{#if geo}}
   <p><a class="positive" href="{{pathFor 'mapWith' _id=_id._str scope=scopeVar}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a></p>
+  {{/if}}
 </a>
 {{/with}}
 </template>

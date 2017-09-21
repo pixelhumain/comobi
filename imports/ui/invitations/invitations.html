@@ -1,0 +1,115 @@
+<template name="Page_invitations">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "invitations"}}</h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#if dataReady}}
+    {{#ionView}}
+    {{#ionContent}}
+      {{#ionList}}
+      <div class="list list-inset">
+        <label class="item item-input">
+          <i class="icon ion-search placeholder-icon"></i>
+          <input id="search" type="text" placeholder="{{_ "searchInvitationPlaceholder"}}" value="{{filter}}">
+        </label>
+      </div>
+    {{> listInvitationsFollows citoyen=citoyen filter=filter scopeId=scopeId scopeVar=scopeVar }}
+    {{#if scope.isAdmin}}
+    {{> listInvitationsMemberOf citoyen=citoyen filter=filter scopeId=scopeId scopeVar=scopeVar }}
+    {{/if}}
+    {{> searchGlobalInvitations filter=filter isAdmin=scope.isAdmin}}
+    {{/ionList}}
+
+    {{/ionContent}}
+    {{/ionView}}
+    {{else}}
+  {{> loading}}
+  {{/if}}
+</template>
+
+<template name="searchGlobalInvitations">
+
+  <div class="item item-divider">
+    <i class="icon ion-search"></i> {{_ "search"}} <span class="badge badge-dark">{{countSearchGlobal}}</span>
+  </div>
+  {{#each searchGlobal}}
+  {{#if equals typeSig 'city'}}
+  <a href="" class="item item-icon-left">
+  <i {{icone typeSig}}></i> {{name}}
+  </a>
+  {{else}}
+  <div class="item {{#if profilThumbImageUrl}}item-avatar{{else}}{{/if}} item-button-right">
+  {{#if profilThumbImageUrl}}{{> imgDoc}}{{else}}<i {{icone typeSig}}></i>{{/if}} {{name}}
+  {{#if address}}<p>{{address.postalCode}} {{address.addressLocality}}</p>{{/if}}
+  {{> Bouton_card id=scopeId scope=scopeVar childType=typeSig childId=_id isConnect=isAttendees classOff="button-dark invitations-link" classOn="button-dark invitations-link" iconOff="fa fa-send" iconOn="fa fa-hourglass-half" titleOff=""}}
+  </div>
+  {{/if}}
+  {{else}}
+
+
+  {{#if filter}}
+  {{#ionItem}}
+  {{_ "No results were found for your search"}}
+  {{/ionItem}}
+  {{> formInvitations}}
+  {{else}}
+    {{#ionItem}}
+  {{_ "Enter a search term"}}
+    {{/ionItem}}
+  {{/if}}
+
+
+  {{/each}}
+
+</template>
+
+<template name="listInvitationsFollows">
+  {{#if citoyen.countFollows filter}}
+      <div class="item item-divider">
+        <i class="icon ion-ios-people"></i> {{_ "persons"}} <span class="badge badge-dark">{{citoyen.countFollows filter}}</span>
+      </div>
+      {{> Directory_list list=(citoyen.listFollows filter) isConnect="isInviting" person=true scope="citoyens" scopeId=scopeId scopeCible=scopeVar}}
+  {{/if}}
+</template>
+
+<template name="listInvitationsMemberOf">
+  {{#if citoyen.countMemberOf filter ''}}
+      <div class="item item-divider">
+        <i class="icon ion-ios-people"></i> {{_ "organizations"}} <span class="badge badge-dark">{{citoyen.countMemberOf filter ''}}</span>
+      </div>
+      {{> Directory_list list=(citoyen.listMemberOf filter '') isConnect="isInviting" person=false scope="organizations" scopeId=scopeId scopeCible=scopeVar}}
+  {{/if}}
+</template>
+
+<template name="formInvitations">
+    <div class="item item-divider">
+      {{_ "Send invite"}}
+    </div>
+    {{#if error}}
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    {{/if}}
+    {{#autoForm id="formInvitations" schema=SchemasInvitationsRest type="method" meteormethod="invitationScopeForm" template="ionic" class=""}}
+    {{> afQuickField type="select" name='childType'}}
+    {{> afQuickField name='childName' label-type='placeholder' icon="fa fa-user positive"}}
+    {{> afQuickField name='childEmail' label-type='placeholder' icon="fa fa-envelope"}}
+    {{#if equalFieldValue 'childType' 'organizations'}}
+    {{> afQuickField name='organizationType'}}
+    {{/if}}
+    {{> afQuickField type="toggle" name='connectType' value='admin'}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "send"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+</template>

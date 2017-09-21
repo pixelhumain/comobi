@@ -16,14 +16,15 @@ Meteor.startup(() => {
     } else {
       language = languageBrowser();
     }
+    // console.log(language);
     moment.locale(language);
     Helpers.setLanguage(language);
     TAPi18n.setLanguage(language)
       .done(() => {
       })
-      .fail(() => {
+      .fail((errorMessage) => {
         // Handle the situation
-        // console.log(errorMessage);
+        console.log(errorMessage);
       });
   });
   // template helpers
@@ -31,10 +32,11 @@ Meteor.startup(() => {
 });
 
 
-Tracker.autorun(() => {
-  if (Meteor.userId() && Meteor.user() && Meteor.user().profile && !Meteor.user().profile.language) {
+Tracker.autorun((c) => {
+  if (Meteor.userId() && Meteor.user() && Meteor.user().profile) {
     const language = languageBrowser();
     // console.log(language);
     Meteor.call('userLocale', { language });
+    c.stop();
   }
 });

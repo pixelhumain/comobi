@@ -11,7 +11,7 @@ import { ValidEmail, IsValidEmail } from 'meteor/froatsnook:valid-email';
 // collection et schemas
 // import { NotificationHistory } from '../notification_history.js';
 import { ActivityStream } from '../activitystream.js';
-import { Citoyens, BlockCitoyensRest, SchemasCitoyensRest, SchemasFollowRest, SchemasInviteAttendeesEventRest } from '../citoyens.js';
+import { Citoyens, BlockCitoyensRest, SchemasCitoyensRest, SchemasInvitationsRest, SchemasFollowRest, SchemasInviteAttendeesEventRest } from '../citoyens.js';
 import { News, SchemasNewsRest, SchemasNewsRestBase } from '../news.js';
 import { Documents } from '../documents.js';
 import { Cities } from '../cities.js';
@@ -620,9 +620,13 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
-    const collection = nameToCollection(parentType);
-    if (!collection.findOne({ _id: new Mongo.ObjectID(parentId) }).isAdmin(this.userId)) {
-      throw new Meteor.Error('not-authorized');
+    if (_.contains(['events', 'projects', 'organizations', 'citoyens'], parentType) && this.userId === childId && linkOption === 'isInviting') {
+
+    } else {
+      const collection = nameToCollection(parentType);
+      if (!collection.findOne({ _id: new Mongo.ObjectID(parentId) }).isAdmin(this.userId)) {
+        throw new Meteor.Error('not-authorized');
+      }
     }
 
     const doc = {};
@@ -634,6 +638,25 @@ Meteor.methods({
     const retour = apiCommunecter.postPixel('link', 'validate', doc);
     return retour;
   },
+  multiConnectEntity (parentId, parentType, connectType, childs) {
+    check(parentId, String);
+    check(parentType, String);
+    check(connectType, String);
+    check(childs, Array);
+    check(parentType, Match.Where(function(name) {
+      return _.contains(['events', 'projects', 'organizations', 'citoyens'], name);
+    }));
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    const doc = {};
+    doc.parentId = parentId;
+    doc.connectType = connectType;
+    doc.parentType = parentType;
+    doc.childs = childs;
+    const retour = apiCommunecter.postPixel('link', 'multiconnect', doc);
+    return retour;
+  },
   inviteattendeesEvent (doc) {
     check(doc, SchemasInviteAttendeesEventRest);
     check(doc.invitedUserEmail, ValidEmail);
@@ -641,9 +664,9 @@ Meteor.methods({
       throw new Meteor.Error('not-authorized');
     }
 
-    if (!Meteor.call('isEmailValid', doc.invitedUserEmail)) {
+    /* if (!Meteor.call('isEmailValid', doc.invitedUserEmail)) {
       throw new Meteor.Error('Email not valid');
-    }
+    } */
     const insertDoc = {};
     insertDoc.parentId = doc.eventId;
     insertDoc.parentType = 'events';
@@ -653,6 +676,101 @@ Meteor.methods({
     insertDoc.connectType = 'attendees';
     insertDoc.childId = '';
     const retour = apiCommunecter.postPixel('link', 'connect', insertDoc);
+    return retour;
+  },
+  invitationScopeForm (doc) {
+    check(doc, SchemasInvitationsRest);
+    check(doc.childEmail, ValidEmail);
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    /* if (!Meteor.call('isEmailValid', doc.childEmail)) {
+      throw new Meteor.Error('Email not valid');
+    } */
+    const insertDoc = {};
+    insertDoc.parentId = doc.parentId;
+    insertDoc.parentType = doc.parentType;
+    insertDoc.childType = doc.childType;
+    if (doc.parentType === 'organizations') {
+      insertDoc.connectType = (typeof doc.connectType !== 'undefined' && doc.connectType !== null) ? doc.connectType : 'members';
+    } else if (doc.parentType === 'projects') {
+      insertDoc.connectType = (typeof doc.connectType !== 'undefined' && doc.connectType !== null) ? doc.connectType : 'contributors';
+    } else if (doc.parentType === 'citoyens') {
+      insertDoc.connectType = (typeof doc.connectType !== 'undefined' && doc.connectType !== null) ? doc.connectType : 'followers';
+    } else if (doc.parentType === 'events') {
+      insertDoc.connectType = (typeof doc.connectType !== 'undefined' && doc.connectType !== null) ? doc.connectType : 'attendees';
+    }
+    if (doc.childType === 'citoyens') {
+      insertDoc.childEmail = doc.childEmail;
+      insertDoc.childName = doc.childName;
+      insertDoc.childId = '';
+    } else if (doc.childType === 'organizations') {
+      insertDoc.childEmail = doc.childEmail;
+      insertDoc.childName = doc.childName;
+      insertDoc.childId = '';
+    }
+    const retour = apiCommunecter.postPixel('link', 'connect', insertDoc);
+    return retour;
+  },
+  invitationScope (parentId, parentType, connectType, childType, childEmail, childName, childId) {
+    check(parentId, String);
+    check(parentType, String);
+    check(parentType, Match.Where(function(name) {
+      return _.contains(['events', 'projects', 'organizations', 'citoyens'], name);
+    }));
+    check(childType, String);
+    check(childType, Match.Where(function(name) {
+      return _.contains(['organizations', 'citoyens'], name);
+    }));
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const doc = {};
+    doc.parentId = parentId;
+    doc.parentType = parentType;
+    doc.childType = childType;
+    if (parentType === 'organizations') {
+      doc.connectType = (typeof connectType !== 'undefined' && connectType !== null) ? connectType : 'members';
+    } else if (parentType === 'projects') {
+      doc.connectType = (typeof connectType !== 'undefined' && connectType !== null) ? connectType : 'contributors';
+    } else if (parentType === 'citoyens') {
+      doc.connectType = (typeof connectType !== 'undefined' && connectType !== null) ? connectType : 'followers';
+    } else if (parentType === 'events') {
+      doc.connectType = (typeof connectType !== 'undefined' && connectType !== null) ? connectType : 'attendees';
+    }
+    if (childType === 'citoyens') {
+      if (childId) {
+        check(childId, String);
+        doc.childId = childId;
+        const invite = Citoyens.findOne({ _id: new Mongo.ObjectID(childId) });
+        if (invite) {
+          doc.childEmail = invite.email;
+          doc.childName = invite.name;
+        } else {
+          throw new Meteor.Error('Citizen not exist');
+        }
+      } else {
+        check(childName, String);
+        check(childEmail, String);
+        /* if (!Meteor.call('isEmailValid', childEmail)) {
+          throw new Meteor.Error('Email not valid');
+        } */
+        doc.childEmail = childEmail;
+        doc.childName = childName;
+      }
+    } else if (childType === 'organizations') {
+      check(childId, String);
+      const invite = Organizations.findOne({ _id: new Mongo.ObjectID(childId) });
+      if (invite) {
+        doc.childName = invite.name;
+      } else {
+        throw new Meteor.Error('Citizen not exist');
+      }
+      doc.childId = childId;
+    }
+    const retour = apiCommunecter.postPixel('link', 'connect', doc);
     return retour;
   },
   checkUsername (username) {
@@ -685,9 +803,8 @@ Meteor.methods({
 
     if (user && user._id) {
       return user;
-    } else{
-      throw new Meteor.Error('not user');
     }
+    throw new Meteor.Error('not user');
   },
   searchTagautocomplete (query, options) {
     check(query, String);
@@ -708,12 +825,11 @@ Meteor.methods({
     return Lists.findOne({ name: 'tags' }).list;
   },
   searchMemberautocomplete (search) {
-    check(search, String);
+    check(search, Object);
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
-    const query = { search };
-    const retour = apiCommunecter.postPixelMethod('search', 'searchmemberautocomplete', query);
+    const retour = apiCommunecter.postPixelMethod('search', 'searchmemberautocomplete', search);
     // console.log(retour);
     return retour.data;
   },

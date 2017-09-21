@@ -18,7 +18,7 @@ import { SchemasOrganizationsRest, BlockOrganizationsRest } from '../../api/orga
 import { SchemasProjectsRest, BlockProjectsRest } from '../../api/projects.js';
 import { SchemasPoiRest, BlockPoiRest } from '../../api/poi.js';
 import { SchemasClassifiedRest } from '../../api/classified.js';
-import { SchemasFollowRest, SchemasInviteAttendeesEventRest, SchemasCitoyensRest, BlockCitoyensRest } from '../../api/citoyens.js';
+import { SchemasFollowRest, SchemasInviteAttendeesEventRest, SchemasInvitationsRest, SchemasCitoyensRest, BlockCitoyensRest } from '../../api/citoyens.js';
 import { SchemasNewsRest, SchemasNewsRestBase } from '../../api/news.js';
 import { SchemasCommentsRest, SchemasCommentsEditRest } from '../../api/comments.js';
 import { SchemasShareRest } from '../../api/schema.js';
@@ -133,6 +133,7 @@ Meteor.startup(function () {
   SchemasCommentsRest.i18n('schemas.comments');
   SchemasCommentsEditRest.i18n('schemas.comments');
   SchemasCitoyensRest.i18n('schemas.citoyens');
+  SchemasInvitationsRest.i18n('schemas.invitations');
   BlockCitoyensRest.info.i18n('schemas.global');
   BlockCitoyensRest.network.i18n('schemas.global');
   BlockCitoyensRest.descriptions.i18n('schemas.global');
@@ -228,6 +229,10 @@ Meteor.startup(function () {
     return AutoForm.getFieldValue(fieldName) || false;
   });
 
+  Template.registerHelper('equalFieldValue', function (fieldName,value) {
+    return AutoForm.getFieldValue(fieldName) === value;
+  });
+
   Template.registerHelper('urlImageCommunecter', function () {
     return Meteor.settings.public.urlimage;
   });
@@ -243,6 +248,7 @@ Meteor.startup(function () {
 
   Template.registerHelper('SchemasFollowRest', SchemasFollowRest);
   Template.registerHelper('SchemasInviteAttendeesEventRest', SchemasInviteAttendeesEventRest);
+  Template.registerHelper('SchemasInvitationsRest', SchemasInvitationsRest);
   Template.registerHelper('SchemasNewsRest', SchemasNewsRest);
   Template.registerHelper('SchemasEventsRest', SchemasEventsRest);
   Template.registerHelper('SchemasOrganizationsRest', SchemasOrganizationsRest);

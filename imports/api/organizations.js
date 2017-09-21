@@ -146,9 +146,21 @@ Organizations.helpers({
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     return Citoyens.findOne({ _id: new Mongo.ObjectID(bothUserId) }).isFavorites('organizations', this._id._str);
   },
+  isScope (scope, scopeId) {
+    return !!((this.links && this.links[scope] && this.links[scope][scopeId] && this.links[scope][scopeId].type && this.isIsInviting(scope, scopeId)));
+  },
+  isIsInviting (scope, scopeId) {
+    return !((this.links && this.links[scope] && this.links[scope][scopeId] && this.links[scope][scopeId].isInviting));
+  },
+  isInviting (scope, scopeId) {
+    return !!((this.links && this.links[scope] && this.links[scope][scopeId] && this.links[scope][scopeId].isInviting));
+  },
+  InvitingUser (scope, scopeId) {
+    return this.links && this.links[scope] && this.links[scope][scopeId];
+  },
   isAdmin (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
-    return !!((this.links && this.links.members && this.links.members[bothUserId] && this.links.members[bothUserId].isAdmin && this.isToBeValidated(bothUserId)));
+    return !!((this.links && this.links.members && this.links.members[bothUserId] && this.links.members[bothUserId].isAdmin && this.isToBeValidated(bothUserId) && this.isIsInviting('members', bothUserId)));
   },
   isToBeValidated (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
@@ -210,7 +222,7 @@ Organizations.helpers({
   },
   isMembers (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
-    return !!((this.links && this.links.members && this.links.members[bothUserId] && this.isToBeValidated(bothUserId)));
+    return !!((this.links && this.links.members && this.links.members[bothUserId] && this.isToBeValidated(bothUserId) && this.isIsInviting('members', bothUserId)));
   },
   listEvents (search) {
     if (this.links && this.links.events) {
@@ -282,6 +294,10 @@ Organizations.helpers({
     const query = {};
     query.organizerId = this._id._str;
     queryOptions.fields.organizerId = 1;
+    queryOptions.fields.parentId = 1;
+    queryOptions.fields.startDate = 1;
+    queryOptions.fields.startDate = 1;
+    queryOptions.fields.geo = 1;
     return Events.find(query, queryOptions);
   },
   countEventsCreator () {

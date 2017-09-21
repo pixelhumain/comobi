@@ -7,6 +7,9 @@ import { Router } from 'meteor/iron:router';
 import { Citoyens } from '../../../api/citoyens.js';
 import { Events } from '../../../api/events.js';
 
+import { listEventsSubs } from '../../../api/client/subsmanager.js';
+import { pageDirectory } from '../../../api/client/reactive.js';
+
 import './attendees.html';
 
 Template.listAttendees.onCreated(function () {
@@ -14,7 +17,7 @@ Template.listAttendees.onCreated(function () {
   self.ready = new ReactiveVar();
 
   self.autorun(function() {
-    const handle = Meteor.subscribe('listAttendees', Router.current().params._id);
+    const handle = listEventsSubs.subscribe('listAttendees', Router.current().params._id);
     self.ready.set(handle.ready());
   });
 });
@@ -22,10 +25,6 @@ Template.listAttendees.onCreated(function () {
 Template.listAttendees.helpers({
   events () {
     return Events.findOne({ _id: new Mongo.ObjectID(Router.current().params._id) });
-  },
-  onlineAttendees () {
-    const user = Meteor.users.findOne({ _id: this._id._str });
-    return user && user.profile && user.profile.online;
   },
   isFollowsAttendees (followId) {
     if (Meteor.userId() === followId) {
@@ -39,13 +38,80 @@ Template.listAttendees.helpers({
   },
 });
 
-Template.listAttendees.events({
-  'click .followperson-link' (event) {
-    event.preventDefault();
-    Meteor.call('followEntity', this._id._str, 'citoyens');
+Template.listAttendees_view.onCreated(function() {
+  pageDirectory.set('search', null);
+  pageDirectory.set('view', 'all');
+  pageDirectory.set('selectorga', null);
+});
+
+Template.listAttendees_view.helpers({
+  search () {
+    return pageDirectory.get('search');
   },
-  'click .unfollowperson-link' (event) {
+  view () {
+    return pageDirectory.get('view');
+  },
+});
+
+Template.listAttendees_search.helpers({
+  search () {
+    return pageDirectory.get('search');
+  },
+});
+
+Template.listAttendees_search.events({
+  'keyup #search, change #search': _.throttle((event) => {
+    if (event.currentTarget.value.length > 0) {
+      // console.log(event.currentTarget.value);
+      pageDirectory.set('search', event.currentTarget.value);
+    } else {
+      pageDirectory.set('search', null);
+    }
+  }, 500),
+});
+
+Template.listAttendees_button_bar.helpers({
+  search () {
+    return pageDirectory.get('search');
+  },
+  view () {
+    return pageDirectory.get('view');
+  },
+});
+
+Template.listAttendees_button_bar.events({
+  'click .all' (event) {
     event.preventDefault();
-    Meteor.call('disconnectEntity', this._id._str, 'citoyens');
+    pageDirectory.set('view', 'all');
+  },
+  'click .citoyens' (event) {
+    event.preventDefault();
+    pageDirectory.set('view', 'citoyens');
+  },
+  'click .organizations' (event) {
+    event.preventDefault();
+    pageDirectory.set('view', 'organizations');
+  },
+  'click .invite' (event) {
+    event.preventDefault();
+    pageDirectory.set('view', 'invite');
+  },
+});
+
+Template.listAttendeesValidate.helpers({
+  search () {
+    return pageDirectory.get('search');
+  },
+});
+
+Template.listAttendeesOrgaValidate.helpers({
+  search () {
+    return pageDirectory.get('search');
+  },
+});
+
+Template.listAttendeesIsInviting.helpers({
+  search () {
+    return pageDirectory.get('search');
   },
 });

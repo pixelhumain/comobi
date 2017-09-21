@@ -19,7 +19,7 @@ import { Poi } from './poi.js';
 import { News } from './news.js';
 import { Documents } from './documents.js';
 import { ActivityStream } from './activitystream.js';
-import { queryLink, queryOptions, nameToCollection } from './helpers.js';
+import { queryLink, queryLinkIsInviting, queryLinkAttendees, arrayLinkAttendees, queryOptions, nameToCollection } from './helpers.js';
 
 export const Events = new Meteor.Collection('events', { idGeneration: 'MONGO' });
 
@@ -204,7 +204,49 @@ Events.helpers({
         return true;
       }
     }
-    return !!((this.links && this.links.attendees && this.links.attendees[bothUserId] && this.links.attendees[bothUserId].isAdmin));
+    return !!((this.links && this.links.attendees && this.links.attendees[bothUserId] && this.links.attendees[bothUserId].isAdmin && this.isIsInviting('attendees', bothUserId)));
+  },
+  isScope (scope, scopeId) {
+    return !!((this.links && this.links[scope] && this.links[scope][scopeId] && this.links[scope][scopeId].type && this.isIsInviting(scope, scopeId)));
+  },
+  isIsInviting (scope, scopeId) {
+    return !((this.links && this.links[scope] && this.links[scope][scopeId] && this.links[scope][scopeId].isInviting));
+  },
+  isInviting (scope, scopeId) {
+    return !!((this.links && this.links[scope] && this.links[scope][scopeId] && this.links[scope][scopeId].isInviting));
+  },
+  InvitingUser (scope, scopeId) {
+    return this.links && this.links[scope] && this.links[scope][scopeId];
+  },
+  listAttendeesIsInviting (search) {
+    if (this.links && this.links.attendees) {
+      const query = queryLinkIsInviting(this.links.attendees, search);
+      return Citoyens.find(query, queryOptions);
+    }
+    return false;
+  },
+  countAttendeesIsInviting (search) {
+    return this.listAttendeesIsInviting(search) && this.listAttendeesIsInviting(search).count();
+  },
+  listAttendeesValidate (search) {
+    if (this.links && this.links.attendees) {
+      const query = queryLinkAttendees(this.links.attendees, search, 'citoyens');
+      return Citoyens.find(query, queryOptions);
+    }
+    return false;
+  },
+  countAttendeesValidate (search) {
+    return this.listAttendeesValidate(search) && this.listAttendeesValidate(search).count();
+  },
+  listAttendeesOrgaValidate (search) {
+    if (this.links && this.links.attendees) {
+      const query = queryLinkAttendees(this.links.attendees, search, 'organizations');
+      return Organizations.find(query, queryOptions);
+    }
+    return false;
+  },
+  countAttendeesOrgaValidate (search) {
+    return this.listAttendeesOrgaValidate(search) && this.listAttendeesOrgaValidate(search).count();
   },
   scopeVar () {
     return 'events';
@@ -217,7 +259,8 @@ Events.helpers({
   },
   isAttendees (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
-    return !!((this.links && this.links.attendees && this.links.attendees[bothUserId]));
+    //return !!((this.links && this.links.attendees && this.links.attendees[bothUserId]));
+    return !!((this.links && this.links.attendees && this.links.attendees[bothUserId] && this.isIsInviting('attendees', bothUserId)))
   },
   listAttendees (search) {
     if (this.links && this.links.attendees) {
@@ -226,8 +269,11 @@ Events.helpers({
     }
     return false;
   },
-  countAttendees () {
-    return this.links && this.links.attendees && _.size(this.links.attendees);
+  countAttendees (search) {
+    return this.listAttendees(search) && this.listAttendees(search).count();
+  },
+  countAttendeesSimple () {
+    return this.links && this.links.attendees && arrayLinkAttendees(this.links.attendees, 'citoyens').length + arrayLinkAttendees(this.links.attendees, 'organizations').length;
   },
   listNotifications (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
@@ -250,6 +296,28 @@ Events.helpers({
   },
   listEventTypes () {
     return Lists.find({ name: 'eventTypes' });
+  },
+  listEventsCreator () {
+    const query = {};
+    //query.organizerId = this._id._str;
+    queryOptions.fields.organizerId = 1;
+    queryOptions.fields.parentId = 1;
+    queryOptions.fields.startDate = 1;
+    queryOptions.fields.startDate = 1;
+    queryOptions.fields.geo = 1;
+    query.parentId = this._id._str;
+    return Events.find(query, queryOptions);
+  },
+  countEventsCreator () {
+    // return this.links && this.links.events && _.size(this.links.events);
+    return this.listEventsCreator() && this.listEventsCreator().count();
+  },
+  eventsParent () {
+    const query = {};
+    queryOptions.fields.organizerId = 1;
+    queryOptions.fields.parentId = 1;
+    query._id = new Mongo.ObjectID(this.parentId);
+    return Events.findOne(query, queryOptions);
   },
   listPoiCreator () {
     const query = {};
