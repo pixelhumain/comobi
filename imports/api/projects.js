@@ -200,6 +200,10 @@ Projects.helpers({
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     return !!((this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].toBeValidated));
   },
+  toBeisInviting (userId) {
+    const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+    return !!((this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].isInviting));
+  },
   listMembersToBeValidated () {
     if (this.links && this.links.contributors) {
       const query = queryLinkToBeValidated(this.links.contributors);

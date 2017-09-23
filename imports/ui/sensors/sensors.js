@@ -36,7 +36,7 @@ Template.sensors.events({
     event.preventDefault();
     const sensor = $(event.currentTarget).data('sensor');
     // sensorApi.disables();
-    sensorApi.setWatch(null);
+    sensorApi.setWatch(true);
     sensorApi.disable(sensor);
   },
 });
@@ -85,10 +85,10 @@ Template.sensors.helpers({
     return `x:${array[0]}<br>y:${array[1]}<br>z:${array[2]}`;
   },
   getStepCounter() {
-    return sensorApi.get('STEP_COUNTER');
+    return sensorApi.getStepCounter().toString();
   },
-  getTypeSensor() {
-    return sensorApi.get('typeSensor');
+  getTypeSensor(typeSensor) {
+    return sensorApi.getTypeSensorStart(typeSensor);
   },
   dataReady() {
     return Template.instance().ready.get();

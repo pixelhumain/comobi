@@ -28,13 +28,7 @@ Template.Directory_item.helpers({
   },
   classes () {
     const classes = ['item item-avatar animated out'];
-
-    if (this.toBeValidated && this.isConnect !== 'isFavorites') {
-      classes.push('item-icon-right');
-    } else {
-      classes.push('item-button-right');
-    }
-
+    classes.push('item-button-right');
     if (this.class) {
       const customClasses = this.class.split(' ');
       customClasses.forEach(function (customClass) {

@@ -248,6 +248,10 @@ Events.helpers({
   countAttendeesOrgaValidate (search) {
     return this.listAttendeesOrgaValidate(search) && this.listAttendeesOrgaValidate(search).count();
   },
+  toBeisInviting (userId) {
+    const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+    return !!((this.links && this.links.attendees && this.links.attendees[bothUserId] && this.links.attendees[bothUserId].isInviting));
+  },
   scopeVar () {
     return 'events';
   },

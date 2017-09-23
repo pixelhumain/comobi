@@ -148,7 +148,7 @@ const geofenceApi = {
         }
       }); */
   },
-  async  removeAll() {
+  async removeAll() {
     try {
       const removeAll = await this.geofence.removeAll();
       if (removeAll) {

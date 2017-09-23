@@ -19,7 +19,13 @@
     {{else}}
 
     {{#if toBeValidated}}
-    <i class="icon fa fa-hourglass-half"></i>
+    <button class="button button-icon disabled">
+      <i class="icon fa fa-hourglass-half"></i>
+    </button>
+    {{else if toBeisInviting}}
+    <button class="button button-icon disabled">
+      <i class="icon fa fa-hourglass-half"></i>
+    </button>
     {{else}}
 
     {{#if equals person true}}

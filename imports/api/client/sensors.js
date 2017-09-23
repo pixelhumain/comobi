@@ -14,6 +14,14 @@ const sensorApi = {
   },
   disable(typeSensor) {
     SessionSensors.set('typeSensor', null);
+    const typeSensorStart = {};
+    typeSensorStart[typeSensor] = false;
+    SessionSensors.set('typeSensorStart', typeSensorStart);
+    if (typeSensor === 'STEP_COUNTER') {
+      if (SessionSensors.get('stepCounterStart')) {
+        SessionSensors.set('stepCounterStart', null);
+      }
+    }
     sensors.removeSensorListener(typeSensor, 'NORMAL', this.listener, (error) => {
       if (error) console.error('Could not stop listening to sensor');
     });
@@ -21,18 +29,28 @@ const sensorApi = {
   listener(event) {
     // console.log(event);
     if (event && event.values) {
-      console.log(event.values);
+      // console.log(event.values);
       // SessionSensors.set(SessionSensors.get('typeSensor'), `${event.values.join(',')}`);
+      if (event.sensor === 'STEP_COUNTER') {
+        if (!SessionSensors.get('stepCounterStart')) {
+          SessionSensors.set('stepCounterStart', event.values[0]);
+        }
+      }
       SessionSensors.set(event.sensor, `${event.values.join(',')}`);
     }
   },
   getState(typeSensor) {
     SessionSensors.set('typeSensor', typeSensor);
+    const typeSensorStart = {};
+    typeSensorStart[typeSensor] = true;
+    SessionSensors.set('typeSensorStart', typeSensorStart);
     sensors.addSensorListener(typeSensor, 'NORMAL', this.listener, (error) => {
       if (error) {
         console.log(error.message || error);
         console.error('Could not listen to sensor');
         SessionSensors.set(typeSensor, 'na');
+        typeSensorStart[typeSensor] = false;
+        SessionSensors.set('typeSensorStart', typeSensorStart);
       }
     });
   },
@@ -41,6 +59,22 @@ const sensorApi = {
   },
   setWatch(value) {
     return SessionSensors.set('watch', value);
+  },
+  setStepCounterStart(value) {
+    return SessionSensors.set('stepCounterStart', value);
+  },
+  getStepCounterStart() {
+    return SessionSensors.get('stepCounterStart');
+  },
+  getStepCounter() {
+    const stepCounterStart = this.getStepCounterStart();
+    const stepCounterStartInt = parseInt(stepCounterStart);
+    const stepCounter = this.get('STEP_COUNTER');
+    const stepCounterInt = parseInt(stepCounter);
+    return stepCounterInt - stepCounterStartInt;
+  },
+  getTypeSensorStart(typeSensor) {
+    return SessionSensors.get('typeSensorStart') && SessionSensors.get('typeSensorStart')[typeSensor];
   },
   setEnvironmental(environmental) {
     SessionSensors.set('environmental', environmental);

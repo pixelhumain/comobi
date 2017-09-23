@@ -170,6 +170,10 @@ Organizations.helpers({
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     return !!((this.links && this.links.members && this.links.members[bothUserId] && this.links.members[bothUserId].toBeValidated));
   },
+  toBeisInviting (userId) {
+    const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+    return !!((this.links && this.links.members && this.links.members[bothUserId] && this.links.members[bothUserId].isInviting));
+  },
   listMembersToBeValidated () {
     if (this.links && this.links.members) {
       const query = queryLinkToBeValidated(this.links.members);
