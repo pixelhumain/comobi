@@ -1638,6 +1638,17 @@ indexMax:20 */
 
     const insee = Cities.findOne({ insee: user.city });
 
+console.log({
+  name: user.name,
+  email: user.email,
+  username: user.username,
+  pwd: user.password,
+  cp: user.codepostal,
+  city: insee.insee,
+  geoPosLatitude: insee.geo.latitude,
+  geoPosLongitude: insee.geo.longitude,
+});
+
     try {
       const response = HTTP.call('POST', `${Meteor.settings.endpoint}/${Meteor.settings.module}/person/register`, {
         params: {
@@ -1645,7 +1656,7 @@ indexMax:20 */
           email: user.email,
           username: user.username,
           pwd: user.password,
-          cp: insee.postalCodes[0].postalCode,
+          cp: user.codepostal,
           city: insee.insee,
           geoPosLatitude: insee.geo.latitude,
           geoPosLongitude: insee.geo.longitude,

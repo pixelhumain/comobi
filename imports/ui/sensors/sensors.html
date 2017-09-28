@@ -38,7 +38,7 @@
 {{/if}}
 {{#if getProximity}}
 <div class='item item-icon-right item-button-left'>
-  {{#if equals getTypeSensor 'PROXIMITY'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="PROXIMITY"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="PROXIMITY"><i class="icon fa fa-play"></i></button>{{/if}} {{_ 'proximity'}} <span class="badge badge-positive">{{getProximity}} cm</span> </div>
+  {{#if getTypeSensor 'PROXIMITY'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="PROXIMITY"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="PROXIMITY"><i class="icon fa fa-play"></i></button>{{/if}} {{_ 'proximity'}} <span class="badge badge-positive">{{getProximity}} cm</span> </div>
 {{/if}}
 {{#if getTemperatureIn}}
 <div class='item item-icon-right item-button-left'>

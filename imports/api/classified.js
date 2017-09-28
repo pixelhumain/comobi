@@ -15,7 +15,7 @@ import { Projects } from './projects.js';
 
 import { nameToCollection } from './helpers.js';
 
-export const Classified = new Meteor.Collection('classified', { idGeneration: 'MONGO' });
+export const Classified = new Mongo.Collection('classified', { idGeneration: 'MONGO' });
 
 // SimpleSchema.debug = true;
 

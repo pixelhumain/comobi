@@ -20,7 +20,7 @@ import { ActivityStream } from './activitystream.js';
 import { queryLink, queryOptions, nameToCollection } from './helpers.js';
 
 // Person
-export const Citoyens = new Meteor.Collection('citoyens', { idGeneration: 'MONGO' });
+export const Citoyens = new Mongo.Collection('citoyens', { idGeneration: 'MONGO' });
 
 const baseSchemaCitoyens = baseSchema.pick(['name', 'shortDescription', 'description', 'url', 'tags', 'tags.$']);
 

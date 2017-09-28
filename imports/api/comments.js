@@ -6,7 +6,7 @@ import { moment } from 'meteor/momentjs:moment';
 // collection
 import { Citoyens } from './citoyens.js';
 
-export const Comments = new Meteor.Collection('comments', { idGeneration: 'MONGO' });
+export const Comments = new Mongo.Collection('comments', { idGeneration: 'MONGO' });
 
 if (Meteor.isServer) {
 // Index

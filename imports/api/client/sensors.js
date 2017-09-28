@@ -8,13 +8,14 @@ const sensorApi = {
   // allSensors: [...this.Motion, ...this.Environmental, ...this.Position],
   config() {
     this.setWatch(null);
+    const self = this;
   },
   allSensors() {
     return [...this.Motion, ...this.Environmental, ...this.Position];
   },
   disable(typeSensor) {
     SessionSensors.set('typeSensor', null);
-    const typeSensorStart = {};
+    let typeSensorStart = SessionSensors.get('typeSensorStart') ? SessionSensors.get('typeSensorStart') : {};
     typeSensorStart[typeSensor] = false;
     SessionSensors.set('typeSensorStart', typeSensorStart);
     if (typeSensor === 'STEP_COUNTER') {
@@ -28,22 +29,19 @@ const sensorApi = {
   },
   listener(event) {
     // console.log(event);
-    if (event && event.values) {
-      // console.log(event.values);
-      // SessionSensors.set(SessionSensors.get('typeSensor'), `${event.values.join(',')}`);
       if (event.sensor === 'STEP_COUNTER') {
         if (!SessionSensors.get('stepCounterStart')) {
           SessionSensors.set('stepCounterStart', event.values[0]);
         }
       }
       SessionSensors.set(event.sensor, `${event.values.join(',')}`);
-    }
   },
   getState(typeSensor) {
-    SessionSensors.set('typeSensor', typeSensor);
-    const typeSensorStart = {};
+    let typeSensorStart = SessionSensors.get('typeSensorStart') ? SessionSensors.get('typeSensorStart') : {};
     typeSensorStart[typeSensor] = true;
+    console.log(JSON.stringify(typeSensorStart));
     SessionSensors.set('typeSensorStart', typeSensorStart);
+    SessionSensors.set('typeSensor', typeSensor);
     sensors.addSensorListener(typeSensor, 'NORMAL', this.listener, (error) => {
       if (error) {
         console.log(error.message || error);
@@ -86,10 +84,11 @@ const sensorApi = {
     const self = this;
     const allSensors = this.allSensors();
     allSensors.map((typeSensor) => {
-      SessionSensors.set(typeSensor, null);
+      // SessionSensors.set(typeSensor, null);
+      console.log(typeSensor);
       self.disable(typeSensor);
     });
-    this.setWatch(null);
+    self.setWatch(null);
   },
 };
 

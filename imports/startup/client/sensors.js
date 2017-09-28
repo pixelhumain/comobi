@@ -7,12 +7,14 @@ Meteor.startup(() => {
   if (Meteor.isCordova && !Meteor.isDesktop) {
     if (device.platform === 'Android') {
       sensorApi.config();
-      sensorApi.disables();
+      //sensorApi.disables();
 
-      Tracker.autorun((c) => {
+      /*Tracker.autorun((c) => {
         if (Meteor.userId() && Meteor.user()) {
           if (sensorApi.get('watch') === null) {
             const AMBIENT_TEMPERATURE = sensorApi.get('AMBIENT_TEMPERATURE');
+            console.log('AMBIENT_TEMPERATURE watch');
+            console.log(AMBIENT_TEMPERATURE);
             if (AMBIENT_TEMPERATURE) {
               sensorApi.disable('AMBIENT_TEMPERATURE');
               const RELATIVE_HUMIDITY = sensorApi.get('RELATIVE_HUMIDITY');
@@ -95,7 +97,7 @@ Meteor.startup(() => {
             }
           }
         }
-      });
+      });*/
     }
   }
 });

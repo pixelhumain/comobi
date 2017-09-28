@@ -7,6 +7,7 @@ import { DeepLink } from 'meteor/communecter:deep-link';
 import { TAPi18n } from 'meteor/tap:i18n';
 import { _ } from 'meteor/underscore';
 import { $ } from 'meteor/jquery';
+import { HTTP } from 'meteor/http';
 
 // collections
 import { ActivityStream } from '../../api/activitystream.js';
@@ -54,6 +55,18 @@ Meteor.startup(function () {
               Router.go('detailList', { scope, _id });
             }
           }
+        }
+      } else {
+        const regex = /\/co2\/person\/activate\/user\/([^/]*)\/validationKey\/([a-z0-9]*)/g;
+        const m = regex.exec(intent);
+        if (m && m[0] && m[1] && m[2]) {
+          HTTP.get(m[0], {}, (error, response) => {
+            if (error) {
+
+            } else {
+              return Router.go('/login');
+            }
+          });
         }
       }
     });
@@ -229,7 +242,7 @@ Meteor.startup(function () {
     return AutoForm.getFieldValue(fieldName) || false;
   });
 
-  Template.registerHelper('equalFieldValue', function (fieldName,value) {
+  Template.registerHelper('equalFieldValue', function (fieldName, value) {
     return AutoForm.getFieldValue(fieldName) === value;
   });
 

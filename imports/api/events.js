@@ -21,7 +21,7 @@ import { Documents } from './documents.js';
 import { ActivityStream } from './activitystream.js';
 import { queryLink, queryLinkIsInviting, queryLinkAttendees, arrayLinkAttendees, queryOptions, nameToCollection } from './helpers.js';
 
-export const Events = new Meteor.Collection('events', { idGeneration: 'MONGO' });
+export const Events = new Mongo.Collection('events', { idGeneration: 'MONGO' });
 
 
 export const SchemasEventsRest = new SimpleSchema([baseSchema, geoSchema, {

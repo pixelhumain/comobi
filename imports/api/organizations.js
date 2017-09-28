@@ -18,7 +18,7 @@ import { Poi } from './poi.js';
 import { ActivityStream } from './activitystream.js';
 import { queryLink, queryLinkType, queryLinkToBeValidated, queryOptions } from './helpers.js';
 
-export const Organizations = new Meteor.Collection('organizations', { idGeneration: 'MONGO' });
+export const Organizations = new Mongo.Collection('organizations', { idGeneration: 'MONGO' });
 
 // SimpleSchema.debug = true;
 

@@ -14,7 +14,7 @@ import { Events } from './events.js';
 import { Projects } from './projects.js';
 import { nameToCollection } from './helpers.js';
 
-export const Poi = new Meteor.Collection('poi', { idGeneration: 'MONGO' });
+export const Poi = new Mongo.Collection('poi', { idGeneration: 'MONGO' });
 
 // SimpleSchema.debug = true;
 

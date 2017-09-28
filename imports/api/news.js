@@ -17,7 +17,7 @@ import { Rooms } from './rooms.js';
 import { Proposals } from './proposals.js';
 import { nameToCollection } from './helpers.js';
 
-export const News = new Meteor.Collection('news', { idGeneration: 'MONGO' });
+export const News = new Mongo.Collection('news', { idGeneration: 'MONGO' });
 
 if (Meteor.isServer) {
 // Index
