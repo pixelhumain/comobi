@@ -76,6 +76,18 @@ Template.Directory_item.events({
       }
     });
   },
+  'click .connectscopeadmin-link-js' (event, instance) {
+    event.preventDefault();
+    instance.state.set('call', true);
+    Meteor.call('connectEntity', this.id, this.scope, this.childId, 'admin', (error) => {
+      if (error) {
+        instance.state.set('call', false);
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+      } else {
+        instance.state.set('call', false);
+      }
+    });
+  },
   'click .unfollowperson-link-js' (event, instance) {
     event.preventDefault();
     const self = this;

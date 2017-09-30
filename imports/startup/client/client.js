@@ -22,7 +22,7 @@ import { SchemasClassifiedRest } from '../../api/classified.js';
 import { SchemasFollowRest, SchemasInviteAttendeesEventRest, SchemasInvitationsRest, SchemasCitoyensRest, BlockCitoyensRest } from '../../api/citoyens.js';
 import { SchemasNewsRest, SchemasNewsRestBase } from '../../api/news.js';
 import { SchemasCommentsRest, SchemasCommentsEditRest } from '../../api/comments.js';
-import { SchemasShareRest } from '../../api/schema.js';
+import { SchemasShareRest, SchemasRolesRest } from '../../api/schema.js';
 
 
 Meteor.startup(function () {
@@ -138,6 +138,7 @@ Meteor.startup(function () {
   SchemasFollowRest.i18n('schemas.followrest');
   SchemasInviteAttendeesEventRest.i18n('schemas.followrest');
   SchemasShareRest.i18n('schemas.sharerest');
+  SchemasRolesRest.i18n('schemas.rolesrest');
   SchemasNewsRest.i18n('schemas.news.global');
   SchemasNewsRestBase.citoyens.i18n('schemas.news.citoyens');
   SchemasNewsRestBase.projects.i18n('schemas.news.projects');
@@ -272,4 +273,5 @@ Meteor.startup(function () {
   Template.registerHelper('SchemasCommentsEditRest', SchemasCommentsEditRest);
   Template.registerHelper('SchemasCitoyensRest', SchemasCitoyensRest);
   Template.registerHelper('SchemasShareRest', SchemasShareRest);
+  Template.registerHelper('SchemasRolesRest', SchemasRolesRest);
 });

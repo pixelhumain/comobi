@@ -273,6 +273,13 @@ Citoyens.helpers({
       contentKey: 'profil',
     }, { sort: { created: -1 }, limit: 1 });
   },
+  roles (scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].roles && this.links[scopeCible][scopeId].roles.join(',');
+  },
   isFavorites (scope, scopeId) {
     return !!((this.collections && this.collections.favorites && this.collections.favorites[scope] && this.collections.favorites[scope][scopeId]));
   },

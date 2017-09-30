@@ -16,6 +16,7 @@ Template.Directory_list.onCreated(function () {
       scope: { type: String },
       scopeId: { type: String, optional: true },
       scopeCible: { type: String, optional: true },
+      isScopeAdmin: { type: Boolean, optional: true },
     }).validate(Template.currentData());
   });
 });

@@ -345,6 +345,11 @@ Router.map(function() {
     loadingTemplate: 'loading',
   });
 
+  this.route('rolesEdit', {
+    template: 'rolesEdit',
+    path: '/:scope/roles/:_id/type/:childType/cible/:childId/',
+    loadingTemplate: 'loading',
+  });
 
   this.route('settings', {
     template: 'settings',

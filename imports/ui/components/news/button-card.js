@@ -59,6 +59,41 @@ Template.Bouton_card.events({
       }
     });
   },
+  'click .connectscopeadmin-link-js' (event, instance) {
+    event.preventDefault();
+    instance.state.set('call', true);
+    Meteor.call('connectEntity', this.id, this.scope, this.childId, 'admin', (error) => {
+      if (error) {
+        instance.state.set('call', false);
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+      } else {
+        instance.state.set('call', false);
+      }
+    });
+  },
+  'click .disconnectscopeadmin-link-js' (event, instance) {
+    event.preventDefault();
+    const self = this;
+    instance.state.set('call', true);
+    IonPopup.confirm({ title: TAPi18n.__('Disconnect'),
+      template: TAPi18n.__('Want to remove the link between the entity'),
+      onOk() {
+        Meteor.call('disconnectEntity', self.id, self.scope, null, this.childId, this.childType, (error) => {
+          if (error) {
+            instance.state.set('call', false);
+            IonPopup.alert({ template: TAPi18n.__(error.reason) });
+          } else {
+            instance.state.set('call', false);
+          }
+        });
+      },
+      onCancel() {
+        instance.state.set('call', false);
+      },
+      cancelText: TAPi18n.__('No'),
+      okText: TAPi18n.__('Yes'),
+    });
+  },
   'click .validatescope-link' (event, instance) {
     event.preventDefault();
     instance.state.set('call', true);

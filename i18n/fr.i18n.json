@@ -178,6 +178,15 @@
   "invited you":"vous a invité",
   "Pending":"En attente",
   "searchInvitationPlaceholder":"Chercher par nom, email...",
+  "roles":"Rôles",
+  "Parameter":"Paramètre",
+  "Is admin":"Est administrateur",
+  "Edit a roles":"Modifier les rôles",
+  "Add as admin":"Ajouter comme administrateur",
+  "Remove this":"Supprimer ce __scope__",
+  "contributor":"contributeur",
+  "member":"membre",
+  "attendee":"participant",
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] existe déja",
@@ -954,6 +963,22 @@
       "comment":{
         "label": "message",
         "placeholder":"commentaire..."
+      }
+    },
+    "rolesrest":{
+      "roles":{
+        "label": "Rôles",
+        "placeholder": "Sélectionnez ...",
+        "options": {
+          "Organisateur":"Organisateur",
+          "Partenaire":"Partenaire",
+          "Financeur":"Financeur",
+          "Président":"Président",
+          "Sponsor":"Sponsor",
+          "Directeur":"Directeur",
+          "Conférencier":"Conférencier",
+          "Intervenant":"Intervenant"
+        }
       }
     },
     "global":{

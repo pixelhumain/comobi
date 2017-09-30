@@ -1,0 +1,66 @@
+<template name="rolesEdit">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "Parameter"}} : {{scope.name}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+
+  <div class="list" data-snap-ignore="true">
+    <div class="item item-divider">
+      <i class="icon fa fa-cog"></i> {{_ "Parameter"}}
+    </div>
+    {{#if equals childType 'citoyens'}}
+    {{#if scope.isAdmin childId}}
+    <div class="item">
+      {{_ 'Is admin'}}
+    </div>
+    {{else}}
+    <div class="item">
+      {{> Bouton_card id=scopeId scope=scope.scopeVar childType=childType childId=childId isConnect=(scope.isAdmin childId)  classOff="button-block button-dark connectscopeadmin-link-js" classOn="button-block button-dark connectscopeadmin-link-js" iconOff="fa fa-lock" iconOn="fa fa-lock" titleOff=(_ "Add as admin")}}
+    </div>
+    <div class="item">
+      {{> Bouton_card id=scopeId scope=scope.scopeVar childType=childType childId=childId isConnect=false  classOff="button-block button-dark disconnectscopeadmin-link-js" classOn="button-block button-dark disconnectscopeadmin-link-js" iconOff="fa fa-link" iconOn="fa fa-unlink" titleOff=(_ "Remove this" scope=scopeVarTrad)}}
+    </div>
+  {{/if}}
+  {{else}}
+  <div class="item">
+    {{> Bouton_card id=scopeId scope=scope.scopeVar childType=childType childId=childId isConnect=false  classOff="button-block button-dark disconnectscopeadmin-link-js" classOn="button-block button-dark disconnectscopeadmin-link-js" iconOff="fa fa-link" iconOn="fa fa-unlink" titleOff=(_ "Remove this" scope=scopeVarTrad)}}
+  </div>
+  {{/if}}
+  </div>
+  <div class="list" data-snap-ignore="true">
+    <div class="item item-divider">
+      <i class="icon fa fa-cog"></i> {{_ "Edit a roles"}}
+    </div>
+    {{#if error}}
+    <div class="card">
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    </div>
+    {{/if}}
+    {{#autoForm id="editRoles" schema=SchemasRolesRest type="method-update" meteormethod="updateRoles" doc=roles singleMethodArgument=true template="ionic" class="padding"}}
+    {{> afQuickField name='roles' type='select-checkbox' }}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+  {{> loading}}
+  {{/if}}
+</template>

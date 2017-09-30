@@ -136,6 +136,13 @@ Organizations.helpers({
       contentKey: 'profil',
     }, { sort: { created: -1 }, limit: 1 });
   },
+  roles (scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].roles && this.links[scopeCible][scopeId].roles.join(',');
+  },
   creatorProfile () {
     return Citoyens.findOne({ _id: new Mongo.ObjectID(this.creator) });
   },
