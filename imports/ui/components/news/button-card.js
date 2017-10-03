@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { TAPi18n } from 'meteor/tap:i18n';
+import { Router } from 'meteor/iron:router';
 import { IonPopup } from 'meteor/meteoric:ionic';
 
 // mixin
@@ -68,6 +69,11 @@ Template.Bouton_card.events({
         IonPopup.alert({ template: TAPi18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
+        if (this.scope === 'events') {
+          Router.go('listAttendees', { _id: this.id, scope: this.scope }, { replaceState: true });
+        } else {
+          Router.go('directory', { _id: this.id, scope: this.scope }, { replaceState: true });
+        }
       }
     });
   },
@@ -84,6 +90,11 @@ Template.Bouton_card.events({
             IonPopup.alert({ template: TAPi18n.__(error.reason) });
           } else {
             instance.state.set('call', false);
+            if (self.scope === 'events') {
+              Router.go('listAttendees', { _id: self.id, scope: self.scope }, { replaceState: true });
+            } else {
+              Router.go('directory', { _id: self.id, scope: self.scope }, { replaceState: true });
+            }
           }
         });
       },

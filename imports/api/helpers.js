@@ -49,6 +49,19 @@ export const arrayLinkProper = (array) => {
   return arrayIds;
 };
 
+export const arrayLinkProperNoObject = (array) => {
+  const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
+    if (arrayLink.isInviting === true) {
+      return undefined;
+    }
+    if (arrayLink.type === 'citoyens' && arrayLink.toBeValidated === true) {
+      return undefined;
+    }
+    return key;
+  }), arrayfilter => arrayfilter !== undefined);
+  return arrayIds;
+};
+
 export const queryLink = (array, search, selectorga) => {
   // const arrayIds = _.map(array, (arrayLink, key) => new Mongo.ObjectID(key));
   const arrayIds = arrayLinkProper(array);
