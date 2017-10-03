@@ -61,8 +61,8 @@ Template.Directory_item.events({
       onCancel() {
         instance.state.set('call', false);
       },
-      cancelText: TAPi18n.__('No'),
-      okText: TAPi18n.__('Yes'),
+      cancelText: TAPi18n.__('no'),
+      okText: TAPi18n.__('yes'),
     });
   },
   'click .connectscope-link-js' (event, instance) {
@@ -113,8 +113,8 @@ Template.Directory_item.events({
       onCancel() {
         instance.state.set('call', false);
       },
-      cancelText: TAPi18n.__('No'),
-      okText: TAPi18n.__('Yes'),
+      cancelText: TAPi18n.__('no'),
+      okText: TAPi18n.__('yes'),
     });
   },
   'click .followperson-link-js' (event, instance) {

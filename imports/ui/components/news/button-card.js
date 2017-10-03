@@ -101,8 +101,8 @@ Template.Bouton_card.events({
       onCancel() {
         instance.state.set('call', false);
       },
-      cancelText: TAPi18n.__('No'),
-      okText: TAPi18n.__('Yes'),
+      cancelText: TAPi18n.__('no'),
+      okText: TAPi18n.__('yes'),
     });
   },
   'click .validatescope-link' (event, instance) {
@@ -136,8 +136,8 @@ Template.Bouton_card.events({
       onCancel() {
         instance.state.set('call', false);
       },
-      cancelText: TAPi18n.__('No'),
-      okText: TAPi18n.__('Yes'),
+      cancelText: TAPi18n.__('no'),
+      okText: TAPi18n.__('yes'),
     });
   },
   'click .followperson-link' (event, instance) {
@@ -171,8 +171,8 @@ Template.Bouton_card.events({
       onCancel() {
         instance.state.set('call', false);
       },
-      cancelText: TAPi18n.__('No'),
-      okText: TAPi18n.__('Yes'),
+      cancelText: TAPi18n.__('no'),
+      okText: TAPi18n.__('yes'),
     });
   },
   'click .unfollowscope-link' (event, instance) {
@@ -194,8 +194,8 @@ Template.Bouton_card.events({
       onCancel() {
         instance.state.set('call', false);
       },
-      cancelText: TAPi18n.__('No'),
-      okText: TAPi18n.__('Yes'),
+      cancelText: TAPi18n.__('no'),
+      okText: TAPi18n.__('yes'),
     });
   },
   'click .favorites-link' (event, instance) {
