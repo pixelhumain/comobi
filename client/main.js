@@ -45,6 +45,8 @@ import '../imports/ui/collections/collections.js';
 
 import '../imports/ui/share/share.js';
 
+import '../imports/ui/roles/roles.js';
+
 import '../imports/ui/search/search.js';
 import '../imports/ui/changeposition/changeposition.js';
 import '../imports/ui/contacts/contacts.js';

@@ -1,3 +1,3 @@
-import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
 
-export const Resolutions = new Meteor.Collection('resolutions', { idGeneration: 'MONGO' });
+export const Resolutions = new Mongo.Collection('resolutions', { idGeneration: 'MONGO' });

@@ -17,11 +17,11 @@ import { Rooms } from './rooms.js';
 import { Proposals } from './proposals.js';
 import { nameToCollection } from './helpers.js';
 
-export const News = new Meteor.Collection('news', { idGeneration: 'MONGO' });
+export const News = new Mongo.Collection('news', { idGeneration: 'MONGO' });
 
 if (Meteor.isServer) {
 // Index
-  News.rawCollection().createIndex(
+/*  News.rawCollection().createIndex(
     { 'target.id': 1 },
     { name: 'target_id', partialFilterExpression: { 'target.id': { $exists: true } }, background: true }
     , (e) => {
@@ -66,7 +66,7 @@ if (Meteor.isServer) {
       }
     });
 
-/* News.rawCollection().createIndex(
+ News.rawCollection().createIndex(
     { author: 1, targetIsAuthor: 1, type: 1, 'scope.type' : 1 },
     { name: 'author_targetIsAuthor_exists', partialFilterExpression: { author: { $exists: true },type: { $exists: true },'scope.type': { $exists: true },targetIsAuthor: { $exists: false } }, background: true }
   , (e) => {

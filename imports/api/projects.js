@@ -18,7 +18,7 @@ import { Poi } from './poi.js';
 import { ActivityStream } from './activitystream.js';
 import { queryLink, queryLinkToBeValidated, queryOptions, nameToCollection } from './helpers.js';
 
-export const Projects = new Meteor.Collection('projects', { idGeneration: 'MONGO' });
+export const Projects = new Mongo.Collection('projects', { idGeneration: 'MONGO' });
 
 // SimpleSchema.debug = true;
 
@@ -199,6 +199,10 @@ Projects.helpers({
   toBeValidated (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     return !!((this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].toBeValidated));
+  },
+  toBeisInviting (userId) {
+    const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+    return !!((this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].isInviting));
   },
   listMembersToBeValidated () {
     if (this.links && this.links.contributors) {

@@ -507,7 +507,6 @@
       </button>
       {{else}}
       {{> Bouton_card id=_id._str scope=scopeVar isConnect=isMembers classOff="button-small connectscope-link" classOn="button-small disconnectscope-link" iconOff="fa fa-link" iconOn="fa fa-unlink"}}
-      <a href="{{pathFor 'invitations' _id=_id._str scope=scopeVar}}" class="button button-small">{{> ionIcon icon="person-add"}}</a>
       {{/if}}
       {{/if}}
 
@@ -515,9 +514,10 @@
       {{#if isAdmin}}
       <a href="" class="button button-small" data-ion-popover="addMenuScopePopover"><i class="icon fa fa-plus"></i></a>
       {{#if isCordova}}
-      <button class="button button-small scanner-event">{{> ionIcon icon="ios-barcode"}} {{_ "QR Scanner"}}</button>
+      <button class="button button-small scanner-event">{{> ionIcon icon="ios-barcode"}}</button>
       {{/if}}
       {{/if}}
+      <a href="{{pathFor 'invitations' _id=_id._str scope=scopeVar}}" class="button button-small">{{> ionIcon icon="person-add"}}</a>
       {{/if}}
       <a href="{{pathFor 'directory' _id=_id._str scope=scopeVar}}" class="button button-small"><i class="icon fa fa-connectdevelop"></i></a>
     </div>

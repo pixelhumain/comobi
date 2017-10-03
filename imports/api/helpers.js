@@ -36,8 +36,22 @@ export const selectorgaQuery = (query, selectorga) => {
   return query;
 };
 
+export const arrayLinkProper = (array) => {
+  const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
+    if (arrayLink.isInviting === true) {
+      return undefined;
+    }
+    if (arrayLink.type === 'citoyens' && arrayLink.toBeValidated === true) {
+      return undefined;
+    }
+    return new Mongo.ObjectID(key);
+  }), arrayfilter => arrayfilter !== undefined);
+  return arrayIds;
+};
+
 export const queryLink = (array, search, selectorga) => {
-  const arrayIds = _.map(array, (arrayLink, key) => new Mongo.ObjectID(key));
+  // const arrayIds = _.map(array, (arrayLink, key) => new Mongo.ObjectID(key));
+  const arrayIds = arrayLinkProper(array);
   let query = {};
   query._id = { $in: arrayIds };
   if (Meteor.isClient) {
@@ -111,15 +125,21 @@ export const queryLinkAttendees = (array, search, type) => {
     if (search) {
       query = searchQuery(query, search);
     }
-    /*if (selectorga) {
+    /* if (selectorga) {
       query = selectorgaQuery(query, selectorga);
-    }*/
+    } */
   }
   return query;
 };
 
 export const arrayLinkType = (array, type) => {
   const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
+    if (arrayLink.isInviting === true) {
+      return undefined;
+    }
+    if (arrayLink.type === 'citoyens' && arrayLink.toBeValidated === true) {
+      return undefined;
+    }
     if (arrayLink.type === type) {
       return new Mongo.ObjectID(key);
     }

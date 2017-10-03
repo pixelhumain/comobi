@@ -28,13 +28,7 @@ Template.Directory_item.helpers({
   },
   classes () {
     const classes = ['item item-avatar animated out'];
-
-    if (this.toBeValidated && this.isConnect !== 'isFavorites') {
-      classes.push('item-icon-right');
-    } else {
-      classes.push('item-button-right');
-    }
-
+    classes.push('item-button-right');
     if (this.class) {
       const customClasses = this.class.split(' ');
       customClasses.forEach(function (customClass) {
@@ -49,14 +43,25 @@ Template.Directory_item.helpers({
 Template.Directory_item.events({
   'click .disconnectscope-link-js' (event, instance) {
     event.preventDefault();
+    const self = this;
     instance.state.set('call', true);
-    Meteor.call('disconnectEntity', this.id, this.scope, (error) => {
-      if (error) {
+    IonPopup.confirm({ title: TAPi18n.__('Disconnect'),
+      template: TAPi18n.__('Want to remove the link between you and the entity'),
+      onOk() {
+        Meteor.call('disconnectEntity', self.id, self.scope, (error) => {
+          if (error) {
+            instance.state.set('call', false);
+            IonPopup.alert({ template: TAPi18n.__(error.reason) });
+          } else {
+            instance.state.set('call', false);
+          }
+        });
+      },
+      onCancel() {
         instance.state.set('call', false);
-        alert(error.error);
-      } else {
-        instance.state.set('call', false);
-      }
+      },
+      cancelText: TAPi18n.__('No'),
+      okText: TAPi18n.__('Yes'),
     });
   },
   'click .connectscope-link-js' (event, instance) {
@@ -65,7 +70,19 @@ Template.Directory_item.events({
     Meteor.call('connectEntity', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
-        alert(error.error);
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+      } else {
+        instance.state.set('call', false);
+      }
+    });
+  },
+  'click .connectscopeadmin-link-js' (event, instance) {
+    event.preventDefault();
+    instance.state.set('call', true);
+    Meteor.call('connectEntity', this.id, this.scope, this.childId, 'admin', (error) => {
+      if (error) {
+        instance.state.set('call', false);
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -73,14 +90,25 @@ Template.Directory_item.events({
   },
   'click .unfollowperson-link-js' (event, instance) {
     event.preventDefault();
+    const self = this;
     instance.state.set('call', true);
-    Meteor.call('disconnectEntity', this.id, 'citoyens', (error) => {
-      if (error) {
+    IonPopup.confirm({ title: TAPi18n.__('Unfollow'),
+      template: TAPi18n.__('no longer follow this entity'),
+      onOk() {
+        Meteor.call('disconnectEntity', self.id, 'citoyens', (error) => {
+          if (error) {
+            instance.state.set('call', false);
+            IonPopup.alert({ template: TAPi18n.__(error.reason) });
+          } else {
+            instance.state.set('call', false);
+          }
+        });
+      },
+      onCancel() {
         instance.state.set('call', false);
-        alert(error.error);
-      } else {
-        instance.state.set('call', false);
-      }
+      },
+      cancelText: TAPi18n.__('No'),
+      okText: TAPi18n.__('Yes'),
     });
   },
   'click .followperson-link-js' (event, instance) {
@@ -89,7 +117,7 @@ Template.Directory_item.events({
     Meteor.call('followEntity', this.id, 'citoyens', (error) => {
       if (error) {
         instance.state.set('call', false);
-        alert(error.error);
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -101,7 +129,7 @@ Template.Directory_item.events({
     Meteor.call('collectionsAdd', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
-        alert(error.error);
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }

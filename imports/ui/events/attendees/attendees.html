@@ -70,7 +70,7 @@
       <div class="item item-divider">
         <i class="icon fa fa-user"></i> {{_ "persons"}} <span class="badge badge-dark">{{countAttendeesValidate search}}</span>
       </div>
-      {{> Directory_list list=(listAttendeesValidate search) isConnect="isFollowersMe" person=true scope="citoyens"}}
+      {{> Directory_list list=(listAttendeesValidate search) isConnect="isFollowersMe" person=true scope="citoyens" scopeCible=scopeVar scopeId=_id._str isScopeAdmin=isAdmin}}
   {{/if}}
 </template>
 
@@ -79,7 +79,7 @@
       <div class="item item-divider">
         <i class="icon fa fa-users"></i> {{_ "organizations"}} <span class="badge badge-dark">{{countAttendeesOrgaValidate search}}</span>
       </div>
-      {{> Directory_list list=(listAttendeesOrgaValidate search) isConnect="isMembers" person=false scope="organizations"}}
+      {{> Directory_list list=(listAttendeesOrgaValidate search) isConnect="isMembers" person=false scope="organizations" scopeCible=scopeVar scopeId=_id._str isScopeAdmin=isAdmin}}
   {{/if}}
 </template>
 

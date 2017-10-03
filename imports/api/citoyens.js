@@ -20,7 +20,7 @@ import { ActivityStream } from './activitystream.js';
 import { queryLink, queryOptions, nameToCollection } from './helpers.js';
 
 // Person
-export const Citoyens = new Meteor.Collection('citoyens', { idGeneration: 'MONGO' });
+export const Citoyens = new Mongo.Collection('citoyens', { idGeneration: 'MONGO' });
 
 const baseSchemaCitoyens = baseSchema.pick(['name', 'shortDescription', 'description', 'url', 'tags', 'tags.$']);
 
@@ -273,6 +273,13 @@ Citoyens.helpers({
       contentKey: 'profil',
     }, { sort: { created: -1 }, limit: 1 });
   },
+  roles (scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].roles && this.links[scopeCible][scopeId].roles.join(',');
+  },
   isFavorites (scope, scopeId) {
     return !!((this.collections && this.collections.favorites && this.collections.favorites[scope] && this.collections.favorites[scope][scopeId]));
   },
@@ -514,8 +521,9 @@ Citoyens.helpers({
       memberOfArray = _.map(this.links.memberOf, (a, k) => k);
     }
 
-    const arrayIds = _.union(projectsArray, eventsArray, memberOfArray);
+    let arrayIds = _.union(projectsArray, eventsArray, memberOfArray);
     arrayIds.push(bothUserId);
+    arrayIds = arrayIds.filter(element => element !== undefined);
     query.$or.push({ author: bothUserId });
     query.$or.push({ 'target.id': { $in: arrayIds } });
     query.$or.push({ 'mentions.id': { $in: arrayIds } });

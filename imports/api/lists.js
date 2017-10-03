@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
 
-export const Lists = new Meteor.Collection('lists', { idGeneration: 'MONGO' });
+export const Lists = new Mongo.Collection('lists', { idGeneration: 'MONGO' });
 
 if (Meteor.isServer) {
 // Index

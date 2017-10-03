@@ -7,6 +7,7 @@ import { DeepLink } from 'meteor/communecter:deep-link';
 import { TAPi18n } from 'meteor/tap:i18n';
 import { _ } from 'meteor/underscore';
 import { $ } from 'meteor/jquery';
+import { HTTP } from 'meteor/http';
 
 // collections
 import { ActivityStream } from '../../api/activitystream.js';
@@ -21,7 +22,7 @@ import { SchemasClassifiedRest } from '../../api/classified.js';
 import { SchemasFollowRest, SchemasInviteAttendeesEventRest, SchemasInvitationsRest, SchemasCitoyensRest, BlockCitoyensRest } from '../../api/citoyens.js';
 import { SchemasNewsRest, SchemasNewsRestBase } from '../../api/news.js';
 import { SchemasCommentsRest, SchemasCommentsEditRest } from '../../api/comments.js';
-import { SchemasShareRest } from '../../api/schema.js';
+import { SchemasShareRest, SchemasRolesRest } from '../../api/schema.js';
 
 
 Meteor.startup(function () {
@@ -54,6 +55,18 @@ Meteor.startup(function () {
               Router.go('detailList', { scope, _id });
             }
           }
+        }
+      } else {
+        const regex = /\/co2\/person\/activate\/user\/([^/]*)\/validationKey\/([a-z0-9]*)/g;
+        const m = regex.exec(intent);
+        if (m && m[0] && m[1] && m[2]) {
+          HTTP.get(m[0], {}, (error, response) => {
+            if (error) {
+
+            } else {
+              return Router.go('/login');
+            }
+          });
         }
       }
     });
@@ -125,6 +138,7 @@ Meteor.startup(function () {
   SchemasFollowRest.i18n('schemas.followrest');
   SchemasInviteAttendeesEventRest.i18n('schemas.followrest');
   SchemasShareRest.i18n('schemas.sharerest');
+  SchemasRolesRest.i18n('schemas.rolesrest');
   SchemasNewsRest.i18n('schemas.news.global');
   SchemasNewsRestBase.citoyens.i18n('schemas.news.citoyens');
   SchemasNewsRestBase.projects.i18n('schemas.news.projects');
@@ -229,7 +243,7 @@ Meteor.startup(function () {
     return AutoForm.getFieldValue(fieldName) || false;
   });
 
-  Template.registerHelper('equalFieldValue', function (fieldName,value) {
+  Template.registerHelper('equalFieldValue', function (fieldName, value) {
     return AutoForm.getFieldValue(fieldName) === value;
   });
 
@@ -259,4 +273,5 @@ Meteor.startup(function () {
   Template.registerHelper('SchemasCommentsEditRest', SchemasCommentsEditRest);
   Template.registerHelper('SchemasCitoyensRest', SchemasCitoyensRest);
   Template.registerHelper('SchemasShareRest', SchemasShareRest);
+  Template.registerHelper('SchemasRolesRest', SchemasRolesRest);
 });

@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
 import { _ } from 'meteor/underscore';
 import { Counts } from 'meteor/tmeasday:publish-counts';
 
-export const ActivityStream = new Meteor.Collection('activityStream', { idGeneration: 'MONGO' });
+export const ActivityStream = new Mongo.Collection('activityStream', { idGeneration: 'MONGO' });
 
 ActivityStream.api = {
   Unseen (userId) {

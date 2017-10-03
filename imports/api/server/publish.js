@@ -563,7 +563,7 @@ Meteor.publishComposite('citoyenActusList', function(limit) {
                 profilThumbImageUrl: 1,
               } };
               if (news.object && news.object.type && news.object.id) {
-                console.log(news.object.type);
+                // console.log(news.object.type);
                 const collection = nameToCollection(news.object.type);
                 return collection.find({ _id: new Mongo.ObjectID(news.object.id) }, queryOptions);
               }
@@ -1127,7 +1127,6 @@ Meteor.publishComposite('directoryListInvitations', function(scope, scopeId) {
       {
         find(scopeD) {
           if (scope === 'citoyens') {
-            console.log(JSON.stringify(scopeD.listOrganizationsCreator().fetch()));
             return scopeD.listOrganizationsCreator();
           }
         },

@@ -70,6 +70,11 @@
   {{#if equals scopeVar 'projects'}}
   {{> listDirectoryContributors}}
   {{/if}}
+  {{#if equals scopeVar 'events'}}
+  {{> listAttendeesValidate}}
+  {{> listAttendeesOrgaValidate}}
+  {{> listAttendeesIsInviting}}
+  {{/if}}
   {{> listDirectoryEvents}}
   {{> listDirectoryFollowers}}
   {{else}}
@@ -106,7 +111,7 @@
       <div class="item item-divider">
         <i class="icon ion-ios-people"></i> {{_ "contributors"}} <span class="badge badge-dark">{{countContributors search}}</span>
       </div>
-      {{> Directory_list list=(listContributors search) isConnect="isFollowersMe" person=true scope="citoyens"}}
+      {{> Directory_list list=(listContributors search) isConnect="isFollowersMe" person=true scope="citoyens" scopeCible=scopeVar scopeId=_id._str isScopeAdmin=isAdmin}}
   {{/if}}
 </template>
 
@@ -147,7 +152,7 @@
       <div class="item item-divider">
         <i class="icon ion-ios-people"></i> {{_ "members"}} <span class="badge badge-dark">{{countMembers search}}</span>
       </div>
-      {{> Directory_list list=(listMembers search) isConnect="isFollowersMe" person=true scope="citoyens"}}
+      {{> Directory_list list=(listMembers search) isConnect="isFollowersMe" person=true scope="citoyens" scopeCible=scopeVar scopeId=_id._str isScopeAdmin=isAdmin}}
   {{/if}}
 </template>
 
@@ -161,7 +166,7 @@
         <a class="button button-small {{#if equals selectorga value}}button-positive activated{{else}}button-positive{{/if}} selectorga" id="{{value}}" data-id="{{value}}">{{label}}</a>
       {{/each}}
       </div>
-      {{> Directory_list list=(listMembersOrganizations search selectorga) isConnect="isMembers" person=false scope="organizations"}}
+      {{> Directory_list list=(listMembersOrganizations search selectorga) isConnect="isMembers" person=false scope="organizations" scopeCible=scopeVar scopeId=_id._str isScopeAdmin=isAdmin}}
   {{/if}}
 </template>
 

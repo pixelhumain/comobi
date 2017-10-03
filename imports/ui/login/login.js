@@ -197,7 +197,7 @@ Template.signin.events({
     pageSession.set('error', null);
     // createUserAccount or createUserAccountRest
     // console.log(user);
-    Meteor.call('createUserAccountRest', user, function (error) {
+    Meteor.call('createUserAccountRest', user, (error) => {
       if (error) {
         pageSession.set('loading-signup', false);
         // console.log(error.error);
@@ -210,7 +210,12 @@ Template.signin.events({
             return Router.go('/');
           }
           pageSession.set('loading-signup', false);
+          if (err.reason === 'notValidatedEmail') {
+            IonPopup.alert({ template: TAPi18n.__(err.reason) });
+            return Router.go('/login');
+          }
           pageSession.set('error', err.reason);
+
           return false;
         });
       }

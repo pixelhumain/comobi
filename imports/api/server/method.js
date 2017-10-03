@@ -22,7 +22,7 @@ import { Projects, SchemasProjectsRest, BlockProjectsRest } from '../projects.js
 import { Poi, SchemasPoiRest, BlockPoiRest } from '../poi.js';
 import { Classified, SchemasClassifiedRest } from '../classified.js';
 import { Comments, SchemasCommentsRest, SchemasCommentsEditRest } from '../comments.js';
-import { SchemasShareRest } from '../schema.js';
+import { SchemasShareRest, SchemasRolesRest } from '../schema.js';
 
 // function api
 import { apiCommunecter } from './api.js';
@@ -544,7 +544,7 @@ Meteor.methods({
     const retour = apiCommunecter.postPixel('collections', 'add', doc);
     return retour;
   },
-  connectEntity (connectId, parentType, childId) {
+  connectEntity (connectId, parentType, childId, connectType) {
     check(connectId, String);
     check(parentType, String);
     check(parentType, Match.Where(function(name) {
@@ -556,15 +556,23 @@ Meteor.methods({
     const doc = {};
     doc.parentId = connectId;
     doc.childType = 'citoyens';
-    if (parentType === 'organizations') {
+    if (connectType === 'admin' && childId) {
+      check(childId, String);
+      const collection = nameToCollection(parentType);
+      if (!collection.findOne({ _id: new Mongo.ObjectID(connectId) }).isAdmin(this.userId)) {
+        throw new Meteor.Error('not-authorized');
+      }
+      doc.connectType = 'admin';
+    } else if (parentType === 'organizations' && connectType !== 'admin') {
       doc.connectType = 'member';
-    } else if (parentType === 'projects') {
+    } else if (parentType === 'projects' && connectType !== 'admin') {
       doc.connectType = 'contributor';
-    } else if (parentType === 'citoyens') {
+    } else if (parentType === 'citoyens' && connectType !== 'admin') {
       doc.connectType = 'followers';
-    } else if (parentType === 'events') {
+    } else if (parentType === 'events' && connectType !== 'admin') {
       doc.connectType = 'attendee';
     }
+
     doc.childId = (typeof childId !== 'undefined') ? childId : this.userId;
     doc.parentType = parentType;
     const retour = apiCommunecter.postPixel('link', 'connect', doc);
@@ -599,9 +607,15 @@ Meteor.methods({
     } else if (parentType === 'events') {
       doc.connectType = (typeof connectType !== 'undefined' && connectType !== null) ? connectType : 'attendees';
     }
+    if (childId !== this.userId) {
+      const collection = nameToCollection(parentType);
+      if (!collection.findOne({ _id: new Mongo.ObjectID(connectId) }).isAdmin(this.userId)) {
+        throw new Meteor.Error('not-authorized');
+      }
+    }
     doc.childId = (typeof childId !== 'undefined' && childId !== null) ? childId : this.userId;
     doc.parentType = parentType;
-    // console.log(doc);
+    console.log(doc);
     const retour = apiCommunecter.postPixel('link', 'disconnect', doc);
     return retour;
   },
@@ -714,6 +728,7 @@ Meteor.methods({
     return retour;
   },
   invitationScope (parentId, parentType, connectType, childType, childEmail, childName, childId) {
+    console.log(`${parentId}, ${parentType}, ${connectType}, ${childType}, ${childEmail}, ${childName}, ${childId}`);
     check(parentId, String);
     check(parentType, String);
     check(parentType, Match.Where(function(name) {
@@ -1638,6 +1653,17 @@ indexMax:20 */
 
     const insee = Cities.findOne({ insee: user.city });
 
+    console.log({
+      name: user.name,
+      email: user.email,
+      username: user.username,
+      pwd: user.password,
+      cp: user.codepostal,
+      city: insee.insee,
+      geoPosLatitude: insee.geo.latitude,
+      geoPosLongitude: insee.geo.longitude,
+    });
+
     try {
       const response = HTTP.call('POST', `${Meteor.settings.endpoint}/${Meteor.settings.module}/person/register`, {
         params: {
@@ -1645,7 +1671,7 @@ indexMax:20 */
           email: user.email,
           username: user.username,
           pwd: user.password,
-          cp: insee.postalCodes[0].postalCode,
+          cp: user.codepostal,
           city: insee.insee,
           geoPosLatitude: insee.geo.latitude,
           geoPosLongitude: insee.geo.longitude,
@@ -1820,5 +1846,35 @@ export const userDevice = new ValidatedMethod({
     }
 
     return false;
+  },
+});
+
+export const updateRoles = new ValidatedMethod({
+  name: 'updateRoles',
+  validate: new SimpleSchema({
+    modifier: {
+      type: Object,
+      blackbox: true,
+    },
+  }).validator(),
+  run({ modifier }) {
+    SchemasRolesRest.clean(modifier);
+    SchemasRolesRest.validate(modifier, { modifier: true });
+
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const collection = nameToCollection(modifier.$set.contextType);
+    if (!collection.findOne({ _id: new Mongo.ObjectID(modifier.$set.contextId) }).isAdmin()) {
+      throw new Meteor.Error('not-authorized');
+    }
+    const docRetour = modifier.$set;
+    if (modifier && modifier.$set && modifier.$set.roles) {
+      docRetour.roles = modifier.$set.roles.join(',');
+    }
+
+    const retour = apiCommunecter.postPixel('link', 'removerole', docRetour);
+    return retour;
   },
 });

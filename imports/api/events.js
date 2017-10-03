@@ -21,7 +21,7 @@ import { Documents } from './documents.js';
 import { ActivityStream } from './activitystream.js';
 import { queryLink, queryLinkIsInviting, queryLinkAttendees, arrayLinkAttendees, queryOptions, nameToCollection } from './helpers.js';
 
-export const Events = new Meteor.Collection('events', { idGeneration: 'MONGO' });
+export const Events = new Mongo.Collection('events', { idGeneration: 'MONGO' });
 
 
 export const SchemasEventsRest = new SimpleSchema([baseSchema, geoSchema, {
@@ -247,6 +247,10 @@ Events.helpers({
   },
   countAttendeesOrgaValidate (search) {
     return this.listAttendeesOrgaValidate(search) && this.listAttendeesOrgaValidate(search).count();
+  },
+  toBeisInviting (userId) {
+    const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+    return !!((this.links && this.links.attendees && this.links.attendees[bothUserId] && this.links.attendees[bothUserId].isInviting));
   },
   scopeVar () {
     return 'events';

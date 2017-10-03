@@ -18,7 +18,7 @@ import { Poi } from './poi.js';
 import { ActivityStream } from './activitystream.js';
 import { queryLink, queryLinkType, queryLinkToBeValidated, queryOptions } from './helpers.js';
 
-export const Organizations = new Meteor.Collection('organizations', { idGeneration: 'MONGO' });
+export const Organizations = new Mongo.Collection('organizations', { idGeneration: 'MONGO' });
 
 // SimpleSchema.debug = true;
 
@@ -136,6 +136,13 @@ Organizations.helpers({
       contentKey: 'profil',
     }, { sort: { created: -1 }, limit: 1 });
   },
+  roles (scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].roles && this.links[scopeCible][scopeId].roles.join(',');
+  },
   creatorProfile () {
     return Citoyens.findOne({ _id: new Mongo.ObjectID(this.creator) });
   },
@@ -169,6 +176,10 @@ Organizations.helpers({
   toBeValidated (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     return !!((this.links && this.links.members && this.links.members[bothUserId] && this.links.members[bothUserId].toBeValidated));
+  },
+  toBeisInviting (userId) {
+    const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
+    return !!((this.links && this.links.members && this.links.members[bothUserId] && this.links.members[bothUserId].isInviting));
   },
   listMembersToBeValidated () {
     if (this.links && this.links.members) {
