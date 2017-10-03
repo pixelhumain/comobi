@@ -10,10 +10,10 @@ Template.qrcode.onRendered(function () {
   // let qrresult = {type:type,_id:Router.current().params._id};
   const qrLink = `https://www.communecter.org/#page.type.${scope}.id.${Router.current().params._id}`;
 
-  const qr = JSON.stringify(qrLink);
+  // const qr = JSON.stringify(qrLink);
   // console.log(qr);
   this.$('#qrcode').qrcode({
-    text: qr,
+    text: qrLink,
     render: 'image',
     size: 150,
     ecLevel: 'H',

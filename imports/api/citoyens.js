@@ -534,7 +534,6 @@ Citoyens.helpers({
       const followsArray = _.map(this.links.follows, (a, k) => k);
       query.$or.push({ 'target.id': { $in: followsArray }, 'scope.type': { $in: ['public', 'restricted'] } });
     }
-    console.log(query);
     return News.find(query, options);
   },
   new () {
