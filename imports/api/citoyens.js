@@ -17,7 +17,7 @@ import { Classified } from './classified.js';
 import { Organizations } from './organizations.js';
 import { Documents } from './documents.js';
 import { ActivityStream } from './activitystream.js';
-import { queryLink, queryOptions, nameToCollection } from './helpers.js';
+import { arrayLinkProperNoObject, queryLink, queryOptions, nameToCollection } from './helpers.js';
 
 // Person
 export const Citoyens = new Mongo.Collection('citoyens', { idGeneration: 'MONGO' });
@@ -290,6 +290,13 @@ Citoyens.helpers({
     }
     return !!((this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].type && this.isIsInviting(scopeCible, scopeId)));
   },
+  isScopeAdmin (scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return !!((this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].type && this.isIsAdminInviting(scopeCible, scopeId)));
+  },
   isIsInviting (scope, scopeId) {
     let scopeCible = scope;
     if (scope === 'organizations') {
@@ -297,12 +304,26 @@ Citoyens.helpers({
     }
     return !((this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].isInviting));
   },
+  isIsAdminInviting (scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return !((this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].isAdminInviting));
+  },
   isInviting (scope, scopeId) {
     let scopeCible = scope;
     if (scope === 'organizations') {
       scopeCible = 'memberOf';
     }
     return !!((this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].isInviting));
+  },
+  isAdminInviting (scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return !!((this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].isAdminInviting));
   },
   InvitingUser (scope, scopeId) {
     let scopeCible = scope;
@@ -504,24 +525,28 @@ Citoyens.helpers({
       options.limit = limit;
     }
 
-    let projectsArray;
-    let eventsArray;
+    let projectsArray = [];
+    let eventsArray = [];
     let memberOfArray = [];
 
     // projects
     if (this.links && this.links.projects) {
-      projectsArray = _.map(this.links.projects, (a, k) => k);
+      projectsArray = arrayLinkProperNoObject(this.links.projects);
+      // projectsArray = _.map(this.links.projects, (a, k) => k);
     }
     // events
     if (this.links && this.links.events) {
-      eventsArray = _.map(this.links.events, (a, k) => k);
+      eventsArray = arrayLinkProperNoObject(this.links.events);
+      // eventsArray = _.map(this.links.events, (a, k) => k);
     }
     // memberOf
     if (this.links && this.links.memberOf) {
-      memberOfArray = _.map(this.links.memberOf, (a, k) => k);
+      memberOfArray = arrayLinkProperNoObject(this.links.memberOf);
+      // memberOfArray = _.map(this.links.memberOf, (a, k) => k);
     }
 
-    let arrayIds = _.union(projectsArray, eventsArray, memberOfArray);
+    // let arrayIds = _.union(projectsArray, eventsArray, memberOfArray);
+    let arrayIds = [...projectsArray, ...eventsArray, ...memberOfArray];
     arrayIds.push(bothUserId);
     arrayIds = arrayIds.filter(element => element !== undefined);
     query.$or.push({ author: bothUserId });

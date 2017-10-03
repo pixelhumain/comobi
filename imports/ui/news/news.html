@@ -468,7 +468,11 @@
       {{#with InvitingUser 'attendees' currentUser._id}}
     <div class="item item-text-wrap animated out">
       <p><a href="{{pathFor 'detailList' _id=invitorId scope=type}}" class="dark">{{invitorName}}</a>
-        {{_ "invited you"}}
+      {{#if isAdmin}}
+      {{_ "invited you to become an administrator"}}
+      {{else}}
+      {{_ "invited you"}}
+      {{/if}}
       </p>
     </div>
     {{/with}}
@@ -527,7 +531,11 @@
       {{#with InvitingUser 'members' currentUser._id}}
     <div class="item item-text-wrap animated out">
       <p><a href="{{pathFor 'detailList' _id=invitorId scope=type}}" class="dark">{{invitorName}}</a>
+        {{#if isAdmin}}
+        {{_ "invited you to become an administrator"}}
+        {{else}}
         {{_ "invited you"}}
+        {{/if}}
       </p>
     </div>
     {{/with}}
@@ -586,7 +594,11 @@
       {{#with InvitingUser 'contributors' currentUser._id}}
     <div class="item item-text-wrap animated out">
       <p><a href="{{pathFor 'detailList' _id=invitorId scope=type}}" class="dark">{{invitorName}}</a>
+        {{#if isAdmin}}
+        {{_ "invited you to become an administrator"}}
+        {{else}}
         {{_ "invited you"}}
+        {{/if}}
       </p>
     </div>
     {{/with}}

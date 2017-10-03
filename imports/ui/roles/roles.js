@@ -1,20 +1,16 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { _ } from 'meteor/underscore';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { TAPi18n } from 'meteor/tap:i18n';
 import { Router } from 'meteor/iron:router';
 import { AutoForm } from 'meteor/aldeed:autoform';
 import { Mongo } from 'meteor/mongo';
-import { IonPopup } from 'meteor/meteoric:ionic';
 
 // collections
 import { Events } from '../../api/events.js';
 import { Organizations } from '../../api/organizations.js';
 import { Projects } from '../../api/projects.js';
 import { Citoyens } from '../../api/citoyens.js';
-
-import { SchemasRolesRest } from '../../api/schema.js';
 
 import { nameToCollection } from '../../api/helpers.js';
 
@@ -82,7 +78,7 @@ Template.rolesEdit.helpers({
   childType () {
     return pageSession.get('childType');
   },
-  scopeVarTrad() {
+  scopeVarTrad () {
     if (pageSession.get('scope') === 'organizations') {
       return TAPi18n.__('member');
     } else if (pageSession.get('scope') === 'projects') {
