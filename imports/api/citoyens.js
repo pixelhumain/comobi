@@ -521,8 +521,9 @@ Citoyens.helpers({
       memberOfArray = _.map(this.links.memberOf, (a, k) => k);
     }
 
-    const arrayIds = _.union(projectsArray, eventsArray, memberOfArray);
+    let arrayIds = _.union(projectsArray, eventsArray, memberOfArray);
     arrayIds.push(bothUserId);
+    arrayIds = arrayIds.filter(element => element !== undefined);
     query.$or.push({ author: bothUserId });
     query.$or.push({ 'target.id': { $in: arrayIds } });
     query.$or.push({ 'mentions.id': { $in: arrayIds } });
@@ -533,6 +534,7 @@ Citoyens.helpers({
       const followsArray = _.map(this.links.follows, (a, k) => k);
       query.$or.push({ 'target.id': { $in: followsArray }, 'scope.type': { $in: ['public', 'restricted'] } });
     }
+    console.log(query);
     return News.find(query, options);
   },
   new () {
