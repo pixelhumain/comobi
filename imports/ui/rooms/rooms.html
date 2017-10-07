@@ -52,6 +52,9 @@
     <div class="item item-text-wrap">
       <p>{{description}}</p>
     </div>
+    <div class="item item-divider">
+      {{_ "proposals"}}
+    </div>
   {{> listProposals_search}}
   {{> listProposals_button_bar}}
   {{#if equals view 'all'}}
@@ -63,6 +66,14 @@
   {{else}}
   {{> listProposalsStatus status=view room=this}}
   {{/if}}
+  <div class="item item-divider">
+    {{_ "resolutions"}}
+  </div>
+
+  <div class="item item-divider">
+    {{_ "actions"}}
+  </div>
+
   </div>
 </template>
 
