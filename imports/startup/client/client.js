@@ -22,6 +22,7 @@ import { SchemasClassifiedRest } from '../../api/classified.js';
 import { SchemasFollowRest, SchemasInviteAttendeesEventRest, SchemasInvitationsRest, SchemasCitoyensRest, BlockCitoyensRest } from '../../api/citoyens.js';
 import { SchemasNewsRest, SchemasNewsRestBase } from '../../api/news.js';
 import { SchemasCommentsRest, SchemasCommentsEditRest } from '../../api/comments.js';
+import { SchemasRoomsRest } from '../../api/rooms.js';
 import { SchemasShareRest, SchemasRolesRest } from '../../api/schema.js';
 
 
@@ -135,6 +136,7 @@ Meteor.startup(function () {
   SchemasProjectsRest.i18n('schemas.projectsrest');
   SchemasPoiRest.i18n('schemas.poirest');
   SchemasClassifiedRest.i18n('schemas.classifiedrest');
+  SchemasRoomsRest.i18n('schemas.roomsrest');
   SchemasFollowRest.i18n('schemas.followrest');
   SchemasInviteAttendeesEventRest.i18n('schemas.followrest');
   SchemasShareRest.i18n('schemas.sharerest');
@@ -238,6 +240,50 @@ Meteor.startup(function () {
   },
   );
 
+  Template.registerHelper('objectKeyArray', function (objectSource) {
+    const array = [];
+    if (objectSource) {
+      Object.keys(objectSource).forEach(function(v) {
+        objectSource[v].idKey = v;
+        array.push(objectSource[v]);
+      });
+    }
+    return array;
+  });
+
+  Template.registerHelper('votesObject', function (votes) {
+    const voteUp = votes.up ? votes.up.length : 0;
+    const voteDown = votes.down ? votes.down.length : 0;
+    const voteWhite = votes.white ? votes.white.length : 0;
+    const totalVotes = voteUp + voteDown + voteWhite;
+    const pourcVoteUp = (100 * voteUp) / totalVotes;
+    const pourcVoteDown = (100 * voteDown) / totalVotes;
+    const pourcVoteWhite = (100 * voteWhite) / totalVotes;
+    const meVoteUp = (votes.up && Meteor.userId() && votes.up.includes(Meteor.userId()));
+    const meVoteDown = (votes.down && Meteor.userId() && votes.down.includes(Meteor.userId()));
+    const meVoteWhite = (votes.white && Meteor.userId() && votes.white.includes(Meteor.userId()));
+    const meVote = (meVoteUp || meVoteDown || meVoteWhite);
+    const voteValid = (totalVotes > 0 && pourcVoteUp > 50);
+    const voteStart = (totalVotes > 0);
+    console.log({
+      voteStart,
+      voteValid,
+      totalVotes,
+      meVote,
+      voteUp: { nb: voteUp.toString(), pourc: pourcVoteUp.toString(), meVoteUp },
+      voteDown: { nb: voteDown.toString(), pourc: pourcVoteDown.toString(), meVoteDown },
+      voteWhite: { nb: voteWhite.toString(), pourc: pourcVoteWhite.toString(), meVoteWhite },
+    });
+    return {
+      voteStart,
+      voteValid,
+      totalVotes,
+      meVote,
+      voteUp: { nb: voteUp.toString(), pourc: pourcVoteUp.toString(), meVoteUp },
+      voteDown: { nb: voteDown.toString(), pourc: pourcVoteDown.toString(), meVoteDown },
+      voteWhite: { nb: voteWhite.toString(), pourc: pourcVoteWhite.toString(), meVoteWhite },
+    };
+  });
 
   Template.registerHelper('currentFieldValue', function (fieldName) {
     return AutoForm.getFieldValue(fieldName) || false;
@@ -256,7 +302,7 @@ Meteor.startup(function () {
   });
 
   Template.registerHelper('urlImageDesktop', function () {
-    console.log(Meteor.settings.public.remoteUrl);
+    // console.log(Meteor.settings.public.remoteUrl);
     return Meteor.isDesktop ? Meteor.settings.public.remoteUrl : '';
   });
 
@@ -274,4 +320,5 @@ Meteor.startup(function () {
   Template.registerHelper('SchemasCitoyensRest', SchemasCitoyensRest);
   Template.registerHelper('SchemasShareRest', SchemasShareRest);
   Template.registerHelper('SchemasRolesRest', SchemasRolesRest);
+  Template.registerHelper('SchemasRoomsRest', SchemasRoomsRest);
 });

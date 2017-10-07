@@ -1878,3 +1878,26 @@ export const updateRoles = new ValidatedMethod({
     return retour;
   },
 });
+
+
+export const saveVote = new ValidatedMethod({
+  name: 'saveVote',
+  validate: new SimpleSchema({
+    parentType: { type: String },
+    parentId: { type: String },
+    voteValue: { type: String },
+    idAmdt: { type: String },
+  }).validator(),
+  run({ parentType, parentId, voteValue, idAmdt }) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    const docRetour = {};
+    docRetour.parentType = parentType;
+    docRetour.parentId = parentId;
+    docRetour.voteValue = voteValue;
+    docRetour.idAmdt = idAmdt;
+    const retour = apiCommunecter.postPixel('cooperation', 'savevote', docRetour);
+    return retour;
+  },
+});

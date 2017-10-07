@@ -1006,6 +1006,53 @@ Meteor.publishComposite('directoryListPoi', function(scope, scopeId) {
     ] };
 });
 
+Meteor.publishComposite('directoryListRooms', function(scope, scopeId) {
+  check(scopeId, String);
+  check(scope, String);
+  check(scope, Match.Where(function(name) {
+    return _.contains(['projects', 'organizations', 'events'], name);
+  }));
+  const collection = nameToCollection(scope);
+  if (!this.userId) {
+    return null;
+  }
+  return {
+    find() {
+      const options = {};
+      // options['_disableOplog'] = true;
+      return collection.find({ _id: new Mongo.ObjectID(scopeId) }, options);
+    },
+    children: [
+      {
+        find(scopeD) {
+          if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+            const options = {};
+            options.fields = {
+              _id: 1,
+              name: 1,
+              profilThumbImageUrl: 1,
+            };
+            let scopeCible = scope;
+            if (scope === 'organizations') {
+              scopeCible = 'memberOf';
+            }
+            options.fields[`links.${scopeCible}`] = 1;
+            return Citoyens.find({ _id: new Mongo.ObjectID(this.userId) }, options);
+          }
+        },
+        children: [
+          {
+            find(citoyen, scopeD) {
+              if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+                return scopeD.listRooms();
+              }
+            },
+          },
+        ]
+      },
+    ] };
+});
+
 Meteor.publishComposite('directoryListClassified', function(scope, scopeId) {
   check(scopeId, String);
   check(scope, String);
@@ -1169,6 +1216,103 @@ Meteor.publishComposite('listeventSous', function(scopeId) {
         },
       },
     ] */ };
+});
+
+Meteor.publishComposite('detailRooms', function(scope, scopeId, roomId) {
+  check(scopeId, String);
+  check(scope, String);
+  check(roomId, String);
+  check(scope, Match.Where(function(name) {
+    return _.contains(['projects', 'organizations', 'events'], name);
+  }));
+  const collection = nameToCollection(scope);
+  if (!this.userId) {
+    return null;
+  }
+  return {
+    find() {
+      const options = {};
+      // options['_disableOplog'] = true;
+      return collection.find({ _id: new Mongo.ObjectID(scopeId) }, options);
+    },
+    children: [
+      {
+        find(scopeD) {
+          if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+            const options = {};
+            options.fields = {
+              _id: 1,
+              name: 1,
+              profilThumbImageUrl: 1,
+            };
+            let scopeCible = scope;
+            if (scope === 'organizations') {
+              scopeCible = 'memberOf';
+            }
+            options.fields[`links.${scopeCible}`] = 1;
+            return Citoyens.find({ _id: new Mongo.ObjectID(this.userId) }, options);
+          }
+        },
+        children: [
+          {
+            find(citoyen, scopeD) {
+              if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+                return scopeD.detailRooms(roomId);
+              }
+            },
+            children: [
+              {
+                find(room) {
+                  if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+                    return room.listProposals();
+                  }
+                },
+              },
+            ]
+          },
+        ]
+      },
+    ]
+  };
+});
+
+Meteor.publishComposite('detailProposals', function(scope, scopeId, roomId, proposalId) {
+  check(scopeId, String);
+  check(scope, String);
+  check(roomId, String);
+  check(proposalId, String);
+  check(scope, Match.Where(function(name) {
+    return _.contains(['projects', 'organizations', 'events'], name);
+  }));
+  const collection = nameToCollection(scope);
+  if (!this.userId) {
+    return null;
+  }
+  return {
+    find() {
+      const options = {};
+      // options['_disableOplog'] = true;
+      return collection.find({ _id: new Mongo.ObjectID(scopeId) }, options);
+    },
+    children: [
+      {
+        find(scopeD) {
+          if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+            return Rooms.find({ _id: new Mongo.ObjectID(roomId) });
+          }
+        },
+        children: [
+          {
+            find(scopeD) {
+              if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+                return Proposals.find({ _id: new Mongo.ObjectID(proposalId) });
+              }
+            },
+          },
+        ]
+      },
+    ]
+  };
 });
 
 Meteor.publishComposite('listAttendees', function(scopeId) {

@@ -1,0 +1,184 @@
+<template name="detailProposals">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "proposal"}} : </h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+
+  {{> detailViewProposals proposals=proposals}}
+
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>
+
+<template name="detailViewProposals">
+  <div class="list card">
+    <div class="item item-divider">
+      {{proposals.title}}
+    </div>
+    <div class="item">
+      oceatoon	est l'auteur de cette proposition
+    </div>
+    {{> statusAmendementsProposals status=proposals.status}}
+    <div class="item item-text-wrap">
+      <p>{{proposals.description}}</p>
+    </div>
+    {{#if proposals.arguments}}
+    <div class="item item-divider">
+      Compléments d'informations, argumentations, exemples, démonstrations, etc
+    </div>
+    <div class="item item-text-wrap">
+      {{#markdown}}{{proposals.arguments}}{{/markdown}}
+    </div>
+    {{/if}}
+  </div>
+
+    {{#if equals proposals.status 'amendable'}}
+
+    {{#if proposals.amendementActivated}}
+    <div class="list card">
+      <div class="item item-divider">
+        Amendements
+      </div>
+    {{#if proposals.isNotEndAmendement}}
+    <div class="item item-text-wrap">
+      <p>Proposition soumise aux amendements jusqu'au <strong>{{proposals.formatAmendementDateEnd}}</strong>
+       Fin des amendements <strong>{{livestamp proposals.amendementDateEnd}}</strong>
+      Vous pouvez proposer des amendements et voter les amendements proposés par les autres utilisateurs</p>
+    </div>
+    {{/if}}
+    <div class="item item-divider">
+      Liste des amendements temporairement validés ·  Majorité : {{proposals.majority}}%
+    </div>
+    {{> listAmendementsProposals amendements=(objectKeyArray proposals.amendements)}}
+    </div>
+    {{else}}
+    <div class="list">
+    <div class="item">
+      Amendements désactivés
+    </div>
+    </div>
+    {{/if}}
+
+    <div class="list">
+    <div class="item item-divider">
+      <i class="icon fa fa-balance-scale"></i> Débat
+    </div>
+    <div class="item">
+      Ajouter un argument
+    </div>
+    </div>
+
+    {{else if equals proposals.status 'tovote'}}
+
+    {{else if equals proposals.status 'resolved'}}
+
+    {{else if equals proposals.status 'closed'}}
+
+    {{/if}}
+
+
+</template>
+
+
+<template name="statusAmendementsProposals">
+{{#if equals status 'amendable'}}
+<div class="item">
+  <strong>Amendable</strong>	> À voter	> Fermée
+</div>
+{{else if equals status 'tovote'}}
+<div class="item">
+  Amendable	> <strong>À voter</strong>	> Fermée
+</div>
+{{else if equals status 'resolved'}}
+<div class="item">
+  Amendable	> À voter	> Fermée
+</div>
+{{else if equals status 'closed'}}
+<div class="item">
+  Amendable	> À voter	> <strong>Fermée</strong>
+</div>
+{{/if}}
+</template>
+
+<template name="listAmendementsProposals">
+{{#each amendement in amendements}}
+{{> itemAmendementsProposals amendement=amendement}}
+{{else}}
+<div class="item">
+  Pas d'amendements
+</div>
+{{/each}}
+</template>
+
+<template name="itemAmendementsProposals">
+  <div class="item item-divider">
+    n°{{amendement.idKey}} {{_ amendement.typeAmdt}} {{> badgeAmendementsProposals votes=(votesObject amendement.votes)}}
+  </div>
+<div class="item item-text-wrap">
+  <p>{{amendement.textAdd}}</p>
+</div>
+  {{> votesProposals votes=(votesObject amendement.votes) amendementId=amendement.idKey}}
+</template>
+
+<template name="votesProposals">
+  <div class="item item-text-wrap">
+  <p>{{#if votes.meVote}}
+  <strong>Vous avez voté
+  {{#if votes.voteUp.meVoteUp}}
+  <span class="balanced">{{_ 'in favour'}}</span>
+  {{else if votes.voteDown.meVoteDown}}
+  <span class="assertive">{{_ 'against'}}</span>
+  {{else if votes.voteWhite.meVoteWhite}}
+  <span class="dark">{{_ 'blank'}}</span>
+  {{/if}}
+  </strong>
+  {{else}}
+  vous n'avez pas encore voté
+  {{/if}}
+  </p>
+<p>Vous pouvez changer votre choix à tout moment</p>
+</div>
+
+<div class="button-bar bar-clear">
+  <button class="button button-small button-balanced savevoteup-js">{{_ 'in favour'}} ({{votes.voteUp.pourc}}%)</button>
+  <button class="button button-small button-assertive savevotedown-js">{{_ 'against'}} ({{votes.voteDown.pourc}}%)</button>
+  <button class="button button-small button-stable savevotewhite-js">{{_ 'blank'}} ({{votes.voteWhite.pourc}}%)</button>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <i class="icon balanced fa fa-group"></i> {{votes.voteUp.nb}}
+  </div>
+  <div class="col text-center">
+    <i class="icon assertive fa fa-group"></i> {{votes.voteDown.nb}}
+  </div>
+  <div class="col text-center">
+    <i class="icon dark fa fa-group"></i> {{votes.voteWhite.nb}}
+  </div>
+</div>
+
+</template>
+
+<template name="badgeAmendementsProposals">
+  {{#if votes.voteStart}}
+  {{#if votes.voteValid}}
+<span class="badge badge-balanced">{{_ 'temporarily validated'}}</span>
+{{else}}
+<span class="badge badge-assertive">{{_ 'temporarily refused'}}</span>
+{{/if}}
+{{/if}}
+</template>

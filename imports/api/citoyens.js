@@ -280,6 +280,20 @@ Citoyens.helpers({
     }
     return this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].roles && this.links[scopeCible][scopeId].roles.join(',');
   },
+  funcRoles (scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].roles && this.links[scopeCible][scopeId].roles.join(',');
+  },
+  isRoles (scope, scopeId, rolesMatch) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].roles && rolesMatch && this.links[scopeCible][scopeId].roles.some(role => rolesMatch.includes(role));
+  },
   isFavorites (scope, scopeId) {
     return !!((this.collections && this.collections.favorites && this.collections.favorites[scope] && this.collections.favorites[scope][scopeId]));
   },

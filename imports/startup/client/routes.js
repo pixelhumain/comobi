@@ -269,6 +269,24 @@ Router.map(function() {
     loadingTemplate: 'loading',
   });
 
+  this.route('roomsList', {
+    template: 'newsList',
+    path: '/:scope/rooms/:_id',
+    loadingTemplate: 'loading',
+  });
+
+  this.route('roomsDetail', {
+    template: 'detailRooms',
+    path: '/:scope/rooms/:_id/room/:roomId',
+    loadingTemplate: 'loading',
+  });
+
+  this.route('proposalsDetail', {
+    template: 'detailProposals',
+    path: '/:scope/rooms/:_id/room/:roomId/proposal/:proposalId',
+    loadingTemplate: 'loading',
+  });
+
   this.route('directory', {
     template: 'directory',
     path: '/:scope/directory/:_id',

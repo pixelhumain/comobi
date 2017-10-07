@@ -49,6 +49,7 @@
     <a class="tab-item {{#if equals selectview 'scopeProjectsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'projectsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeProjectsTemplate"><i class="icon fa fa-lightbulb-o"></i></a>
     <a class="tab-item {{#if equals selectview 'scopeEventsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'eventsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeEventsTemplate"><i class="icon fa fa-calendar"></i></a>
     <a class="tab-item {{#if equals selectview 'scopePoiTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'poiList' _id=scope._id._str scope=scope.scopeVar}}" id="scopePoiTemplate"><i class="icon fa fa-map-marker"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeRoomsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'roomsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeRoomsTemplate"><i class="icon fa fa-university"></i></a>
   </div>
     {{> Template.dynamic template=selectview data=scope}}
   {{else if equals scope.scopeVar 'projects'}}
@@ -60,6 +61,7 @@
     <a class="tab-item {{#if equals selectview 'scopeNewsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'newsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeNewsTemplate"><i class="icon fa fa-rss"></i></a>
     <a class="tab-item {{#if equals selectview 'scopeEventsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'eventsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeEventsTemplate"><i class="icon fa fa-calendar"></i></a>
     <a class="tab-item {{#if equals selectview 'scopePoiTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'poiList' _id=scope._id._str scope=scope.scopeVar}}" id="scopePoiTemplate"><i class="icon fa fa-map-marker"></i></a>
+    <a class="tab-item {{#if equals selectview 'scopeRoomsTemplate'}}tab-item-active{{/if}}" href="{{pathFor 'roomsList' _id=scope._id._str scope=scope.scopeVar}}" id="scopeRoomsTemplate"><i class="icon fa fa-university"></i></a>
   </div>
     {{> Template.dynamic template=selectview data=scope}}
   {{else if equals scope.scopeVar 'events'}}
@@ -165,6 +167,25 @@
     {{#transition in="zoomIn" out="bounceOut"}}
     {{#each item in listEventsCreator}}
     {{> scopeItemList item=item count=item.countAttendeesSimple}}
+    {{else}}
+
+    {{/each}}
+    {{/transition}}
+  </div>
+</template>
+
+<template name="scopeRoomsTemplate">
+  <div class="list">
+    <div class="item item-divider homestead">
+      <i class="icon fa fa-university"></i>  {{_ "rooms"}} {{name}} <span class="badge badge-dark">{{countRooms}}</span>
+    </div>
+    {{> Template.dynamic template=scopeBoutonRoomsTemplate data=this}}
+
+    {{#transition in="zoomIn" out="bounceOut"}}
+    {{#each item in listRooms}}
+    <a class="item animated in out" href="{{pathFor 'roomsDetail' _id=item.parentId scope=item.parentType roomId=item._id._str}}">
+      <h2><i class="icon fa fa-hashtag"></i> {{item.name}}</h2>
+    </a>
     {{else}}
 
     {{/each}}

@@ -13,6 +13,10 @@ export const avancements_SELECT_LABEL = [{ label: 'idea', value: 'idea' }, { lab
 
 export const preferencesSelect = ['public', 'private', 'hide'];
 
+export const rolesPlusSelect = ['Organisateur', 'Partenaire', 'Financeur', 'Président', 'Sponsor', 'Directeur', 'Conférencier', 'Intervenant'];
+
+export const statusProposals = ['amendable', 'tovote', 'resolved', 'disabled', 'closed', 'archived'];
+
 export const SchemasRolesRest = new SimpleSchema({
   contextId: {
     type: String,
@@ -24,6 +28,7 @@ export const SchemasRolesRest = new SimpleSchema({
   roles: {
     type: [String],
     optional: true,
+    allowedValues: rolesPlusSelect,
   },
   childId: {
     type: String,

@@ -1,0 +1,82 @@
+<template name="detailRooms">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "room"}} : {{#if rooms.name}}{{rooms.name}}{{/if}}</h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+
+  {{> Template.dynamic template="detailRooms_view" data=rooms}}
+
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>
+
+
+<template name="listProposals_search">
+  <label class="item item-input">
+    <i class="icon ion-search placeholder-icon"></i>
+    <input id="search" type="text" placeholder="{{_ "Search..."}}" value="{{search}}">
+  </label>
+</template>
+
+<template name="listProposals_button_bar">
+  <div class="button-bar button-positive">
+    {{> Button_toggle condition=(equals view 'all') classOff="button button-small button-dark all" classOn="button button-small button-dark all activated" iconOff="icon fa fa-th-list" iconOn="icon fa fa-th-list positive"}}
+    {{> Button_toggle condition=(equals view 'amendable') classOff="button button-small amendable" classOn="button button-small amendable activated" iconOff="icon fa fa-pencil" iconOn="icon fa fa-pencil positive"}}
+    {{> Button_toggle condition=(equals view 'tovote') classOff="button button-small tovote" classOn="button button-small tovote activated" iconOff="icon fa fa-gavel" iconOn="icon fa fa-gavel positive"}}
+    {{> Button_toggle condition=(equals view 'resolved') classOff="button button-small resolved" classOn="button button-small resolved activated" iconOff="icon fa fa-times" iconOn="icon fa fa-times positive"}}
+    {{> Button_toggle condition=(equals view 'disabled') classOff="button button-small proposals-disabled" classOn="button button-small proposals-disabled activated" iconOff="icon fa fa-certificate" iconOn="icon fa fa-certificate positive"}}
+    {{> Button_toggle condition=(equals view 'closed') classOff="button button-small closed" classOn="button button-small closed activated" iconOff="icon fa fa-trash" iconOn="icon fa fa-trash positive"}}
+
+  </div>
+</template>
+
+<template name="detailRooms_view">
+  <div class="list">
+    <div class="item item-divider">
+      {{name}}
+    </div>
+    <div class="item item-text-wrap">
+      <p>{{description}}</p>
+    </div>
+  {{> listProposals_search}}
+  {{> listProposals_button_bar}}
+  {{#if equals view 'all'}}
+  {{> listProposalsStatus status='amendable' room=this}}
+  {{> listProposalsStatus status='tovote' room=this}}
+  {{> listProposalsStatus status='resolved' room=this}}
+  {{> listProposalsStatus status='disabled' room=this}}
+  {{> listProposalsStatus status='closed' room=this}}
+  {{else}}
+  {{> listProposalsStatus status=view room=this}}
+  {{/if}}
+  </div>
+</template>
+
+<template name="listProposalsStatus">
+  {{#if room.countProposalsStatus status search}}
+      <div class="item item-divider">
+        <i class="icon fa fa-user"></i> {{_ status}} <span class="badge badge-dark">{{room.countProposalsStatus status search}}</span>
+      </div>
+      {{#transition in="zoomIn" out="bounceOut"}}
+      {{#each item in (room.listProposalsStatus status search)}}
+      <a class="item" href="{{pathFor 'proposalsDetail' _id=item.parentId scope=item.parentType roomId=item.idParentRoom proposalId=item._id._str}}">{{item.title}}</a>
+      {{else}}
+
+      {{/each}}
+      {{/transition}}
+  {{/if}}
+</template>

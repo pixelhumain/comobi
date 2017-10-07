@@ -23,6 +23,7 @@ import { Projects } from '../../api/projects.js';
 import { Poi } from '../../api/poi.js';
 import { Classified } from '../../api/classified.js';
 import { Citoyens } from '../../api/citoyens.js';
+import { Rooms } from '../../api/rooms.js';
 import { News, SchemasNewsRestBase } from '../../api/news.js';
 
 import { nameToCollection } from '../../api/helpers.js';
@@ -39,6 +40,7 @@ window.Projects = Projects;
 window.Poi = Poi;
 window.Classified = Classified;
 window.Citoyens = Citoyens;
+window.Rooms = Rooms;
 
 const pageSession = new ReactiveDict('pageNews');
 
@@ -63,6 +65,8 @@ Template.newsList.onCreated(function() {
       pageSession.set('selectview', 'scopePoiTemplate');
     } else if (Router.current().route.getName() === 'eventsList') {
       pageSession.set('selectview', 'scopeEventsTemplate');
+    } else if (Router.current().route.getName() === 'roomsList') {
+      pageSession.set('selectview', 'scopeRoomsTemplate');
     } else {
       pageSession.set('selectview', 'scopeDetailTemplate');
     }
@@ -375,7 +379,30 @@ Template.scopeEventsTemplate.onCreated(function() {
 
 Template.scopeEventsTemplate.helpers({
   scopeBoutonEventsTemplate () {
-    return `boutonProjects${Router.current().params.scope}`;
+    return `boutonEvents${Router.current().params.scope}`;
+  },
+  dataReady() {
+    return Template.instance().ready.get();
+  },
+});
+
+Template.scopeRoomsTemplate.onCreated(function() {
+  this.ready = new ReactiveVar();
+
+  this.autorun(function() {
+    pageSession.set('scopeId', Router.current().params._id);
+    pageSession.set('scope', Router.current().params.scope);
+  });
+
+  this.autorun(function() {
+    const handle = newsListSubs.subscribe('directoryListRooms', Router.current().params.scope, Router.current().params._id);
+    this.ready.set(handle.ready());
+  }.bind(this));
+});
+
+Template.scopeRoomsTemplate.helpers({
+  scopeBoutonEventsTemplate () {
+    return `boutonRooms${Router.current().params.scope}`;
   },
   dataReady() {
     return Template.instance().ready.get();
