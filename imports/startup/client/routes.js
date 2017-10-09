@@ -287,6 +287,18 @@ Router.map(function() {
     loadingTemplate: 'loading',
   });
 
+  this.route('actionsDetail', {
+    template: 'detailActions',
+    path: '/:scope/rooms/:_id/room/:roomId/action/:actionId',
+    loadingTemplate: 'loading',
+  });
+
+  this.route('resolutionsDetail', {
+    template: 'detailResolutions',
+    path: '/:scope/rooms/:_id/room/:roomId/resolution/:resolutionId',
+    loadingTemplate: 'loading',
+  });
+
   this.route('directory', {
     template: 'directory',
     path: '/:scope/directory/:_id',

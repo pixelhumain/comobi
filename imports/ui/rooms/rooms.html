@@ -25,7 +25,7 @@
 </template>
 
 
-<template name="listProposals_search">
+<template name="listRooms_search">
   <label class="item item-input">
     <i class="icon ion-search placeholder-icon"></i>
     <input id="search" type="text" placeholder="{{_ "Search..."}}" value="{{search}}">
@@ -44,6 +44,15 @@
   </div>
 </template>
 
+<template name="listActions_button_bar">
+  <div class="button-bar button-positive">
+    {{> Button_toggle condition=(equals viewActions 'all') classOff="button button-small button-dark all" classOn="button button-small button-dark all activated" iconOff="icon fa fa-ticket" iconOn="icon fa fa-ticketpositive"}}
+    {{> Button_toggle condition=(equals viewActions 'todo') classOff="button button-small todo" classOn="button button-small todo activated" iconOff="icon fa fa-pencil" iconOn="icon fa fa-pencil positive"}}
+    {{> Button_toggle condition=(equals viewActions 'disabled') classOff="button button-small disabled" classOn="button button-small disabled activated" iconOff="icon fa fa-times" iconOn="icon fa fa-times positive"}}
+    {{> Button_toggle condition=(equals viewActions 'done') classOff="button button-small done" classOn="button button-small done activated" iconOff="icon fa fa-check" iconOn="icon fa fa-check positive"}}
+  </div>
+</template>
+
 <template name="detailRooms_view">
   <div class="list">
     <div class="item item-divider">
@@ -55,7 +64,7 @@
     <div class="item item-divider">
       {{_ "proposals"}}
     </div>
-  {{> listProposals_search}}
+  {{> listRooms_search}}
   {{> listProposals_button_bar}}
   {{#if equals view 'all'}}
   {{> listProposalsStatus status='amendable' room=this}}
@@ -73,7 +82,14 @@
   <div class="item item-divider">
     {{_ "actions"}}
   </div>
-
+  {{> listActions_button_bar}}
+  {{#if equals viewActions 'all'}}
+  {{> listActionsStatus status='todo' room=this}}
+  {{> listActionsStatus status='disabled' room=this}}
+  {{> listActionsStatus status='done' room=this}}
+  {{else}}
+  {{> listActionsStatus status=viewActions room=this}}
+  {{/if}}
   </div>
 </template>
 
@@ -85,6 +101,21 @@
       {{#transition in="zoomIn" out="bounceOut"}}
       {{#each item in (room.listProposalsStatus status search)}}
       <a class="item" href="{{pathFor 'proposalsDetail' _id=item.parentId scope=item.parentType roomId=item.idParentRoom proposalId=item._id._str}}">{{item.title}}</a>
+      {{else}}
+
+      {{/each}}
+      {{/transition}}
+  {{/if}}
+</template>
+
+<template name="listActionsStatus">
+  {{#if room.countActionsStatus status search}}
+      <div class="item item-divider">
+        <i class="icon fa fa-user"></i> {{_ status}} <span class="badge badge-dark">{{room.countActionsStatus status search}}</span>
+      </div>
+      {{#transition in="zoomIn" out="bounceOut"}}
+      {{#each item in (room.listActionsStatus status search)}}
+      <a class="item" href="{{pathFor 'actionsDetail' _id=item.parentId scope=item.parentType roomId=item.idParentRoom actionId=item._id._str}}">{{item.name}}</a>
       {{else}}
 
       {{/each}}

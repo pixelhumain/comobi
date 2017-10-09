@@ -1,0 +1,36 @@
+<template name="detailActions">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "action"}} : </h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+
+  {{> detailViewActions actions=actions}}
+
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>
+
+<template name="detailViewActions">
+  <div class="list card">
+    <div class="item item-divider">
+      {{actions.name}}
+    </div>
+    <div class="item">
+
+    </div>
+  </div>
+</template>

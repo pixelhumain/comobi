@@ -23,6 +23,9 @@ import { SchemasFollowRest, SchemasInviteAttendeesEventRest, SchemasInvitationsR
 import { SchemasNewsRest, SchemasNewsRestBase } from '../../api/news.js';
 import { SchemasCommentsRest, SchemasCommentsEditRest } from '../../api/comments.js';
 import { SchemasRoomsRest } from '../../api/rooms.js';
+import { SchemasProposalsRest } from '../../api/proposals.js';
+import { SchemasActionsRest } from '../../api/actions.js';
+
 import { SchemasShareRest, SchemasRolesRest } from '../../api/schema.js';
 
 
@@ -137,6 +140,8 @@ Meteor.startup(function () {
   SchemasPoiRest.i18n('schemas.poirest');
   SchemasClassifiedRest.i18n('schemas.classifiedrest');
   SchemasRoomsRest.i18n('schemas.roomsrest');
+  SchemasProposalsRest.i18n('schemas.proposalsrest');
+  SchemasActionsRest.i18n('schemas.actionsrest');
   SchemasFollowRest.i18n('schemas.followrest');
   SchemasInviteAttendeesEventRest.i18n('schemas.followrest');
   SchemasShareRest.i18n('schemas.sharerest');
@@ -321,4 +326,6 @@ Meteor.startup(function () {
   Template.registerHelper('SchemasShareRest', SchemasShareRest);
   Template.registerHelper('SchemasRolesRest', SchemasRolesRest);
   Template.registerHelper('SchemasRoomsRest', SchemasRoomsRest);
+  Template.registerHelper('SchemasProposalsRest', SchemasProposalsRest);
+  Template.registerHelper('SchemasActionsRest', SchemasActionsRest);
 });

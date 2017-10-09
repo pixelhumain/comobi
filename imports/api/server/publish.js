@@ -1268,6 +1268,13 @@ Meteor.publishComposite('detailRooms', function(scope, scopeId, roomId) {
                   }
                 },
               },
+              {
+                find(room) {
+                  if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+                    return room.listActions();
+                  }
+                },
+              },
             ]
           },
         ]

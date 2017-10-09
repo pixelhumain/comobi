@@ -8,6 +8,8 @@ import { Router } from 'meteor/iron:router';
 import { baseSchema, SchemasRolesRest } from './schema.js';
 
 import { Proposals } from './proposals.js';
+import { Actions } from './actions.js'
+import { Resolutions } from './resolutions.js'
 import { queryOptions } from './helpers.js';
 
 export const Rooms = new Mongo.Collection('rooms', { idGeneration: 'MONGO' });
@@ -136,5 +138,44 @@ Rooms.helpers({
   },
   countProposalsStatus (status, search) {
     return this.listProposalsStatus(status, search) && this.listProposalsStatus(status, search).count();
+  },
+  listActions (search) {
+    const query = {};
+    query.idParentRoom = this._id._str;
+    if (Meteor.isClient) {
+      if (search) {
+        if (search.charAt(0) === '#' && search.length > 1) {
+          query.tags = { $regex: search.substr(1), $options: 'i' };
+        } else {
+          query.name = { $regex: search, $options: 'i' };
+        }
+      }
+    }
+    // queryOptions
+    return Actions.find(query);
+  },
+  listActionsStatus (status, search) {
+    const query = {};
+    query.idParentRoom = this._id._str;
+    if (Meteor.isClient) {
+      if (search) {
+        if (search.charAt(0) === '#' && search.length > 1) {
+          query.name = { $regex: search.substr(1), $options: 'i' };
+        } else {
+          query.title = { $regex: search, $options: 'i' };
+        }
+      }
+      if (status) {
+        query.status = status;
+      }
+    }
+    // queryOptions
+    return Actions.find(query);
+  },
+  countActions (search) {
+    return this.listActions(search) && this.listActions(search).count();
+  },
+  countActionsStatus (status, search) {
+    return this.listActionsStatus(status, search) && this.listActionsStatus(status, search).count();
   },
 });

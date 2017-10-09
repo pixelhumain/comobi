@@ -23,6 +23,11 @@ import { Poi, SchemasPoiRest, BlockPoiRest } from '../poi.js';
 import { Classified, SchemasClassifiedRest } from '../classified.js';
 import { Comments, SchemasCommentsRest, SchemasCommentsEditRest } from '../comments.js';
 import { SchemasShareRest, SchemasRolesRest } from '../schema.js';
+// DDA
+import { Actions } from '../actions.js';
+import { Resolutions } from '../resolutions.js';
+import { Rooms } from '../rooms.js';
+import { Proposals } from '../proposals.js';
 
 // function api
 import { apiCommunecter } from './api.js';
@@ -36,6 +41,10 @@ global.Projects = Projects;
 global.Poi = Poi;
 global.Classified = Classified;
 global.Citoyens = Citoyens;
+global.Actions = Actions;
+global.Resolutions = Resolutions;
+global.Rooms = Rooms;
+global.Proposals = Proposals;
 
 const baseDocRetour = (docRetour, doc, scope) => {
   if (scope === 'block') {
@@ -1883,21 +1892,82 @@ export const updateRoles = new ValidatedMethod({
 export const saveVote = new ValidatedMethod({
   name: 'saveVote',
   validate: new SimpleSchema({
-    parentType: { type: String },
+    parentType: { type: String, allowedValues: ['amendement', 'proposal'] },
     parentId: { type: String },
-    voteValue: { type: String },
-    idAmdt: { type: String },
+    voteValue: { type: String, allowedValues: ['up', 'down', 'white', 'uncomplet'] },
+    idAmdt: { type: String, optional: true },
   }).validator(),
   run({ parentType, parentId, voteValue, idAmdt }) {
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
+    // TODO verifier si user à droit de voter
     const docRetour = {};
     docRetour.parentType = parentType;
     docRetour.parentId = parentId;
     docRetour.voteValue = voteValue;
-    docRetour.idAmdt = idAmdt;
+    if (parentType === 'amendement') {
+      if (idAmdt) {
+        docRetour.idAmdt = idAmdt;
+      } else {
+        throw new Meteor.Error('not-authorized');
+      }
+    }
+
     const retour = apiCommunecter.postPixel('cooperation', 'savevote', docRetour);
+    return retour;
+  },
+});
+
+
+export const assignmeActionRooms = new ValidatedMethod({
+  name: 'assignmeActionRooms',
+  validate: new SimpleSchema({
+    id: { type: String },
+  }).validator(),
+  run({ id }) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    // TODO verifier si id est une room existante et les droit pour ce l'assigner
+    const docRetour = {};
+    docRetour.id = id;
+    const retour = apiCommunecter.postPixel('rooms', 'assignme', docRetour);
+    return retour;
+  },
+});
+
+
+export const actionsType = new ValidatedMethod({
+  name: 'actionsType',
+  validate: new SimpleSchema({
+    parentType: { type: String, allowedValues: ['projects', 'organizations', 'events'] },
+    parentId: { type: String },
+    type: { type: String, allowedValues: ['actions', 'proposals'] },
+    id: { type: String },
+    name: { type: String, allowedValues: ['status'] },
+    value: { type: String, allowedValues: ['done', 'disabled', 'amendable', 'tovote'] },
+  }).validator(),
+  run({ parentType, parentId, type, id, name, value }) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    const collection = nameToCollection(parentType);
+    if (!collection.findOne({ _id: new Mongo.ObjectID(parentId) }).isAdmin()) {
+      throw new Meteor.Error('not-authorized');
+    }
+    const collectionType = nameToCollection(type);
+    if (!collectionType.findOne({ _id: new Mongo.ObjectID(id) })) {
+      throw new Meteor.Error('not-authorized');
+    }
+    const docRetour = {};
+    docRetour.parentType = parentType;
+    docRetour.parentId = parentId;
+    docRetour.type = type;
+    docRetour.id = id;
+    docRetour.name = name;
+    docRetour.value = value;
+    const retour = apiCommunecter.postPixel('element', 'updatefield', docRetour);
     return retour;
   },
 });

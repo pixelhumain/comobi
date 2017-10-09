@@ -40,6 +40,7 @@ Template.detailRooms.helpers({
 Template.detailRooms_view.onCreated(function() {
   pageSession.set('search', null);
   pageSession.set('view', 'all');
+  pageSession.set('viewActions', 'all')
   pageSession.set('selectstatus', null);
 });
 
@@ -50,15 +51,18 @@ Template.detailRooms_view.helpers({
   view () {
     return pageSession.get('view');
   },
+  viewActions () {
+    return pageSession.get('viewActions');
+  },
 });
 
-Template.listProposals_search.helpers({
+Template.listRooms_search.helpers({
   search () {
     return pageSession.get('search');
   },
 });
 
-Template.listProposals_search.events({
+Template.listRooms_search.events({
   'keyup #search, change #search': _.throttle((event) => {
     if (event.currentTarget.value.length > 0) {
       // console.log(event.currentTarget.value);
@@ -109,7 +113,35 @@ Template.listProposals_button_bar.events({
   },
 });
 
-Template.listProposalsStatus.helpers({
+Template.listActions_button_bar.helpers({
+  search () {
+    return pageSession.get('search');
+  },
+  viewActions () {
+    return pageSession.get('viewActions');
+  },
+});
+
+Template.listActions_button_bar.events({
+  'click .all' (event) {
+    event.preventDefault();
+    pageSession.set('viewActions', 'all');
+  },
+  'click .amendable' (event) {
+    event.preventDefault();
+    pageSession.set('viewActions', 'amendable');
+  },
+  'click .tovote' (event) {
+    event.preventDefault();
+    pageSession.set('viewActions', 'tovote');
+  },
+  'click .resolved' (event) {
+    event.preventDefault();
+    pageSession.set('viewActions', 'resolved');
+  },
+});
+
+Template.listActionsStatus.helpers({
   search () {
     return pageSession.get('search');
   },

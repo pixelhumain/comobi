@@ -1,0 +1,36 @@
+<template name="detailResolutions">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "action"}} : </h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+
+  {{> detailViewResolutions resolutions=resolutions}}
+
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>
+
+<template name="detailViewResolutions">
+  <div class="list card">
+    <div class="item item-divider">
+      {{resolutions.name}}
+    </div>
+    <div class="item">
+
+    </div>
+  </div>
+</template>
