@@ -41,6 +41,10 @@ export const SchemasCommentsRest = new SimpleSchema({
     type: String,
     optional: true,
   },
+  argval: {
+    type: String,
+    optional: true,
+  },
   contextId: {
     type: String,
   },
@@ -88,6 +92,16 @@ if (Meteor.isClient) {
     },
     isAuthor () {
       return this.author === Meteor.userId();
+    },
+    classArgval () {
+      if (this.argval === 'up') {
+        return 'item-balanced';
+      } else if (this.argval === 'white') {
+        return 'item-stable';
+      } else if (this.argval === 'down') {
+        return 'item-assertive';
+      }
+      return null;
     },
   });
 } else {

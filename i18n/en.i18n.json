@@ -165,6 +165,7 @@
       "news":"a publication of",
       "actions":"an action",
       "proposals":"a proposal",
+      "resolutions":"a resolution",
       "rooms":"a cooperative space"
     }
   },
@@ -188,6 +189,115 @@
   "contributor":"contributor",
   "member":"member",
   "attendee":"attendee",
+  "a cooperative space":"a cooperative space",
+  "cooperative space":"cooperative space",
+  "creating a new cooperative space":"creating a new cooperative space",
+  "Edit a cooperative space":"Edit a cooperative space",
+  "proposals":"Proposals",
+  "amendable":"Amendable",
+  "tovote":"To vote",
+  "resolved":"Resolved",
+  "disabled":"Disabled",
+  "closed":"Closed",
+  "resolutions":"Resolutions",
+  "actions":"Actions",
+  "todo":"Todo",
+  "done":"Finished",
+  "creating a new proposal":"Creating a new proposal",
+  "edit a proposal":"Edit a proposal",
+  "proposalFormInformation":"A proposal is used to discuss and seek community input on a given idea or question",
+  "creating a new action":"creating a new action",
+  "edit a action":"Edit a action",
+  "creating a new amendment":"creating a new amendment",
+  "edit a amendment":"edit a amendment",
+  "amendmentFormInformation":"If your amendment is adopted, it will be added to the principale proposal, and will incorporated the final proposal, submited to vote.",
+  "dda":{
+    "resolution":{
+      "resolution":"Resolution",
+      "adopted":"The <strong>resolution</strong> was taken: the proposal is <span class='balanced'>validated</span>",
+      "refused":"The <strong>resolution</strong> was denied: the proposal is <span class='assertive'>refused</span>",
+      "endofvote":"End of vote",
+      "showproposaldetail":"Show proposal detail",
+      "showresolution":"Show Resolution",
+      "resultstitle":"Results"
+    },
+    "actions":{
+      "action":"Action",
+      "actionstartenddate":"Action from __start__ to __end__",
+      "endofaction":"End of the action",
+      "theytakeaction":"They take part in this action",
+      "youparticipatingaction":"You are participating in this action",
+      "wantparticipateaction":"I want to participate in this action",
+      "noparticipants":"No participants",
+      "discussion":"Discussion",
+      "buttons":{
+        "disable":"Disable",
+        "close":"Close"
+      },
+      "status":{
+        "inprogress":"In progress",
+        "completed":"Completed",
+        "todo":"To do",
+        "disabled":"Disabled"
+      }
+    },
+    "proposal":{
+      "proposal":"Proposal",
+      "argumentstitle":"Supplemental information, arguments, examples, demonstrations, etc.",
+      "amendments":{
+        "title":"Amendments",
+        "text":"Proposal submitted to amendments until",
+        "endofamendments":"End of amendments",
+        "proposetext":"You can propose amendments and vote on amendments proposed by other users",
+        "listofamendmentstemporarily":"List of amendments temporarily validated · Majority: 50%",
+        "amendmentsdeactivated":"Amendments deactivated",
+        "noamendments":"No amendments",
+        "validated":"validated",
+        "validated_temporarily":"temporarily validated",
+        "refused":"refused",
+        "refused_temporarily":"temporarily refused"
+      },
+      "tovote":{
+        "title":"Vote",
+        "text":"Proposal to be put to the vote until",
+        "endofvotes":"End of votes",
+        "proposetext":"You can propose amendments and vote on amendments proposed by other users",
+        "listofamendmentsvalidated":"List of validated amendments · Majority",
+        "votesdisabled":"votes disabled",
+        "proposal_temporarily_validated":"Proposal temporarily <span class='balanced'>validated</span>",
+        "proposal_temporarily_refused":"Proposal temporarily <span class='assertive'>refused</span>",
+        "proposal_validated":"Proposal <span class='balanced'>validated</span>",
+        "proposal_refused":"Proposal <span class='assertive'>refused</span>",
+        "bethefirsttovote":"Be the first to vote",
+        "youvoted":"You voted",
+        "infavour":"in favour",
+        "against":"against",
+        "blank":"blank",
+        "incomplete":"incomplete",
+        "youhavenotvotedyet":"you have not voted yet",
+        "votecanchange":"You can change your choice at any time",
+        "changeofvote":"Change of vote",
+        "anonymousvote":"Anonymous vote",
+        "majorityrule":"Majority rule",
+        "voter": "voter",
+        "voter_plural": "voters"
+      },
+      "buttons":{
+        "disable":"Disable",
+        "close":"Close",
+        "backtoamendments":"Back to amendments",
+        "openthevotes":"Open the votes"
+      },
+      "status":{
+        "amendable":"Amendable",
+        "tovote":"To vote",
+        "closed":"Closed",
+        "resolved":"Resolved",
+        "disabled":"Disabled"
+      }
+    },
+    "debate":"Debate"
+  },
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] already exists",
@@ -200,6 +310,10 @@
       "maxNumberExclusive": "[label] must be less than [max]",
       "minDate": "[label] must be on or after [min]",
       "maxDate": "[label] cannot be after [max]",
+      "maxDateAmendment": "The date must be before the end of the voting period",
+      "minDateVote": "The date must be after the end of the amendment period",
+      "maxDateStart": "The date must be before the end",
+      "minDateEnd": "The date must be after the start",
       "badDate": "[label] is not a valid date",
       "minCount": "You must specify at least [minCount] values",
       "maxCount": "You cannot specify more than [maxCount] values",
@@ -292,6 +406,94 @@
       },
       "invitedUserEmail":{
           "label": "email"
+      }
+    },
+    "blockproposalsrest":{
+      "txtAmdt":{
+          "label": "Your amendment"
+      }
+    },
+    "roomsrest" : {
+      "name":{
+        "label": "name"
+      },
+      "description":{
+        "label": "description"
+      },
+      "roles":{
+        "label": "Limit access by role (default: open to all)",
+        "placeholder": "Select ...",
+        "options": {
+          "Organisateur":"Organizer",
+          "Partenaire":"Partner",
+          "Financeur":"Financier",
+          "Président":"President",
+          "Sponsor":"Sponsor",
+          "Directeur":"Director",
+          "Conférencier":"Lecturer",
+          "Intervenant":"Speaker"
+        }
+      }
+    },
+    "actionsrest" : {
+      "name":{
+        "label": "name"
+      },
+      "description":{
+        "label": "description"
+      },
+      "startDate":{
+        "label": "start date"
+      },
+      "endDate":{
+        "label": "end date"
+      },
+      "tags":{
+        "label": "tags"
+      },
+      "urls":{
+        "label": "Free information / urls"
+      }
+    },
+    "proposalsrest" : {
+      "title":{
+        "label": "Name of your proposal"
+      },
+      "description":{
+        "label": "Your proposition",
+        "information":"The final vote will be on the content of your proposal. For clarity, please provide additional information on your proposal in the next section."
+      },
+      "arguments":{
+        "label": "Arguments",
+        "placeholder":"Supplemental information, arguments, examples, demonstrations, etc"
+      },
+      "amendementActivated":{
+        "label": "Activate the amendments",
+        "information":"Votes are disabled during the activated amendment period"
+      },
+      "amendementDateEnd":{
+        "label": "End of the amendment period (opening of votes)"
+      },
+      "voteDateEnd":{
+        "label": "End of voting period"
+      },
+      "majority":{
+        "label": "Majority rule (%)",
+        "information":"Enter a value between 50% and 100%. Your proposal will need to collect more than <strong>__majority__%</strong> of votes to be validated"
+      },
+      "voteAnonymous":{
+        "label": "Votes anonymous",
+        "information":"Would you like to keep the identity of the voters secret?"
+      },
+      "voteCanChange":{
+        "label": "Allow the change of vote",
+        "information":"Would you like to allow voters to change their choice at will?"
+      },
+      "tags":{
+        "label": "Keywords"
+      },
+      "urls":{
+        "label": "Free information / urls"
       }
     },
     "eventsrest" : {
@@ -959,6 +1161,15 @@
       "text":{
         "label": "message",
         "placeholder":"message"
+      },
+      "argval":{
+        "label": "Type of review",
+        "placeholder": "Select ...",
+        "options": {
+          "up":"In favour",
+          "white":"Neutral",
+          "down":"Against"
+        }
       }
     },
     "sharerest":{

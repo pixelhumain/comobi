@@ -29,8 +29,8 @@
   {{#with scope.new}}
   {{#each listComments}}
   <div class="list card">
-    <div class="item {{#if imageDoc authorComments._id._str}}item-avatar{{/if}}">
-      {{#if imageDoc authorComments._id._str}}
+    <div class="item {{#if authorComments.profilThumbImageUrl}}item-avatar{{/if}}">
+      {{#if authorComments.profilThumbImageUrl}}
       {{> imgDoc profilThumbImageUrl=authorComments.profilThumbImageUrl resized="80x80"}}
       {{/if}}
       <p><i class="icon ion-person"></i>  <a href="{{pathFor 'detailList' _id=author scope='citoyens'}}" class="dark">{{authorComments.name}}</a></p>

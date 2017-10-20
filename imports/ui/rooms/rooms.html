@@ -1,0 +1,259 @@
+<template name="detailRooms">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "cooperative space"}}</h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+
+  {{> Template.dynamic template="detailRooms_view" data=scope}}
+
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>
+
+
+<template name="listRooms_search">
+  <label class="item item-input">
+    <i class="icon ion-search placeholder-icon"></i>
+    <input id="search" type="text" placeholder="{{_ "Search..."}}" value="{{search}}">
+  </label>
+</template>
+
+<template name="listProposals_button_bar">
+  <div class="button-bar button-positive">
+    {{> Button_toggle condition=(equals view 'all') classOff="button button-small button-dark all" classOn="button button-small button-dark all activated" iconOff="icon fa fa-th-list" iconOn="icon fa fa-th-list positive"}}
+    {{> Button_toggle condition=(equals view 'amendable') classOff="button button-small amendable" classOn="button button-small amendable activated" iconOff="icon fa fa-pencil" iconOn="icon fa fa-pencil positive"}}
+    {{> Button_toggle condition=(equals view 'tovote') classOff="button button-small tovote" classOn="button button-small tovote activated" iconOff="icon fa fa-gavel" iconOn="icon fa fa-gavel positive"}}
+    {{> Button_toggle condition=(equals view 'resolved') classOff="button button-small resolved" classOn="button button-small resolved activated" iconOff="icon fa fa-times" iconOn="icon fa fa-times positive"}}
+    {{> Button_toggle condition=(equals view 'disabled') classOff="button button-small proposals-disabled" classOn="button button-small proposals-disabled activated" iconOff="icon fa fa-certificate" iconOn="icon fa fa-certificate positive"}}
+    {{> Button_toggle condition=(equals view 'closed') classOff="button button-small closed" classOn="button button-small closed activated" iconOff="icon fa fa-trash" iconOn="icon fa fa-trash positive"}}
+
+  </div>
+</template>
+
+<template name="listActions_button_bar">
+  <div class="button-bar button-positive">
+    {{> Button_toggle condition=(equals viewActions 'all') classOff="button button-small button-dark all" classOn="button button-small button-dark all activated" iconOff="icon fa fa-th-list" iconOn="icon fa fa-th-list positive"}}
+    {{> Button_toggle condition=(equals viewActions 'todo') classOff="button button-small todo" classOn="button button-small todo activated" iconOff="icon fa fa-ticket" iconOn="icon fa fa-ticket positive"}}
+    {{> Button_toggle condition=(equals viewActions 'disabled') classOff="button button-small actions-disabled" classOn="button button-small actions-disabled activated" iconOff="icon fa fa-times" iconOn="icon fa fa-times positive"}}
+    {{> Button_toggle condition=(equals viewActions 'done') classOff="button button-small done" classOn="button button-small done activated" iconOff="icon fa fa-check" iconOn="icon fa fa-check positive"}}
+  </div>
+</template>
+
+<template name="detailRooms_view">
+  <div class="list">
+    {{#with room }}
+    <div class="item item-divider">
+      {{name}}
+    </div>
+    {{#if ../isAdmin}}
+    <div class="button-bar bar-positive">
+      <a href="{{pathFor 'roomsEdit' _id=../_id._str scope=../scopeVar roomId=_id._str}}" class="button button-small">{{> ionIcon icon="edit"}}</a>
+    </div>
+    {{else if isCreator}}
+    <div class="button-bar bar-positive">
+      <a href="{{pathFor 'roomsEdit' _id=../_id._str scope=../scopeVar roomId=_id._str}}" class="button button-small">{{> ionIcon icon="edit"}}</a>
+    </div>
+    {{/if}}
+    <div class="item item-text-wrap">
+      <p>{{description}}</p>
+      {{#if roles}}
+      <p><i class="icon fa fa-lock"></i> {{rolesJoin}}</p>
+      {{/if}}
+      {{#if tags}}
+      <p>
+      {{#each tags}}
+      <span class=""><i class="icon ion-pound"></i> {{this}}</span>
+      {{/each}}
+      </p>
+      {{/if}}
+    </div>
+      {{> listRooms_search}}
+    <div class="item item-divider">
+    <i class="icon fa fa-inbox"></i> {{_ "proposals"}}
+    </div>
+
+    {{#if ../isScopeMe}}
+    <div class="button-bar bar-positive">
+      <a href="{{pathFor 'proposalsAdd' _id=../_id._str scope=../scopeVar roomId=_id._str}}" class="button button-small">{{> ionIcon icon="plus"}}</a>
+    </div>
+    {{/if}}
+  {{> listProposals_button_bar}}
+  {{#if equals view 'all'}}
+  {{> listProposalsStatus status='amendable' room=this}}
+  {{> listProposalsStatus status='tovote' room=this}}
+  {{> listProposalsStatus status='resolved' room=this}}
+  {{> listProposalsStatus status='disabled' room=this}}
+  {{> listProposalsStatus status='closed' room=this}}
+  {{else}}
+  {{> listProposalsStatus status=view room=this}}
+  {{/if}}
+
+  {{> listResolutions room=this}}
+  <div class="item item-divider">
+    <i class="icon fa fa-inbox"></i> {{_ "actions"}}
+  </div>
+
+  {{#if ../isScopeMe}}
+  <div class="button-bar bar-positive">
+    <a href="{{pathFor 'actionsAdd' _id=../_id._str scope=../scopeVar roomId=_id._str}}" class="button button-small">{{> ionIcon icon="plus"}}</a>
+  </div>
+  {{/if}}
+  {{> listActions_button_bar}}
+  {{#if equals viewActions 'all'}}
+  {{> listActionsStatus status='todo' room=this}}
+  {{> listActionsStatus status='disabled' room=this}}
+  {{> listActionsStatus status='done' room=this}}
+  {{else}}
+  {{> listActionsStatus status=viewActions room=this}}
+  {{/if}}
+  {{/with}}
+  </div>
+</template>
+
+<template name="listProposalsStatus">
+  {{#if room.countProposalsStatus status search}}
+      <div class="item item-divider">
+        {{_ status}} <span class="badge badge-dark">{{room.countProposalsStatus status search}}</span>
+      </div>
+      {{#transition in="zoomIn" out="bounceOut"}}
+      {{#each item in (room.listProposalsStatus status search)}}
+      <a class="item animated in out" href="{{pathFor 'proposalsDetail' _id=item.parentId scope=item.parentType roomId=item.idParentRoom proposalId=item._id._str}}">{{item.title}}</a>
+      {{else}}
+
+      {{/each}}
+      {{/transition}}
+  {{/if}}
+</template>
+
+<template name="listActionsStatus">
+  {{#if room.countActionsStatus status search}}
+      <div class="item item-divider">
+        {{_ status}} <span class="badge badge-dark">{{room.countActionsStatus status search}}</span>
+      </div>
+      {{#transition in="zoomIn" out="bounceOut"}}
+      {{#each item in (room.listActionsStatus status search)}}
+      <a class="item animated in out" href="{{pathFor 'actionsDetail' _id=item.parentId scope=item.parentType roomId=item.idParentRoom actionId=item._id._str}}">{{item.name}}</a>
+      {{else}}
+
+      {{/each}}
+      {{/transition}}
+  {{/if}}
+</template>
+
+<template name="listResolutions">
+  {{#if room.countResolutions search}}
+      <div class="item item-divider">
+        <i class="icon fa fa-inbox"></i> {{_ "resolutions"}} <span class="badge badge-dark">{{room.countResolutions search}}</span>
+      </div>
+      {{#transition in="zoomIn" out="bounceOut"}}
+      {{#each item in (room.listResolutions search)}}
+      <a class="item animated in out" href="{{pathFor 'resolutionsDetail' _id=item.parentId scope=item.parentType roomId=item.idParentRoom resolutionId=item._id._str}}">{{item.title}}</a>
+      {{else}}
+
+      {{/each}}
+      {{/transition}}
+  {{/if}}
+</template>
+
+<template name="roomsAdd">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "cooperative space"}}</h1>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list" data-snap-ignore="true">
+    <div class="item item-divider">
+      {{_ "creating a new cooperative space"}}
+    </div>
+    {{#if error}}
+    <div class="card">
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    </div>
+    {{/if}}
+    {{#autoForm id="addRoom" schema=SchemasRoomsRest type="method" meteormethod="insertRoom" singleMethodArgument=true template="ionic" class="padding"}}
+    {{> roomsFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "create"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+
+<template name="roomsEdit">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "cooperative space"}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list" data-snap-ignore="true">
+    <div class="item item-divider">
+      {{_ "Edit a cooperative space"}}
+    </div>
+    {{#if error}}
+    <div class="card">
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    </div>
+    {{/if}}
+    {{#autoForm id="editRoom" schema=SchemasRoomsRest type="method-update" meteormethod="updateRoom" doc=room singleMethodArgument=true template="ionic" class="padding"}}
+    {{> roomsFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+  {{> loading}}
+  {{/if}}
+</template>
+
+<template name="roomsFields">
+  {{> afQuickField name='name'}}
+  {{> afQuickField name='description' rows=8}}
+  {{> afQuickField name='roles' type='select-checkbox' }}
+</template>

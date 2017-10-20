@@ -15,6 +15,7 @@ import { Organizations } from './organizations.js';
 import { Documents } from './documents.js';
 import { Events } from './events.js';
 import { Poi } from './poi.js';
+import { Rooms } from './rooms.js';
 import { ActivityStream } from './activitystream.js';
 import { queryLink, queryLinkToBeValidated, queryOptions, nameToCollection } from './helpers.js';
 
@@ -159,6 +160,13 @@ Projects.helpers({
     }
     return undefined;
   },
+  roles (scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].roles && this.links[scopeCible][scopeId].roles.join(',');
+  },
   creatorProfile () {
     return Citoyens.findOne({ _id: new Mongo.ObjectID(this.creator) });
   },
@@ -168,6 +176,9 @@ Projects.helpers({
   isFavorites (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
     return Citoyens.findOne({ _id: new Mongo.ObjectID(bothUserId) }).isFavorites('projects', this._id._str);
+  },
+  isScopeMe () {
+    return this.isContributors();
   },
   isScope (scope, scopeId) {
     return !!((this.links && this.links[scope] && this.links[scope][scopeId] && this.links[scope][scopeId].type && this.isIsInviting(scope, scopeId)));
@@ -306,6 +317,66 @@ Projects.helpers({
   },
   countPoiCreator () {
     return this.listPoiCreator() && this.listPoiCreator().count();
+  },
+  listRooms (search) {
+    if (Citoyens.findOne({ _id: new Mongo.ObjectID(Meteor.userId()) }).isScope(this.scopeVar(), this._id._str)) {
+      const query = {};
+
+      if (this.isAdmin()) {
+        if (Meteor.isClient && search) {
+          query.parentId = this._id._str;
+          query.name = { $regex: search, $options: 'i' };
+          query.status = 'open';
+        } else {
+          query.parentId = this._id._str;
+          query.status = 'open';
+        }
+      } else {
+        query.$or = [];
+        const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(Meteor.userId()) }).funcRoles(this.scopeVar(), this._id._str) ? Citoyens.findOne({ _id: new Mongo.ObjectID(Meteor.userId()) }).funcRoles(this.scopeVar(), this._id._str).split(',') : null;
+        if (roles) {
+          if (Meteor.isClient && search) {
+            query.$or.push({ parentId: this._id._str, name: { $regex: search, $options: 'i' }, status: 'open', roles: { $exists: true, $in: roles } });
+          } else {
+            query.$or.push({ parentId: this._id._str, status: 'open', roles: { $exists: true, $in: roles } });
+          }
+        }
+        if (Meteor.isClient && search) {
+          query.$or.push({ parentId: this._id._str, name: { $regex: search, $options: 'i' }, status: 'open', roles: { $exists: false } });
+        } else {
+          query.$or.push({ parentId: this._id._str, status: 'open', roles: { $exists: false } });
+        }
+      }
+
+      queryOptions.fields.parentId = 1;
+      queryOptions.fields.parentType = 1;
+      queryOptions.fields.status = 1;
+      queryOptions.fields.roles = 1;
+      return Rooms.find(query, queryOptions);
+    }
+  },
+  detailRooms (roomId) {
+    if (Citoyens.findOne({ _id: new Mongo.ObjectID(Meteor.userId()) }).isScope(this.scopeVar(), this._id._str)) {
+      const query = {};
+      if (this.isAdmin()) {
+        query._id = new Mongo.ObjectID(roomId);
+        query.status = 'open';
+      } else {
+        query.$or = [];
+        const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(Meteor.userId()) }).funcRoles(this.scopeVar(), this._id._str) ? Citoyens.findOne({ _id: new Mongo.ObjectID(Meteor.userId()) }).funcRoles(this.scopeVar(), this._id._str).split(',') : null;
+        if (roles) {
+          query.$or.push({ _id: new Mongo.ObjectID(roomId), status: 'open', roles: { $exists: true, $in: roles } });
+        }
+        query.$or.push({ _id: new Mongo.ObjectID(roomId), status: 'open', roles: { $exists: false } });
+      }
+      return Rooms.find(query);
+    }
+  },
+  countRooms (search) {
+    return this.listRooms(search) && this.listRooms(search).count();
+  },
+  room (roomId) {
+    return Rooms.findOne({ _id: new Mongo.ObjectID(Router.current().params.roomId) });
   },
   listNotifications (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();

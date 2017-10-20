@@ -22,6 +22,10 @@ import { SchemasClassifiedRest } from '../../api/classified.js';
 import { SchemasFollowRest, SchemasInviteAttendeesEventRest, SchemasInvitationsRest, SchemasCitoyensRest, BlockCitoyensRest } from '../../api/citoyens.js';
 import { SchemasNewsRest, SchemasNewsRestBase } from '../../api/news.js';
 import { SchemasCommentsRest, SchemasCommentsEditRest } from '../../api/comments.js';
+import { SchemasRoomsRest } from '../../api/rooms.js';
+import { SchemasProposalsRest, BlockProposalsRest } from '../../api/proposals.js';
+import { SchemasActionsRest } from '../../api/actions.js';
+
 import { SchemasShareRest, SchemasRolesRest } from '../../api/schema.js';
 
 
@@ -135,6 +139,10 @@ Meteor.startup(function () {
   SchemasProjectsRest.i18n('schemas.projectsrest');
   SchemasPoiRest.i18n('schemas.poirest');
   SchemasClassifiedRest.i18n('schemas.classifiedrest');
+  SchemasRoomsRest.i18n('schemas.roomsrest');
+  SchemasProposalsRest.i18n('schemas.proposalsrest');
+  BlockProposalsRest.i18n('schemas.blockproposalsrest');
+  SchemasActionsRest.i18n('schemas.actionsrest');
   SchemasFollowRest.i18n('schemas.followrest');
   SchemasInviteAttendeesEventRest.i18n('schemas.followrest');
   SchemasShareRest.i18n('schemas.sharerest');
@@ -238,7 +246,6 @@ Meteor.startup(function () {
   },
   );
 
-
   Template.registerHelper('currentFieldValue', function (fieldName) {
     return AutoForm.getFieldValue(fieldName) || false;
   });
@@ -256,7 +263,7 @@ Meteor.startup(function () {
   });
 
   Template.registerHelper('urlImageDesktop', function () {
-    console.log(Meteor.settings.public.remoteUrl);
+    // console.log(Meteor.settings.public.remoteUrl);
     return Meteor.isDesktop ? Meteor.settings.public.remoteUrl : '';
   });
 
@@ -274,4 +281,8 @@ Meteor.startup(function () {
   Template.registerHelper('SchemasCitoyensRest', SchemasCitoyensRest);
   Template.registerHelper('SchemasShareRest', SchemasShareRest);
   Template.registerHelper('SchemasRolesRest', SchemasRolesRest);
+  Template.registerHelper('SchemasRoomsRest', SchemasRoomsRest);
+  Template.registerHelper('SchemasProposalsRest', SchemasProposalsRest);
+  Template.registerHelper('BlockProposalsRest', BlockProposalsRest);
+  Template.registerHelper('SchemasActionsRest', SchemasActionsRest);
 });

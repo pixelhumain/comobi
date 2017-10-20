@@ -23,6 +23,11 @@ import { Poi, SchemasPoiRest, BlockPoiRest } from '../poi.js';
 import { Classified, SchemasClassifiedRest } from '../classified.js';
 import { Comments, SchemasCommentsRest, SchemasCommentsEditRest } from '../comments.js';
 import { SchemasShareRest, SchemasRolesRest } from '../schema.js';
+// DDA
+import { Actions, SchemasActionsRest } from '../actions.js';
+import { Resolutions } from '../resolutions.js';
+import { Rooms, SchemasRoomsRest } from '../rooms.js';
+import { Proposals, SchemasProposalsRest, BlockProposalsRest } from '../proposals.js';
 
 // function api
 import { apiCommunecter } from './api.js';
@@ -36,6 +41,10 @@ global.Projects = Projects;
 global.Poi = Poi;
 global.Classified = Classified;
 global.Citoyens = Citoyens;
+global.Actions = Actions;
+global.Resolutions = Resolutions;
+global.Rooms = Rooms;
+global.Proposals = Proposals;
 
 const baseDocRetour = (docRetour, doc, scope) => {
   if (scope === 'block') {
@@ -1875,6 +1884,515 @@ export const updateRoles = new ValidatedMethod({
     }
 
     const retour = apiCommunecter.postPixel('link', 'removerole', docRetour);
+    return retour;
+  },
+});
+
+export const insertRoom = new ValidatedMethod({
+  name: 'insertRoom',
+  validate: SchemasRoomsRest.validator(),
+  run(doc) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    // admin ou membre
+    const collection = nameToCollection(doc.parentType);
+    if (!(collection.findOne({ _id: new Mongo.ObjectID(doc.parentId) }).isAdmin() || Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(doc.parentType, doc.parentId))) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const docRetour = doc;
+    docRetour.status = 'open';
+    if (doc && doc.roles) {
+      docRetour.roles = doc.roles.join(',');
+    }
+    docRetour.key = 'room';
+    docRetour.collection = 'rooms';
+
+    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    return retour;
+  },
+});
+
+export const updateRoom = new ValidatedMethod({
+  name: 'updateRoom',
+  validate: new SimpleSchema({
+    modifier: {
+      type: Object,
+      blackbox: true,
+    },
+    _id: {
+      type: String,
+    },
+  }).validator(),
+  run({ modifier, _id }) {
+    SchemasRoomsRest.clean(modifier);
+    SchemasRoomsRest.validate(modifier, { modifier: true });
+
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    // admin ou creator
+    const collection = nameToCollection(modifier.$set.parentType);
+    if (!(collection.findOne({ _id: new Mongo.ObjectID(modifier.$set.parentId) }).isAdmin() || Rooms.findOne({ _id: new Mongo.ObjectID(_id) }).isCreator())) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const docRetour = modifier.$set;
+    if (modifier && modifier.$set && modifier.$set.roles) {
+      docRetour.roles = modifier.$set.roles.join(',');
+    }
+    docRetour.status = 'open';
+    docRetour.key = 'room';
+    docRetour.collection = 'rooms';
+    docRetour.id = _id;
+    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    return retour;
+  },
+});
+
+export const insertProposal = new ValidatedMethod({
+  name: 'insertProposal',
+  validate: SchemasProposalsRest.validator(),
+  run(doc) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    // membre ou membre avec roles si room à des roles
+    const room = Rooms.findOne({ _id: new Mongo.ObjectID(doc.idParentRoom) });
+    if (!room) {
+      throw new Meteor.Error('not-authorized');
+    } else {
+      if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
+        if (room.roles && room.roles.length > 0) {
+            const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
+            if (roles && room.roles.some(role => roles.includes(role))) {
+              // true
+            } else {
+              // false
+              throw new Meteor.Error('not-authorized');
+            }
+        }
+      } else {
+        throw new Meteor.Error('not-authorized');
+      }
+    }
+    const docRetour = doc;
+    docRetour.majority = doc.majority.toString();
+    if (doc.amendementDateEnd) {
+      docRetour.amendementDateEnd = moment(doc.amendementDateEnd).format('YYYY-MM-DDTHH:mm:ssZ');
+    }
+    if (doc.voteDateEnd) {
+      docRetour.voteDateEnd = moment(doc.voteDateEnd).format('YYYY-MM-DDTHH:mm:ssZ');
+    }
+    docRetour.key = 'proposal';
+    docRetour.collection = 'proposals';
+    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    return retour;
+  },
+});
+
+export const updateProposal = new ValidatedMethod({
+  name: 'updateProposal',
+  validate: new SimpleSchema({
+    modifier: {
+      type: Object,
+      blackbox: true,
+    },
+    _id: {
+      type: String,
+    },
+  }).validator(),
+  run({ modifier, _id }) {
+    SchemasProposalsRest.clean(modifier);
+    SchemasProposalsRest.validate(modifier, { modifier: true });
+
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    if (!Proposals.findOne({ _id: new Mongo.ObjectID(_id) })) {
+      throw new Meteor.Error('not-authorized');
+    }
+    const collection = nameToCollection(modifier.$set.parentType);
+    // admin ou creator
+    if (!(collection.findOne({ _id: new Mongo.ObjectID(modifier.$set.parentId) }).isAdmin() || Proposals.findOne({ _id: new Mongo.ObjectID(_id) }).isCreator())) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    /* const room = Rooms.findOne({ _id: new Mongo.ObjectID(modifier.$set.idParentRoom) });
+    if (!room) {
+      throw new Meteor.Error('not-authorized');
+    } else {
+      if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
+        if (room.roles && room.roles.length > 0) {
+            const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
+            if (roles && room.roles.some(role => roles.includes(role))) {
+              // true
+            } else {
+              // false
+              throw new Meteor.Error('not-authorized');
+            }
+        }
+      } else {
+        throw new Meteor.Error('not-authorized');
+      }
+    } */
+
+    const docRetour = modifier.$set;
+    docRetour.majority = modifier.$set.majority.toString();
+    if (modifier.$set.amendementDateEnd) {
+      docRetour.amendementDateEnd = moment(modifier.$set.amendementDateEnd).format();
+    }
+    if (modifier.$set.voteDateEnd) {
+      docRetour.voteDateEnd = moment(modifier.$set.voteDateEnd).format();
+    }
+    docRetour.key = 'proposal';
+    docRetour.collection = 'proposals';
+    docRetour.id = _id;
+    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    return retour;
+  },
+});
+
+export const insertAction = new ValidatedMethod({
+  name: 'insertAction',
+  validate: SchemasActionsRest.validator(),
+  run(doc) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    // membre ou membre avec roles si room à des roles
+    const room = Rooms.findOne({ _id: new Mongo.ObjectID(doc.idParentRoom) });
+    if (!room) {
+      throw new Meteor.Error('not-authorized');
+    } else {
+      if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
+        if (room.roles && room.roles.length > 0) {
+            const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
+            if (roles && room.roles.some(role => roles.includes(role))) {
+              // true
+            } else {
+              // false
+              throw new Meteor.Error('not-authorized');
+            }
+        }
+      } else {
+        throw new Meteor.Error('not-authorized');
+      }
+    }
+
+    const docRetour = doc;
+
+    if (doc.startDate) {
+      docRetour.startDate = moment(doc.startDate).format('YYYY-MM-DDTHH:mm:ssZ');
+    }
+    if (doc.endDate) {
+      docRetour.endDate = moment(doc.endDate).format('YYYY-MM-DDTHH:mm:ssZ');
+    }
+
+    /*
+    email:thomas.craipeau@gmail.com
+    */
+    docRetour.status = 'todo';
+    docRetour.idUserAuthor = this.userId;
+    docRetour.key = 'action';
+    docRetour.collection = 'actions';
+    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    return retour;
+  },
+});
+
+export const updateAction = new ValidatedMethod({
+  name: 'updateAction',
+  validate: new SimpleSchema({
+    modifier: {
+      type: Object,
+      blackbox: true,
+    },
+    _id: {
+      type: String,
+    },
+  }).validator(),
+  run({ modifier, _id }) {
+    SchemasActionsRest.clean(modifier);
+    SchemasActionsRest.validate(modifier, { modifier: true });
+
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    if (!Actions.findOne({ _id: new Mongo.ObjectID(_id) })) {
+      throw new Meteor.Error('not-authorized');
+    }
+    const collection = nameToCollection(modifier.$set.parentType);
+    // admin ou creator
+    if (!(collection.findOne({ _id: new Mongo.ObjectID(modifier.$set.parentId) }).isAdmin() || Actions.findOne({ _id: new Mongo.ObjectID(_id) }).isCreator())) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const docRetour = modifier.$set;
+
+    if (modifier.$set.startDate) {
+      docRetour.startDate = moment(modifier.$set.startDate).format();
+    }
+    if (modifier.$set.endDate) {
+      docRetour.endDate = moment(modifier.$set.endDate).format();
+    }
+    // docRetour.status = 'todo';
+    docRetour.idUserAuthor = this.userId;
+    docRetour.key = 'action';
+    docRetour.collection = 'actions';
+    docRetour.id = _id;
+    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    return retour;
+  },
+});
+
+export const insertAmendement = new ValidatedMethod({
+  name: 'insertAmendement',
+  validate: BlockProposalsRest.validator(),
+  run(doc) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    // membre ou membre avec roles si room à des roles
+    const query = {};
+    query._id = new Mongo.ObjectID(doc.id);
+    const proposal = Proposals.findOne(query);
+    if (!proposal) {
+      throw new Meteor.Error('not-authorized');
+    } else {
+    const room = Rooms.findOne({ _id: new Mongo.ObjectID(proposal.idParentRoom) });
+    if (!room) {
+      throw new Meteor.Error('not-authorized');
+    } else {
+      if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
+        if (room.roles && room.roles.length > 0) {
+            const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
+            if (roles && room.roles.some(role => roles.includes(role))) {
+              // true
+            } else {
+              // false
+              throw new Meteor.Error('not-authorized');
+            }
+        }
+      } else {
+        throw new Meteor.Error('not-authorized');
+      }
+    }
+  }
+    const docRetour = doc;
+
+    /* block:amendement
+    typeElement:proposals
+    id:59d7450d40bb4e926fdcd10b
+    txtAmdt:proposition amendement
+    typeAmdt:add */
+
+    const retour = apiCommunecter.postPixel('element', 'updateblock', docRetour);
+    return retour;
+  },
+});
+
+export const updateAmendement = new ValidatedMethod({
+  name: 'updateAmendement',
+  validate: new SimpleSchema({
+    modifier: {
+      type: Object,
+      blackbox: true,
+    },
+    _id: {
+      type: String,
+    },
+  }).validator(),
+  run({ modifier, _id }) {
+    BlockProposalsRest.clean(modifier);
+    BlockProposalsRest.validate(modifier, { modifier: true });
+
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const docRetour = modifier.$set;
+    docRetour.id = _id;
+    const retour = apiCommunecter.postPixel('element', 'updateblock', docRetour);
+    return retour;
+  },
+});
+
+export const saveVote = new ValidatedMethod({
+  name: 'saveVote',
+  validate: new SimpleSchema({
+    parentType: { type: String, allowedValues: ['amendement', 'proposal'] },
+    parentId: { type: String },
+    voteValue: { type: String, allowedValues: ['up', 'down', 'white', 'uncomplet'] },
+    idAmdt: { type: String, optional: true },
+  }).validator(),
+  run({ parentType, parentId, voteValue, idAmdt }) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    // TODO verifier si user à droit de voter
+    if (parentType === 'amendement' && !idAmdt) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const query = {};
+    query._id = new Mongo.ObjectID(parentId);
+    if (parentType === 'amendement' && idAmdt) {
+      query[`amendements.${idAmdt}`] = { $exists: true };
+    }
+    const proposal = Proposals.findOne(query);
+    if (!proposal) {
+      throw new Meteor.Error('not-authorized');
+    } else {
+      const room = Rooms.findOne({ _id: new Mongo.ObjectID(proposal.idParentRoom) });
+      if (!room) {
+        throw new Meteor.Error('not-authorized');
+      } else {
+        if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
+          if (room.roles && room.roles.length > 0) {
+            const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
+            if (roles && room.roles.some(role => roles.includes(role))) {
+              // true
+            } else {
+              // false
+              throw new Meteor.Error('not-authorized');
+            }
+          }
+        } else {
+          throw new Meteor.Error('not-authorized');
+        }
+      }
+    }
+
+    const docRetour = {};
+    docRetour.parentType = parentType;
+    docRetour.parentId = parentId;
+    docRetour.voteValue = voteValue;
+    if (parentType === 'amendement') {
+      if (idAmdt) {
+        docRetour.idAmdt = idAmdt;
+      } else {
+        throw new Meteor.Error('not-authorized');
+      }
+    }
+
+    const retour = apiCommunecter.postPixel('cooperation', 'savevote', docRetour);
+    return retour;
+  },
+});
+
+
+export const assignmeActionRooms = new ValidatedMethod({
+  name: 'assignmeActionRooms',
+  validate: new SimpleSchema({
+    id: { type: String },
+  }).validator(),
+  run({ id }) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    // TODO verifier si id est une room existante et les droit pour ce l'assigner
+    //id action > recupérer idParentRoom,parentType,parentId > puis roles dans room
+    const action = Actions.findOne({ _id: new Mongo.ObjectID(id) });
+    if (!action) {
+      throw new Meteor.Error('not-authorized');
+    } else {
+      const room = Rooms.findOne({ _id: new Mongo.ObjectID(action.idParentRoom) });
+      if (!room) {
+        throw new Meteor.Error('not-authorized');
+      } else {
+        if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
+          if (room.roles && room.roles.length > 0) {
+            const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
+            if (roles && room.roles.some(role => roles.includes(role))) {
+              // true
+            } else {
+              // false
+              throw new Meteor.Error('not-authorized');
+            }
+          }
+        } else {
+          throw new Meteor.Error('not-authorized');
+        }
+      }
+    }
+
+    const docRetour = {};
+    docRetour.id = id;
+    const retour = apiCommunecter.postPixel('rooms', 'assignme', docRetour);
+    return retour;
+  },
+});
+
+export const deleteAmendement = new ValidatedMethod({
+  name: 'deleteAmendement',
+  validate: new SimpleSchema({
+    numAm: { type: String },
+    idProposal: { type: String },
+  }).validator(),
+  run({ numAm, idProposal }) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    // TODO verifier si idProposal est une proposition existante et numAm l'amendement existe
+    const query = {};
+    query._id = new Mongo.ObjectID(idProposal);
+    query[`amendements.${numAm}`] = { $exists: true };
+    const amendement = Proposals.findOne(query);
+    if (!amendement) {
+      throw new Meteor.Error('not-authorized');
+    }
+    // ou admin ou creator
+    const collection = nameToCollection(amendement.parentType);
+    if (!collection.findOne({ _id: new Mongo.ObjectID(amendement.parentId) }).isAdmin()) {
+      if (amendement.amendements[numAm].idUserAuthor !== this.userId) {
+        throw new Meteor.Error('not-authorized');
+      }
+    }
+
+    const docRetour = {};
+    docRetour.numAm = numAm;
+    docRetour.idProposal = idProposal;
+    const retour = apiCommunecter.postPixel('cooperation', 'deleteamendement', docRetour);
+    return retour;
+  },
+});
+
+export const actionsType = new ValidatedMethod({
+  name: 'actionsType',
+  validate: new SimpleSchema({
+    parentType: { type: String, allowedValues: ['projects', 'organizations', 'events'] },
+    parentId: { type: String },
+    type: { type: String, allowedValues: ['actions', 'proposals'] },
+    id: { type: String },
+    name: { type: String, allowedValues: ['status'] },
+    value: { type: String, allowedValues: ['done', 'disabled', 'amendable', 'tovote'] },
+  }).validator(),
+  run({ parentType, parentId, type, id, name, value }) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+    const collection = nameToCollection(parentType);
+    const collectionType = nameToCollection(type);
+
+    if (!collectionType.findOne({ _id: new Mongo.ObjectID(id) })) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    if (!(collection.findOne({ _id: new Mongo.ObjectID(parentId) }).isAdmin() || collectionType.findOne({ _id: new Mongo.ObjectID(id) }).isCreator())) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const docRetour = {};
+    docRetour.parentType = parentType;
+    docRetour.parentId = parentId;
+    docRetour.type = type;
+    docRetour.id = id;
+    docRetour.name = name;
+    docRetour.value = value;
+    const retour = apiCommunecter.postPixel('element', 'updatefield', docRetour);
     return retour;
   },
 });
