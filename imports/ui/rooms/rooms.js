@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Mongo } from 'meteor/mongo';
+import { AutoForm } from 'meteor/aldeed:autoform';
 import { Router } from 'meteor/iron:router';
 
 import { Rooms } from '../../api/rooms.js';
@@ -9,9 +10,19 @@ import { Rooms } from '../../api/rooms.js';
 // submanager
 import { newsListSubs } from '../../api/client/subsmanager.js';
 
+import { Events } from '../../api/events.js';
+import { Organizations } from '../../api/organizations.js';
+import { Projects } from '../../api/projects.js';
+
+import { nameToCollection } from '../../api/helpers.js';
+
 import { pageSession } from '../../api/client/reactive.js';
 
 import './rooms.html';
+
+window.Events = Events;
+window.Organizations = Organizations;
+window.Projects = Projects;
 
 Template.detailRooms.onCreated(function() {
   this.ready = new ReactiveVar();
@@ -29,8 +40,11 @@ Template.detailRooms.onCreated(function() {
 });
 
 Template.detailRooms.helpers({
-  rooms () {
-    return Rooms.findOne({ _id: new Mongo.ObjectID(Router.current().params.roomId) });
+  scope () {
+    if (Router.current().params.scope) {
+      const collection = nameToCollection(Router.current().params.scope);
+      return collection.findOne({ _id: new Mongo.ObjectID(Router.current().params._id) });
+    }
   },
   dataReady() {
     return Template.instance().ready.get();
@@ -127,22 +141,120 @@ Template.listActions_button_bar.events({
     event.preventDefault();
     pageSession.set('viewActions', 'all');
   },
-  'click .amendable' (event) {
+  'click .todo' (event) {
     event.preventDefault();
-    pageSession.set('viewActions', 'amendable');
+    pageSession.set('viewActions', 'todo');
   },
-  'click .tovote' (event) {
+  'click .actions-disabled' (event) {
     event.preventDefault();
-    pageSession.set('viewActions', 'tovote');
+    pageSession.set('viewActions', 'disabled');
   },
-  'click .resolved' (event) {
+  'click .done' (event) {
     event.preventDefault();
-    pageSession.set('viewActions', 'resolved');
+    pageSession.set('viewActions', 'done');
   },
 });
 
 Template.listActionsStatus.helpers({
   search () {
     return pageSession.get('search');
+  },
+});
+
+Template.listProposalsStatus.helpers({
+  search () {
+    return pageSession.get('search');
+  },
+});
+
+Template.listResolutions.helpers({
+  search () {
+    return pageSession.get('search');
+  },
+});
+
+Template.roomsAdd.onCreated(function () {
+  pageSession.set('error', false);
+
+  this.autorun(function() {
+    pageSession.set('scopeId', Router.current().params._id);
+    pageSession.set('scope', Router.current().params.scope);
+  });
+});
+
+Template.roomsEdit.onCreated(function () {
+  const template = Template.instance();
+  template.ready = new ReactiveVar();
+  pageSession.set('error', false);
+
+  this.autorun(function() {
+    pageSession.set('scopeId', Router.current().params._id);
+    pageSession.set('scope', Router.current().params.scope);
+    pageSession.set('roomId', Router.current().params.roomId);
+  });
+
+  this.autorun(function() {
+    const handle = Meteor.subscribe('detailRooms', Router.current().params.scope, Router.current().params._id, Router.current().params.roomId);
+    if (handle.ready()) {
+      template.ready.set(handle.ready());
+    }
+  });
+});
+
+Template.roomsAdd.helpers({
+  error () {
+    return pageSession.get('error');
+  },
+});
+
+Template.roomsEdit.helpers({
+  room () {
+    const room = Rooms.findOne({ _id: new Mongo.ObjectID(Router.current().params.roomId) });
+    const roomEdit = {};
+    roomEdit._id = room._id._str;
+    roomEdit.name = room.name;
+    roomEdit.description = room.description;
+    roomEdit.roles = room.roles;
+    return roomEdit;
+  },
+  error () {
+    return pageSession.get('error');
+  },
+  dataReady() {
+    return Template.instance().ready.get();
+  },
+});
+
+AutoForm.addHooks(['addRoom', 'editRoom'], {
+  after: {
+    method(error, result) {
+      if (!error) {
+        Router.go('roomsDetail', { _id: pageSession.get('scopeId'), scope: pageSession.get('scope'), roomId: result.data.id }, { replaceState: true });
+      }
+    },
+    'method-update'(error, result) {
+      if (!error) {
+        Router.go('roomsDetail', { _id: pageSession.get('scopeId'), scope: pageSession.get('scope'), roomId: pageSession.get('roomId') }, { replaceState: true });
+      }
+    },
+  },
+  before: {
+    method(doc) {
+      doc.parentType = pageSession.get('scope');
+      doc.parentId = pageSession.get('scopeId');
+      return doc;
+    },
+    'method-update'(modifier) {
+      modifier.$set.parentType = pageSession.get('scope');
+      modifier.$set.parentId = pageSession.get('scopeId');
+      return modifier;
+    },
+  },
+  onError(formType, error) {
+    if (error.errorType && error.errorType === 'Meteor.Error') {
+      if (error && error.error === 'error_call') {
+        pageSession.set('error', error.reason.replace(': ', ''));
+      }
+    }
   },
 });

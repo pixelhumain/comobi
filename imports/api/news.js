@@ -270,10 +270,25 @@ if (Meteor.isClient) {
       return undefined;
     },
     objectNews () {
-      const queryOptions = { fields: {
-        _id: 1,
-        name: 1,
-      } };
+      const queryOptions = {};
+      if (this.object && this.object.type === 'actions') {
+        queryOptions.fields = {
+          _id: 1,
+          name: 1,
+          idParentRoom: 1,
+        };
+      } else if (this.object && this.object.type === 'proposals') {
+        queryOptions.fields = {
+          _id: 1,
+          title: 1,
+          idParentRoom: 1,
+        };
+      } else {
+        queryOptions.fields = {
+          _id: 1,
+          name: 1,
+        };
+      }
       if (this.object && this.object.type && this.object.id) {
         // console.log(this.object.type);
         const collection = nameToCollection(this.object.type);

@@ -281,15 +281,85 @@ Router.map(function() {
     loadingTemplate: 'loading',
   });
 
+  this.route('roomsAdd', {
+    template: 'roomsAdd',
+    path: '/:scope/rooms/:_id/add',
+    loadingTemplate: 'loading',
+  });
+
+  this.route('roomsEdit', {
+    template: 'roomsEdit',
+    path: '/:scope/rooms/:_id/room/:roomId/edit',
+    loadingTemplate: 'loading',
+  });
+
   this.route('proposalsDetail', {
     template: 'detailProposals',
     path: '/:scope/rooms/:_id/room/:roomId/proposal/:proposalId',
     loadingTemplate: 'loading',
   });
 
+  this.route('proposalsAdd', {
+    template: 'proposalsAdd',
+    path: '/:scope/rooms/:_id/room/:roomId/proposaladd',
+    loadingTemplate: 'loading',
+  });
+
+  this.route('proposalsEdit', {
+    template: 'proposalsEdit',
+    path: '/:scope/rooms/:_id/room/:roomId/proposaledit/:proposalId',
+    loadingTemplate: 'loading',
+  });
+
+  this.route('proposalsDetailComments', {
+    template: 'proposalsDetailComments',
+    path: '/:scope/rooms/:_id/room/:roomId/proposal/:proposalId/comments',
+  });
+
+  this.route('commentsProposalsEdit', {
+    template: 'commentsProposalsEdit',
+    path: '/:scope/rooms/:_id/room/:roomId/proposal/:proposalId/comments/:commentId/edit',
+    loadingTemplate: 'loading',
+  });
+
+  this.route('amendementsAdd', {
+    template: 'amendementsAdd',
+    path: '/:scope/rooms/:_id/room/:roomId/amendement/:proposalId/add',
+    loadingTemplate: 'loading',
+  });
+
+  this.route('amendementsEdit', {
+    template: 'amendementsEdit',
+    path: '/:scope/rooms/:_id/room/:roomId/amendement/:proposalId/edit/:amendementId',
+    loadingTemplate: 'loading',
+  });
+
   this.route('actionsDetail', {
     template: 'detailActions',
     path: '/:scope/rooms/:_id/room/:roomId/action/:actionId',
+    loadingTemplate: 'loading',
+  });
+
+  this.route('actionsAdd', {
+    template: 'actionsAdd',
+    path: '/:scope/rooms/:_id/room/:roomId/actionadd',
+    loadingTemplate: 'loading',
+  });
+
+  this.route('actionsEdit', {
+    template: 'actionsEdit',
+    path: '/:scope/rooms/:_id/room/:roomId/actionedit/:actionId',
+    loadingTemplate: 'loading',
+  });
+
+  this.route('actionsDetailComments', {
+    template: 'actionsDetailComments',
+    path: '/:scope/rooms/:_id/room/:roomId/action/:actionId/comments',
+  });
+
+  this.route('commentsActionsEdit', {
+    template: 'commentsActionsEdit',
+    path: '/:scope/rooms/:_id/room/:roomId/action/:actionId/comments/:commentId/edit',
     loadingTemplate: 'loading',
   });
 
@@ -374,6 +444,7 @@ Router.map(function() {
     path: '/:scope/news/:_id/edit/:newsId/comments/:commentId/edit',
     loadingTemplate: 'loading',
   });
+
 
   this.route('rolesEdit', {
     template: 'rolesEdit',

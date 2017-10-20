@@ -165,6 +165,7 @@
       "news": "une publication de",
       "actions":"une action",
       "proposals":"une proposition",
+      "resolutions":"une résolution",
       "rooms":"un espace coopératif"
     }
   },
@@ -188,6 +189,115 @@
   "contributor":"contributeur",
   "member":"membre",
   "attendee":"participant",
+  "a cooperative space":"un espace coopératif",
+  "cooperative space":"Espace coopératif",
+  "creating a new cooperative space":"Créer un nouvel espace coopératif",
+  "Edit a cooperative space":"Modifier un espace coopératif",
+  "proposals":"Propositions",
+  "amendable":"Amendable",
+  "tovote":"À voter",
+  "resolved":"Résolues",
+  "disabled":"Désactivées",
+  "closed":"Fermées",
+  "resolutions":"Résolutions",
+  "actions":"Actions",
+  "todo":"À faire",
+  "done":"Terminées",
+  "creating a new proposal":"Créer une nouvelle proposition",
+  "edit a proposal":"Modifier une proposition",
+  "proposalFormInformation":"Une proposition est utilisée pour discuter et solliciter l'avis de la communauté sur une idée ou une question donnée",
+  "creating a new action":"Créer une nouvelle action",
+  "edit a action":"Modifier une action",
+  "creating a new amendment":"créer un nouvel amendement",
+  "edit a amendment":"modifier un amendement",
+  "amendmentFormInformation":"Si votre amendement est adopté, il sera ajouté à la proposition principale, et intégrera la proposition finale, soumise au vote.",
+  "dda":{
+    "resolution":{
+      "resolution":"Résolution",
+      "adopted":"La <strong>résolution</strong> a été prise : la proposition est <span class='balanced'>validée</span>",
+      "refused":"La <strong>résolution</strong> a été refusée : la proposition est <span class='assertive'>refusée</span>",
+      "endofvote":"Fin du vote",
+      "showproposaldetail":"Afficher le detail de la proposition",
+      "showresolution":"Afficher la résolution",
+      "resultstitle":"Résultats"
+    },
+    "actions":{
+      "action":"Action",
+      "actionstartenddate":"Action à réaliser du __start__ au __end__",
+      "endofaction":"Fin de l'action",
+      "theytakeaction":"Ils participent à cette action",
+      "youparticipatingaction":"Vous participez à cette action",
+      "wantparticipateaction":"Je veux participer à cette action",
+      "noparticipants":"Pas de participants",
+      "discussion":"Discussion",
+      "buttons":{
+        "disable":"Désactivée",
+        "close":"Terminée"
+      },
+      "status":{
+        "inprogress":"En cours",
+        "completed":"Terminée",
+        "todo":"À faire",
+        "disabled":"Désactivée"
+      }
+    },
+    "proposal":{
+      "proposal":"Proposition",
+      "argumentstitle":"Compléments d'informations, argumentations, exemples, démonstrations, etc.",
+      "amendments":{
+        "title":"Amendements",
+        "text":"Proposition soumise aux amendements jusqu'au",
+        "endofamendments":"Fin des amendements",
+        "proposetext":"Vous pouvez proposer des amendements et voter les amendements proposés par les autres utilisateurs",
+        "listofamendmentstemporarily":"Liste des amendements temporairement validés ·  Majorité : 50%",
+        "amendmentsdeactivated":"Amendements désactivés",
+        "noamendments":"Pas d'amendements",
+        "validated":"validé",
+        "validated_temporarily":"temporairement validé",
+        "refused":"refusé",
+        "refused_temporarily":"temporairement refusé"
+      },
+      "tovote":{
+        "title":"Voter",
+        "text":"Proposition soumise aux votes jusqu'au",
+        "endofvotes":"Fin des votes",
+        "proposetext":"You can propose amendments and vote on amendments proposed by other users",
+        "listofamendmentsvalidated":"Liste des amendements validés · Majorité",
+        "votesdisabled":"votes désactivés",
+        "proposal_temporarily_validated":"Proposition temporairement <span class='balanced'>validée</span>",
+        "proposal_temporarily_refused":"Proposition temporairement <span class='assertive'>refusée</span>",
+        "proposal_validated":"Proposition <span class='balanced'>validée</span>",
+        "proposal_refused":"Proposition <span class='assertive'>refusée</span>",
+        "bethefirsttovote":"Soyez le premier à voter",
+        "youvoted":"Vous avez voté",
+        "infavour":"pour",
+        "against":"contre",
+        "blank":"blanc",
+        "incomplete":"incomplet",
+        "youhavenotvotedyet":"vous n'avez pas encore voté",
+        "votecanchange":"Vous pouvez changer votre choix à tout moment",
+        "changeofvote":"Changement de vote",
+        "anonymousvote":"Vote anonyme",
+        "majorityrule":"Règle de majorité",
+        "voter": "votant",
+        "voter_plural": "votants"
+      },
+      "buttons":{
+        "disable":"Désactiver",
+        "close":"Fermer",
+        "backtoamendments":"Retour aux amendements",
+        "openthevotes":"Ouvrir les votes"
+      },
+      "status":{
+        "amendable":"Amendable",
+        "tovote":"À voter",
+        "closed":"Fermée",
+        "resolved":"Résolue",
+        "disabled":"Désactivée"
+      }
+    },
+    "debate":"Débat"
+  },
   "simpleschema": {
     "messages": {
       "usernameNotUnique": "[label] existe déja",
@@ -200,6 +310,10 @@
       "maxNumberExclusive": "Ce champ doit être inferieur à [max]",
       "minDate": "La date doit est posterieure au [min]",
       "maxDate": "La date doit est anterieure au [max]",
+      "maxDateAmendment": "La date doit être antérieure à la date de fin de la période de vote",
+      "minDateVote": "La date doit être posterieure à la date de fin de la période d'amendement",
+      "maxDateStart": "La date doit être antérieure à la date de fin",
+      "minDateEnd": "La date doit être posterieure à la date de début ",
       "badDate": "Cette date est invalide",
       "minCount": "Vous devez saisir plus de [minCount] valeurs",
       "maxCount": "Vous devez saisir moins de [maxCount] valeurs",
@@ -292,6 +406,94 @@
       },
       "invitedUserEmail":{
           "label": "Email"
+      }
+    },
+    "blockproposalsrest":{
+      "txtAmdt":{
+          "label": "Votre amendement"
+      }
+    },
+    "roomsrest" : {
+      "name":{
+        "label": "Nom"
+      },
+      "description":{
+        "label": "Description"
+      },
+      "roles":{
+        "label": "Limiter l'accès par rôle (par défaut : ouvert à tous)",
+        "placeholder": "Sélectionnez ...",
+        "options": {
+          "Organisateur":"Organisateur",
+          "Partenaire":"Partenaire",
+          "Financeur":"Financeur",
+          "Président":"Président",
+          "Sponsor":"Sponsor",
+          "Directeur":"Directeur",
+          "Conférencier":"Conférencier",
+          "Intervenant":"Intervenant"
+        }
+      }
+    },
+    "actionsrest" : {
+      "name":{
+        "label": "Nom"
+      },
+      "description":{
+        "label": "Description"
+      },
+      "startDate":{
+        "label": "Date de début"
+      },
+      "endDate":{
+        "label": "Date de fin"
+      },
+      "tags":{
+        "label": "Mots clés"
+      },
+      "urls":{
+        "label": "Informations libres / urls"
+      }
+    },
+    "proposalsrest" : {
+      "title":{
+        "label": "Nom de votre proposition"
+      },
+      "description":{
+        "label": "Votre proposition",
+        "information":"Le vote final portera sur le contenu de votre proposition. Pour plus de clarté, veuillez fournir des informations supplémentaires sur votre proposition dans la section suivante."
+      },
+      "arguments":{
+        "label": "Compléments d'informations",
+        "placeholder":"Compléments d'informations, argumentations, exemples, démonstrations, etc"
+      },
+      "amendementActivated":{
+        "label": "Activer les amendements",
+        "information":"Les votes sont désactivés pendant la période d'amendement activée"
+      },
+      "amendementDateEnd":{
+        "label": "Fin de la période d'amendement (ouverture des votes)"
+      },
+      "voteDateEnd":{
+        "label": "Fin de la période de vote"
+      },
+      "majority":{
+        "label": "Règle de majorité (%)",
+        "information":"Entrez une valeur comprise entre 50% et 100%. Votre proposition devra collecter plus de <strong>__majority__%</strong> des votes favorables pour être validée"
+      },
+      "voteAnonymous":{
+        "label": "Votes anonyme",
+        "information":"Voulez-vous garder l'identité des électeurs secrète ?"
+      },
+      "voteCanChange":{
+        "label": "Autoriser le changement de vote",
+        "information":"Voulez-vous permettre aux électeurs de changer leur choix à volonté ?"
+      },
+      "tags":{
+        "label": "Mots clés"
+      },
+      "urls":{
+        "label": "Informations libres / urls"
       }
     },
     "eventsrest" : {
@@ -958,6 +1160,15 @@
       "text":{
         "label": "message",
         "placeholder":"commentaire..."
+      },
+      "argval":{
+        "label": "Type d'avis",
+        "placeholder": "Sélectionnez un...",
+        "options": {
+          "up":"Pour",
+          "white":"Neutre",
+          "down":"Contre"
+        }
       }
     },
     "sharerest":{

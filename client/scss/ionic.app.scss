@@ -4,12 +4,13 @@ $color-event: #FFA200; //orange
 $color-project: #8C5AA1; // violet
 $color-poi: #20C06B; // vert poi
 $color-classified: #2BB0C6; //
+$color-room: #229296;
 
 
 $light:                           #fff !default;
 $stable:                          #f8f8f8 !default;
 $positive:                        #E33551 !default;
-$calm:                            #11c1f3 !default;
+$calm:                            #229296 !default;
 $balanced:                        #51e335 !default;
 $energized:                       #ffc900 !default;
 $assertive:                       #ef473a !default;
@@ -349,6 +350,12 @@ $button-follower-active-border:   darken($assertive, 10%) !default;
 }
 .classified-bg {
   background-color: $color-classified;
+}
+.room, a.room {
+  color: $color-room;
+}
+.room-bg {
+  background-color: $color-room;
 }
 // BUTTONS END
 

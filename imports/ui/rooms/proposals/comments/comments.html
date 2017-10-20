@@ -1,0 +1,127 @@
+<template name="proposalsDetailComments">
+  {{#contentFor "headerButtonLeft"}}
+  {{#if scope._id._str}}
+  {{>ionNavBackButton}}
+  {{/if}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "comments"}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+  {{> commentsProposalsAdd}}
+  {{> proposalsDetailCommentsData scope=scope }}
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>
+
+<template name="proposalsDetailCommentsData">
+  {{#with scope.room}}
+  {{#with proposal}}
+  <div class="item item-divider">
+  {{_ 'dda.proposal.proposal'}} : <a href="{{pathFor 'proposalsDetail' _id=parentId scope=parentType roomId=idParentRoom proposalId=_id._str}}" class="positive">{{title}}</a>
+  </div>
+  {{#each listComments}}
+  <div class="list card">
+    <div class="item {{#if authorComments.profilThumbImageUrl}}item-avatar{{/if}}">
+      {{#if authorComments.profilThumbImageUrl}}
+      {{> imgDoc profilThumbImageUrl=authorComments.profilThumbImageUrl resized="80x80"}}
+      {{/if}}
+      <p><i class="icon ion-person"></i>  <a href="{{pathFor 'detailList' _id=author scope='citoyens'}}" class="dark">{{authorComments.name}}</a></p>
+      <p><i class="icon ion-clock"></i> {{livestamp dateComments}}</p>
+    </div>
+    {{#if text}}
+    <div class="item item-body {{classArgval}}">
+      {{text}}
+    </div>
+    {{/if}}
+    <div class="item tabs tabs-secondary tabs-icon-left">
+      <a class="tab-item like-comment" href="#">
+        <i class="icon ion-thumbsup"></i>
+        {{likesCount}}
+      </a>
+      <a class="tab-item dislike-comment" href="#">
+        <i class="icon ion-thumbsdown"></i>
+        {{dislikesCount}}
+      </a>
+      {{#if isAuthor}}
+      <a class="tab-item action-comment" href="#">
+        <i class="icon fa fa-cog"></i>
+      </a>
+      {{else}}
+      {{#if ../../scope.isAdmin}}
+      <a class="tab-item action-comment" href="#">
+        <i class="icon fa fa-cog"></i>
+      </a>
+      {{/if}}
+      {{/if}}
+    </div>
+
+  </div>
+  {{/each}}
+{{/with}}
+{{/with}}
+</template>
+
+<template name="commentsProposalsAdd">
+  {{#autoForm id="addProposalsComment" schema=SchemasCommentsRest type="method" meteormethod="insertComment" template="ionic" class=""}}
+  {{> afQuickField name='content' label-type='placeholder' rows=2}}
+  {{> afQuickField name='argval' type='select'}}
+  <div class="item">
+    <div class="button-bar">
+      <button type="submit" class="button button-dark">{{_ "publish"}}</button>
+    </div>
+  </div>
+  {{/autoForm}}
+</template>
+
+<template name="commentsProposalsEdit">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "comment"}}</h1>
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list" data-snap-ignore="true">
+    <div class="item item-divider">
+      {{_ "edit a comment"}}
+    </div>
+    {{#if error}}
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+    {{/if}}
+    {{#autoForm id="editProposalsComment" schema=SchemasCommentsEditRest type="method-update" meteormethod="updateComment" doc=comment template="ionic" class="padding"}}
+    {{> afQuickField name='text' label-type='placeholder' rows=2}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>

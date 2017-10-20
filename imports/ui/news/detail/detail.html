@@ -35,7 +35,11 @@
     {{/if}}
 
     {{#if equals type 'activityStream'}}
+    {{#if equals object.type 'proposals'}}
+    <h2>{{objectNews.title}}</h2>
+    {{else}}
     <h2>{{objectNews.name}}</h2>
+    {{/if}}
     {{else}}
     <h2>
       {{#if equals targetIsAuthor 'true'}}
@@ -84,7 +88,13 @@
   {{else}}
   <div class="item item-body">
     <p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a> {{i18npref 'activitystream.verb' verb}}
-    {{i18npref 'activitystream.type' object.type}} : <a href="{{pathFor 'detailList' _id=object.id scope=object.type}}" class="positive">{{objectNews.name}}</a></p>
+    {{i18npref 'activitystream.type' object.type}} :
+    {{#if equals object.type 'rooms'}}
+    <a href="{{pathFor 'roomsDetail' _id=target.id scope=target.type roomId=object.id}}" class="positive">{{objectNews.name}}</a>
+    {{else}}
+    <a href="{{pathFor 'detailList' _id=object.id scope=object.type}}" class="positive">{{objectNews.name}}</a>
+    {{/if}}
+  </p>
   {{#if tags}}
   <p>
   {{#each tags}}
@@ -97,7 +107,19 @@
   {{else}}
   <div class="item item-body">
     <p><a href="{{pathFor 'detailList' _id=target.id scope=target.type}}" class="positive">{{targetNews.name}}</a> {{i18npref 'activitystream.verb' verb}}
-    {{i18npref 'activitystream.type' object.type}} : <a href="{{pathFor 'detailList' _id=object.id scope=object.type}}" class="positive">{{objectNews.name}}</a></p>
+    {{i18npref 'activitystream.type' object.type}} :
+    {{#if equals object.type 'rooms'}}
+    <a href="{{pathFor 'roomsDetail' _id=target.id scope=target.type roomId=object.id}}" class="positive">{{objectNews.name}}</a>
+    {{else if equals object.type 'actions'}}
+    <a href="{{pathFor 'actionsDetail' _id=target.id scope=target.type roomId=objectNews.idParentRoom actionId=object.id}}" class="positive">{{objectNews.name}}</a>
+    {{else if equals object.type 'proposals'}}
+    <a href="{{pathFor 'proposalsDetail' _id=target.id scope=target.type roomId=objectNews.idParentRoom proposalId=object.id}}" class="positive">{{objectNews.title}}</a>
+    {{else if equals object.type 'resolutions'}}
+    <a href="{{pathFor 'resolutionsDetail' _id=target.id scope=target.type roomId=objectNews.idParentRoom resolutionId=object.id}}" class="positive">{{objectNews.title}}</a>
+    {{else}}
+    <a href="{{pathFor 'detailList' _id=object.id scope=object.type}}" class="positive">{{objectNews.name}}</a>
+    {{/if}}
+  </p>
   {{#if tags}}
   <p>
   {{#each tags}}

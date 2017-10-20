@@ -557,11 +557,28 @@ Meteor.publishComposite('citoyenActusList', function(limit) {
           }, */
           {
             find(news) {
-              const queryOptions = { fields: {
-                _id: 1,
-                name: 1,
-                profilThumbImageUrl: 1,
-              } };
+              const queryOptions = {};
+              if (news.object && news.object.type === 'actions') {
+                queryOptions.fields = {
+                  _id: 1,
+                  name: 1,
+                  idParentRoom: 1,
+                  profilThumbImageUrl: 1,
+                };
+              } else if (news.object && news.object.type === 'proposals') {
+                queryOptions.fields = {
+                  _id: 1,
+                  title: 1,
+                  idParentRoom: 1,
+                  profilThumbImageUrl: 1,
+                };
+              } else {
+                queryOptions.fields = {
+                  _id: 1,
+                  name: 1,
+                  profilThumbImageUrl: 1,
+                };
+              }
               if (news.object && news.object.type && news.object.id) {
                 // console.log(news.object.type);
                 const collection = nameToCollection(news.object.type);
@@ -1275,6 +1292,13 @@ Meteor.publishComposite('detailRooms', function(scope, scopeId, roomId) {
                   }
                 },
               },
+              {
+                find(room) {
+                  if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+                    return room.listResolutions();
+                  }
+                },
+              },
             ]
           },
         ]
@@ -1305,16 +1329,290 @@ Meteor.publishComposite('detailProposals', function(scope, scopeId, roomId, prop
       {
         find(scopeD) {
           if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
-            return Rooms.find({ _id: new Mongo.ObjectID(roomId) });
+            //return Rooms.find({ _id: new Mongo.ObjectID(roomId) });
+              return scopeD.detailRooms(roomId);
+          }
+        },
+        children: [
+          {
+            find(room) {
+              if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+                return Proposals.find({ _id: new Mongo.ObjectID(proposalId) });
+              }
+            },
+            children: [
+              {
+                find(proposal) {
+                  return Citoyens.find({
+                    _id: new Mongo.ObjectID(proposal.creator),
+                  }, {
+                    fields: {
+                      name: 1,
+                      profilThumbImageUrl: 1,
+                    },
+                  });
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+});
+
+Meteor.publishComposite('proposalsDetailComments', function(scope, scopeId, roomId, proposalId) {
+  check(scopeId, String);
+  check(scope, String);
+  check(roomId, String);
+  check(proposalId, String);
+  check(scope, Match.Where(function(name) {
+    return _.contains(['projects', 'organizations', 'events'], name);
+  }));
+  const collection = nameToCollection(scope);
+  if (!this.userId) {
+    return null;
+  }
+  return {
+    find() {
+      const options = {};
+      // options['_disableOplog'] = true;
+      return collection.find({ _id: new Mongo.ObjectID(scopeId) }, options);
+    },
+    children: [
+      {
+        find(scopeD) {
+          if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+            //return Rooms.find({ _id: new Mongo.ObjectID(roomId) });
+            return scopeD.detailRooms(roomId);
+          }
+        },
+        children: [
+          {
+            find(room) {
+              if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+                return Proposals.find({ _id: new Mongo.ObjectID(proposalId) });
+              }
+            },
+            children: [
+              {
+                find(proposal) {
+                  return Citoyens.find({
+                    _id: new Mongo.ObjectID(proposal.creator),
+                  }, {
+                    fields: {
+                      name: 1,
+                      profilThumbImageUrl: 1,
+                    },
+                  });
+                },
+              },
+              {
+                find(proposal) {
+                  return proposal.listComments();
+                },
+                children: [
+                  {
+                    find(comment) {
+                      return Citoyens.find({
+                        _id: new Mongo.ObjectID(comment.author),
+                      }, {
+                        fields: {
+                          name: 1,
+                          profilThumbImageUrl: 1,
+                        },
+                      });
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+});
+
+Meteor.publishComposite('detailActions', function(scope, scopeId, roomId, actionId) {
+  check(scopeId, String);
+  check(scope, String);
+  check(roomId, String);
+  check(actionId, String);
+  check(scope, Match.Where(function(name) {
+    return _.contains(['projects', 'organizations', 'events'], name);
+  }));
+  const collection = nameToCollection(scope);
+  if (!this.userId) {
+    return null;
+  }
+  return {
+    find() {
+      const options = {};
+      // options['_disableOplog'] = true;
+      return collection.find({ _id: new Mongo.ObjectID(scopeId) }, options);
+    },
+    children: [
+      {
+        find(scopeD) {
+          if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+            //return Rooms.find({ _id: new Mongo.ObjectID(roomId) });
+            return scopeD.detailRooms(roomId);
+          }
+        },
+        children: [
+          {
+            find(room) {
+              if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+                return Actions.find({ _id: new Mongo.ObjectID(actionId) });
+              }
+            },
+            children: [
+              {
+                find(action) {
+                  return Citoyens.find({
+                    _id: new Mongo.ObjectID(action.creator),
+                  }, {
+                    fields: {
+                      name: 1,
+                      profilThumbImageUrl: 1,
+                    },
+                  });
+                },
+              },
+              {
+                find(action) {
+                  return action.listMembersToBeValidated();
+                },
+              },
+            ],
+          },
+        ]
+      },
+    ]
+  };
+});
+
+Meteor.publishComposite('actionsDetailComments', function(scope, scopeId, roomId, actionId) {
+  check(scopeId, String);
+  check(scope, String);
+  check(roomId, String);
+  check(actionId, String);
+  check(scope, Match.Where(function(name) {
+    return _.contains(['projects', 'organizations', 'events'], name);
+  }));
+  const collection = nameToCollection(scope);
+  if (!this.userId) {
+    return null;
+  }
+  return {
+    find() {
+      const options = {};
+      // options['_disableOplog'] = true;
+      return collection.find({ _id: new Mongo.ObjectID(scopeId) }, options);
+    },
+    children: [
+      {
+        find(scopeD) {
+          if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+            // return Rooms.find({ _id: new Mongo.ObjectID(roomId) });
+            return scopeD.detailRooms(roomId);
+          }
+        },
+        children: [
+          {
+            find(room) {
+              if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+                return Actions.find({ _id: new Mongo.ObjectID(actionId) });
+              }
+            },
+            children: [
+              {
+                find(action) {
+                  return Citoyens.find({
+                    _id: new Mongo.ObjectID(action.creator),
+                  }, {
+                    fields: {
+                      name: 1,
+                      profilThumbImageUrl: 1,
+                    },
+                  });
+                },
+              },
+              {
+                find(action) {
+                  return action.listComments();
+                },
+                children: [
+                  {
+                    find(comment) {
+                      return Citoyens.find({
+                        _id: new Mongo.ObjectID(comment.author),
+                      }, {
+                        fields: {
+                          name: 1,
+                          profilThumbImageUrl: 1,
+                        },
+                      });
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+});
+
+Meteor.publishComposite('detailResolutions', function(scope, scopeId, roomId, resolutionId) {
+  check(scopeId, String);
+  check(scope, String);
+  check(roomId, String);
+  check(resolutionId, String);
+  check(scope, Match.Where(function(name) {
+    return _.contains(['projects', 'organizations', 'events'], name);
+  }));
+  const collection = nameToCollection(scope);
+  if (!this.userId) {
+    return null;
+  }
+  return {
+    find() {
+      const options = {};
+      // options['_disableOplog'] = true;
+      return collection.find({ _id: new Mongo.ObjectID(scopeId) }, options);
+    },
+    children: [
+      {
+        find(scopeD) {
+          if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
+            // return Rooms.find({ _id: new Mongo.ObjectID(roomId) });
+            return scopeD.detailRooms(roomId);
           }
         },
         children: [
           {
             find(scopeD) {
               if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
-                return Proposals.find({ _id: new Mongo.ObjectID(proposalId) });
+                return Resolutions.find({ _id: new Mongo.ObjectID(resolutionId) });
               }
             },
+            children: [
+              {
+                find(resolution) {
+                  return Citoyens.find({
+                    _id: new Mongo.ObjectID(resolution.creator),
+                  }, {
+                    fields: {
+                      name: 1,
+                      profilThumbImageUrl: 1,
+                    },
+                  });
+                },
+              },
+            ],
           },
         ]
       },
@@ -1617,11 +1915,28 @@ Meteor.publishComposite('newsList', function(scope, scopeId, limit) {
       } */
       {
         find(news) {
-          const queryOptions = { fields: {
-            _id: 1,
-            name: 1,
-            profilThumbImageUrl: 1,
-          } };
+          const queryOptions = {};
+          if (news.object && news.object.type === 'actions') {
+            queryOptions.fields = {
+              _id: 1,
+              name: 1,
+              idParentRoom: 1,
+              profilThumbImageUrl: 1,
+            };
+          } else if (news.object && news.object.type === 'proposals') {
+            queryOptions.fields = {
+              _id: 1,
+              title: 1,
+              idParentRoom: 1,
+              profilThumbImageUrl: 1,
+            };
+          } else {
+            queryOptions.fields = {
+              _id: 1,
+              name: 1,
+              profilThumbImageUrl: 1,
+            };
+          }
           if (news.object && news.object.type && news.object.id) {
             const collection = nameToCollection(news.object.type);
             return collection.find({ _id: new Mongo.ObjectID(news.object.id) }, queryOptions);
@@ -1734,11 +2049,28 @@ Meteor.publishComposite('newsDetail', function(scope, scopeId, newsId) {
       }, */
       {
         find(news) {
-          const queryOptions = { fields: {
-            _id: 1,
-            name: 1,
-            profilThumbImageUrl: 1,
-          } };
+          const queryOptions = {};
+          if (news.object && news.object.type === 'actions') {
+            queryOptions.fields = {
+              _id: 1,
+              name: 1,
+              idParentRoom: 1,
+              profilThumbImageUrl: 1,
+            };
+          } else if (news.object && news.object.type === 'proposals') {
+            queryOptions.fields = {
+              _id: 1,
+              title: 1,
+              idParentRoom: 1,
+              profilThumbImageUrl: 1,
+            };
+          } else {
+            queryOptions.fields = {
+              _id: 1,
+              name: 1,
+              profilThumbImageUrl: 1,
+            };
+          }
           if (news.object && news.object.type && news.object.id) {
             const collection = nameToCollection(news.object.type);
             return collection.find({ _id: new Mongo.ObjectID(news.object.id) }, queryOptions);

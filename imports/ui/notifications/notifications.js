@@ -145,6 +145,17 @@ Template.notificationsList.events({
       if (this.target.type === 'news') {
         Router.go('newsDetailComments', { _id: this.target.parent.id, newsId: this.target.id, scope: this.target.parent.type });
       }
+      if (this.object.type === 'proposals' || this.object.type === 'actions') {
+        const regex = /page\/type\/([^/]*)\/id\/([^/]*)\/view\/coop\/room\/([^/]*)\/([^/]*)\/([a-z0-9]*)/g;
+        const m = regex.exec(this.notify.url);
+        if (m && m[0] && m[1] && m[2] && m[3] && m[4] && m[5]) {
+          if (m[4] === 'proposal') {
+            Router.go('proposalsDetailComments', { _id: m[2], scope: m[1], roomId: m[3], proposalId: m[5] });
+          } else if (m[4] === 'action') {
+            Router.go('actionsDetailComments', { _id: m[2], scope: m[1], roomId: m[3], actionId: m[5] });
+          }
+        }
+      }
     } else if (this.verb === 'like') {
       if (this.target.type === 'news') {
         Router.go('newsDetail', { _id: this.target.parent.id, newsId: this.target.id, scope: this.target.parent.type });
@@ -163,6 +174,25 @@ Template.notificationsList.events({
       if (this.target.type === 'citoyens' || this.target.type === 'projects' || this.target.type === 'organizations' || this.target.type === 'events') {
         if (this.target.id) {
           Router.go('detailList', { _id: this.target.id, scope: this.target.type });
+        }
+      }
+    } else if (this.verb === 'ammend' || this.verb === 'vote' || this.verb === 'addaction' || this.verb === 'addproposal' || this.verb === 'addresolution' || this.verb === 'addactionroom') {
+      if (this.target.type === 'projects' || this.target.type === 'organizations' || this.target.type === 'events') {
+        if (this.target.id) {
+          // analyser url
+          // this.notify.url
+          // page\/type\/${this.target.type}\/id\/${this.target.id}\/view\/coop\/room\/([^/]*)\/proposal\/${this.object.id}
+          const regex = /page\/type\/([^/]*)\/id\/([^/]*)\/view\/coop\/room\/([^/]*)\/([^/]*)\/([a-z0-9]*)/g;
+          const m = regex.exec(this.notify.url);
+          if (m && m[0] && m[1] && m[2] && m[3] && m[4] && m[5]) {
+            if (m[4] === 'proposal') {
+              Router.go('proposalsDetail', { _id: m[2], scope: m[1], roomId: m[3], proposalId: m[5] });
+            } else if (m[4] === 'resolution') {
+              Router.go('resolutionsDetail', { _id: m[2], scope: m[1], roomId: m[3], resolutionId: m[5] });
+            } else if (m[4] === 'action') {
+              Router.go('actionsDetail', { _id: m[2], scope: m[1], roomId: m[3], actionId: m[5] });
+            }
+          }
         }
       }
     }

@@ -44,7 +44,9 @@ import '../imports/ui/directory/directory.js';
 import '../imports/ui/collections/collections.js';
 
 import '../imports/ui/rooms/rooms.js';
+import '../imports/ui/rooms/proposals/comments/comments.js';
 import '../imports/ui/rooms/proposals/proposals.js';
+import '../imports/ui/rooms/actions/comments/comments.js';
 import '../imports/ui/rooms/actions/actions.js';
 import '../imports/ui/rooms/resolutions/resolutions.js';
 

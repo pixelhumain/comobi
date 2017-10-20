@@ -111,6 +111,20 @@ export const baseSchema = new SimpleSchema({
   tags: {
     type: [String],
     optional: true,
+    /* autoform: {
+  type: "selectize",
+  multiple: true,
+  selectizeOptions: {
+    persit:false,
+    create: function(input){
+      return {
+        value:input,
+        text:input
+      }
+    },
+
+  }
+} */
   },
   preferences: {
     type: preferences,
