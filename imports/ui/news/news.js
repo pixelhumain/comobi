@@ -735,6 +735,7 @@ Template.newsAdd.onRendered(function () {
     delay: 600,
     displayTimeout: 300,
     startWithSpace: true,
+    insertTpl: '${atwho-at}${name}',
     displayTpl(item) {
       return item.avatar ? `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} </li>` : `<li>${item.name} </li>`;
     },
@@ -747,7 +748,9 @@ Template.newsAdd.onRendered(function () {
       // console.log(pageSession.get('queryMention'));
       if (pageSession.get('queryMention') !== query) {
         pageSession.set('queryMention', query);
-        Meteor.call('searchMemberautocomplete', query, function(error, result) {
+        const querySearch = {};
+        querySearch.search = query;
+        Meteor.call('searchMemberautocomplete', querySearch, function(error, result) {
           if (!error) {
             const citoyensArray = _.map(result.citoyens, (array, key) => (array.profilThumbImageUrl ? { id: key, name: array.name, type: 'citoyens', avatar: `${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}` } : { id: key, name: array.name, type: 'citoyens' }));
             const organizationsArray = _.map(result.organizations, (array, key) => (array.profilThumbImageUrl ? { id: key, name: array.name, type: 'organizations', avatar: `${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}` } : { id: key, name: array.name, type: 'organizations' }));
@@ -859,6 +862,7 @@ Template.newsFields.onRendered(function () {
     delay: 600,
     displayTimeout: 300,
     startWithSpace: true,
+    insertTpl: '${atwho-at}${name}',
     displayTpl(item) {
       return item.avatar ? `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} </li>` : `<li>${item.name} </li>`;
     },
@@ -871,7 +875,9 @@ Template.newsFields.onRendered(function () {
       // console.log(pageSession.get('queryMention'));
       if (pageSession.get('queryMention') !== query) {
         pageSession.set('queryMention', query);
-        Meteor.call('searchMemberautocomplete', query, function(error, result) {
+        const querySearch = {};
+        querySearch.search = query;
+        Meteor.call('searchMemberautocomplete', querySearch, function(error, result) {
           if (!error) {
             const citoyensArray = _.map(result.citoyens, (array, key) => (array.profilThumbImageUrl ? { id: key, name: array.name, type: 'citoyens', avatar: `${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}` } : { id: key, name: array.name, type: 'citoyens' }));
             const organizationsArray = _.map(result.organizations, (array, key) => (array.profilThumbImageUrl ? { id: key, name: array.name, type: 'organizations', avatar: `${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}` } : { id: key, name: array.name, type: 'organizations' }));
