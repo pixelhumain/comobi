@@ -10,6 +10,10 @@ import { Citoyens } from './citoyens.js';
 import { Comments } from './comments.js';
 import { queryLink, queryLinkToBeValidated, queryOptions } from './helpers.js';
 
+if (Meteor.isclient) {
+  import { Chronos } from './client/chronos.js';
+}
+
 export const Actions = new Mongo.Collection('actions', { idGeneration: 'MONGO' });
 
 /*
