@@ -17,7 +17,7 @@ import { Classified } from './classified.js';
 import { Organizations } from './organizations.js';
 import { Documents } from './documents.js';
 import { ActivityStream } from './activitystream.js';
-import { arrayLinkProperNoObject, queryLink, queryOptions, nameToCollection } from './helpers.js';
+import { arrayLinkProperNoObject, queryLink, queryOptions, queryLinkInter, nameToCollection } from './helpers.js';
 
 // Person
 export const Citoyens = new Mongo.Collection('citoyens', { idGeneration: 'MONGO' });
@@ -385,6 +385,17 @@ Citoyens.helpers({
   countFollowers (search) {
     // return this.links && this.links.followers && _.size(this.links.followers);
     return this.listFollowers(search) && this.listFollowers(search).count();
+  },
+  listFriends (search) {
+    if (this.links && this.links.followers && this.links.follows) {
+      const query = queryLinkInter(this.links.followers, this.links.follows, search);
+      return Citoyens.find(query, queryOptions);
+    }
+    return false;
+  },
+  countFriends(search) {
+    // return this.links && this.links.followers && _.size(this.links.followers);
+    return this.listFriends(search) && this.listFriends(search).count();
   },
   listMemberOf (search, selectorga) {
     if (this.links && this.links.memberOf) {

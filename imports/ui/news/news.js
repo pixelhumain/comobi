@@ -735,7 +735,6 @@ Template.newsAdd.onRendered(function () {
     delay: 600,
     displayTimeout: 300,
     startWithSpace: true,
-    insertTpl: '${atwho-at}${name}',
     displayTpl(item) {
       return item.avatar ? `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} </li>` : `<li>${item.name} </li>`;
     },
@@ -862,7 +861,6 @@ Template.newsFields.onRendered(function () {
     delay: 600,
     displayTimeout: 300,
     startWithSpace: true,
-    insertTpl: '${atwho-at}${name}',
     displayTpl(item) {
       return item.avatar ? `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} </li>` : `<li>${item.name} </li>`;
     },

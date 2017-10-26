@@ -8,14 +8,13 @@ const sensorApi = {
   // allSensors: [...this.Motion, ...this.Environmental, ...this.Position],
   config() {
     this.setWatch(null);
-    const self = this;
   },
   allSensors() {
     return [...this.Motion, ...this.Environmental, ...this.Position];
   },
   disable(typeSensor) {
     SessionSensors.set('typeSensor', null);
-    let typeSensorStart = SessionSensors.get('typeSensorStart') ? SessionSensors.get('typeSensorStart') : {};
+    const typeSensorStart = SessionSensors.get('typeSensorStart') ? SessionSensors.get('typeSensorStart') : {};
     typeSensorStart[typeSensor] = false;
     SessionSensors.set('typeSensorStart', typeSensorStart);
     if (typeSensor === 'STEP_COUNTER') {
@@ -29,15 +28,15 @@ const sensorApi = {
   },
   listener(event) {
     // console.log(event);
-      if (event.sensor === 'STEP_COUNTER') {
-        if (!SessionSensors.get('stepCounterStart')) {
-          SessionSensors.set('stepCounterStart', event.values[0]);
-        }
+    if (event.sensor === 'STEP_COUNTER') {
+      if (!SessionSensors.get('stepCounterStart')) {
+        SessionSensors.set('stepCounterStart', event.values[0]);
       }
-      SessionSensors.set(event.sensor, `${event.values.join(',')}`);
+    }
+    SessionSensors.set(event.sensor, `${event.values.join(',')}`);
   },
   getState(typeSensor) {
-    let typeSensorStart = SessionSensors.get('typeSensorStart') ? SessionSensors.get('typeSensorStart') : {};
+    const typeSensorStart = SessionSensors.get('typeSensorStart') ? SessionSensors.get('typeSensorStart') : {};
     typeSensorStart[typeSensor] = true;
     console.log(JSON.stringify(typeSensorStart));
     SessionSensors.set('typeSensorStart', typeSensorStart);

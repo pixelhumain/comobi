@@ -73,6 +73,7 @@ Template.projectsAdd.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 });
@@ -87,6 +88,7 @@ Template.projectsEdit.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
@@ -113,6 +115,7 @@ Template.projectsBlockEdit.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
@@ -172,6 +175,9 @@ Template.projectsEdit.helpers({
     }
     if (project && project.address && project.address.depName) {
       projectEdit.depName = project.address.depName;
+    }
+    if (project && project.address && project.address.localityId) {
+      projectEdit.localityId = project.address.localityId;
     }
     projectEdit.geoPosLatitude = project.geo.latitude;
     projectEdit.geoPosLongitude = project.geo.longitude;
@@ -252,6 +258,9 @@ Template.projectsBlockEdit.helpers({
         }
         if (project && project.address && project.address.depName) {
           projectEdit.depName = project.address.depName;
+        }
+        if (project && project.address && project.address.localityId) {
+          projectEdit.localityId = project.address.localityId;
         }
         projectEdit.geoPosLatitude = project.geo.latitude;
         projectEdit.geoPosLongitude = project.geo.longitude;
@@ -334,6 +343,7 @@ Template.projectsFields.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 

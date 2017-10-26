@@ -1,5 +1,5 @@
 /**
- * at.js - 1.5.4
+ * at.js - 1.5.3
  * Copyright (c) 2017 chord.luo <chord.luo@gmail.com>;
  * Homepage: http://ichord.github.com/At.js
  * License: MIT
@@ -455,10 +455,6 @@ Controller = (function() {
   Controller.prototype.renderView = function(data) {
     var searchKey;
     searchKey = this.getOpt("searchKey");
-    if(!(this && this.query && this.query.text)){
-      this.query = {};
-      this.query.text = null;
-    }
     data = this.callbacks("sorter").call(this, this.query.text, data.slice(0, 1001), searchKey);
     return this.view.render(data.slice(0, this.getOpt('limit')));
   };
@@ -813,7 +809,7 @@ EditableController = (function(superClass) {
   EditableController.prototype.rect = function() {
     var $iframe, iframeOffset, rect;
     rect = this.query.el.offset();
-    if (!(rect && this.query.el[0].getClientRects().length)) {
+    if (!rect) {
       return;
     }
     if (this.app.iframe && !this.app.iframeAsRoot) {
@@ -826,13 +822,9 @@ EditableController = (function(superClass) {
   };
 
   EditableController.prototype.insert = function(content, $li) {
-    var data, overrides, range, suffix, suffixNode;
+    var data, range, suffix, suffixNode;
     if (!this.$inputor.is(':focus')) {
       this.$inputor.focus();
-    }
-    overrides = this.getOpt('functionOverrides');
-    if (overrides.insert) {
-      return overrides.insert.call(this, content, $li);
     }
     suffix = (suffix = this.getOpt('suffix')) === "" ? suffix : suffix || "\u00A0";
     data = $li.data('item-data');
@@ -1191,7 +1183,6 @@ $.fn.atwho["default"] = {
   insertTpl: "${atwho-at}${name}",
   headerTpl: null,
   callbacks: DEFAULT_CALLBACKS,
-  functionOverrides: {},
   searchKey: "name",
   suffix: void 0,
   hideWithoutSuffix: false,

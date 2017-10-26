@@ -77,6 +77,7 @@ Template.classifiedAdd.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
   pageSession.set('section', null);
@@ -94,6 +95,7 @@ Template.classifiedEdit.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
   pageSession.set('section', null);
@@ -155,6 +157,9 @@ Template.classifiedEdit.helpers({
     }
     if (classified && classified.address && classified.address.depName) {
       classifiedEdit.depName = classified.address.depName;
+    }
+    if (classified && classified.address && classified.address.localityId) {
+      classifiedEdit.localityId = classified.address.localityId;
     }
     classifiedEdit.geoPosLatitude = classified.geo.latitude;
     classifiedEdit.geoPosLongitude = classified.geo.longitude;

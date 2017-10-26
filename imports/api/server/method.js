@@ -291,6 +291,20 @@ const baseDocRetour = (docRetour, doc, scope) => {
     docRetour.value.address.postalCode = doc.postalCode;
     docRetour.value.address.codeInsee = doc.city;
     docRetour.value.address.addressLocality = doc.cityName;
+    if (doc.localityId) {
+      docRetour.value.address.localityId = doc.localityId;
+      const locality = Cities.findOne({ _id: new Mongo.ObjectID(doc.localityId) });
+      docRetour.value.address.level1 = locality.level1;
+      docRetour.value.address.level1Name = locality.level1Name;
+      if (locality.level2) {
+        docRetour.value.address.level2 = locality.level2;
+        docRetour.value.address.level2Name = locality.level2Name;
+      }
+      docRetour.value.address.level3 = locality.level3;
+      docRetour.value.address.level3Name = locality.level3Name;
+      docRetour.value.address.level4 = locality.level4;
+      docRetour.value.address.level4Name = locality.level4Name;
+    }
     docRetour.value.address.regionName = doc.regionName;
     docRetour.value.address.depName = doc.depName;
     if (doc.streetAddress) {
@@ -313,11 +327,35 @@ const baseDocRetour = (docRetour, doc, scope) => {
       docRetour.address.postalCode = doc.postalCode;
       docRetour.address.codeInsee = doc.city;
       docRetour.address.addressLocality = doc.cityName;
+      if (doc.localityId) {
+        docRetour.address.localityId = doc.localityId;
+        const locality = Cities.findOne({ _id: new Mongo.ObjectID(doc.localityId) });
+        docRetour.address.level1 = locality.level1;
+        docRetour.address.level1Name = locality.level1Name;
+        if (locality.level2) {
+          docRetour.address.level2 = locality.level2;
+          docRetour.address.level2Name = locality.level2Name;
+        }
+        docRetour.address.level3 = locality.level3;
+        docRetour.address.level3Name = locality.level3Name;
+        docRetour.address.level4 = locality.level4;
+        docRetour.address.level4Name = locality.level4Name;
+      }
       docRetour.address.regionName = doc.regionName;
       docRetour.address.depName = doc.depName;
+
       if (doc.streetAddress) {
         docRetour.address.streetAddress = doc.streetAddress;
       }
+      /*
+address[level1]:58be4af494ef47df1d0ddbcc
+address[level1Name]:
+address[localityId]:54c0965cf6b95c141800a517
+address[level3]:58be4af494ef47df1d0ddbcc
+address[level3Name]:
+address[level4]:58be4af494ef47df1d0ddbcc
+address[level4Name]:
+*/
     }
     if (doc.geoPosLatitude && doc.geoPosLongitude) {
       docRetour.geo = {};

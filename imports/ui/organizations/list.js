@@ -103,6 +103,7 @@ Template.organizationsAdd.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
@@ -124,6 +125,7 @@ Template.organizationsEdit.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
@@ -146,6 +148,7 @@ Template.organizationsBlockEdit.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
@@ -210,6 +213,9 @@ Template.organizationsEdit.helpers({
     }
     if (organization && organization.address && organization.address.depName) {
       organizationEdit.depName = organization.address.depName;
+    }
+    if (organization && organization.address && organization.address.localityId) {
+      organizationEdit.localityId = organization.address.localityId;
     }
     organizationEdit.geoPosLatitude = organization.geo.latitude;
     organizationEdit.geoPosLongitude = organization.geo.longitude;
@@ -286,6 +292,9 @@ Template.organizationsBlockEdit.helpers({
         }
         if (organization && organization.address && organization.address.depName) {
           organizationEdit.depName = organization.address.depName;
+        }
+        if (organization && organization.address && organization.address.localityId) {
+          organizationEdit.localityId = organization.address.localityId;
         }
         organizationEdit.geoPosLatitude = organization.geo.latitude;
         organizationEdit.geoPosLongitude = organization.geo.longitude;
@@ -368,6 +377,9 @@ Template.organizationsFields.helpers({
   depName () {
     return pageSession.get('depName') || AutoForm.getFieldValue('depName');
   },
+  localityId () {
+    return pageSession.get('localityId') || AutoForm.getFieldValue('localityId');
+  },
 });
 
 
@@ -379,6 +391,7 @@ Template.organizationsFields.onRendered(function() {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
@@ -401,8 +414,17 @@ Template.organizationsFields.onRendered(function() {
               pageSession.set('country', result.country);
               pageSession.set('city', result.insee);
               pageSession.set('cityName', result.postalCodes[0].name);
-              pageSession.set('regionName', result.regionName);
-              pageSession.set('depName', result.depName);
+              pageSession.set('localityId', result._id._str);
+              if (result.regionName) {
+                pageSession.set('regionName', result.regionName);
+              } else if (result.level3Name) {
+                pageSession.set('regionName', result.level3Name);
+              }
+              if (result.depName) {
+                pageSession.set('depName', result.depName);
+              } else if (result.level4Name) {
+                pageSession.set('depName', result.level4Name);
+              }
               pageSession.set('geoPosLatitude', latlngObj.latitude);
               pageSession.set('geoPosLongitude', latlngObj.longitude);
             }
@@ -479,8 +501,17 @@ Template.organizationsFields.events({
     const insee = Cities.findOne({ insee: instance.$(event.currentTarget).val() });
     pageSession.set('geoPosLatitude', insee.geo.latitude);
     pageSession.set('geoPosLongitude', insee.geo.longitude);
-    pageSession.set('regionName', insee.regionName);
-    pageSession.set('depName', insee.depName);
+    if (insee.regionName) {
+      pageSession.set('regionName', insee.regionName);
+    } else if (insee.level3Name) {
+      pageSession.set('regionName', insee.level3Name);
+    }
+    if (insee.depName) {
+      pageSession.set('depName', insee.depName);
+    } else if (insee.level4Name) {
+      pageSession.set('depName', insee.level4Name);
+    }
+    pageSession.set('localityId', insee._id._str);
     pageSession.set('cityName', event.currentTarget.options[event.currentTarget.selectedIndex].text);
     // console.log(insee.geo.latitude);
     // console.log(insee.geo.longitude);

@@ -27,7 +27,7 @@
   {{/if}}
   {{#each cities}}
   <div class="item item-icon-left city">
-  {{name}} - {{regionName}}
+  {{name}} - {{#if regionName}}{{regionName}}{{else if level3Name}}{{level3Name}} - {{level1Name}}{{/if}}
   {{> ionIcon icon="location"}}
   </div>
   {{else}}

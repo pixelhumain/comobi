@@ -2237,6 +2237,7 @@ Meteor.publishComposite('callUsers', function() {
           _id: 1,
           name: 1,
           'links.follows': 1,
+          'links.followers': 1,
           profilThumbImageUrl: 1,
         },
       });
@@ -2244,7 +2245,7 @@ Meteor.publishComposite('callUsers', function() {
     children: [
       {
         find(citoyen) {
-          return citoyen.listFollows();
+          return citoyen.listFriends();
         },
         children: [
           {

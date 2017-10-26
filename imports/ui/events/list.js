@@ -138,6 +138,7 @@ Template.eventsAdd.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
@@ -167,6 +168,7 @@ Template.eventsEdit.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
@@ -194,6 +196,7 @@ Template.eventsBlockEdit.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
@@ -258,6 +261,9 @@ Template.eventsEdit.helpers({
     }
     if (event && event.address && event.address.depName) {
       eventEdit.depName = event.address.depName;
+    }
+    if (event && event.address && event.address.localityId) {
+      eventEdit.localityId = event.address.localityId;
     }
     eventEdit.geoPosLatitude = event.geo.latitude;
     eventEdit.geoPosLongitude = event.geo.longitude;
@@ -337,6 +343,9 @@ Template.eventsBlockEdit.helpers({
         }
         if (event && event.address && event.address.depName) {
           eventEdit.depName = event.address.depName;
+        }
+        if (event && event.address && event.address.localityId) {
+          eventEdit.localityId = event.address.localityId;
         }
         eventEdit.geoPosLatitude = event.geo.latitude;
         eventEdit.geoPosLongitude = event.geo.longitude;
