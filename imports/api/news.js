@@ -162,6 +162,10 @@ export const SchemasNewsRest = new SimpleSchema({
     type: String,
     optional: true,
   },
+  'mentions.$.slug': {
+    type: String,
+    optional: true,
+  },
   'mentions.$.value': {
     type: String,
     optional: true,
@@ -324,7 +328,11 @@ if (Meteor.isClient) {
         if (this.mentions) {
           _.each(this.mentions, (array) => {
           // text = text.replace(new RegExp(`@${array.value}`, 'g'), `<a href="${Router.path('detailList', {scope:array.type,_id:array.id})}" class="positive">@${array.value}</a>`);
-            text = text.replace(new RegExp(`@?${array.value}`, 'g'), `<a href="${Router.path('detailList', { scope: array.type, _id: array.id })}" class="positive">@${array.value}</a>`);
+            if (array.slug) {
+              text = text.replace(new RegExp(`@?${array.slug}`, 'g'), `<a href="${Router.path('detailList', { scope: array.type, _id: array.id })}" class="positive">@${array.slug}</a>`);
+            } else {
+              text = text.replace(new RegExp(`@?${array.value}`, 'g'), `<a href="${Router.path('detailList', { scope: array.type, _id: array.id })}" class="positive">@${array.value}</a>`);
+            }
           }, text);
         }
         return text;

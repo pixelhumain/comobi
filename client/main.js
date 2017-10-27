@@ -50,6 +50,8 @@ import '../imports/ui/rooms/actions/comments/comments.js';
 import '../imports/ui/rooms/actions/actions.js';
 import '../imports/ui/rooms/resolutions/resolutions.js';
 
+import '../imports/ui/games/games.js';
+
 import '../imports/ui/share/share.js';
 
 import '../imports/ui/roles/roles.js';

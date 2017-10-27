@@ -16,3 +16,9 @@ public/i18n/
 node_modules/
 cordova-build-override/platforms/android/google-services.json
 version.desktop
+docker-build.sh
+docker-compose.yaml
+Dockerfile
+npm-debug.log
+.docker/
+.rancher/

@@ -28,6 +28,8 @@ import { Actions, SchemasActionsRest } from '../actions.js';
 import { Resolutions } from '../resolutions.js';
 import { Rooms, SchemasRoomsRest } from '../rooms.js';
 import { Proposals, SchemasProposalsRest, BlockProposalsRest } from '../proposals.js';
+// Game
+import { Gamesmobile, Playersmobile, Questsmobile, SchemasPlayersmobileRest } from '../gamemobile.js';
 
 // function api
 import { apiCommunecter } from './api.js';
@@ -2004,13 +2006,13 @@ export const insertProposal = new ValidatedMethod({
     } else {
       if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
         if (room.roles && room.roles.length > 0) {
-            const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
-            if (roles && room.roles.some(role => roles.includes(role))) {
-              // true
-            } else {
-              // false
-              throw new Meteor.Error('not-authorized');
-            }
+          const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
+          if (roles && room.roles.some(role => roles.includes(role))) {
+            // true
+          } else {
+            // false
+            throw new Meteor.Error('not-authorized');
+          }
         }
       } else {
         throw new Meteor.Error('not-authorized');
@@ -2107,13 +2109,13 @@ export const insertAction = new ValidatedMethod({
     } else {
       if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
         if (room.roles && room.roles.length > 0) {
-            const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
-            if (roles && room.roles.some(role => roles.includes(role))) {
-              // true
-            } else {
-              // false
-              throw new Meteor.Error('not-authorized');
-            }
+          const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
+          if (roles && room.roles.some(role => roles.includes(role))) {
+            // true
+          } else {
+            // false
+            throw new Meteor.Error('not-authorized');
+          }
         }
       } else {
         throw new Meteor.Error('not-authorized');
@@ -2200,12 +2202,12 @@ export const insertAmendement = new ValidatedMethod({
     if (!proposal) {
       throw new Meteor.Error('not-authorized');
     } else {
-    const room = Rooms.findOne({ _id: new Mongo.ObjectID(proposal.idParentRoom) });
-    if (!room) {
-      throw new Meteor.Error('not-authorized');
-    } else {
-      if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
-        if (room.roles && room.roles.length > 0) {
+      const room = Rooms.findOne({ _id: new Mongo.ObjectID(proposal.idParentRoom) });
+      if (!room) {
+        throw new Meteor.Error('not-authorized');
+      } else {
+        if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
+          if (room.roles && room.roles.length > 0) {
             const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
             if (roles && room.roles.some(role => roles.includes(role))) {
               // true
@@ -2213,12 +2215,12 @@ export const insertAmendement = new ValidatedMethod({
               // false
               throw new Meteor.Error('not-authorized');
             }
+          }
+        } else {
+          throw new Meteor.Error('not-authorized');
         }
-      } else {
-        throw new Meteor.Error('not-authorized');
       }
     }
-  }
     const docRetour = doc;
 
     /* block:amendement
@@ -2431,6 +2433,188 @@ export const actionsType = new ValidatedMethod({
     docRetour.name = name;
     docRetour.value = value;
     const retour = apiCommunecter.postPixel('element', 'updatefield', docRetour);
+    return retour;
+  },
+});
+
+export const gameParticipate = new ValidatedMethod({
+  name: 'gameParticipate',
+  validate: new SimpleSchema({
+    gameId: { type: String },
+  }).validator(),
+  run({ gameId }) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const query = {};
+    query._id = new Mongo.ObjectID(gameId);
+    const game = Gamesmobile.findOne(query);
+    if (!game) {
+      throw new Meteor.Error('not-game', 'not-game');
+    }
+    if (game.isNotStart()) {
+      throw new Meteor.Error('game-is-not-start', 'game-is-not-start');
+    }
+    if (game.isEnd()) {
+      throw new Meteor.Error('game-is-end', 'game-is-end');
+    }
+    const player = Playersmobile.findOne({ idUser: this.userId, idGame: gameId });
+    if (player && player._id) {
+      throw new Meteor.Error('player-already-present', 'player-already-present');
+    }
+    const doc = {};
+    doc.idUser = this.userId;
+    doc.idGame = gameId;
+    // SchemasPlayersmobileRest.clean(doc);
+    // SchemasPlayersmobileRest.validate(doc);
+    const retour = Playersmobile.insert(doc);
+    if (retour) {
+      Gamesmobile.update(
+        { _id: new Mongo.ObjectID(gameId) },
+        { $inc: { numberPlayers: 1 } },
+      );
+    }
+    console.log(retour);
+    return retour;
+  },
+});
+
+export const questValidate = new ValidatedMethod({
+  name: 'questValidate',
+  validate: new SimpleSchema({
+    gameId: { type: String },
+    questId: { type: String },
+    choiceId: { type: String },
+  }).validator(),
+  run({ gameId, questId, choiceId }) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const query = {};
+    query._id = new Mongo.ObjectID(gameId);
+    const game = Gamesmobile.findOne(query);
+    if (!game) {
+      throw new Meteor.Error('not-game', 'not-game');
+    }
+    if (game.isNotStart()) {
+      throw new Meteor.Error('game-is-not-start', 'game-is-not-start');
+    }
+    if (game.isEnd()) {
+      throw new Meteor.Error('game-is-end', 'game-is-end');
+    }
+    const quest = Questsmobile.findOne({ _id: new Mongo.ObjectID(questId) });
+    if (!quest) {
+      throw new Meteor.Error('quest-not-exist', 'quest-not-exist');
+    }
+    const player = Playersmobile.findOne({ idUser: this.userId, idGame: gameId });
+    if (!player) {
+      throw new Meteor.Error('player-not-exit', 'player-not-exit');
+    }
+    if (player && player.finishedAt) {
+      throw new Meteor.Error('game-finished', 'game-finished');
+    }
+    const playerQuestExist = Playersmobile.findOne({ idUser: this.userId, idGame: gameId, validateQuest: { $in: [questId] } });
+    if (playerQuestExist) {
+      throw new Meteor.Error('player-quest-exit', 'player-quest-exit');
+    }
+    if (quest.questId !== choiceId) {
+      throw new Meteor.Error('quest-wrong-answer', 'quest-wrong-answer');
+    }
+
+    const modifier = {};
+    modifier.$inc = { totalPoint: quest.pointWin };
+    modifier.$addToSet = { validateQuest: questId };
+    const countGameQuest = Questsmobile.find({ idGame: gameId }).count();
+    if (player.validateQuest && player.validateQuest.length && player.validateQuest.length > 0 && player.validateQuest.length < countGameQuest) {
+      const countValidateQuest = player.validateQuest.length + 1;
+      if (countValidateQuest === countGameQuest) {
+        // fin du jeu
+        modifier.$set = {};
+        modifier.$set.finishedAt = new Date();
+      }
+    }
+    const retour = Playersmobile.update({ _id: player._id }, modifier);
+    Questsmobile.update({ _id: new Mongo.ObjectID(questId) }, { $inc: { numberPlayerValidate: 1 } });
+    return retour;
+  },
+});
+
+export const questValidateGeo = new ValidatedMethod({
+  name: 'questValidateGeo',
+  validate: new SimpleSchema({
+    gameId: { type: String },
+    questId: { type: String },
+    latlng: { type: Object },
+    'latlng.latitude': { type: Number, decimal: true },
+    'latlng.longitude': { type: Number, decimal: true },
+  }).validator(),
+  run({ gameId, questId, latlng }) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const query = {};
+    query._id = new Mongo.ObjectID(gameId);
+    const game = Gamesmobile.findOne(query);
+    if (!game) {
+      throw new Meteor.Error('not-game', 'not-game');
+    }
+    if (game.isNotStart()) {
+      throw new Meteor.Error('game-is-not-start', 'game-is-not-start');
+    }
+    if (game.isEnd()) {
+      throw new Meteor.Error('game-is-end', 'game-is-end');
+    }
+    const quest = Questsmobile.findOne({ _id: new Mongo.ObjectID(questId) });
+    if (!quest) {
+      throw new Meteor.Error('quest-not-exist', 'quest-not-exist');
+    }
+    const player = Playersmobile.findOne({ idUser: this.userId, idGame: gameId });
+    if (!player) {
+      throw new Meteor.Error('player-not-exit', 'player-not-exit');
+    }
+    if (player && player.finishedAt) {
+      throw new Meteor.Error('game-finished', 'game-finished');
+    }
+    const playerQuestExist = Playersmobile.findOne({ idUser: this.userId, idGame: gameId, validateQuest: { $in: [questId] } });
+    if (playerQuestExist) {
+      throw new Meteor.Error('player-quest-exit', 'player-quest-exit');
+    }
+
+    const collection = nameToCollection(quest.questType);
+    const queryGeo = {};
+    queryGeo._id = new Mongo.ObjectID(quest.questId);
+    const radius = 200;
+    queryGeo.geoPosition = {
+      $nearSphere: {
+        $geometry: {
+          type: 'Point',
+          coordinates: [latlng.longitude, latlng.latitude],
+        },
+        $maxDistance: radius,
+      },
+    };
+    const scope = collection.findOne(queryGeo);
+    if (!scope) {
+      throw new Meteor.Error('quest-wrong-answer', 'quest-wrong-answer');
+    }
+
+    const modifier = {};
+    modifier.$inc = { totalPoint: quest.pointWin };
+    modifier.$addToSet = { validateQuest: questId };
+    const countGameQuest = Questsmobile.find({ idGame: gameId }).count();
+    if (player.validateQuest && player.validateQuest.length && player.validateQuest.length > 0 && player.validateQuest.length < countGameQuest) {
+      const countValidateQuest = player.validateQuest.length + 1;
+      if (countValidateQuest === countGameQuest) {
+        // fin du jeu
+        modifier.$set = {};
+        modifier.$set.finishedAt = new Date();
+      }
+    }
+    const retour = Playersmobile.update({ _id: player._id }, modifier);
+    Questsmobile.update({ _id: new Mongo.ObjectID(questId) }, { $inc: { numberPlayerValidate: 1 } });
     return retour;
   },
 });

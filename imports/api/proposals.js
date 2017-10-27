@@ -9,10 +9,6 @@ import { baseSchema, blockBaseSchema } from './schema.js';
 import { Citoyens } from './citoyens.js';
 import { Comments } from './comments.js';
 
-if (Meteor.isclient) {
-  import { Chronos } from './client/chronos.js';
-}
-
 export const Proposals = new Mongo.Collection('proposals', { idGeneration: 'MONGO' });
 
 // SimpleSchema.debug = true;
@@ -131,24 +127,65 @@ export const BlockProposalsRest = new SimpleSchema([blockBaseSchema, {
   },
 }]);
 
+if (Meteor.isClient) {
+  import { Chronos } from './client/chronos.js';
+
+  Proposals.helpers({
+    isEndAmendement() {
+      const end = moment(this.amendementDateEnd).toDate();
+      return Chronos.moment(end).isBefore(); // True
+    },
+    isEndVote() {
+      const end = moment(this.voteDateEnd).toDate();
+      return Chronos.moment(end).isBefore(); // True
+    },
+    isNotEndAmendement() {
+      const end = moment(this.amendementDateEnd).toDate();
+      return Chronos.moment().isBefore(end); // True
+    },
+    isNotEndVote() {
+      const end = moment(this.voteDateEnd).toDate();
+      return Chronos.moment().isBefore(end); // True
+    },
+  });
+} else {
+  Proposals.helpers({
+    isEndAmendement() {
+      const end = moment(this.amendementDateEnd).toDate();
+      return moment(end).isBefore(); // True
+    },
+    isEndVote() {
+      const end = moment(this.voteDateEnd).toDate();
+      return moment(end).isBefore(); // True
+    },
+    isNotEndAmendement() {
+      const end = moment(this.amendementDateEnd).toDate();
+      return moment().isBefore(end); // True
+    },
+    isNotEndVote() {
+      const end = moment(this.voteDateEnd).toDate();
+      return moment().isBefore(end); // True
+    },
+  });
+}
 
 Proposals.helpers({
-  isVisibleFields (field) {
+  isVisibleFields(field) {
     return true;
   },
-  isPublicFields (field) {
+  isPublicFields(field) {
     return this.preferences && this.preferences.publicFields && _.contains(this.preferences.publicFields, field);
   },
-  isPrivateFields (field) {
+  isPrivateFields(field) {
     return this.preferences && this.preferences.privateFields && _.contains(this.preferences.privateFields, field);
   },
-  scopeVar () {
+  scopeVar() {
     return 'proposals';
   },
-  scopeEdit () {
+  scopeEdit() {
     return 'proposalsEdit';
   },
-  listScope () {
+  listScope() {
     return 'listProposals';
   },
   momentAmendementDateEnd() {
@@ -163,67 +200,35 @@ Proposals.helpers({
   formatVoteDateEnd() {
     return moment(this.voteDateEnd).format('DD/MM/YYYY HH:mm');
   },
-  isEndAmendement () {
-    const end = moment(this.amendementDateEnd).toDate();
-    // const now = moment().toDate();
-    if (Meteor.isclient) {
-      return Chronos.moment(end).isBefore(); // True
-    }
-    return moment(end).isBefore(); // True
-  },
-  isEndVote () {
-    const end = moment(this.voteDateEnd).toDate();
-    // const now = moment().toDate();
-    if (Meteor.isclient) {
-      return Chronos.moment(end).isBefore(); // True
-    }
-    return moment(end).isBefore(); // True
-  },
-  isNotEndAmendement () {
-    const end = moment(this.amendementDateEnd).toDate();
-    // const now = moment().toDate();
-    if (Meteor.isclient) {
-      return Chronos.moment().isBefore(end); // True
-    }
-    return moment().isBefore(end); // True
-  },
-  isNotEndVote () {
-    const end = moment(this.voteDateEnd).toDate();
-    // const now = moment().toDate();
-    if (Meteor.isclient) {
-      return Chronos.moment().isBefore(end); // True
-    }
-    return moment().isBefore(end); // True
-  },
-  voteActivatedBool () {
+  voteActivatedBool() {
     return this.convertBool(this.voteActivated);
   },
-  voteCanChangeBool () {
+  voteCanChangeBool() {
     return this.convertBool(this.voteCanChange);
   },
-  voteAnonymousBool () {
+  voteAnonymousBool() {
     return this.convertBool(this.voteAnonymous);
   },
-  amendementActivatedBool () {
+  amendementActivatedBool() {
     return this.convertBool(this.amendementActivated);
   },
   convertBool(value) {
     return (value === 'true' || value === true);
   },
-  creatorProfile () {
+  creatorProfile() {
     return Citoyens.findOne({
       _id: new Mongo.ObjectID(this.creator),
     }, {
-      fields: {
-        name: 1,
-        profilThumbImageUrl: 1,
-      },
-    });
+        fields: {
+          name: 1,
+          profilThumbImageUrl: 1,
+        },
+      });
   },
-  isCreator () {
+  isCreator() {
     return this.creator === Meteor.userId();
   },
-  votesResultat () {
+  votesResultat() {
     const votes = this.votes ? this.votes : null;
     const majority = this.majority ? parseInt(this.majority) : 50;
     const voteUp = votes && votes.up ? votes.up.length : 0;
@@ -253,7 +258,7 @@ Proposals.helpers({
       voteUncomplet: { nb: voteUncomplet.toString(), pourc: pourcVoteUncomplet.toString(), meVoteUncomplet },
     };
   },
-  votesAmendements (votes) {
+  votesAmendements(votes) {
     const voteUp = votes && votes.up ? votes.up.length : 0;
     const voteDown = votes && votes.down ? votes.down.length : 0;
     const voteWhite = votes && votes.white ? votes.white.length : 0;
@@ -277,12 +282,12 @@ Proposals.helpers({
       voteWhite: { nb: voteWhite.toString(), pourc: pourcVoteWhite.toString(), meVoteWhite },
     };
   },
-  objectKeyArrayAmendements () {
+  objectKeyArrayAmendements() {
     const array = [];
     if (this.amendements) {
       const amendements = this.amendements;
       const self = this;
-      Object.keys(amendements).forEach(function(v) {
+      Object.keys(amendements).forEach(function (v) {
         amendements[v].idKey = v;
         amendements[v].votesObject = self.votesAmendements(amendements[v].votes);
         array.push(amendements[v]);
@@ -290,16 +295,16 @@ Proposals.helpers({
     }
     return array;
   },
-  listComments () {
+  listComments() {
     // console.log('listComments');
     return Comments.find({
       contextId: this._id._str,
     }, { sort: { created: -1 } });
   },
-  commentsCount () {
+  commentsCount() {
     if (this.commentCount) {
       return this.commentCount;
     }
     return 0;
   },
-});
+})

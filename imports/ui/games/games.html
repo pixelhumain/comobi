@@ -1,0 +1,221 @@
+<template name="detailGames">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "games detail"}}</h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+{{#if dataReady}}
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="item tabs tabs-icon-left">
+    <a class="tab-item {{#if equals selectview 'detailGames_view'}}tab-item-active{{/if}}" href="{{pathFor 'gamesDetail' _id=scope._id._str}}" id="detailGames_view"><i class="icon fa fa-home"></i></a>
+    <a class="tab-item {{#if equals selectview 'gameScoreBoard'}}tab-item-active{{/if}}" href="{{pathFor 'gameScoreBoard' _id=scope._id._str}}" id="gameScoreBoard"><i class="icon fa fa-trophy"></i></a>
+  </div>
+  {{> Template.dynamic template=selectview data=scope}}
+  {{/ionContent}}
+  {{/ionView}}
+  {{else}}
+{{> loading}}
+{{/if}}
+</template>
+
+<template name="detailGames_view">
+    <div class="list">
+        <div class="item item-divider">
+         {{name}}
+        </div>
+        <div class="item item-text-wrap">
+            <p>{{description}}</p>
+        </div>
+        {{#if isStart}}
+        {{#if isEnd}}
+        {{> gameIsEnd}}
+        {{else}}
+        {{> gameIsStart}}
+        {{/if}}
+        {{else}}
+        {{> gameNotStart}}
+        {{/if}}
+    </div>
+</template>
+
+<template name="gameNotStart">
+<div class="item item-text-wrap">
+    <p class="text-center">
+        <span class="assertive">game not start</span>
+    </p>
+</div>
+<div class="item item-text-wrap">
+    <p>
+        Date de début du jeu
+        <strong>{{formatStartDate}}</strong>
+        <br> Date de fin du jeu
+        <strong>{{formatEndDate}}</strong>
+        <br> Fin du jeu
+        <strong>{{timeSpentEnd}}</strong>
+        <br> Le jeu débutera
+        <strong>{{timeSpentStart}}</strong>
+    </p>
+</div>
+</template>
+
+<template name="gameIsEnd">
+<div class="item item-text-wrap">
+    <p><span class="assertive">game is end - {{numberPlayers}} players</span></p>
+</div>
+{{#with playerMe}} 
+{{#if finishedAt}}
+<div class="item item-text-wrap">
+    <p>{{_ "finished"}}
+        <strong>{{livestamp finishedAt}}</strong>
+        <br> {{_ "game completed in"}}
+        <strong>{{diffInText createdAt finishedAt}}</strong>
+        <br>
+        <strong>{{totalPoint}}</strong> points
+    </p>
+</div>
+{{else}}
+    <p>{{_ "not finished"}}
+        <br>
+        <strong>{{totalPoint}}</strong> points
+    </p>
+{{/if}}
+
+{{/with}}
+</template>
+
+<template name="gameIsStart">
+<div class="item item-text-wrap">
+    <p class="text-center">
+        <span class="balanced">game is start - {{numberPlayers}} players</span>
+    </p>
+</div>
+<div class="item item-text-wrap">
+    <p>
+        Date de fin du jeu
+        <strong>{{formatEndDate}}</strong>
+        <br> Fin du jeu
+        <strong>{{timeSpentEnd}}</strong>
+        <br> Le jeu à débuté
+        <strong>{{timeSpentStart}}</strong>
+    </p>
+</div>
+{{#with playerMe}}
+{{#if finishedAt}}
+<div class="item item-text-wrap">
+    <p>{{_ "finished"}}
+        <strong>{{livestamp finishedAt}}</strong>
+        <br> {{_ "game completed in"}}
+        <strong>{{diffInText createdAt finishedAt}}</strong><br>
+        <strong>{{totalPoint}}</strong> points
+    </p>
+</div>
+{{else}}
+<div class="item item-text-wrap">
+    <p>
+        vous avez commencé à jouer <strong>{{playTimeSpentStart}}</strong> et vous avez <strong>{{totalPoint}}</strong> points
+    </p>
+</div>
+    <div class="item item-divider">
+        {{_ "quest"}}
+    </div>
+{{#each quest in listQuestsNoValid}}
+<div class="item item-text-wrap">
+    <p>
+        {{quest.question}}
+    </p>
+</div>
+<div class="item">
+{{> buttonQuestValidate gameId=../_id._str questId=quest._id._str choiceId=quest.questId}}
+</div>
+{{/each}} 
+{{/if}}
+    <div class="item item-divider">
+        {{_ "questvalid"}}
+    </div>
+{{#each quest in listQuestsValid}}
+{{>itemQuest quest=quest}}
+{{/each}}
+
+{{else}}
+<div class="item">
+{{> buttonGameParticipate gameId=_id._str}}
+</div>
+{{/with}}
+</template>
+
+<template name="buttonGameParticipate">
+<button class="button button-positive button-block game-participate-js"><i class="icon fa fa-play-circle"></i> Jouer au jeu</button>
+</template>
+
+<template name="buttonQuestValidate">
+    <button class="button button-positive button-block quest-validate-js">
+        <i class="icon fa fa-check"></i>
+    </button>
+
+<button class="button button-positive button-block quest-validate-geo-js">
+    <i class="icon fa fa-check"></i> {{_ "check position"}}
+</button>
+
+<button class="button button-positive button-block scanner-quest-validate-js">
+    <i class="icon fa fa-qrcode"></i> {{_ "scan qr code"}}
+</button>
+</template>
+
+<template name="itemQuest">
+<div class="item item-text-wrap">
+    <p>
+        {{quest.question}}
+    </p>
+</div>
+{{#with quest.objectQuest}}
+<a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}}" href="{{pathFor 'detailList' _id=_id._str scope=scopeVar}}">
+    {{#if profilThumbImageUrl}}
+    <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}"> {{/if}}
+    <h2>{{name}}</h2>
+    {{#if geo}}
+    <p>
+        <a class="positive" href="{{pathFor 'mapWith' _id=_id._str scope=scopeVar}}">
+            <i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a>
+    </p>
+    {{/if}}
+    <span class="badge badge-balanced">{{../quest.numberPlayerValidate}}</span>
+</a>
+{{/with}}
+</template>
+
+<template name="gameScoreBoard">
+<div class="list">
+    <div class="item item-divider">
+        {{_ "scoreboard"}}
+    </div>
+    {{#each player in listPlayers}}
+    <div class="item {{#if player.playerProfile.profilThumbImageUrl}}item-avatar{{/if}}">
+        {{#if player.playerProfile.profilThumbImageUrl}} {{> imgDoc profilThumbImageUrl=player.playerProfile.profilThumbImageUrl resized="80x80"}}
+        {{/if}}
+        <h2>
+            <a href="{{pathFor 'detailList' _id=player.playerProfile._id._str scope='citoyens'}}" class="dark">{{player.playerProfile.name}}</a>
+        </h2>
+        {{#if player.isMe}}<p>{{_ "Me"}}</p>{{/if}}
+        {{#if player.finishedAt}}
+        <p>{{_ "finished"}} <strong>{{livestamp player.finishedAt}}</strong><br>
+           {{_ "game completed in"}} <strong>{{diffInText player.createdAt player.finishedAt}}</strong>
+        </p>
+        {{/if}}
+         
+        <span class="badge badge-dark">{{player.totalPoint}} points</span>
+    </div>
+    {{else}}
+        <div class="item">
+            {{_ "noparticipants"}}
+        </div>
+    {{/each}}
+</div>
+</template>

@@ -369,6 +369,18 @@ Router.map(function() {
     loadingTemplate: 'loading',
   });
 
+  this.route('gamesDetail', {
+    template: 'detailGames',
+    path: '/games/:_id',
+    loadingTemplate: 'loading',
+  });
+
+  this.route('gameScoreBoard', {
+    template: 'detailGames',
+    path: '/games/:_id/scoreboard',
+    loadingTemplate: 'loading',
+  });
+  
   this.route('directory', {
     template: 'directory',
     path: '/:scope/directory/:_id',

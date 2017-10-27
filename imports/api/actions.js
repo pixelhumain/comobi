@@ -10,10 +10,6 @@ import { Citoyens } from './citoyens.js';
 import { Comments } from './comments.js';
 import { queryLink, queryLinkToBeValidated, queryOptions } from './helpers.js';
 
-if (Meteor.isclient) {
-  import { Chronos } from './client/chronos.js';
-}
-
 export const Actions = new Mongo.Collection('actions', { idGeneration: 'MONGO' });
 
 /*
@@ -79,6 +75,32 @@ export const SchemasActionsRest = new SimpleSchema([baseSchema.pick(['name', 'de
     optional: true,
   },
 }]);
+
+if (Meteor.isClient) {
+  import { Chronos } from './client/chronos.js';
+
+  Actions.helpers({
+    isEndDate() {
+      const end = moment(this.endDate).toDate();
+      return Chronos.moment(end).isBefore(); // True
+    },
+    isNotEndDate() {
+      const end = moment(this.endDate).toDate();
+      return Chronos.moment().isBefore(end); // True
+    },
+  });
+} else {
+  Actions.helpers({
+    isEndDate() {
+      const end = moment(this.endDate).toDate();
+      return moment(end).isBefore(); // True
+    },
+    isNotEndDate() {
+      const end = moment(this.endDate).toDate();
+      return moment().isBefore(end); // True
+    },
+  });
+}
 
 Actions.helpers({
   isVisibleFields (field) {
@@ -152,22 +174,6 @@ Actions.helpers({
   },
   formatEndDate() {
     return moment(this.endDate).format('DD/MM/YYYY HH:mm');
-  },
-  isEndDate () {
-    const end = moment(this.endDate).toDate();
-    // const now = moment().toDate();
-    if (Meteor.isclient) {
-      return Chronos.moment(end).isBefore(); // True
-    }
-    return moment(end).isBefore(); // True
-  },
-  isNotEndDate () {
-    const end = moment(this.endDate).toDate();
-    // const now = moment().toDate();
-    if (Meteor.isclient) {
-      return Chronos.moment().isBefore(end); // True
-    }
-    return moment().isBefore(end); // True
   },
   listComments () {
     // console.log('listComments');
