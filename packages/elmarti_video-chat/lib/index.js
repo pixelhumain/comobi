@@ -1,15 +1,19 @@
+//jshint esversion: 6
 import { Meteor } from 'meteor/meteor';
 import { Client } from './client';
 import { Services } from './server';
+import { Tracker } from "meteor/tracker";
+import { Video } from './video';
 
 import CallLog from './call_log';
-console.log("got it", Meteor.isClient, Meteor.isServer);
+
 if( Meteor.isClient ){
-	console.log("loading client");
-	Meteor.VideoCallServices = new Client();
+	Meteor.VideoCallServices = new Client( {
+		meteor: Meteor,
+		tracker: Tracker,
+		video: Video } );
 }
 if( Meteor.isServer ){
-	console.log("loading server");
 	Meteor.users.find({"status.online": true}).observe({
 		removed: function ({_id}) {
 			CallLog.find({

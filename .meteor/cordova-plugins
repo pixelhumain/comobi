@@ -11,4 +11,4 @@ cordova-plugin-media-capture@1.4.3
 cordova-plugin-meteor-webapp@1.4.1
 cordova-plugin-crosswalk-webview@2.3.0
 me.dispatch.crosswalk-permissions@file://./packages
-phonegap-plugin-barcodescanner@https://github.com/phonegap/phonegap-plugin-barcodescanner/tarball/master
+phonegap-plugin-barcodescanner@https://github.com/phonegap/phonegap-plugin-barcodescanner/tarball/93fd6104e49f25bf8df1ac18a14046c5402bb224

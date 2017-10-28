@@ -48,7 +48,6 @@ valider/ou pas
 les reponse
 nombre de reponse
 date des reponse
-
 */
 export const SchemasPlayersmobileRest = new SimpleSchema({
   idUser: {
@@ -348,10 +347,8 @@ Gamesmobile.helpers({
 
 Questsmobile.helpers({
   objectQuest() {
-    console.log(`${this.questType} ${this.questId}`);
     if (this.questType && this.questId) {
       const collection = nameToCollection(this.questType);
-      console.log(collection.findOne({ _id: new Mongo.ObjectID(this.questId) }));
       return collection.findOne({ _id: new Mongo.ObjectID(this.questId) });
     }
   },
@@ -412,7 +409,6 @@ Playersmobile.helpers({
     queryOptions.sort = {};
     queryOptions.sort.order = 1;
     // queryOptions
-    console.log(JSON.stringify(query));
     return Questsmobile.find(query, queryOptions);
   },
   countQuestsNoValid() {

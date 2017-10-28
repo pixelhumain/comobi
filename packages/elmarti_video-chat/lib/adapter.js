@@ -111,7 +111,7 @@
 // a=ice-options:foo bar
     SDPUtils.parseIceOptions = function(line) {
         return line.substr(14).split(' ');
-    }
+    };
 
 // Parses an rtpmap line, returns RTCRtpCoddecParameters. Sample input:
 // a=rtpmap:111 opus/48000/2
@@ -245,7 +245,7 @@
         if (mid) {
             return mid.substr(6);
         }
-    }
+    };
 
     SDPUtils.parseFingerprint = function(line) {
         var parts = line.substr(14).split(' ');

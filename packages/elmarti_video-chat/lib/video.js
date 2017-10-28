@@ -1,15 +1,13 @@
-import { Meteor } from 'meteor/meteor';
-
 class Video {
 	/**
 	 * Wrap video to allow stabler manipulation
 	 * @param video {HTMLElement}
 	 */
-	onPlaying = false;
-	onPause = false;
 	constructor ( video ){
+		this.onPlaying = false;
+		this.onPause = false;
 		if( !video ) {
-			throw new Meteor.Error( "Video element not found" );
+			throw new Error( "Video element not found" );
 		} else {
 			this.element = video;
 			this.element.onplaying = () => {
@@ -47,7 +45,7 @@ class Video {
 					// Auto-play was prevented
 					// Show paused UI.
 					console.log("video error", error);
-				});;
+				} );
 		}
 	}
 
