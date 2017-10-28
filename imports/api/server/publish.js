@@ -25,6 +25,8 @@ import { Actions } from '../actions.js';
 import { Resolutions } from '../resolutions.js';
 import { Rooms } from '../rooms.js';
 import { Proposals } from '../proposals.js';
+// Game
+import { Gamesmobile, Playersmobile, Questsmobile } from '../gamemobile.js';
 
 import { nameToCollection } from '../helpers.js';
 
@@ -1614,9 +1616,110 @@ Meteor.publishComposite('detailResolutions', function(scope, scopeId, roomId, re
               },
             ],
           },
-        ]
+        ],
       },
-    ]
+    ],
+  };
+});
+
+Meteor.publishComposite('detailGames', function (gameId) {
+  check(gameId, String);
+  if (!this.userId) {
+    return null;
+  }
+  return {
+    find() {
+      const options = {};
+      // options['_disableOplog'] = true;
+      return Gamesmobile.find({ _id: new Mongo.ObjectID(gameId) }, options);
+    },
+    children: [
+      {
+        find(game) {
+          const query = {};
+          query.idGame = game._id._str;
+          query.idUser = this.userId;
+          const queryOptions = {};
+          queryOptions.fields = {};
+          queryOptions.fields.idGame = 1;
+          queryOptions.fields.idUser = 1;
+          queryOptions.fields.totalPoint = 1;
+          queryOptions.fields.validateQuest = 1;
+          queryOptions.fields.createdAt = 1;
+          // queryOptions
+          return Playersmobile.find(query);
+        },
+        children: [
+          {
+            find(player) {
+              return player.listQuestsNoValid();
+            },
+          },
+          {
+            find(player) {
+              return player.listQuestsValid();
+            },
+            children: [
+              {
+                find(quest) {
+                  if (quest.questType && quest.questId) {
+                    const collection = nameToCollection(quest.questType);
+                    return collection.find({ _id: new Mongo.ObjectID(quest.questId) });
+                  }
+                },
+              },
+            ],
+          },
+          {
+            find(player) {
+              return Citoyens.find({
+                _id: new Mongo.ObjectID(player.idUser),
+              }, {
+                  fields: {
+                    name: 1,
+                    profilThumbImageUrl: 1,
+                  },
+                });
+            },
+          },
+        ],
+      },
+    ],
+  };
+});
+
+Meteor.publishComposite('gameScoreBoard', function (gameId) {
+  check(gameId, String);
+  if (!this.userId) {
+    return null;
+  }
+  return {
+    find() {
+      const options = {};
+      // options['_disableOplog'] = true;
+      return Gamesmobile.find({ _id: new Mongo.ObjectID(gameId) }, options);
+    },
+    children: [
+      {
+        find(game) {
+          return game.listPlayers();
+        },
+        children: [
+          {
+            find(player) {
+              return Citoyens.find({
+                _id: new Mongo.ObjectID(player.idUser),
+              }, {
+                  fields: {
+                    name: 1,
+                    profilThumbImageUrl: 1,
+                  },
+                });
+            },
+          },
+        ],
+      },
+    ],
   };
 });
 
@@ -2237,6 +2340,7 @@ Meteor.publishComposite('callUsers', function() {
           _id: 1,
           name: 1,
           'links.follows': 1,
+          'links.followers': 1,
           profilThumbImageUrl: 1,
         },
       });
@@ -2244,7 +2348,7 @@ Meteor.publishComposite('callUsers', function() {
     children: [
       {
         find(citoyen) {
-          return citoyen.listFollows();
+          return citoyen.listFriends();
         },
         children: [
           {

@@ -292,8 +292,7 @@ Events.helpers({
   },
   isStart () {
     const start = moment(this.startDate).toDate();
-    const now = moment().toDate();
-    return moment(start).isBefore(now); // True
+    return moment(start).isBefore(); // True
   },
   typeValue () {
     return Lists.findOne({ name: 'eventTypes' }).list[this.type];

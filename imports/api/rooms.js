@@ -78,9 +78,10 @@ Rooms.helpers({
     return true;
   },
   rolesJoin () {
-    if (this.roles) {
+    if (this.roles && Array.isArray(this.roles)) {
       return this.roles.join(',');
     }
+    return this.roles;
   },
   creatorProfile () {
     return Citoyens.findOne({

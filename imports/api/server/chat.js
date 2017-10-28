@@ -35,8 +35,8 @@ apiChat.login = function(params){
 };
 */
 
-/* const pwd = 'Djab974Djab974';
-const email = 'thomas.craipeau@gmail.com';
+/* const pwd = '';
+const email = '';
 const retourUser= apiChat.login({email,pwd});
 
 const room = Chat.callSync('loadHistory','GENERAL',null,50,{"$date":1497700914458});

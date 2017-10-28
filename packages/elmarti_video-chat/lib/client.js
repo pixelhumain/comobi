@@ -1,87 +1,107 @@
 //jshint esversion: 6
-import { Meteor } from "meteor/meteor";
-import { Tracker } from "meteor/tracker";
-import { Video } from './video';
+let Meteor, Video;
 class Client {
-	RTCConfiguration = {};
-	RetryLimit = 5;
-	RetryCount = 0;
-	constructor() {
-		Tracker.autorun( () => {
+
+	constructor( args ) {
+		this.callbacks = callbacks;
+		this.RTCConfiguration = {};
+		this.RetryLimit = 5;
+		this.RetryCount = 0;
+		let { meteor, tracker, video } = args;
+		Meteor = meteor;
+		Video = video;
+		tracker.autorun( () => {
 			this.sub = Meteor.subscribe( 'VideoChatPublication' );
 		} );
-		let callLog;
-		Meteor.connection._stream.on( 'message', ( msg ) => {
-
-			msg = JSON.parse( msg );
-			if ( msg.collection === 'VideoChatCallLog'
-				&& msg.msg === 'removed' ) {
-				this.onTerminateCall();
-			}
-			if ( msg.collection === 'VideoChatCallLog'
-				&& msg.msg === 'added'
-				&& msg.fields.target === Meteor.userId()
-				&& msg.fields.status === "NEW" ) {
-				callLog = msg.fields;
-				this.stream = new Meteor.Streamer( msg.id );
-				this.stream.on( 'video_message', ( stream_data ) => {
-					if ( typeof stream_data === "string" ) {
-						stream_data = JSON.parse( stream_data );
-					}
-					if ( stream_data.offer ) {
-						navigator.mediaDevices.getUserMedia( { audio: true, video: true } ).then( stream => {
-							if ( this.localVideo ) {
-								this.localVideo.setStream(stream, true);
-								this.localVideo.play();
-							}
-							this.setupPeerConnection( stream, stream_data.offer );
-						} ).catch( err => {
-							this.onError( err, stream_data )
-						} );
-					}
-					if ( stream_data.candidate ) {
-						if ( typeof stream_data.candidate === "string" )
-							stream_data.candidate = JSON.parse( stream_data.candidate );
-						console.log( stream_data.candidate );
-						const candidate = stream_data.candidate === {}
-						|| stream_data.candidate === null ? null : new RTCIceCandidate( stream_data.candidate );
-						if ( this.peerConnection )
-							this.peerConnection.addIceCandidate( candidate ).catch( err => {
-								this.onError( err, stream_data );
-							} );
-					}
-				} );
-				this.onReceivePhoneCall( callLog.caller );
-			}
-			if ( msg.collection === 'VideoChatCallLog'
-				&& msg.msg === 'added'
-				&& msg.fields.caller === Meteor.userId()
-				&& msg.fields.status === 'NEW' ) {
-				callLog = msg.fields;
-			}
-			if ( msg.msg === 'changed'
-				&& msg.collection === 'VideoChatCallLog'
-				&& msg.fields !== undefined ) {
-				const { fields } = msg;
-				if ( fields.status === 'ACCEPTED' && callLog.caller === Meteor.userId() ) {
-					this.onTargetAccept();
-					navigator.mediaDevices.getUserMedia( { audio: true, video: true } ).then( stream => {
-						if ( this.localVideo ) {
-							this.localVideo.pause();
-							this.localVideo.setStream( stream, true);
-							this.localVideo.play();
-						}
-						this.setupPeerConnection( stream );
-					} ).catch( err => {
-						this.onError( err, msg );
-					} );
-				}
-			}
-		} );
+		Meteor.connection._stream.on( 'message', this.handleStream.bind(this) );
 
 	}
 
-	/**5
+	/**
+	 * Handle the Video chat specific data in the DDP stream
+	 * @param msg {string}
+	 */
+	handleStream( msg ) {
+
+		msg = JSON.parse( msg );
+		if ( msg.collection === 'VideoChatCallLog'
+			&& msg.msg === 'removed' ) {
+			this.onTerminateCall();
+		}
+		if ( msg.collection === 'VideoChatCallLog'
+			&& msg.msg === 'added'
+			&& msg.fields.target === Meteor.userId()
+			&& msg.fields.status === "NEW" ) {
+			this.callLog = msg.fields;
+			this.stream = new Meteor.Streamer( msg.id );
+			this.stream.on( 'video_message', this.handleTargetStream.bind(this) );
+			this.onReceivePhoneCall( this.callLog.caller );
+		}
+		if ( msg.collection === 'VideoChatCallLog'
+			&& msg.msg === 'added'
+			&& msg.fields.caller === Meteor.userId()
+			&& msg.fields.status === 'NEW' ) {
+			this.callLog = msg.fields;
+		}
+		if ( msg.msg === 'changed'
+			&& msg.collection === 'VideoChatCallLog'
+			&& msg.fields !== undefined ) {
+			const { fields } = msg;
+			if ( fields.status === 'ACCEPTED' && this.callLog.caller === Meteor.userId() ) {
+				this.onTargetAccept();
+				this.handleTargetAccept();
+			}
+		}
+	}
+
+	/**
+	 * Handle the stream data for the target user
+	 * @param streamData {string}
+	 */
+	handleTargetStream( streamData ) {
+		if ( typeof streamData === "string" ) {
+			streamData = JSON.parse( streamData );
+		}
+		if ( streamData.offer ) {
+			navigator.mediaDevices.getUserMedia( { audio: true, video: true } ).then( stream => {
+				if ( this.localVideo ) {
+					this.localVideo.setStream( stream, true );
+					this.localVideo.play();
+				}
+				this.setupPeerConnection( stream, streamData.offer );
+			} ).catch( err => {
+				this.onError( err, streamData );
+			} );
+		}
+		if ( streamData.candidate ) {
+			if ( typeof streamData.candidate === "string" ){
+				streamData.candidate = JSON.parse( streamData.candidate );
+			}
+			const candidate = streamData.candidate === {}
+			|| streamData.candidate === null ? null : new RTCIceCandidate( streamData.candidate );
+			if ( this.peerConnection )
+				this.peerConnection.addIceCandidate( candidate ).catch( err => {
+					this.onError( err, streamData );
+				} );
+		}
+	}
+
+	/**
+	 * Handle the local mediaDevices when the target accepts the call
+	 */
+	handleTargetAccept(){
+		navigator.mediaDevices.getUserMedia( { audio: true, video: true } ).then( stream => {
+			if ( this.localVideo ) {
+				this.localVideo.pause();
+				this.localVideo.setStream( stream, true );
+				this.localVideo.play();
+			}
+			this.setupPeerConnection( stream );
+		} ).catch( err => {
+			this.onError( err, msg );
+		} );
+	}
+	/**
 	 * Set up the peer connection
 	 * @param stream {MediaStream}
 	 * @param remoteDescription {RTCPeerConnection}
@@ -109,32 +129,31 @@ class Client {
 			this.stream.emit( 'video_message', { candidate: JSON.stringify( event.candidate ) } );
 		};
 		this.peerConnection.oniceconnectionstatechange = ( event ) => {
-		    if( event.target.iceConnectionState === "failed" ){
-		        this.peerConnection = undefined;
-		        if(this.RetryCount < this.RetryLimit) {
-                    navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(stream => {
-                    	this.RetryCount++;
-                        if (this.localVideo) {
-                        	this.localVideo.pause();
-                        	this.localVideo.setStream( stream, true );
+			if ( event.target.iceConnectionState === "failed" ) {
+				this.peerConnection = undefined;
+				if ( this.RetryCount < this.RetryLimit ) {
+					navigator.mediaDevices.getUserMedia( { audio: true, video: true } ).then( stream => {
+						this.RetryCount++;
+						if ( this.localVideo ) {
+							this.localVideo.pause();
+							this.localVideo.setStream( stream, true );
 							this.localVideo.play();
-                        }
-                        this.setupPeerConnection(stream);
-                    }).catch(err => {
-                        this.onError(err, msg);
-                    });
-                } else {
-		            const error = new Error(408, "Could not establish connection");
-		            this.onError(error);
-                }
+						}
+						this.setupPeerConnection( stream );
+					} ).catch( err => {
+						this.onError( err, msg );
+					} );
+				} else {
+					const error = new Error( 408, "Could not establish connection" );
+					this.onError( error );
+				}
 
-            }
-			console.log( event );
+			}
 		};
 		this.peerConnection.onaddstream = function ( stream ) {
 			if ( this.remoteVideo ) {
 				this.remoteVideo.pause();
-				this.remoteVideo.setStream(stream.stream);
+				this.remoteVideo.setStream( stream.stream );
 				this.remoteVideo.play();
 			}
 		}.bind( this );
@@ -165,7 +184,7 @@ class Client {
 
 	createCallSession() {
 		this.peerConnection.createOffer().then( offer => {
-            this.stream.emit( 'video_message', JSON.stringify( { offer } ) );
+			this.stream.emit( 'video_message', JSON.stringify( { offer } ) );
 			this.peerConnection.setLocalDescription( offer ).catch( err => {
 				this.onError( err, offer );
 			} );
@@ -180,42 +199,42 @@ class Client {
 	 * @remote remote {HTMLElement}
 	 */
 	call( _id, local, remote ) {
-	    this.RetryCount = 0;
+		this.RetryCount = 0;
 		if ( local )
 			this.localVideo = new Video( local );
 		if ( remote )
 			this.remoteVideo = new Video( remote );
-		Meteor.call( 'VideoCallServices/call', _id, ( err, _id ) => {
-			this.RetryCount++;
-			if ( err )
-				this.onError( err, _id );
-			else {
-				this.stream = new Meteor.Streamer( _id );
-				this.stream.on( 'video_message', ( stream_data ) => {
-					if ( typeof stream_data === 'string' )
-						stream_data = JSON.parse( stream_data );
-					if ( stream_data.answer ) {
-						this.peerConnection.setRemoteDescription( stream_data.answer ).catch( err => {
-							this.onError( err, stream_data )
-						} );
-					}
-
-					if ( stream_data.candidate ) {
-						if ( typeof stream_data.candidate === 'string' )
-							stream_data.candidate = JSON.parse( stream_data.candidate );
-						const candidate = stream_data.candidate === {}
-						|| stream_data.candidate === null ? null : new RTCIceCandidate( stream_data.candidate );
-						console.log( candidate );
-						if ( this.peerConnection )
-							this.peerConnection.addIceCandidate( stream_data.candidate ).catch( err => {
-								this.onError( err, stream_data );
-							} );
-					}
-				} );
-			}
-		} );
+		Meteor.call( 'VideoCallServices/call', _id, this.callbacks.call.bind(this) );
 	}
 
+	/**
+	 * Handle the data stream for the caller
+	 * @param streamData {string}
+	 */
+	handleCallerStream( streamData ){
+			if ( typeof streamData === 'string' ){
+				streamData = JSON.parse( streamData );
+			}
+			if ( streamData.answer ) {
+				this.peerConnection.setRemoteDescription( streamData.answer ).catch( err => {
+					this.onError( err, streamData )
+				} );
+			}
+
+			if ( streamData.candidate ) {
+				if ( typeof streamData.candidate === 'string' )
+					streamData.candidate = JSON.parse( streamData.candidate );
+				const candidate = streamData.candidate === {}
+				|| streamData.candidate === null ? null : new RTCIceCandidate( streamData.candidate );
+				if ( this.peerConnection ){
+					this.peerConnection.addIceCandidate( streamData.candidate ).catch( err => {
+						this.onError( err, streamData );
+					} );
+				}
+
+			}
+
+	}
 	/**
 	 * Answer the phone call
 	 * @param local {HTMLElement}
@@ -237,8 +256,9 @@ class Client {
 	 */
 	endPhoneCall() {
 		Meteor.call( "VideoCallServices/end", err => {
-			if ( err )
+			if ( err ){
 				this.onError( err );
+			}
 		} );
 	}
 
@@ -263,7 +283,17 @@ class Client {
 
 	}
 }
-
+const callbacks = {
+	call: function ( err, _id ) {
+		this.RetryCount++;
+		if ( err )
+			this.onError( err, _id );
+		else {
+			this.stream = new Meteor.Streamer( _id );
+			this.stream.on( 'video_message', this.handleCallerStream.bind(this) );
+		}
+	}
+};
 
 export {
 	Client

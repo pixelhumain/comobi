@@ -77,6 +77,7 @@ Template.poiAdd.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 });
@@ -91,6 +92,7 @@ Template.poiEdit.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
@@ -117,6 +119,7 @@ Template.poiBlockEdit.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
@@ -181,6 +184,9 @@ Template.poiEdit.helpers({
     if (poi && poi.address && poi.address.depName) {
       poiEdit.depName = poi.address.depName;
     }
+    if (poi && poi.address && poi.address.localityId) {
+      poiEdit.localityId = poi.address.localityId;
+    }
     poiEdit.geoPosLatitude = poi.geo.latitude;
     poiEdit.geoPosLongitude = poi.geo.longitude;
     return poiEdit;
@@ -220,6 +226,9 @@ Template.poiBlockEdit.helpers({
         }
         if (poi && poi.address && poi.address.depName) {
           poiEdit.depName = poi.address.depName;
+        }
+        if (poi && poi.address && poi.address.localityId) {
+          poiEdit.localityId = poi.address.localityId;
         }
         poiEdit.geoPosLatitude = poi.geo.latitude;
         poiEdit.geoPosLongitude = poi.geo.longitude;

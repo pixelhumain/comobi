@@ -1,3 +1,4 @@
+//jshint esversion: 6
 import {Meteor} from 'meteor/meteor';
 import {check} from 'meteor/check';
 import CallLog from './call_log';

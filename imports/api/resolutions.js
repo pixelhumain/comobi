@@ -5,8 +5,46 @@ import { _ } from 'meteor/underscore';
 
 export const Resolutions = new Mongo.Collection('resolutions', { idGeneration: 'MONGO' });
 
-if (Meteor.isclient) {
+if (Meteor.isClient) {
   import { Chronos } from './client/chronos.js';
+
+  Resolutions.helpers({
+    isEndAmendement() {
+      const end = moment(this.amendementDateEnd).toDate();
+      return Chronos.moment(end).isBefore(); // True
+    },
+    isEndVote() {
+      const end = moment(this.voteDateEnd).toDate();
+      return Chronos.moment(end).isBefore(); // True
+    },
+    isNotEndAmendement() {
+      const end = moment(this.amendementDateEnd).toDate();
+      return Chronos.moment().isBefore(end); // True
+    },
+    isNotEndVote() {
+      const end = moment(this.voteDateEnd).toDate();
+      return Chronos.moment().isBefore(end); // True
+    },
+  });
+} else {
+  Resolutions.helpers({
+    isEndAmendement() {
+      const end = moment(this.amendementDateEnd).toDate();
+      return moment(end).isBefore(); // True
+    },
+    isEndVote() {
+      const end = moment(this.voteDateEnd).toDate();
+      return moment(end).isBefore(); // True
+    },
+    isNotEndAmendement() {
+      const end = moment(this.amendementDateEnd).toDate();
+      return moment().isBefore(end); // True
+    },
+    isNotEndVote() {
+      const end = moment(this.voteDateEnd).toDate();
+      return moment().isBefore(end); // True
+    },
+  });
 }
 
 Resolutions.helpers({
@@ -39,38 +77,6 @@ Resolutions.helpers({
   },
   formatVoteDateEnd() {
     return moment(this.voteDateEnd).format('DD/MM/YYYY HH:mm');
-  },
-  isEndAmendement () {
-    const end = moment(this.amendementDateEnd).toDate();
-    // const now = moment().toDate();
-    if (Meteor.isclient) {
-      return Chronos.moment(end).isBefore(); // True
-    }
-    return moment(end).isBefore(); // True
-  },
-  isEndVote () {
-    const end = moment(this.voteDateEnd).toDate();
-    // const now = moment().toDate();
-    if (Meteor.isclient) {
-      return Chronos.moment(end).isBefore(); // True
-    }
-    return moment(end).isBefore(); // True
-  },
-  isNotEndAmendement () {
-    const end = moment(this.amendementDateEnd).toDate();
-    // const now = moment().toDate();
-    if (Meteor.isclient) {
-      return Chronos.moment().isBefore(end); // True
-    }
-    return moment().isBefore(end); // True
-  },
-  isNotEndVote () {
-    const end = moment(this.voteDateEnd).toDate();
-    // const now = moment().toDate();
-    if (Meteor.isclient) {
-      return Chronos.moment().isBefore(end); // True
-    }
-    return moment().isBefore(end); // True
   },
   voteCanChangeBool () {
     return this.convertBool(this.voteCanChange);

@@ -163,12 +163,21 @@ export const geoSchema = new SimpleSchema({
     autoform: {
       type: 'hidden',
     },
+    optional: true,
   },
   depName: {
     type: String,
     autoform: {
       type: 'hidden',
     },
+    optional: true,
+  },
+  localityId: {
+    type: String,
+    autoform: {
+      type: 'hidden',
+    },
+    optional: true,
   },
   geoPosLatitude: {
     type: Number,

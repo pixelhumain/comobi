@@ -77,6 +77,7 @@ Template.citoyensEdit.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
@@ -158,6 +159,9 @@ Template.citoyensEdit.helpers({
     if (citoyen && citoyen.address && citoyen.address.depName) {
       citoyenEdit.depName = citoyen.address.depName;
     }
+    if (citoyen && citoyen.address && citoyen.address.localityId) {
+      citoyenEdit.localityId = citoyen.address.localityId;
+    }
     citoyenEdit.geoPosLatitude = citoyen.geo.latitude;
     citoyenEdit.geoPosLongitude = citoyen.geo.longitude;
     return citoyenEdit;
@@ -181,6 +185,7 @@ Template.citoyensBlockEdit.onCreated(function () {
   pageSession.set('cityName', null);
   pageSession.set('regionName', null);
   pageSession.set('depName', null);
+  pageSession.set('localityId', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 
@@ -263,6 +268,9 @@ Template.citoyensBlockEdit.helpers({
       }
       if (citoyen && citoyen.address && citoyen.address.depName) {
         citoyenEdit.depName = citoyen.address.depName;
+      }
+      if (citoyen && citoyen.address && citoyen.address.localityId) {
+        citoyenEdit.localityId = citoyen.address.localityId;
       }
       citoyenEdit.geoPosLatitude = citoyen.geo.latitude;
       citoyenEdit.geoPosLongitude = citoyen.geo.longitude;

@@ -37,7 +37,10 @@ export const selectorgaQuery = (query, selectorga) => {
 };
 
 export const arrayLinkProper = (array) => {
-  const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
+  const arrayIds = Object.keys(array)
+    .filter(k => array[k].isInviting !== true && !(array[k].type === 'citoyens' && array[k].toBeValidated === true))
+    .map(k => new Mongo.ObjectID(k));
+  /* const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
     if (arrayLink.isInviting === true) {
       return undefined;
     }
@@ -45,12 +48,15 @@ export const arrayLinkProper = (array) => {
       return undefined;
     }
     return new Mongo.ObjectID(key);
-  }), arrayfilter => arrayfilter !== undefined);
+  }), arrayfilter => arrayfilter !== undefined); */
   return arrayIds;
 };
 
 export const arrayLinkProperNoObject = (array) => {
-  const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
+  const arrayIds = Object.keys(array)
+    .filter(k => array[k].isInviting !== true && !(array[k].type === 'citoyens' && array[k].toBeValidated === true))
+    .map(k => k);
+  /* const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
     if (arrayLink.isInviting === true) {
       return undefined;
     }
@@ -58,8 +64,35 @@ export const arrayLinkProperNoObject = (array) => {
       return undefined;
     }
     return key;
-  }), arrayfilter => arrayfilter !== undefined);
+  }), arrayfilter => arrayfilter !== undefined); */
   return arrayIds;
+};
+
+export const arrayLinkProperInter = (arraya, arrayb) => {
+  const arrayaIds = arrayLinkProperNoObject(arraya);
+  const arraybIds = arrayLinkProperNoObject(arrayb);
+  const a = new Set(arrayaIds);
+  const b = new Set(arraybIds);
+  const arrayIdsSet = new Set(
+    [...a].filter(x => b.has(x)));
+  const arrayIds = [...arrayIdsSet].map(_id => new Mongo.ObjectID(_id));
+  return arrayIds;
+};
+
+export const queryLinkInter = (arraya, arrayb, search, selectorga) => {
+  // const arrayIds = _.map(array, (arrayLink, key) => new Mongo.ObjectID(key));
+  const arrayIds = arrayLinkProperInter(arraya, arrayb);
+  let query = {};
+  query._id = { $in: arrayIds };
+  if (Meteor.isClient) {
+    if (search) {
+      query = searchQuery(query, search);
+    }
+    if (selectorga) {
+      query = selectorgaQuery(query, selectorga);
+    }
+  }
+  return query;
 };
 
 export const queryLink = (array, search, selectorga) => {
@@ -79,12 +112,15 @@ export const queryLink = (array, search, selectorga) => {
 };
 
 export const arrayLinkToBeValidated = (array) => {
-  const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
+  const arrayIds = Object.keys(array)
+    .filter(k => array[k].toBeValidated === true)
+    .map(k => new Mongo.ObjectID(k));
+  /* const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
     if (arrayLink.toBeValidated === true) {
       return new Mongo.ObjectID(key);
     }
     return undefined;
-  }), arrayfilter => arrayfilter !== undefined);
+  }), arrayfilter => arrayfilter !== undefined); */
   return arrayIds;
 };
 
@@ -96,12 +132,15 @@ export const queryLinkToBeValidated = (array) => {
 };
 
 export const arrayLinkIsInviting = (array) => {
-  const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
+  const arrayIds = Object.keys(array)
+    .filter(k => array[k].isInviting === true)
+    .map(k => new Mongo.ObjectID(k));
+  /* const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
     if (arrayLink.isInviting === true) {
       return new Mongo.ObjectID(key);
     }
     return undefined;
-  }), arrayfilter => arrayfilter !== undefined);
+  }), arrayfilter => arrayfilter !== undefined); */
   return arrayIds;
 };
 
@@ -118,7 +157,10 @@ export const queryLinkIsInviting = (array, search) => {
 };
 
 export const arrayLinkAttendees = (array, type) => {
-  const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
+  const arrayIds = Object.keys(array)
+    .filter(k => array[k].isInviting !== true && array[k].type === type)
+    .map(k => new Mongo.ObjectID(k));
+  /* const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
     if (arrayLink.isInviting === true) {
       return undefined;
     }
@@ -126,7 +168,7 @@ export const arrayLinkAttendees = (array, type) => {
       return new Mongo.ObjectID(key);
     }
     return undefined;
-  }), arrayfilter => arrayfilter !== undefined);
+  }), arrayfilter => arrayfilter !== undefined); */
   return arrayIds;
 };
 
@@ -146,7 +188,10 @@ export const queryLinkAttendees = (array, search, type) => {
 };
 
 export const arrayLinkType = (array, type) => {
-  const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
+  const arrayIds = Object.keys(array)
+    .filter(k => array[k].isInviting !== true && !(array[k].type === 'citoyens' && array[k].toBeValidated === true) && array[k].type === type)
+    .map(k => new Mongo.ObjectID(k));
+  /* const arrayIds = _.filter(_.map(array, (arrayLink, key) => {
     if (arrayLink.isInviting === true) {
       return undefined;
     }
@@ -157,7 +202,7 @@ export const arrayLinkType = (array, type) => {
       return new Mongo.ObjectID(key);
     }
     return undefined;
-  }), arrayfilter => arrayfilter !== undefined);
+  }), arrayfilter => arrayfilter !== undefined); */
   return arrayIds;
 };
 
@@ -243,17 +288,26 @@ export const matchTags = (doc, tags) => {
   }
 
   if (tags) {
-    const arrayTags = _.reject(tags, value => matches[value] === null, matches);
+    // const arrayTags = _.reject(tags, value => matches[value] === null, matches);
+    const arrayTags = tags.filter(value => matches[value] !== null);
     if (doc.tags) {
-      doc.tags = _.uniq(_.union(doc.tags, arrayTags, matches));
+      const a = new Set([...doc.tags, ...arrayTags, ...matches]);
+      doc.tags = [...a];
+      // doc.tags = _.uniq(_.union(doc.tags, arrayTags, matches));
     } else {
-      doc.tags = _.uniq(_.union(arrayTags, matches));
+      const a = new Set([...arrayTags, ...matches]);
+      doc.tags = [...a];
+      // doc.tags = _.uniq(_.union(arrayTags, matches));
     }
   } else if (matches.length > 0) {
     if (doc.tags) {
-      doc.tags = _.uniq(_.union(doc.tags, matches));
+      const a = new Set([...doc.tags, ...matches]);
+      doc.tags = [...a];
+      // doc.tags = _.uniq(_.union(doc.tags, matches));
     } else {
-      doc.tags = _.uniq(matches);
+      const a = new Set(matches);
+      doc.tags = [...a];
+      // doc.tags = _.uniq(matches);
     }
   }
   return doc;
