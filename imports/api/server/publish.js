@@ -710,7 +710,6 @@ Meteor.publishComposite('collectionsList', function(scope, scopeId, type) {
 });
 
 Meteor.publishComposite('directoryList', function(scope, scopeId) {
-  console.log(`${scope} - ${scopeId}`);
   check(scopeId, String);
   check(scope, String);
   check(scope, Match.Where(function(name) {
@@ -724,7 +723,7 @@ Meteor.publishComposite('directoryList', function(scope, scopeId) {
     find(scopeD) {
       return Lists.find({ name: { $in: ['eventTypes', 'organisationTypes'] } });
     },
-  },{
+  }, {
     find() {
       const options = {};
       // options['_disableOplog'] = true;
@@ -1068,7 +1067,7 @@ Meteor.publishComposite('directoryListRooms', function(scope, scopeId) {
               }
             },
           },
-        ]
+        ],
       },
     ] };
 });
@@ -1302,11 +1301,11 @@ Meteor.publishComposite('detailRooms', function(scope, scopeId, roomId) {
                   }
                 },
               },
-            ]
+            ],
           },
-        ]
+        ],
       },
-    ]
+    ],
   };
 });
 
@@ -1332,7 +1331,7 @@ Meteor.publishComposite('detailProposals', function(scope, scopeId, roomId, prop
       {
         find(scopeD) {
           if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
-            //return Rooms.find({ _id: new Mongo.ObjectID(roomId) });
+            // return Rooms.find({ _id: new Mongo.ObjectID(roomId) });
             return scopeD.detailRooms(roomId);
           }
         },
@@ -1490,9 +1489,9 @@ Meteor.publishComposite('detailActions', function(scope, scopeId, roomId, action
               },
             ],
           },
-        ]
+        ],
       },
-    ]
+    ],
   };
 });
 
