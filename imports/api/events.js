@@ -166,6 +166,20 @@ Events.helpers({
   isPrivateFields (field) {
     return this.preferences && this.preferences.privateFields && _.contains(this.preferences.privateFields, field);
   },
+  rolesLinks(scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].roles && this.links[scopeCible][scopeId].roles.join(',');
+  },
+  roles(scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].roles && this.links[scopeCible][scopeId].roles.join(',');
+  },
   organizerEvent () {
     if (this.organizerType && this.organizerId && _.contains(['events', 'projects', 'organizations', 'citoyens'], this.organizerType)) {
       const collectionType = nameToCollection(this.organizerType);

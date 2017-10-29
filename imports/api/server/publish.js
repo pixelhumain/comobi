@@ -710,6 +710,7 @@ Meteor.publishComposite('collectionsList', function(scope, scopeId, type) {
 });
 
 Meteor.publishComposite('directoryList', function(scope, scopeId) {
+  console.log(`${scope} - ${scopeId}`);
   check(scopeId, String);
   check(scope, String);
   check(scope, Match.Where(function(name) {
@@ -720,6 +721,10 @@ Meteor.publishComposite('directoryList', function(scope, scopeId) {
     return null;
   }
   return {
+    find(scopeD) {
+      return Lists.find({ name: { $in: ['eventTypes', 'organisationTypes'] } });
+    },
+  },{
     find() {
       const options = {};
       // options['_disableOplog'] = true;
@@ -745,11 +750,6 @@ Meteor.publishComposite('directoryList', function(scope, scopeId) {
       return collection.find({ _id: new Mongo.ObjectID(scopeId) }, options);
     },
     children: [
-      {
-        find(scopeD) {
-          return Lists.find({ name: { $in: ['eventTypes', 'organisationTypes'] } });
-        },
-      },
       {
         find(scopeD) {
           if (scope === 'citoyens') {
@@ -836,7 +836,8 @@ Meteor.publishComposite('directoryList', function(scope, scopeId) {
         },
       }, */
     ] };
-});
+},
+);
 
 Meteor.publishComposite('directoryListEvents', function(scope, scopeId) {
   check(scopeId, String);
@@ -1332,7 +1333,7 @@ Meteor.publishComposite('detailProposals', function(scope, scopeId, roomId, prop
         find(scopeD) {
           if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
             //return Rooms.find({ _id: new Mongo.ObjectID(roomId) });
-              return scopeD.detailRooms(roomId);
+            return scopeD.detailRooms(roomId);
           }
         },
         children: [
@@ -1675,11 +1676,11 @@ Meteor.publishComposite('detailGames', function (gameId) {
               return Citoyens.find({
                 _id: new Mongo.ObjectID(player.idUser),
               }, {
-                  fields: {
-                    name: 1,
-                    profilThumbImageUrl: 1,
-                  },
-                });
+                fields: {
+                  name: 1,
+                  profilThumbImageUrl: 1,
+                },
+              });
             },
           },
         ],
@@ -1710,11 +1711,11 @@ Meteor.publishComposite('gameScoreBoard', function (gameId) {
               return Citoyens.find({
                 _id: new Mongo.ObjectID(player.idUser),
               }, {
-                  fields: {
-                    name: 1,
-                    profilThumbImageUrl: 1,
-                  },
-                });
+                fields: {
+                  name: 1,
+                  profilThumbImageUrl: 1,
+                },
+              });
             },
           },
         ],

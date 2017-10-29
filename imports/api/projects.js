@@ -160,6 +160,13 @@ Projects.helpers({
     }
     return undefined;
   },
+  rolesLinks (scope, scopeId) {
+    let scopeCible = scope;
+    if (scope === 'organizations') {
+      scopeCible = 'memberOf';
+    }
+    return this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].roles && this.links[scopeCible][scopeId].roles.join(',');
+  },
   roles (scope, scopeId) {
     let scopeCible = scope;
     if (scope === 'organizations') {

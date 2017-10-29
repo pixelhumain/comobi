@@ -4,19 +4,19 @@
     <h2><a href="{{pathFor 'detailList' _id=item._id._str scope=scope}}" class="dark">{{item.name}}</a></h2>
     {{#if typeValue}}{{typeValue}}{{/if}}{{#if isAdmin}}<span class="positive"><i class="icon fa fa-circle"></i></span>{{/if}}
     {{#if equals scopeCible 'organizations'}}
-    {{#if item.roles scopeCible scopeId}}<p>{{item.roles scopeCible scopeId}}</p>{{/if}}
+    {{#if item.rolesLinks scopeCible scopeId}}<p>{{item.rolesLinks scopeCible scopeId}}</p>{{/if}}
     {{#if isScopeAdmin}}
     <a href="{{pathFor 'rolesEdit' _id=scopeId scope=scopeCible childId=item._id._str childType=scope}}" class="button button-clear dark badge"><i class="icon fa fa-cog"></i></a>
     {{/if}}
     {{/if}}
     {{#if equals scopeCible 'projects'}}
-    {{#if item.roles scopeCible scopeId}}<p>{{item.roles scopeCible scopeId}}</p>{{/if}}
+    {{#if item.rolesLinks scopeCible scopeId}}<p>{{item.rolesLinks scopeCible scopeId}}</p>{{/if}}
     {{#if isScopeAdmin}}
     <a href="{{pathFor 'rolesEdit' _id=scopeId scope=scopeCible childId=item._id._str childType=scope}}" class="button button-clear dark badge"><i class="icon fa fa-cog"></i></a>
     {{/if}}
     {{/if}}
     {{#if equals scopeCible 'events'}}
-    {{#if item.roles scopeCible scopeId}}<p>{{item.roles scopeCible scopeId}}</p>{{/if}}
+    {{#if item.rolesLinks scopeCible scopeId}}<p>{{item.rolesLinks scopeCible scopeId}}</p>{{/if}}
     {{#if isScopeAdmin}}
     <a href="{{pathFor 'rolesEdit' _id=scopeId scope=scopeCible childId=item._id._str childType=scope}}" class="button button-clear dark badge"><i class="icon fa fa-cog"></i></a>
     {{/if}}
