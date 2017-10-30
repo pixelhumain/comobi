@@ -736,7 +736,7 @@ Template.newsAdd.onRendered(function () {
     displayTimeout: 300,
     startWithSpace: true,
     displayTpl(item) {
-      return item.avatar ? `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} - ${item.slug}</li>` : `<li>${item.name} - ${item.slug}</li>`;
+      return item.avatar ? `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name}</li>` : `<li>${item.name}</li>`;
     },
     insertTpl: '${atwho-at}${slug}',
     searchKey: 'name',
@@ -752,8 +752,8 @@ Template.newsAdd.onRendered(function () {
         querySearch.search = query;
         Meteor.call('searchMemberautocomplete', querySearch, function(error, result) {
           if (!error) {
-            const citoyensArray = _.map(result.citoyens, (array, key) => (array.profilThumbImageUrl ? { id: key, name: array.name, slug: array.slug, type: 'citoyens', avatar: `${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}` } : { id: key, name: array.name, slug: array.slug, type: 'citoyens' }));
-            const organizationsArray = _.map(result.organizations, (array, key) => (array.profilThumbImageUrl ? { id: key, name: array.name, slug: array.slug, type: 'organizations', avatar: `${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}` } : { id: key, name: array.name, slug: array.slug, type: 'organizations' }));
+            const citoyensArray = _.map(result.citoyens, (array, key) => (array.profilThumbImageUrl ? { id: key, name: array.name, slug: (array.slug ? array.slug : array.name), type: 'citoyens', avatar: `${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}` } : { id: key, name: array.name, slug: (array.slug ? array.slug : array.name), type: 'citoyens' }));
+            const organizationsArray = _.map(result.organizations, (array, key) => (array.profilThumbImageUrl ? { id: key, name: array.name, slug: (array.slug ? array.slug : array.name), type: 'organizations', avatar: `${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}` } : { id: key, name: array.name, slug: (array.slug ? array.slug : array.name), type: 'organizations' }));
             const arrayUnions = _.union(citoyensArray, organizationsArray);
             // console.log(citoyensArray);
             self.$('textarea').atwho('load', '@', arrayUnions).atwho('run');
@@ -783,7 +783,7 @@ Template.newsAdd.onRendered(function () {
         mentions.id = $li.data('item-data').id;
         mentions.type = $li.data('item-data').type;
         mentions.avatar = $li.data('item-data').avatar;
-        mentions.value = $li.data('item-data').slug;
+        mentions.value = ($li.data('item-data').slug ? $li.data('item-data').slug : $li.data('item-data').name);
         if (pageSession.get('mentions')) {
           const arrayMentions = pageSession.get('mentions');
           arrayMentions.push(mentions);
@@ -863,7 +863,7 @@ Template.newsFields.onRendered(function () {
     displayTimeout: 300,
     startWithSpace: true,
     displayTpl(item) {
-      return item.avatar ? `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name} - ${item.slug}</li>` : `<li>${item.name} -${item.slug}</li>`;
+      return item.avatar ? `<li><img src='${item.avatar}' height='20' width='20'/> ${item.name}</li>` : `<li>${item.name}</li>`;
     },
     insertTpl: '${atwho-at}${slug}',
     searchKey: 'name',
@@ -879,8 +879,8 @@ Template.newsFields.onRendered(function () {
         querySearch.search = query;
         Meteor.call('searchMemberautocomplete', querySearch, function(error, result) {
           if (!error) {
-            const citoyensArray = _.map(result.citoyens, (array, key) => (array.profilThumbImageUrl ? { id: key, name: array.name, slug: array.slug, type: 'citoyens', avatar: `${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}` } : { id: key, name: array.name, slug: array.slug, type: 'citoyens' }));
-            const organizationsArray = _.map(result.organizations, (array, key) => (array.profilThumbImageUrl ? { id: key, name: array.name, slug: array.slug, type: 'organizations', avatar: `${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}` } : { id: key, name: array.name, slug: array.slug, type: 'organizations' }));
+            const citoyensArray = _.map(result.citoyens, (array, key) => (array.profilThumbImageUrl ? { id: key, name: array.name, slug: (array.slug ? array.slug : array.name), type: 'citoyens', avatar: `${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}` } : { id: key, name: array.name, slug: (array.slug ? array.slug : array.name), type: 'citoyens' }));
+            const organizationsArray = _.map(result.organizations, (array, key) => (array.profilThumbImageUrl ? { id: key, name: array.name, slug: (array.slug ? array.slug : array.name), type: 'organizations', avatar: `${Meteor.settings.public.urlimage}${array.profilThumbImageUrl}` } : { id: key, name: array.name, slug: (array.slug ? array.slug : array.name), type: 'organizations' }));
             const arrayUnions = _.union(citoyensArray, organizationsArray);
             // console.log(citoyensArray);
             self.$('textarea').atwho('load', '@', arrayUnions).atwho('run');
@@ -910,7 +910,7 @@ Template.newsFields.onRendered(function () {
         mentions.id = $li.data('item-data').id;
         mentions.type = $li.data('item-data').type;
         mentions.avatar = $li.data('item-data').avatar;
-        mentions.value = $li.data('item-data').slug;
+        mentions.value = ($li.data('item-data').slug ? $li.data('item-data').slug : $li.data('item-data').name);
         if (pageSession.get('mentions')) {
           const arrayMentions = pageSession.get('mentions');
           arrayMentions.push(mentions);
