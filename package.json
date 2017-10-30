@@ -1,6 +1,6 @@
 {
   "name": "communecter",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "communecter",
   "private": true,
   "scripts": {
@@ -88,6 +88,6 @@
     "eslint-plugin-jsx-a11y": "^5.0.1",
     "eslint-plugin-meteor": "^4.1.0",
     "eslint-plugin-react": "^7.1.0",
-    "meteor-desktop": "^0.8.1"
+    "meteor-desktop": "^0.10.0"
   }
 }

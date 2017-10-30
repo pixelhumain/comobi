@@ -71,8 +71,8 @@ standard-minifier-js@2.2.0
 froatsnook:request
 froatsnook:valid-email
 shell-server@0.3.0
-omega:meteor-desktop-watcher@=0.7.2
-omega:meteor-desktop-bundler@=0.7.2
+omega:meteor-desktop-watcher@=0.10.0
+omega:meteor-desktop-bundler@=0.10.0
 omega:meteor-desktop-localstorage
 tap:i18n-bundler
 communecter:deep-link
@@ -80,7 +80,6 @@ markdown@1.0.12
 jameslefrere:atjs
 jameslefrere:caretjs
 dynamic-import@0.2.0
-#microservice
 aldeed:template-extension
 elmarti:video-chat
 jeremy:selectize

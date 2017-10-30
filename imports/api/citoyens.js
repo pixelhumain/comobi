@@ -273,7 +273,7 @@ Citoyens.helpers({
       contentKey: 'profil',
     }, { sort: { created: -1 }, limit: 1 });
   },
-  roles (scope, scopeId) {
+  rolesLinks (scope, scopeId) {
     let scopeCible = scope;
     if (scope === 'organizations') {
       scopeCible = 'memberOf';

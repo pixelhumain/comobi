@@ -19,7 +19,7 @@ Template.Directory_item.onCreated(function () {
 
 Template.Directory_item.helpers({
   isConnectFunc (isConnect) {
-    return this && this.item && isConnect && this.item[isConnect]();
+    return isConnect && this && this.item && isConnect && this.item[isConnect] && this.item[isConnect]();
   },
   data () {
     return this;

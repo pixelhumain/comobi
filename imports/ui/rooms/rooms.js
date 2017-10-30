@@ -20,6 +20,8 @@ import { pageSession } from '../../api/client/reactive.js';
 
 import './rooms.html';
 
+import '../components/mixin/button-toggle.js';
+
 window.Events = Events;
 window.Organizations = Organizations;
 window.Projects = Projects;
