@@ -720,10 +720,6 @@ Meteor.publishComposite('directoryList', function(scope, scopeId) {
     return null;
   }
   return {
-    find(scopeD) {
-      return Lists.find({ name: { $in: ['eventTypes', 'organisationTypes'] } });
-    },
-  }, {
     find() {
       const options = {};
       // options['_disableOplog'] = true;
@@ -749,6 +745,11 @@ Meteor.publishComposite('directoryList', function(scope, scopeId) {
       return collection.find({ _id: new Mongo.ObjectID(scopeId) }, options);
     },
     children: [
+      {
+        find(scopeD) {
+          return Lists.find({ name: { $in: ['eventTypes', 'organisationTypes'] } });
+        },
+      },
       {
         find(scopeD) {
           if (scope === 'citoyens') {
