@@ -326,14 +326,14 @@ if (Meteor.isClient) {
       if (this.text) {
         let text = this.text;
         if (this.mentions) {
-          _.each(this.mentions, (array) => {
+          Object.values(this.mentions).forEach((array) => {
           // text = text.replace(new RegExp(`@${array.value}`, 'g'), `<a href="${Router.path('detailList', {scope:array.type,_id:array.id})}" class="positive">@${array.value}</a>`);
             if (array.slug) {
               text = text.replace(new RegExp(`@?${array.slug}`, 'g'), `<a href="${Router.path('detailList', { scope: array.type, _id: array.id })}" class="positive">@${array.slug}</a>`);
             } else {
               text = text.replace(new RegExp(`@?${array.value}`, 'g'), `<a href="${Router.path('detailList', { scope: array.type, _id: array.id })}" class="positive">@${array.value}</a>`);
             }
-          }, text);
+          });
         }
         return text;
       }

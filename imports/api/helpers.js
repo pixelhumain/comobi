@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 import { Mongo } from 'meteor/mongo';
+import { TAPi18n } from 'meteor/tap:i18n';
 
 export const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 
@@ -268,6 +269,94 @@ if (Meteor.isClient) {
     return locale;
   };
 }
+
+export const notifyDisplay = (notify, lang = null) => {
+  if (notify) {
+    let label = notify.displayName;
+    const arrayReplace = {};
+    if (notify.displayName && notify.labelArray) {
+      label = label.replace(new RegExp(/[\{\}]+/, 'g'), '');
+      label = label.replace(new RegExp(' ', 'g'), '_');
+      // console.log(`activitystream.notification.${label}`);
+      Object.keys(notify.labelArray).forEach((k) => {
+        if (k === '{where}') {
+          if (Array.isArray(notify.labelArray[k])) {
+            const whereString = [];
+            notify.labelArray[k].forEach((value) => {
+              const labelWhere = value.replace(new RegExp(' ', 'g'), '_');
+              const labelWhereIndex = `activitystream.notification.${labelWhere}`;
+              const labelWhereI18n = lang ? TAPi18n.__(labelWhereIndex, null, lang) : TAPi18n.__(labelWhereIndex);
+              if (labelWhereI18n !== labelWhereIndex) {
+                whereString.push(labelWhereI18n);
+              } else {
+                whereString.push(value);
+              }
+            });
+            arrayReplace.where = whereString.join(' ');
+          } else {
+            arrayReplace.where = '';
+          }
+        } else if (k === '{author}') {
+          if (Array.isArray(notify.labelArray[k])) {
+            arrayReplace.author = notify.labelArray[k].join(',');
+          } else {
+            arrayReplace.author = '';
+          }
+        } else if (k === '{mentions}') {
+          if (Array.isArray(notify.labelArray[k])) {
+            const mentionsString = [];
+            notify.labelArray[k].forEach((value) => {
+              const labelMentions = value.replace(new RegExp(' ', 'g'), '_');
+              const labelMentionsIndex = `activitystream.notification.${labelMentions}`;
+              const labelMentionsI18n = lang ? TAPi18n.__(labelMentionsIndex, null, lang) : TAPi18n.__(labelMentionsIndex);
+              if (labelMentionsI18n !== labelMentionsIndex) {
+                mentionsString.push(labelMentionsI18n);
+              } else {
+                mentionsString.push(value);
+              }
+            });
+            arrayReplace.mentions = mentionsString.join(' ');
+            // arrayReplace.mentions = notify.labelArray[k].join(',');
+          } else {
+            arrayReplace.mentions = '';
+          }
+        } else if (k === '{what}') {
+          if (Array.isArray(notify.labelArray[k])) {
+            arrayReplace.what = notify.labelArray[k].join(',');
+          } else {
+            arrayReplace.what = '';
+          }
+        } else if (k === '{who}') {
+          if (Array.isArray(notify.labelArray[k])) {
+            let whoNumber;
+            const whoString = [];
+            notify.labelArray[k].forEach((value) => {
+              if (Number.isInteger(value)) {
+                whoNumber = lang ? TAPi18n.__('activitystream.notification.whoNumber', { count: value }, lang) : TAPi18n.__('activitystream.notification.whoNumber', { count: value });
+              } else {
+                whoString.push(value);
+              }
+            });
+            if (whoString.length > 1 && whoNumber) {
+              arrayReplace.who = `${whoString.join(',')}, ${whoNumber}`;
+            } else if (whoString.length === 1 && !whoNumber) {
+              arrayReplace.who = `${whoString.join(',')}`;
+            } else if (whoString.length === 2 && !whoNumber) {
+              arrayReplace.who = `${whoString.join(' and ')}`;
+            }
+          } else {
+            arrayReplace.who = '';
+          }
+        }
+      });
+      // {author} invited {who} to join {where}
+      // console.log(arrayReplace);
+      return lang ? TAPi18n.__(`activitystream.notification.${label}`, arrayReplace, lang) : TAPi18n.__(`activitystream.notification.${label}`, arrayReplace);
+    }
+    return label;
+  }
+  return undefined;
+};
 
 export const matchTags = (doc, tags) => {
   // const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;

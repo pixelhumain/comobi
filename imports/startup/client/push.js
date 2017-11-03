@@ -6,6 +6,8 @@ import { Counts } from 'meteor/tmeasday:publish-counts';
 
 import { ActivityStream } from '../../api/activitystream.js';
 
+import { notifyDisplay } from '../../api/helpers.js';
+
 if (Meteor.isDevelopment) {
   Push.debug = true;
 }
@@ -24,7 +26,7 @@ Meteor.startup(function () {
         // console.log(Desktop.getAssetUrl('\___desktop\icon.png'));
         Desktop.send('systemNotifications', 'notify', {
           title: 'notification',
-          text: notification.notify.displayName,
+          text: notifyDisplay(notification.notify),
           icon: '\___desktop\icon.png',
           data: notification,
         });
@@ -99,7 +101,7 @@ Meteor.startup(function () {
           if (!initNotifystart) return;
 
           const options = {
-            body: notification.notify.displayName,
+            body: notifyDisplay(notification.notify),
             icon: '/icon.png',
             data: notification,
           };

@@ -731,7 +731,7 @@ Template.newsAdd.onRendered(function () {
   pageSession.set('tags', false);
   self.$('textarea').atwho({
     at: '@',
-    limit: 10,
+    limit: 20,
     delay: 600,
     displayTimeout: 300,
     startWithSpace: true,
@@ -784,6 +784,7 @@ Template.newsAdd.onRendered(function () {
         mentions.type = $li.data('item-data').type;
         mentions.avatar = $li.data('item-data').avatar;
         mentions.value = ($li.data('item-data').slug ? $li.data('item-data').slug : $li.data('item-data').name);
+        mentions.slug = ($li.data('item-data').slug ? $li.data('item-data').slug : null);
         if (pageSession.get('mentions')) {
           const arrayMentions = pageSession.get('mentions');
           arrayMentions.push(mentions);
@@ -858,7 +859,7 @@ Template.newsFields.onRendered(function () {
   const self = this;
   self.$('textarea').atwho({
     at: '@',
-    limit: 10,
+    limit: 20,
     delay: 600,
     displayTimeout: 300,
     startWithSpace: true,
@@ -911,6 +912,7 @@ Template.newsFields.onRendered(function () {
         mentions.type = $li.data('item-data').type;
         mentions.avatar = $li.data('item-data').avatar;
         mentions.value = ($li.data('item-data').slug ? $li.data('item-data').slug : $li.data('item-data').name);
+        mentions.slug = ($li.data('item-data').slug ? $li.data('item-data').slug : null);
         if (pageSession.get('mentions')) {
           const arrayMentions = pageSession.get('mentions');
           arrayMentions.push(mentions);
@@ -1043,7 +1045,7 @@ AutoForm.addHooks(['addNew', 'editNew'], {
       // comparer dans le text si @name present dans le array
 
       if (pageSession.get('mentions')) {
-        const arrayMentions = _.reject(pageSession.get('mentions'), array => doc.text.match(`@${array.value}`) === null, doc.text);
+        const arrayMentions = pageSession.get('mentions').filter(array => doc.text.match(`@${array.value}`) !== null);
         doc.mentions = arrayMentions;
       } else {
         // si on update est ce que la mention reste
@@ -1077,7 +1079,7 @@ AutoForm.addHooks(['addNew', 'editNew'], {
       modifier.$set.parentType = scope;
       modifier.$set.parentId = scopeId;
       if (pageSession.get('mentions')) {
-        const arrayMentions = _.reject(pageSession.get('mentions'), array => modifier.$set.text.match(`@${array.value}`) === null, modifier.$set.text);
+        const arrayMentions = pageSession.get('mentions').filter(array => modifier.$set.text.match(`@${array.value}`) !== null);
         modifier.$set.mentions = arrayMentions;
       } else {
         // si on update est ce que la mention reste

@@ -28,6 +28,7 @@ import { SchemasActionsRest } from '../../api/actions.js';
 
 import { SchemasShareRest, SchemasRolesRest } from '../../api/schema.js';
 
+import { notifyDisplay } from '../../api/helpers.js';
 
 Meteor.startup(function () {
   window.HTML.isConstructedObject = function(x) {
@@ -214,6 +215,8 @@ Meteor.startup(function () {
     return undefined;
   },
   );
+
+  Template.registerHelper('notifyDisplay', notify => notifyDisplay(notify));
 
   Template.registerHelper('notificationsCount', () => ActivityStream.api.Unseen());
 

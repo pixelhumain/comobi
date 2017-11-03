@@ -38,7 +38,7 @@
     </div>
     {{#if text}}
     <div class="item item-body">
-      {{text}}
+       {{{autolinker (textMentions text)}}}
     </div>
     {{/if}}
     <div class="item tabs tabs-secondary tabs-icon-left">
@@ -100,7 +100,7 @@
     </div>
     {{#if text}}
     <div class="item item-body">
-      {{text}}
+       {{{autolinker (textMentions text)}}}
     </div>
     {{/if}}
     <div class="item tabs tabs-secondary tabs-icon-left">
@@ -136,8 +136,13 @@
 </template>
 
 <template name="commentsAdd">
+       {{#if error}}
+      <div class="item item-text-wrap animated shake homestead text-center">
+        {{_ error}}
+      </div>
+      {{/if}}
   {{#autoForm id="addComment" schema=SchemasCommentsRest type="method" meteormethod="insertComment" template="ionic" class=""}}
-  {{> afQuickField name='content' label-type='placeholder' rows=2}}
+  {{> afQuickField name='text' label-type='placeholder' rows=2 type="textarea" class="atwho-inputor"}}
   <div class="item">
     <div class="button-bar">
       <button type="submit" class="button button-dark">{{_ "publish"}}</button>
@@ -172,7 +177,7 @@
       </div>
     {{/if}}
     {{#autoForm id="editComment" schema=SchemasCommentsEditRest type="method-update" meteormethod="updateComment" doc=comment template="ionic" class="padding"}}
-    {{> afQuickField name='text' label-type='placeholder' rows=2}}
+    {{> afQuickField name='text' label-type='placeholder' rows=2 type="textarea" class="atwho-inputor"}}
     <div class="item">
       <div class="button-bar">
         <button type="submit" class="button button-dark">{{_ "edit"}}</button>

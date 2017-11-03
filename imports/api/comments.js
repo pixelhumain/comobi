@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { moment } from 'meteor/momentjs:moment';
+import { Router } from 'meteor/iron:router';
 
 // collection
 import { Citoyens } from './citoyens.js';
@@ -34,7 +35,7 @@ if (Meteor.isServer) {
 
 
 export const SchemasCommentsRest = new SimpleSchema({
-  content: {
+  text: {
     type: String,
   },
   parentCommentId: {
@@ -50,6 +51,34 @@ export const SchemasCommentsRest = new SimpleSchema({
   },
   contextType: {
     type: String,
+  },
+  mentions: {
+    type: [Object],
+    optional: true,
+  },
+  'mentions.$.id': {
+    type: String,
+    optional: true,
+  },
+  'mentions.$.name': {
+    type: String,
+    optional: true,
+  },
+  'mentions.$.avatar': {
+    type: String,
+    optional: true,
+  },
+  'mentions.$.type': {
+    type: String,
+    optional: true,
+  },
+  'mentions.$.slug': {
+    type: String,
+    optional: true,
+  },
+  'mentions.$.value': {
+    type: String,
+    optional: true,
   },
 });
 
@@ -67,31 +96,78 @@ export const SchemasCommentsEditRest = new SimpleSchema({
   contextType: {
     type: String,
   },
+  mentions: {
+    type: [Object],
+    optional: true,
+  },
+  'mentions.$.id': {
+    type: String,
+    optional: true,
+  },
+  'mentions.$.name': {
+    type: String,
+    optional: true,
+  },
+  'mentions.$.avatar': {
+    type: String,
+    optional: true,
+  },
+  'mentions.$.type': {
+    type: String,
+    optional: true,
+  },
+  'mentions.$.slug': {
+    type: String,
+    optional: true,
+  },
+  'mentions.$.value': {
+    type: String,
+    optional: true,
+  },
 });
 
+Comments.helpers({
+  authorComments() {
+    return Citoyens.findOne({ _id: new Mongo.ObjectID(this.author) });
+  },
+  likesCount() {
+    if (this.voteUp && this.voteUpCount) {
+      return this.voteUpCount;
+    }
+    return 0;
+  },
+  dislikesCount() {
+    if (this.voteDown && this.voteDownCount) {
+      return this.voteDownCount;
+    }
+    return 0;
+  },
+  isAuthor() {
+    return this.author === Meteor.userId();
+  },
+});
 
 if (Meteor.isClient) {
   Comments.helpers({
-    authorComments () {
-      return Citoyens.findOne({ _id: new Mongo.ObjectID(this.author) });
-    },
     dateComments () {
       return moment.unix(this.created).format('YYYY-MM-DD HH:mm');
     },
-    likesCount () {
-      if (this.voteUp && this.voteUpCount) {
-        return this.voteUpCount;
+    textMentions() {
+      if (this.text) {
+        let text = this.text;
+        if (this.mentions) {
+          Object.values(this.mentions).forEach((array) => {
+            // text = text.replace(new RegExp(`@${array.value}`, 'g'), `<a href="${Router.path('detailList', {scope:array.type,_id:array.id})}" class="positive">@${array.value}</a>`);
+            if (array.slug) {
+              text = text.replace(new RegExp(`@?${array.slug}`, 'g'), `<a href="${Router.path('detailList', { scope: array.type, _id: array.id })}" class="positive">@${array.slug}</a>`);
+            } else {
+              text = text.replace(new RegExp(`@?${array.value}`, 'g'), `<a href="${Router.path('detailList', { scope: array.type, _id: array.id })}" class="positive">@${array.value}</a>`);
+            }
+          });
+        }
+        return text;
       }
-      return 0;
-    },
-    dislikesCount () {
-      if (this.voteDown && this.voteDownCount) {
-        return this.voteDownCount;
-      }
-      return 0;
-    },
-    isAuthor () {
-      return this.author === Meteor.userId();
+      return undefined;
     },
     classArgval () {
       if (this.argval === 'up') {
@@ -102,27 +178,6 @@ if (Meteor.isClient) {
         return 'item-assertive';
       }
       return null;
-    },
-  });
-} else {
-  Comments.helpers({
-    authorComments () {
-      return Citoyens.findOne({ _id: new Mongo.ObjectID(this.author) });
-    },
-    likesCount () {
-      if (this.voteUp && this.voteUpCount) {
-        return this.voteUpCount;
-      }
-      return 0;
-    },
-    dislikesCount () {
-      if (this.voteDown && this.voteDownCount) {
-        return this.voteDownCount;
-      }
-      return 0;
-    },
-    isAuthor () {
-      return this.author === Meteor.userId();
     },
   });
 }

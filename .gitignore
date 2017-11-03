@@ -22,3 +22,4 @@ Dockerfile
 npm-debug.log
 .docker/
 .rancher/
+package-lock.json

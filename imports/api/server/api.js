@@ -17,7 +17,7 @@ const callPixelRest = (token, method, controller, action, post) => {
       jar: true,
     },
   });
-    // console.log(responsePost);
+     console.log(responsePost);
   if (responsePost && responsePost.data && responsePost.data.result) {
     return responsePost;
   }
@@ -95,7 +95,8 @@ const dataUriToBuffer = (uri) => {
   const data = unescape(uri.substring(firstComma + 1));
 
   const encoding = base64 ? 'base64' : 'ascii';
-  const buffer = new Buffer(data, encoding);
+  // const buffer = new Buffer(data, encoding);
+  const buffer = new Buffer.from(string, encoding);
 
   // set `.type` property to MIME type
   buffer.type = meta[0] || 'text/plain';

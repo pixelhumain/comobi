@@ -963,6 +963,7 @@ indexMax:20 */
     return retour;
   },
   insertComment (doc) {
+    console.log(doc);
     check(doc, SchemasCommentsRest);
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
@@ -978,10 +979,11 @@ indexMax:20 */
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
-    if (!Comments.findOne({ _id: documentId }).isAuthor()) {
+    if (!Comments.findOne({ _id: new Mongo.ObjectID(documentId) }).isAuthor()) {
       throw new Meteor.Error('not-authorized');
     }
-    const doc = {};
+    // const doc = {};
+
     /* doc.id = documentId;
     doc.content = modifier["$set"].text;
     doc.contextId = modifier["$set"].contextId;
@@ -992,11 +994,17 @@ indexMax:20 */
       doc.parentCommentId = "";
     } */
 
-    doc.name = 'text';
+    /* doc.name = 'text';
     doc.value = modifier.$set.text;
-    doc.pk = documentId._str;
+    doc.pk = documentId._str; */
 
-    const retour = apiCommunecter.postPixel('comment', 'updatefield', doc);
+    if (!modifier.$set.parentCommentId) {
+      modifier.$set.parentCommentId = '';
+    }
+    modifier.$set.id = documentId;
+    console.log(modifier.$set);
+    // const retour = apiCommunecter.postPixel('comment', 'updatefield', doc);
+    const retour = apiCommunecter.postPixel('comment', 'save', modifier.$set);
     return retour;
   },
   deleteComment (commentId) {

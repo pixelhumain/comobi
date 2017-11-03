@@ -52,14 +52,14 @@
 {{#if notify.url}}
 <div class="item item-icon-left item-text-wrap animated out clickGo removeMe" data-ion-menu-close>
   <p>
-  <i class="icon fa {{notify.icon}} positive"></i> {{notify.displayName}}
+  <i class="icon fa {{notify.icon}} positive"></i> {{notifyDisplay notify}}
   </p>
   <p>{{livestamp created}}</p>
 </div>
 {{else}}
 <div class="item item-icon-left item-text-wrap animated out">
   <p>
-    <i class="icon fa {{notify.icon}} positive"></i> {{notify.displayName}}
+    <i class="icon fa {{notify.icon}} positive"></i> {{notifyDisplay notify}}
   </p>
     <p>{{livestamp created}}</p>
 </div>
