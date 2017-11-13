@@ -6,6 +6,7 @@ config.push.json
 /settings-prod.json
 /settings-dev.json
 /settings-qa.json
+/settings-test.json
 electron-settings.json
 electron-settings-prod.json
 cordova.facebook.json
