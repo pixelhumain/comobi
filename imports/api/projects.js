@@ -317,6 +317,22 @@ Projects.helpers({
     // return this.links && this.links.events && _.size(this.links.events);
     return this.listEventsCreator() && this.listEventsCreator().count();
   },
+  listProjectsCreator() {
+    const query = {};
+    query.parentId = this._id._str;
+    queryOptions.fields.parentId = 1;
+    return Projects.find(query, queryOptions);
+  },
+  countProjectsCreator() {
+    return this.listProjectsCreator() && this.listProjectsCreator().count();
+  },
+  projectsParent() {
+    const query = {};
+    queryOptions.fields.creator = 1;
+    queryOptions.fields.parentId = 1;
+    query._id = new Mongo.ObjectID(this.parentId);
+    return Projects.findOne(query, queryOptions);
+  },
   listPoiCreator () {
     const query = {};
     query.parentId = this._id._str;

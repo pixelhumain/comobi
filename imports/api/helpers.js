@@ -342,7 +342,7 @@ export const notifyDisplay = (notify, lang = null) => {
             } else if (whoString.length === 1 && !whoNumber) {
               arrayReplace.who = `${whoString.join(',')}`;
             } else if (whoString.length === 2 && !whoNumber) {
-              arrayReplace.who = `${whoString.join(' and ')}`;
+              arrayReplace.who = whoString.join(` ${TAPi18n.__('activitystream.notification.and')} `);
             }
           } else {
             arrayReplace.who = '';

@@ -3,6 +3,8 @@
   "Add event":"Ajouter un évènement",
   "notifications":"Notifications",
   "not notifications":"Pas de notifications",
+  "highlight": "Mise en lumiére",
+  "return_news": "retourner à la news",
   "home":"Accueil",
   "events":"Evenements",
   "projects":"Projets",
@@ -277,7 +279,7 @@
           "in_a_news": "dans un post",
           "in_a_comment": "dans un commentaire",
           "with": "avec",
-          "and": "and"
+          "and": "et"
         }
   },
   "on the program of":"au programme de:",
@@ -290,7 +292,53 @@
   "invited you":"vous a invité",
   "invited you to become an administrator":"vous a invité à devenir administrateur",
   "Pending":"En attente",
-  "searchInvitationPlaceholder":"Chercher par nom, email...",
+  "invitations": {
+      "invitation": "invitation",
+      "invitation_plural": "invitations",
+      "search_invitation_placeholder": "Chercher par nom, email...",
+      "search": "Chercher",
+      "enter_a_search_term": "Entrez un terme de recherche. 4 caractères minimum",
+      "no_results_were_found_for_your_search": "Aucun résultat trouvé pour votre recherche",
+      "send_invite": "Envoyer invitation",
+      "send": "Envoyer",
+      "your_contacts": "Vos contacts",
+      "your_organizations": "Vos organisations",
+      "result_of_your_search": "résultat de votre recherche"
+  },
+    "games": {
+      "game": "jeu",
+      "game_plural": "jeux",
+      "game_not_start": "le jeu n'a pas démarré",
+      "start_date_of_the_game": "Date de début du jeu",
+      "end_date_of_the_game": "Date de fin du jeu",
+      "end_of_the_game": "Fin du jeu",
+      "the_game_will_start": "Le jeu débutera",
+      "game_is_end": "le jeu est terminé",
+      "player": "__count__ joueur",
+      "player_plural": "__count__ joueurs",
+      "finished": "terminé",
+      "game_completed_in": "jeu terminé en",
+      "point": "__count__ point",
+      "point_plural": "__count__ points",
+      "not_finished": "pas terminé",
+      "game_is_start": "le jeu a commencé",
+      "you_started_playing": "vous avez commencé à jouer <strong>__playTimeSpentStart__</strong> et vous avez __point__",
+      "quest": "Quête",
+      "quest_plural": "Quêtes",
+      "question": "Question",
+      "question_plural": "Questions",
+      "result_of_the_questions": "Résultat des questions",
+      "check_position": "check position",
+      "scan_qr_code": "scan qr code",
+      "validate": "valider",
+      "error": "erreur",
+      "scoreboard": "Tableau des scrores",
+      "me": "moi",
+      "no_players": "pas de joueurs",
+      "play_the_game": "Jouer au jeu",
+      "wrong_answer": "Mauvaise réponse",
+      "good_answer": "Bravo, bonne réponse"
+    },
   "roles":"Rôles",
   "Parameter":"Paramètre",
   "Is admin":"Est administrateur",
@@ -489,13 +537,13 @@
       },
       "childEmail":{
           "label": "Email",
-          "placeholder": "som email"
+          "placeholder": "son email"
       },
       "childType":{
           "label": "Type",
           "placeholder": "Sélectionnez un...",
           "options": {
-            "citoyens": "un citoyens",
+            "citoyens": "un citoyen",
             "organizations": "une organisation"
           }
       },

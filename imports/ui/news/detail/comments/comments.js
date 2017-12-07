@@ -187,6 +187,8 @@ Template.commentsEdit.onCreated(function () {
   const self = this;
   self.ready = new ReactiveVar();
   pageSession.set('error', false);
+  pageSession.set('queryMention', false);
+  pageSession.set('mentions', false);
 
   self.autorun(function() {
     pageSession.set('scopeId', Router.current().params._id);
@@ -205,9 +207,6 @@ Template.commentsEdit.onCreated(function () {
 
 Template.commentsEdit.onRendered(function () {
   const self = this;
-  pageSession.set('error', false);
-  pageSession.set('queryMention', false);
-  pageSession.set('mentions', false);
   self.$('textarea').atwho({
     at: '@',
     limit: 20,
@@ -271,6 +270,7 @@ Template.commentsEdit.helpers({
   comment () {
     const comment = Comments.findOne({ _id: new Mongo.ObjectID(Router.current().params.commentId) });
     if (comment && comment.mentions) {
+      console.log(comment.mentions);
       pageSession.set('mentions', comment.mentions);
     }
     comment._id = comment._id._str;
@@ -291,7 +291,7 @@ AutoForm.addHooks(['addComment', 'editComment'], {
       doc.contextType = 'news';
       doc.contextId = newsId;
       if (pageSession.get('mentions')) {
-        const arrayMentions = pageSession.get('mentions').filter(array => doc.text.match(`@${array.value}`) !== null);
+        const arrayMentions = Array.from(pageSession.get('mentions').reduce((m, t) => m.set(t.value, t), new Map()).values()).filter(array => doc.text.match(`@${array.value}`) !== null);
         doc.mentions = arrayMentions;
       }
       return doc;
@@ -301,7 +301,7 @@ AutoForm.addHooks(['addComment', 'editComment'], {
       modifier.$set.contextType = 'news';
       modifier.$set.contextId = newsId;
       if (pageSession.get('mentions')) {
-        const arrayMentions = pageSession.get('mentions').filter(array => modifier.$set.text.match(`@${array.value}`) !== null);
+        const arrayMentions = Array.from(pageSession.get('mentions').reduce((m, t) => m.set(t.value, t), new Map()).values()).filter(array => modifier.$set.text.match(`@${array.value}`) !== null);
         modifier.$set.mentions = arrayMentions;
       }
       return modifier;

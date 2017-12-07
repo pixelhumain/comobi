@@ -9,7 +9,7 @@ import { Router } from 'meteor/iron:router';
 import position from '../../api/client/position.js';
 
 // submanager
-// import { gamesListSubs } from '../../api/client/subsmanager.js';
+import { gamesListSubs, gamesScoreboardSubs } from '../../api/client/subsmanager.js';
 
 import { Gamesmobile, Playersmobile, Questsmobile } from '../../api/gamemobile.js';
 
@@ -17,21 +17,33 @@ import { pageSession } from '../../api/client/reactive.js';
 
 import './games.html';
 
+/*
+<button class="button button-positive button-block quest-validate-geo-js">
+    <i class="icon fa fa-check"></i> {{_ "games.check_position"}}
+</button>
+<button class="button button-positive button-block quest-validate-js">
+    <i class="icon fa fa-qrcode"></i> {{_ "games.validate"}}
+</button>
+<button class="button button-positive button-block quest-validate-error-js">
+    <i class="icon fa fa-qrcode"></i> {{_ "games.error"}}
+</button>
+*/
+
 Template.detailGames.onCreated(function () {
   this.ready = new ReactiveVar();
 
   this.autorun(function () {
     if (Router.current().route.getName() === 'gamesDetail') {
       pageSession.set('selectview', 'detailGames_view');
-      const handle = Meteor.subscribe('detailGames', Router.current().params._id);
+      const handle = gamesListSubs.subscribe('detailGames', Router.current().params._id);
       this.ready.set(handle.ready());
     } else if (Router.current().route.getName() === 'gameScoreBoard') {
       pageSession.set('selectview', 'gameScoreBoard');
-      const handle = Meteor.subscribe('gameScoreBoard', Router.current().params._id);
+      const handle = gamesScoreboardSubs.subscribe('gameScoreBoard', Router.current().params._id);
       this.ready.set(handle.ready());
     } else {
       pageSession.set('selectview', 'detailGames_view');
-      const handle = Meteor.subscribe('detailGames', Router.current().params._id);
+      const handle = gamesListSubs.subscribe('detailGames', Router.current().params._id);
       this.ready.set(handle.ready());
     }
   }.bind(this));
@@ -70,9 +82,34 @@ Template.buttonQuestValidate.events({
   'click .quest-validate-js'(event) {
     event.preventDefault();
     console.log({ gameId: this.gameId, questId: this.questId, choiceId: this.choiceId });
-    Meteor.call('questValidate', { gameId: this.gameId, questId: this.questId, choiceId: this.choiceId }, (error) => {
+    Meteor.call('questValidate', { gameId: this.gameId, questId: this.questId, choiceId: this.choiceId }, (error, result) => {
       if (error) {
         IonPopup.alert({ template: TAPi18n.__(error.reason) });
+      } else {
+        if (result === 'error') {
+          IonPopup.alert({
+            template: TAPi18n.__('games.wrong_answer')
+          });
+        } else if (result === 'valid') {
+          IonPopup.alert({ template: TAPi18n.__('games.good_answer') });
+        }
+      }
+    });
+  },
+  'click .quest-validate-error-js'(event) {
+    event.preventDefault();
+    console.log({ gameId: this.gameId, questId: this.questId, choiceId: 'ecd1197a262518a44fda35f3' });
+    Meteor.call('questValidate', { gameId: this.gameId, questId: this.questId, choiceId: 'ecd1197a262518a44fda35f3' }, (error, result) => {
+      if (error) {
+        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+      } else {
+        if (result === 'error') {
+          IonPopup.alert({
+            template: TAPi18n.__('games.wrong_answer')
+          });
+        } else if (result === 'valid') {
+          IonPopup.alert({ template: TAPi18n.__('games.good_answer') });
+        }
       }
     });
   },
@@ -98,9 +135,16 @@ Template.buttonQuestValidate.events({
             }
 
             if (qr && qr.type && qr._id) {
-              Meteor.call('questValidate', { gameId: self.gameId, questId: self.questId, choiceId: qr._id }, (error) => {
+              Meteor.call('questValidate', { gameId: self.gameId, questId: self.questId, choiceId: qr._id }, (error, result) => {
                 if (error) {
                   IonPopup.alert({ template: TAPi18n.__(error.reason) });
+                } else {
+                  if (result === 'error') {
+                    IonPopup.alert({
+                      template: TAPi18n.__('games.wrong_answer') });
+                  } else if (result === 'valid') {
+                    IonPopup.alert({ template: TAPi18n.__('games.good_answer') });
+                  }
                 }
               });
             }

@@ -8,6 +8,7 @@ import { TAPi18n } from 'meteor/tap:i18n';
 import { _ } from 'meteor/underscore';
 import { $ } from 'meteor/jquery';
 import { HTTP } from 'meteor/http';
+import { Counter } from 'meteor/natestrauser:publish-performant-counts';
 
 // collections
 import { ActivityStream } from '../../api/activitystream.js';
@@ -270,6 +271,18 @@ Meteor.startup(function () {
     return Meteor.isDesktop ? Meteor.settings.public.remoteUrl : '';
   });
 
+  Template.registerHelper('getCount', (name) => {
+    if (name) {
+      return Counter.get(name);
+    }
+  });
+  Template.registerHelper('hasPublishedCounter', (name) => {
+    if (name) {
+      const count = Counter.get(name);
+      return count >= 0;
+    }
+  });
+  
   Template.registerHelper('SchemasFollowRest', SchemasFollowRest);
   Template.registerHelper('SchemasInviteAttendeesEventRest', SchemasInviteAttendeesEventRest);
   Template.registerHelper('SchemasInvitationsRest', SchemasInvitationsRest);

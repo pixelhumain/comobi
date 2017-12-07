@@ -27,6 +27,9 @@
 
 <template name="newsDetailCommentsData">
   {{#with scope.new}}
+      <div class="item item-divider">
+        <a href="{{pathFor 'newsDetail' _id=target.id newsId=_id._str scope=target.type}}" class="positive">{{_ "return_news"}}</a>
+      </div>
   {{#each listComments}}
   <div class="list card">
     <div class="item {{#if authorComments.profilThumbImageUrl}}item-avatar{{/if}}">

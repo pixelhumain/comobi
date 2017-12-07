@@ -14,6 +14,7 @@ import { Citoyens } from './citoyens.js';
 import { Organizations } from './organizations.js';
 import { Projects } from './projects.js';
 import { Poi } from './poi.js';
+import { Gamesmobile } from './gamemobile.js';
 // SimpleSchema.debug = true;
 
 import { News } from './news.js';
@@ -343,6 +344,14 @@ Events.helpers({
   },
   countPoiCreator () {
     return this.listPoiCreator() && this.listPoiCreator().count();
+  },
+  listGamesCreator() {
+    const query = {};
+    query.parentId = this._id._str;
+    return Gamesmobile.find(query);
+  },
+  countGamesCreator() {
+    return this.listGamesCreator() && this.listGamesCreator().count();
   },
   newsJournal (target, userId, limit) {
     const query = {};

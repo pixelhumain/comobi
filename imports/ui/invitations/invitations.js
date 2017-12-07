@@ -5,6 +5,8 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { _ } from 'meteor/underscore';
 import { Router } from 'meteor/iron:router';
 import { Mongo } from 'meteor/mongo';
+import { TAPi18n } from 'meteor/tap:i18n';
+import { AutoForm } from 'meteor/aldeed:autoform';
 import { IonPopup } from 'meteor/meteoric:ionic';
 
 import './invitations.html';
@@ -171,6 +173,18 @@ Template.formInvitations.helpers({
   error () {
     return pageSession.get('error');
   },
+  isAlt () {
+    if (pageSession.get('filter')) {
+      const filter = pageSession.get('filter');
+      return filter.includes('@') && filter;
+    }
+  },
+  isName () {
+    if (pageSession.get('filter')) {
+      const filter = pageSession.get('filter');
+      return !filter.includes('@') && filter;
+    }
+  },
 });
 
 AutoForm.addHooks(['formInvitations'], {
@@ -195,6 +209,7 @@ AutoForm.addHooks(['formInvitations'], {
   onError(formType, error) {
     if (error.errorType && error.errorType === 'Meteor.Error') {
       if (error && error.error === 'error_call') {
+        
         if (error.reason === "Problème à l'insertion du nouvel utilisateur : une personne avec cet mail existe déjà sur la plateforme") {
           pageSession.set('error', error.reason.replace(':', ' '));
           IonPopup.alert({ template: TAPi18n.__(error.reason.replace(':', ' ')) });
@@ -206,6 +221,9 @@ AutoForm.addHooks(['formInvitations'], {
 
             }
           }); */
+        } else {
+          pageSession.set('error', error.reason.replace(':', ' '));
+          IonPopup.alert({ template: TAPi18n.__(error.reason.replace(':', ' ')) });
         }
       } else {
         pageSession.set('error', error.reason.replace(':', ' '));

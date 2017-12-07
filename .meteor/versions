@@ -110,6 +110,7 @@ mongo-id@1.0.6
 mongo-livedata@1.0.12
 mrt:profile-online@0.1.9
 multiply:iron-router-progress@1.0.2
+natestrauser:publish-performant-counts@0.1.2
 npm-mongo@2.2.33
 observe-sequence@1.0.16
 omega:meteor-desktop-bundler@0.10.0
