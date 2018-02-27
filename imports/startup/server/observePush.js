@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
 import { Push } from 'meteor/raix:push';
-
 import { ActivityStream } from '../../api/activitystream.js';
+
+import { notifyDisplay } from '../../api/helpers.js';
 
 if (Meteor.isDevelopment) {
   Push.debug = true;
@@ -39,7 +40,7 @@ Meteor.startup(function() {
       // console.log(JSON.stringify(notification));
       if (notification && notification.notify && notification.notify.id && notification.notify.displayName) {
         const title = 'notification';
-        const text = notification.notify.displayName;
+        // const text = notification.notify.displayName;
 
         const notifsId = _.map(notification.notify.id, function(ids, key) {
           return key;
@@ -51,11 +52,13 @@ Meteor.startup(function() {
           _.each(notifsIdMeteor, function(value) {
             const query = {};
             query.userId = value;
+            const lang = Meteor.users.findOne({ _id: value }, { fields: { 'profile.language': 1 } });
+            const text = lang && lang.profile.language ? notifyDisplay(notification.notify, lang.profile.language) : notifyDisplay(notification.notify, 'en');
             const payload = JSON.parse(JSON.stringify(notification));
             const badge = ActivityStream.api.queryUnseen(value).count();
             // console.log({ value, badge });
             pushUser(title, text, payload, query, badge);
-          }, title, text, notification);
+          }, title, notification);
         }
       }
     },

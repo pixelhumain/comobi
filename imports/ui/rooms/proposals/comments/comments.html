@@ -75,7 +75,7 @@
 
 <template name="commentsProposalsAdd">
   {{#autoForm id="addProposalsComment" schema=SchemasCommentsRest type="method" meteormethod="insertComment" template="ionic" class=""}}
-  {{> afQuickField name='content' label-type='placeholder' rows=2}}
+  {{> afQuickField name='text' label-type='placeholder' rows=2}}
   {{> afQuickField name='argval' type='select'}}
   <div class="item">
     <div class="button-bar">

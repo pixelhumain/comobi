@@ -65,6 +65,10 @@ export const SchemasPlayersmobileRest = new SimpleSchema({
     type: [String],
     optional: true,
   },
+  errorQuest: {
+    type: [String],
+    optional: true,
+  },
   finishedAt: {
     type: Date,
     optional: true,
@@ -111,6 +115,11 @@ export const SchemasQuestsmobileRest = new SimpleSchema({
     type: Number,
   },
   numberPlayerValidate: {
+    type: Number,
+    optional: true,
+    defaultValue: 0,
+  },
+  numberPlayerError: {
     type: Number,
     optional: true,
     defaultValue: 0,
@@ -182,6 +191,13 @@ export const SchemasGamesmobileRest = new SimpleSchema([baseSchema.pick(['name',
   numberPlayers: {
     type: Number,
     defaultValue: 0,
+  },
+  parentId: {
+    type: String,
+  },
+  parentType: {
+    type: String,
+    allowedValues: ['projects', 'organizations', 'events'],
   },
   createdAt: {
     type: Date,
@@ -278,6 +294,9 @@ if (Meteor.isClient) {
 }
 
 Gamesmobile.helpers({
+  scopeVar() {
+    return 'gamesmobile';
+  },
   listQuests() {
     const query = {};
     query.idGame = this._id._str;
@@ -305,6 +324,7 @@ Gamesmobile.helpers({
     queryOptions.fields.idUser = 1;
     queryOptions.fields.totalPoint = 1;
     queryOptions.fields.validateQuest = 1;
+    queryOptions.fields.errorQuest = 1;
     queryOptions.fields.createdAt = 1;
     queryOptions.fields.finishedAt = 1;
     queryOptions.sort = {};
@@ -326,6 +346,7 @@ Gamesmobile.helpers({
     queryOptions.fields.idUser = 1;
     queryOptions.fields.totalPoint = 1;
     queryOptions.fields.validateQuest = 1;
+    queryOptions.fields.errorQuest = 1;
     queryOptions.fields.createdAt = 1;
     queryOptions.fields.finishedAt = 1;
     // queryOptions
@@ -372,7 +393,8 @@ Playersmobile.helpers({
     const query = {};
     query.idGame = this.idGame;
     const arrayValidateQuest = this.validateQuest ? this.validateQuest.map(_id => new Mongo.ObjectID(_id)) : [];
-    query._id = { $in: arrayValidateQuest };
+    const arrayErrorQuest = this.errorQuest ? this.errorQuest.map(_id => new Mongo.ObjectID(_id)) : [];
+    query._id = { $in: [...arrayValidateQuest, ...arrayErrorQuest] };
     const queryOptions = {};
     queryOptions.fields = {};
     queryOptions.fields._id = 1;
@@ -383,6 +405,7 @@ Playersmobile.helpers({
     queryOptions.fields.question = 1;
     queryOptions.fields.order = 1;
     queryOptions.fields.numberPlayerValidate = 1;
+    queryOptions.fields.numberPlayerError = 1;
     queryOptions.sort = {};
     queryOptions.sort.order = 1;
     // queryOptions
@@ -391,11 +414,11 @@ Playersmobile.helpers({
   countQuestsValid() {
     return this.listQuestsValid() && this.listQuestsValid().count();
   },
-  listQuestsNoValid() {
+  listQuestsError() {
     const query = {};
     query.idGame = this.idGame;
-    const arrayValidateQuest = this.validateQuest ? this.validateQuest.map(_id => new Mongo.ObjectID(_id)) : [];
-    query._id = { $nin: arrayValidateQuest };
+    const arrayErrorQuest = this.errorQuest ? this.errorQuest.map(_id => new Mongo.ObjectID(_id)) : [];
+    query._id = { $in: arrayErrorQuest };
     const queryOptions = {};
     queryOptions.fields = {};
     queryOptions.fields._id = 1;
@@ -405,7 +428,32 @@ Playersmobile.helpers({
     queryOptions.fields.questId = 1;
     queryOptions.fields.question = 1;
     queryOptions.fields.order = 1;
-    queryOptions.limit = 1;
+    queryOptions.fields.numberPlayerValidate = 1;
+    queryOptions.fields.numberPlayerError = 1;
+    queryOptions.sort = {};
+    queryOptions.sort.order = 1;
+    // queryOptions
+    return Questsmobile.find(query, queryOptions);
+  },
+  countQuestsError() {
+    return this.listQuestsError() && this.listQuestsError().count();
+  },
+  listQuestsNoValid() {
+    const query = {};
+    query.idGame = this.idGame;
+    const arrayValidateQuest = this.validateQuest ? this.validateQuest.map(_id => new Mongo.ObjectID(_id)) : [];
+    const arrayErrorQuest = this.errorQuest ? this.errorQuest.map(_id => new Mongo.ObjectID(_id)) : [];
+    query._id = { $nin: [...arrayValidateQuest, ...arrayErrorQuest] };
+    const queryOptions = {};
+    queryOptions.fields = {};
+    queryOptions.fields._id = 1;
+    queryOptions.fields.idGame = 1;
+    queryOptions.fields.pointWin = 1;
+    queryOptions.fields.questType = 1;
+    queryOptions.fields.questId = 1;
+    queryOptions.fields.question = 1;
+    queryOptions.fields.order = 1;
+    // queryOptions.limit = 1;
     queryOptions.sort = {};
     queryOptions.sort.order = 1;
     // queryOptions
@@ -413,5 +461,8 @@ Playersmobile.helpers({
   },
   countQuestsNoValid() {
     return this.listQuestsNoValid() && this.listQuestsNoValid().count();
+  },
+  questIsValid(questId) {
+    return this.validateQuest && this.validateQuest.includes(questId);
   },
 });

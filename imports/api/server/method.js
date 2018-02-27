@@ -643,7 +643,6 @@ Meteor.methods({
     parentId:590c5877dd0452330ca1fa1f
     connectType:followers */
 
-
     const doc = {};
     doc.parentId = connectId;
     doc.childType = (typeof childType !== 'undefined' && childType !== null) ? childType : 'citoyens';
@@ -656,13 +655,14 @@ Meteor.methods({
     } else if (parentType === 'events') {
       doc.connectType = (typeof connectType !== 'undefined' && connectType !== null) ? connectType : 'attendees';
     }
-    if (childId !== this.userId) {
+    doc.childId = (typeof childId !== 'undefined' && childId !== null) ? childId : this.userId;
+
+    if (doc.childId !== this.userId) {
       const collection = nameToCollection(parentType);
       if (!collection.findOne({ _id: new Mongo.ObjectID(connectId) }).isAdmin(this.userId)) {
         throw new Meteor.Error('not-authorized');
       }
     }
-    doc.childId = (typeof childId !== 'undefined' && childId !== null) ? childId : this.userId;
     doc.parentType = parentType;
     console.log(doc);
     const retour = apiCommunecter.postPixel('link', 'disconnect', doc);
@@ -769,10 +769,12 @@ Meteor.methods({
       insertDoc.childName = doc.childName;
       insertDoc.childId = '';
     } else if (doc.childType === 'organizations') {
+      insertDoc.organizationType = doc.organizationType;
       insertDoc.childEmail = doc.childEmail;
       insertDoc.childName = doc.childName;
       insertDoc.childId = '';
     }
+    console.log(insertDoc);
     const retour = apiCommunecter.postPixel('link', 'connect', insertDoc);
     return retour;
   },
@@ -963,6 +965,7 @@ indexMax:20 */
     return retour;
   },
   insertComment (doc) {
+    console.log(doc);
     check(doc, SchemasCommentsRest);
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
@@ -978,10 +981,11 @@ indexMax:20 */
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
-    if (!Comments.findOne({ _id: documentId }).isAuthor()) {
+    if (!Comments.findOne({ _id: new Mongo.ObjectID(documentId) }).isAuthor()) {
       throw new Meteor.Error('not-authorized');
     }
-    const doc = {};
+    // const doc = {};
+
     /* doc.id = documentId;
     doc.content = modifier["$set"].text;
     doc.contextId = modifier["$set"].contextId;
@@ -992,11 +996,24 @@ indexMax:20 */
       doc.parentCommentId = "";
     } */
 
-    doc.name = 'text';
+    /* doc.name = 'text';
     doc.value = modifier.$set.text;
-    doc.pk = documentId._str;
+    doc.pk = documentId._str; */
 
-    const retour = apiCommunecter.postPixel('comment', 'updatefield', doc);
+    /* if (!modifier.$set.parentCommentId) {
+      modifier.$set.parentCommentId = '';
+    }
+    modifier.$set.id = documentId; */
+    const doc = {};
+    doc.id = documentId;
+    doc.params = {};
+    doc.params.text = modifier.$set.text;
+    if (modifier.$set.mentions) {
+      doc.params.mentions = modifier.$set.mentions;
+    }
+    console.log(modifier.$set);
+    // const retour = apiCommunecter.postPixel('comment', 'updatefield', doc);
+    const retour = apiCommunecter.postPixel('comment', 'update', doc);
     return retour;
   },
   deleteComment (commentId) {
@@ -2433,110 +2450,6 @@ export const actionsType = new ValidatedMethod({
     docRetour.name = name;
     docRetour.value = value;
     const retour = apiCommunecter.postPixel('element', 'updatefield', docRetour);
-    return retour;
-  },
-});
-
-export const gameParticipate = new ValidatedMethod({
-  name: 'gameParticipate',
-  validate: new SimpleSchema({
-    gameId: { type: String },
-  }).validator(),
-  run({ gameId }) {
-    if (!this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
-
-    const query = {};
-    query._id = new Mongo.ObjectID(gameId);
-    const game = Gamesmobile.findOne(query);
-    if (!game) {
-      throw new Meteor.Error('not-game', 'not-game');
-    }
-    if (game.isNotStart()) {
-      throw new Meteor.Error('game-is-not-start', 'game-is-not-start');
-    }
-    if (game.isEnd()) {
-      throw new Meteor.Error('game-is-end', 'game-is-end');
-    }
-    const player = Playersmobile.findOne({ idUser: this.userId, idGame: gameId });
-    if (player && player._id) {
-      throw new Meteor.Error('player-already-present', 'player-already-present');
-    }
-    const doc = {};
-    doc.idUser = this.userId;
-    doc.idGame = gameId;
-    // SchemasPlayersmobileRest.clean(doc);
-    // SchemasPlayersmobileRest.validate(doc);
-    const retour = Playersmobile.insert(doc);
-    if (retour) {
-      Gamesmobile.update(
-        { _id: new Mongo.ObjectID(gameId) },
-        { $inc: { numberPlayers: 1 } },
-      );
-    }
-    console.log(retour);
-    return retour;
-  },
-});
-
-export const questValidate = new ValidatedMethod({
-  name: 'questValidate',
-  validate: new SimpleSchema({
-    gameId: { type: String },
-    questId: { type: String },
-    choiceId: { type: String },
-  }).validator(),
-  run({ gameId, questId, choiceId }) {
-    if (!this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
-
-    const query = {};
-    query._id = new Mongo.ObjectID(gameId);
-    const game = Gamesmobile.findOne(query);
-    if (!game) {
-      throw new Meteor.Error('not-game', 'not-game');
-    }
-    if (game.isNotStart()) {
-      throw new Meteor.Error('game-is-not-start', 'game-is-not-start');
-    }
-    if (game.isEnd()) {
-      throw new Meteor.Error('game-is-end', 'game-is-end');
-    }
-    const quest = Questsmobile.findOne({ _id: new Mongo.ObjectID(questId) });
-    if (!quest) {
-      throw new Meteor.Error('quest-not-exist', 'quest-not-exist');
-    }
-    const player = Playersmobile.findOne({ idUser: this.userId, idGame: gameId });
-    if (!player) {
-      throw new Meteor.Error('player-not-exit', 'player-not-exit');
-    }
-    if (player && player.finishedAt) {
-      throw new Meteor.Error('game-finished', 'game-finished');
-    }
-    const playerQuestExist = Playersmobile.findOne({ idUser: this.userId, idGame: gameId, validateQuest: { $in: [questId] } });
-    if (playerQuestExist) {
-      throw new Meteor.Error('player-quest-exit', 'player-quest-exit');
-    }
-    if (quest.questId !== choiceId) {
-      throw new Meteor.Error('quest-wrong-answer', 'quest-wrong-answer');
-    }
-
-    const modifier = {};
-    modifier.$inc = { totalPoint: quest.pointWin };
-    modifier.$addToSet = { validateQuest: questId };
-    const countGameQuest = Questsmobile.find({ idGame: gameId }).count();
-    if (player.validateQuest && player.validateQuest.length && player.validateQuest.length > 0 && player.validateQuest.length < countGameQuest) {
-      const countValidateQuest = player.validateQuest.length + 1;
-      if (countValidateQuest === countGameQuest) {
-        // fin du jeu
-        modifier.$set = {};
-        modifier.$set.finishedAt = new Date();
-      }
-    }
-    const retour = Playersmobile.update({ _id: player._id }, modifier);
-    Questsmobile.update({ _id: new Mongo.ObjectID(questId) }, { $inc: { numberPlayerValidate: 1 } });
     return retour;
   },
 });

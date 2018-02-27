@@ -8,6 +8,7 @@ import { TAPi18n } from 'meteor/tap:i18n';
 import { _ } from 'meteor/underscore';
 import { $ } from 'meteor/jquery';
 import { HTTP } from 'meteor/http';
+import { Counter } from 'meteor/natestrauser:publish-performant-counts';
 
 // collections
 import { ActivityStream } from '../../api/activitystream.js';
@@ -28,6 +29,7 @@ import { SchemasActionsRest } from '../../api/actions.js';
 
 import { SchemasShareRest, SchemasRolesRest } from '../../api/schema.js';
 
+import { notifyDisplay } from '../../api/helpers.js';
 
 Meteor.startup(function () {
   window.HTML.isConstructedObject = function(x) {
@@ -215,6 +217,8 @@ Meteor.startup(function () {
   },
   );
 
+  Template.registerHelper('notifyDisplay', notify => notifyDisplay(notify));
+
   Template.registerHelper('notificationsCount', () => ActivityStream.api.Unseen());
 
   Template.registerHelper('notificationsCountRead', () => ActivityStream.api.Unread());
@@ -267,6 +271,18 @@ Meteor.startup(function () {
     return Meteor.isDesktop ? Meteor.settings.public.remoteUrl : '';
   });
 
+  Template.registerHelper('getCount', (name) => {
+    if (name) {
+      return Counter.get(name);
+    }
+  });
+  Template.registerHelper('hasPublishedCounter', (name) => {
+    if (name) {
+      const count = Counter.get(name);
+      return count >= 0;
+    }
+  });
+  
   Template.registerHelper('SchemasFollowRest', SchemasFollowRest);
   Template.registerHelper('SchemasInviteAttendeesEventRest', SchemasInviteAttendeesEventRest);
   Template.registerHelper('SchemasInvitationsRest', SchemasInvitationsRest);

@@ -4,6 +4,7 @@ import { Router } from 'meteor/iron:router';
 import { $ } from 'meteor/jquery';
 import { _ } from 'meteor/underscore';
 import { Counts } from 'meteor/tmeasday:publish-counts';
+import { Counter } from 'meteor/natestrauser:publish-performant-counts';
 import { MeteorCameraUI } from 'meteor/aboire:camera-ui';
 import { AutoForm } from 'meteor/aldeed:autoform';
 import { TAPi18n } from 'meteor/tap:i18n';
@@ -67,6 +68,8 @@ Template.newsList.onCreated(function() {
       pageSession.set('selectview', 'scopeEventsTemplate');
     } else if (Router.current().route.getName() === 'roomsList') {
       pageSession.set('selectview', 'scopeRoomsTemplate');
+    } else if (Router.current().route.getName() === 'gamesList') {
+      pageSession.set('selectview', 'scopeGamesTemplate');
     } else {
       pageSession.set('selectview', 'scopeDetailTemplate');
     }
@@ -129,8 +132,9 @@ Template.scopeNewsTemplate.onCreated(function() {
   this.autorun(function() {
     if (pageSession.get('limit')) {
       IonLoading.show();
+      const handleCounter = newsListSubs.subscribe('newsListCounter', Router.current().params.scope, Router.current().params._id);
       const handle = newsListSubs.subscribe('newsList', Router.current().params.scope, Router.current().params._id, pageSession.get('limit'));
-      if (handle.ready()) {
+      if (handleCounter.ready() && handle.ready()) {
         IonLoading.hide();
         this.ready.set(handle.ready());
       }
@@ -168,7 +172,8 @@ Template.scopeNewsTemplate.helpers({
   },
   countNews () {
     // console.log(Router.current().params._id)
-    return Counts.get(`countNews.${Router.current().params._id}`);
+    // return Counts.get(`countNews.${Router.current().params._id}`);
+    return Counter.get(`countNews.${Router.current().params._id}`);
   },
   dataReady() {
     return Template.instance().ready.get();
@@ -186,8 +191,9 @@ Template.scopeFilActusTemplate.onCreated(function() {
   this.autorun(function() {
     if (pageSession.get('limitFilActus')) {
       IonLoading.show();
+      const handleCount = filActusSubs.subscribe('citoyenActusListCounter');
       const handle = filActusSubs.subscribe('citoyenActusList', pageSession.get('limitFilActus'));
-      if (handle.ready()) {
+      if (handle.ready() && handleCount.ready()) {
         IonLoading.hide();
         this.ready.set(handle.ready());
       }
@@ -225,7 +231,8 @@ Template.scopeFilActusTemplate.helpers({
   },
   countNews () {
     // console.log(Router.current().params._id)
-    return Counts.get(`countActus.${Router.current().params._id}`);
+    return Counter.get(`countActus.${Router.current().params._id}`);
+    // return Counts.get(`countActus.${Router.current().params._id}`);
   },
   dataReady() {
     return Template.instance().ready.get();
@@ -380,6 +387,29 @@ Template.scopeEventsTemplate.onCreated(function() {
 Template.scopeEventsTemplate.helpers({
   scopeBoutonEventsTemplate () {
     return `boutonEvents${Router.current().params.scope}`;
+  },
+  dataReady() {
+    return Template.instance().ready.get();
+  },
+});
+
+Template.scopeGamesTemplate.onCreated(function () {
+  this.ready = new ReactiveVar();
+
+  this.autorun(function () {
+    pageSession.set('scopeId', Router.current().params._id);
+    pageSession.set('scope', Router.current().params.scope);
+  });
+
+  this.autorun(function () {
+    const handle = newsListSubs.subscribe('directoryListGames', Router.current().params.scope, Router.current().params._id);
+    this.ready.set(handle.ready());
+  }.bind(this));
+});
+
+Template.scopeGamesTemplate.helpers({
+  scopeBoutonGamesTemplate() {
+    return `boutonGames${Router.current().params.scope}`;
   },
   dataReady() {
     return Template.instance().ready.get();
@@ -731,7 +761,7 @@ Template.newsAdd.onRendered(function () {
   pageSession.set('tags', false);
   self.$('textarea').atwho({
     at: '@',
-    limit: 10,
+    limit: 20,
     delay: 600,
     displayTimeout: 300,
     startWithSpace: true,
@@ -784,6 +814,7 @@ Template.newsAdd.onRendered(function () {
         mentions.type = $li.data('item-data').type;
         mentions.avatar = $li.data('item-data').avatar;
         mentions.value = ($li.data('item-data').slug ? $li.data('item-data').slug : $li.data('item-data').name);
+        mentions.slug = ($li.data('item-data').slug ? $li.data('item-data').slug : null);
         if (pageSession.get('mentions')) {
           const arrayMentions = pageSession.get('mentions');
           arrayMentions.push(mentions);
@@ -858,7 +889,7 @@ Template.newsFields.onRendered(function () {
   const self = this;
   self.$('textarea').atwho({
     at: '@',
-    limit: 10,
+    limit: 20,
     delay: 600,
     displayTimeout: 300,
     startWithSpace: true,
@@ -911,6 +942,7 @@ Template.newsFields.onRendered(function () {
         mentions.type = $li.data('item-data').type;
         mentions.avatar = $li.data('item-data').avatar;
         mentions.value = ($li.data('item-data').slug ? $li.data('item-data').slug : $li.data('item-data').name);
+        mentions.slug = ($li.data('item-data').slug ? $li.data('item-data').slug : null);
         if (pageSession.get('mentions')) {
           const arrayMentions = pageSession.get('mentions');
           arrayMentions.push(mentions);
@@ -1043,7 +1075,7 @@ AutoForm.addHooks(['addNew', 'editNew'], {
       // comparer dans le text si @name present dans le array
 
       if (pageSession.get('mentions')) {
-        const arrayMentions = _.reject(pageSession.get('mentions'), array => doc.text.match(`@${array.value}`) === null, doc.text);
+        const arrayMentions = Array.from(pageSession.get('mentions').reduce((m, t) => m.set(t.value, t), new Map()).values()).filter(array => doc.text.match(`@${array.value}`) !== null);
         doc.mentions = arrayMentions;
       } else {
         // si on update est ce que la mention reste
@@ -1077,7 +1109,7 @@ AutoForm.addHooks(['addNew', 'editNew'], {
       modifier.$set.parentType = scope;
       modifier.$set.parentId = scopeId;
       if (pageSession.get('mentions')) {
-        const arrayMentions = _.reject(pageSession.get('mentions'), array => modifier.$set.text.match(`@${array.value}`) === null, modifier.$set.text);
+        const arrayMentions = Array.from(pageSession.get('mentions').reduce((m, t) => m.set(t.value, t), new Map()).values()).filter(array => modifier.$set.text.match(`@${array.value}`) !== null);
         modifier.$set.mentions = arrayMentions;
       } else {
         // si on update est ce que la mention reste

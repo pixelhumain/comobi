@@ -1,6 +1,6 @@
 <template name="scopeItemList">
   {{#with item}}
-<a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in out" href="{{pathFor 'detailList' _id=_id._str scope=scopeVar}}">
+<a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}} animated in out" href="{{#if equals scopeVar 'gamesmobile'}}{{pathFor 'gamesDetail' _id=_id._str}}{{else}}{{pathFor 'detailList' _id=_id._str scope=scopeVar}}{{/if}}">
   {{#if profilThumbImageUrl}}
     <img src="{{urlImageCommunecter}}{{profilThumbImageUrl}}">
   {{/if}}

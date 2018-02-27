@@ -35,6 +35,124 @@
       ou si vous changer de position par celle de la commune selectionner {{#if radius}} dans un rayon de <strong>{{radius}} métres</strong>{{/if}}
     </div>
   </div>
+   {{> highlight}}
+    <div class="row">
+      <div class="col">
+        <a class="button button-block button-large button-organization icon ion-person-stalker" href="{{pathFor 'listOrganizations'}}"><br>
+          {{_ "organizations"}}<br>
+          {{#if hasPublishedCounter (geoId 'organizations')}}
+          {{getCount (geoId 'organizations')}}
+          {{else}}
+          <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+          {{/if}}
+        </a>
+      </div>
+      <div class="col">
+        <a class="button button-block button-large button-event icon ion-calendar" href="{{pathFor 'listEvents'}}"><br>
+          {{_ "events"}}<br>
+          {{#if hasPublishedCounter (geoId 'events')}}
+          {{getCount (geoId 'events')}}
+          {{else}}
+          <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+          {{/if}}
+        </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <a class="button button-block button-large button-project icon ion-lightbulb" href="{{pathFor 'listProjects'}}"><br>
+          {{_ "projects"}}<br>
+          {{#if hasPublishedCounter (geoId 'projects')}}
+          {{getCount (geoId 'projects')}}
+          {{else}}
+          <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+          {{/if}}
+        </a>
+      </div>
+      <div class="col">
+        <a class="button button-block button-large button-person icon ion-person" href="{{pathFor 'listCitoyens'}}"><br>
+          {{_ "persons"}}<br>
+          {{#if hasPublishedCounter (geoId 'citoyens')}}
+          {{getCount (geoId 'citoyens')}}
+          {{else}}
+          <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+          {{/if}}
+        </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <a class="button button-block button-large button-poi icon ion-location" href="{{pathFor 'listPoi'}}"><br>
+          {{_ "poi"}}<br>
+          {{#if hasPublishedCounter (geoId 'poi')}}
+          {{getCount (geoId 'poi')}}
+          {{else}}
+          <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+          {{/if}}
+        </a>
+      </div>
+      <div class="col">
+        <a class="button button-block button-large button-classified icon ion-speakerphone" href="{{pathFor 'listClassified'}}"><br>
+          {{_ "classified"}}<br>
+          {{#if hasPublishedCounter (geoId 'classified')}}
+          {{getCount (geoId 'classified')}}
+          {{else}}
+          <i class="fa fa-refresh fa-spin" style="font-size: 18px;"></i>
+          {{/if}}
+        </a>
+      </div>
+    </div>
+
+    <ul id="floating-button">
+      <li class="positive-bg"><a href="" class="" data-ion-popover="_addMenuPopover" data-scope="citoyens" data-scope-id="{{currentUser._id}}" style="color:white;">
+        <i class="icon menu-icon ion-plus"></i></a>
+      </li>
+    </ul>
+
+
+  {{/ionContent}}
+  {{/ionView}}
+
+</template>
+
+<template name="dashboardOld">
+  {{> testgeo}}
+
+  {{#contentFor "headerTitle"}}
+    <h1 class="title">{{_ "dashboard"}} {{> cityTitle}}</h1>
+  {{/contentFor}}
+  {{#contentFor "headerButtonLeft"}}
+  <button class="button button-clear pull-left" data-ion-menu-toggle="left">
+  {{#if isAndroid}}
+    {{> ionIcon icon='android-more-vertical'}}
+  {{else}}
+    {{> ionIcon icon='navicon'}}
+  {{/if}}
+  </button>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  <button class="button button-clear icon ion-android-notifications brand-base-text-color pull-right all-seen" data-ion-menu-toggle="right">
+   {{#transition in="bounceInDown" out="bounceOutUp"}}
+   {{#if notificationsCount}}
+   <div class="new-notification-bubble animated out">{{notificationsCount}}</div>
+   {{/if}}
+   {{/transition}}
+  </button>
+
+  {{/contentFor}}
+
+
+  {{#ionView}}
+  {{#ionContent class="scroll-bg"}}
+  <div class="row">
+    <div class="col">
+      Les données afficher correspondent à votre position géolocalisée ou à celle de votre profil : {{#if city.name}}<strong>{{city.name}}</strong>{{/if}}, si la géolocalistion ne fonctionne pas
+      ou si vous changer de position par celle de la commune selectionner {{#if radius}} dans un rayon de <strong>{{radius}} métres</strong>{{/if}}
+    </div>
+  </div>
+  
     <div class="row">
       <div class="col">
         <a class="button button-block button-large button-organization icon ion-person-stalker" href="{{pathFor 'listOrganizations'}}"><br>
@@ -112,6 +230,25 @@
   {{/ionContent}}
   {{/ionView}}
 
+</template>
+
+<template name="highlight">
+   {{#if dataReady}}
+   {{#if listHighlightCount}}
+      <div class="list list-inset">
+      {{#transition in="slideInDown" out="slideOutUp"}}
+        <div class="item item-positive item-divider animated in out">
+          <i class="icon fa fa-heart"></i> {{_ "highlight"}}
+        </div>
+      {{#each item in listHighlight}}
+       {{> scopeItemList item=item.parentHighlight}}
+       {{else}}
+
+      {{/each}}
+      {{/transition}}
+      </div>
+       {{/if}}
+      {{/if}}
 </template>
 
 <template name="_addMenuPopover">
