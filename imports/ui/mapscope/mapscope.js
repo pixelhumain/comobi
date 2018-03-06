@@ -40,16 +40,14 @@ subs.poi = listPoiSubs;
 subs.classified = listClassifiedSubs;
 subs.citoyens = listCitoyensSubs;
 
-let clusters;
-let map;
+let clusters = [];
+let map = [];
 const markers = [];
 
 const initialize = (element, zoom) => {
   const geo = position.getLatlng();
   const options = {
     maxZoom: 18,
-    minzoom: 0,
-    tileLayer: false,
   };
   if (geo && geo.latitude) {
     L.mapbox.accessToken = Meteor.settings.public.mapbox;
@@ -58,9 +56,13 @@ const initialize = (element, zoom) => {
       minzoom: 0,
       maxzoom: 18,
     };
-    map = L.mapbox.map(element, tilejson, options);
-    map.setView(new L.LatLng(parseFloat(geo.latitude), parseFloat(geo.longitude)), zoom);
-    const layermapbox = L.tileLayer('https://api.mapbox.com/styles/v1/communecter/cj4ziz9st0re02qo4xtqu7puz/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY29tbXVuZWN0ZXIiLCJhIjoiY2l6eTIyNTYzMDAxbTJ3bng1YTBsa3d0aCJ9.elyGqovHs-mrji3ttn_Yjw').addTo(map);
+    /* map = L.mapbox.map(element)
+      .setView(new L.LatLng(parseFloat(geo.latitude), parseFloat(geo.longitude)), zoom).addLayer(L.mapbox.tileLayer('mapbox.streets'));
+      */
+    map = L.mapbox.map(element, tilejson, options)
+      .setView(new L.LatLng(parseFloat(geo.latitude), parseFloat(geo.longitude)), zoom);
+
+    // const layermapbox = L.tileLayer('https://api.mapbox.com/styles/v1/communecter/cj4ziz9st0re02qo4xtqu7puz/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY29tbXVuZWN0ZXIiLCJhIjoiY2l6eTIyNTYzMDAxbTJ3bng1YTBsa3d0aCJ9.elyGqovHs-mrji3ttn_Yjw').addTo(map);
 
     /* if(city && city.geoShape && city.geoShape.coordinates){
     console.log(JSON.stringify(city.geoShape));
@@ -84,10 +86,6 @@ attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under 
       'marker-color': '#fa0',
     }) }).bindPopup('Vous êtes ici :)');
     map.addLayer(marker);
-
-
-    clusters = new L.MarkerClusterGroup();
-
 
     // map.attributionControl.setPosition('bottomleft');
 
@@ -142,7 +140,40 @@ Session.set("selected", e.target.options._id);
 addMarker(marker);
 }
 }); */
-    map.addLayer(clusters);
+
+
+    const radius = position.getRadius();
+    const latlngObj = position.getLatlngObject();
+    if (radius && latlngObj) {
+      // circle radius
+      const filterCircle = L.circle([parseFloat(geo.latitude), parseFloat(geo.longitude)], radius, {
+        opacity: 0.2,
+        weight: 1,
+        fillOpacity: 0.2,
+      }).addTo(map);
+      if (!Session.get('currentScopeId')) {
+        map.fitBounds(filterCircle.getBounds());
+      }
+    } else {
+      const city = position.getCity();
+      if (city && city.geoShape && city.geoShape.coordinates) {
+        const geojson = [
+          {
+            type: 'Feature',
+            geometry: city.geoShape,
+            properties: {
+              opacity: 0.2,
+              weight: 1,
+              fillOpacity: 0.2,
+            },
+          },
+        ];
+        const polygon = L.geoJson(geojson, { style: L.mapbox.simplestyle.style }).addTo(map);
+        if (!Session.get('currentScopeId')) {
+          map.fitBounds(polygon.getBounds());
+        }
+      }
+    }
 
     /* if(Session.get('currentScopeId')){
 let event = Events.findOne({'_id._str':Session.get('currentScopeId')});
@@ -159,6 +190,10 @@ query: [event.geo.latitude, event.geo.longitude]
 directions.query();
 }
 } */
+
+    clusters = new L.MarkerClusterGroup();
+
+    map.addLayer(clusters);
   }
 };
 

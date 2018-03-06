@@ -22,7 +22,7 @@
 Package.describe({
   name:     'communecter:mapbox',
   summary:  'Mapbox.js for Meteor apps',
-  version:  '2.2.3_3'
+  version:  '2.3.1'
 });
 
 Package.onUse(function (api) {

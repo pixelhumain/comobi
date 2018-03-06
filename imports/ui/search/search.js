@@ -23,7 +23,8 @@ Template.searchGlobal.onRendered(function () {
       querySearch.searchType = ['persons', 'organizations', 'projects', 'events'];
       querySearch.searchBy = 'ALL';
       Meteor.call('searchGlobalautocomplete', querySearch, function(error, result) {
-        const array = _.map(result, (arraySearch, key) => ({
+        const data = (result && result.results) ? result.results : result;
+        const array = _.map(data, (arraySearch, key) => ({
           _id: key,
           name: arraySearch.name,
           profilThumbImageUrl: arraySearch.profilThumbImageUrl,
@@ -32,7 +33,7 @@ Template.searchGlobal.onRendered(function () {
           address: arraySearch.address,
         }));
         // console.log(array);
-        if (result) {
+        if (data) {
           pageSession.set('searchGlobal', array);
         }
       });

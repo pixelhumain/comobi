@@ -7,7 +7,7 @@ import './videortc.js';
 import './position.js';
 import './routes.js';
 import './push.js';
-import './mapbox.js';
 import './autolinker.js';
 import './sensors.js';
 import '../../api/method_both.js';
+import './mapbox.js';

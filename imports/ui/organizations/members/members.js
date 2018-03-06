@@ -25,7 +25,7 @@ Template.listMembers.helpers({
   },
   onlineMembers () {
     const user = Meteor.users.findOne({ _id: this._id._str });
-    return user && user.profile && user.profile.online;
+    return user && user.profile && user.status.online;
   },
   isFollowsMembers (followId) {
     if (Meteor.userId() === followId) {
