@@ -25,7 +25,7 @@ Template.listContributors.helpers({
   },
   onlineContributors () {
     const user = Meteor.users.findOne({ _id: this._id._str });
-    return user && user.profile && user.profile.online;
+    return user && user.profile && user.status.online;
   },
   isFollowsContributors (followId) {
     if (Meteor.userId() === followId) {

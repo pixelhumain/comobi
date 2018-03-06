@@ -310,7 +310,8 @@ Events.helpers({
     return moment(start).isBefore(); // True
   },
   typeValue () {
-    return Lists.findOne({ name: 'eventTypes' }).list[this.type];
+    const eventTypes = Lists.findOne({ name: 'eventTypes' });
+    return this.type && eventTypes && eventTypes.list && eventTypes.list[this.type];
   },
   listEventTypes () {
     return Lists.find({ name: 'eventTypes' });

@@ -1,5 +1,5 @@
 /* let count = 0;
-const cursor = Meteor.users.find({ 'profile.online': true });
+const cursor = Meteor.users.find({ 'status.online': true });
 const handle = cursor.observeChanges({
   added(id, user) {
     count += 1;

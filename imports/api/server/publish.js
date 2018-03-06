@@ -357,8 +357,11 @@ Meteor.publishComposite('geo.scope', function(scope, latlng, radius) {
       if (scope === 'citoyens') {
         query._id = { $ne: new Mongo.ObjectID(this.userId) };
       }
+      if (scope === 'events') {
+        query.endDate = { $gte: new Date() };
+      }
 
-      Counts.publish(this, `countScopeGeo.${scope}`, collection.find(query), { noReady: true });
+      // Counts.publish(this, `countScopeGeo.${scope}`, collection.find(query), { noReady: true });
       return collection.find(query, options);
     },
     children: [
@@ -425,7 +428,7 @@ Meteor.publishComposite('scopeDetail', function(scope, scopeId) {
       }
       //
       if (scope === 'events') {
-        Counts.publish(this, `countSous.${scopeId}`, Events.find({ parentId: scopeId }), { noReady: true });
+        // Counts.publish(this, `countSous.${scopeId}`, Events.find({ parentId: scopeId }), { noReady: true });
       }
       return collection.find({ _id: new Mongo.ObjectID(scopeId) }, options);
     },
@@ -1353,7 +1356,7 @@ Meteor.publishComposite('directoryListInvitations', function(scope, scopeId) {
                 _id: citoyen._id._str,
               }, {
                 fields: {
-                  'profile.online': 1,
+                  'status.online': 1,
                 },
               });
             },
@@ -1905,7 +1908,7 @@ Meteor.publishComposite('listAttendees', function(scopeId) {
                 _id: citoyen._id._str,
               }, {
                 fields: {
-                  'profile.online': 1,
+                  'status.online': 1,
                 },
               });
             },
@@ -1928,7 +1931,7 @@ Meteor.publishComposite('listAttendees', function(scopeId) {
                 _id: citoyen._id._str,
               }, {
                 fields: {
-                  'profile.online': 1,
+                  'status.online': 1,
                 },
               });
             },
@@ -1985,7 +1988,7 @@ Meteor.publishComposite('listMembers', function(scopeId) {
                 _id: citoyen._id._str,
               }, {
                 fields: {
-                  'profile.online': 1,
+                  'status.online': 1,
                 },
               });
             },
@@ -2026,7 +2029,7 @@ Meteor.publishComposite('listMembersToBeValidated', function(scope, scopeId) {
                 _id: citoyen._id._str,
               }, {
                 fields: {
-                  'profile.online': 1,
+                  'status.online': 1,
                 },
               });
             },
@@ -2063,7 +2066,7 @@ Meteor.publishComposite('listContributors', function(scopeId) {
                 _id: citoyen._id._str,
               }, {
                 fields: {
-                  'profile.online': 1,
+                  'status.online': 1,
                 },
               });
             },
@@ -2107,7 +2110,7 @@ Meteor.publishComposite('listFollows', function(scopeId) {
                 _id: citoyen._id._str,
               }, {
                 fields: {
-                  'profile.online': 1,
+                  'status.online': 1,
                 },
               });
             },
@@ -2507,8 +2510,8 @@ Meteor.publish('users', function() {
     return null;
   }
   return [
-    Meteor.users.find({ 'profile.online': true }, { fields: { profile: 1, username: 1 } }),
-    Citoyens.find({ _id: new Mongo.ObjectID(this.userId) }, { _disableOplog: true, fields: { pwd: 0 } }),
+    Meteor.users.find({ 'status.online': true }, { fields: { profile: 1, username: 1 } }),
+    Citoyens.find({ _id: new Mongo.ObjectID(this.userId) }, { fields: { pwd: 0 } }),
   ];
 });
 
@@ -2540,7 +2543,7 @@ Meteor.publishComposite('callUsers', function() {
                 _id: citoyen._id._str,
               }, {
                 fields: {
-                  'profile.online': 1,
+                  'status.online': 1,
                   status: 1,
                 },
               });

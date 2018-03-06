@@ -7,6 +7,7 @@ import { Mongo } from 'meteor/mongo';
 import { TAPi18n } from 'meteor/tap:i18n';
 import { IonPopup } from 'meteor/meteoric:ionic';
 import { $ } from 'meteor/jquery';
+import { VideoCallServices } from 'meteor/elmarti:video-chat';
 
 import { Citoyens } from '../../api/citoyens.js';
 
@@ -17,28 +18,28 @@ import { pageVideo } from '../../api/client/reactive.js';
 Template.videoRTC.onCreated(function() {
   const template = Template.instance();
   template.ready = new ReactiveVar(false);
-
   this.autorun(function() {
     const handle = Meteor.subscribe('callUsers');
     if (handle.ready()) {
       template.ready.set(handle.ready());
     }
   });
+
 });
 
 Template.videoRTC.onRendered(function() {
   const self = this;
-  Meteor.VideoCallServices.onError = (err, data) => {
-    console.log(err, data);
-  };
-  Meteor.VideoCallServices.onTargetAccept = () => {
-    console.log('onTargetAccept');
-  };
-
-  Meteor.VideoCallServices.onPeerConnectionCreated = () => {
+  VideoCallServices.onPeerConnectionCreated = () => {
     console.log('onPeerConnectionCreated');
   };
 
+  VideoCallServices.onTargetAccept = () => {
+    console.log('onTargetAccept');
+  };
+
+  VideoCallServices.setOnError(err => {
+    console.error(err);
+  });
 });
 
 Template.videoRTC.events({
@@ -75,6 +76,9 @@ Template.videoRTC.helpers({
   showCaller() {
     return pageVideo.get('showCaller');
   },
+  getState(key) {
+    return VideoCallServices.getState(key);
+  },
   dataReady() {
     return Template.instance().ready.get();
   },
@@ -87,17 +91,22 @@ Template.callTargetRTC.onRendered(function() {
     if (pageVideo.get('showTarget') === true) {
       self.caller = self.$('#caller').get(0);
       self.target = self.$('#target').get(0);
-      Meteor.VideoCallServices.answerPhoneCall(self.caller, self.target);
+      VideoCallServices.answerPhoneCall({
+        localElement: self.caller,
+        remoteElement: self.target,
+        video: true,
+        audio: true,
+      });
       c.stop();
     }
   });
 
-  Meteor.VideoCallServices.onTerminateCall = () => {
+  VideoCallServices.onTerminateCall = () => {
     console.log('onTerminateCall');
     IonPopup.alert({
       title: TAPi18n.__('onTerminateCall'),
     });
-    Meteor.VideoCallServices.endPhoneCall();
+    VideoCallServices.endPhoneCall();
     const stopStreamedVideo = (videoElem) => {
       const stream = videoElem.srcObject;
       if (stream) {
@@ -113,6 +122,13 @@ Template.callTargetRTC.onRendered(function() {
     pageVideo.set('showChat', false);
     pageVideo.set('showCaller', false);
     pageVideo.set('showTarget', false);
+  };
+
+  VideoCallServices.onCallRejected = () => {
+    console.log('onCallRejected');
+    IonPopup.alert({
+      title: TAPi18n.__('onCallRejected'),
+    });
   };
 });
 
@@ -124,18 +140,24 @@ Template.callCallerRTC.onRendered(function() {
       self.caller = self.$('#caller').get(0);
       self.target = self.$('#target').get(0);
       if (self.caller && self.target) {
-        Meteor.VideoCallServices.call(pageVideo.get('showChat'), self.caller, self.target);
+        VideoCallServices.call({
+          id: pageVideo.get('showChat'),
+          localElement: self.caller,
+          remoteElement: self.target,
+          video: true,
+          audio: true
+        });
         c.stop();
       }
     }
   });
 
-  Meteor.VideoCallServices.onTerminateCall = () => {
+  VideoCallServices.onTerminateCall = () => {
     console.log('onTerminateCall');
     IonPopup.alert({
       title: TAPi18n.__('onTerminateCall'),
     });
-    Meteor.VideoCallServices.endPhoneCall();
+    VideoCallServices.endPhoneCall();
     const stopStreamedVideo = (videoElem) => {
       const stream = videoElem.srcObject;
       if (stream) {
@@ -152,12 +174,19 @@ Template.callCallerRTC.onRendered(function() {
     pageVideo.set('showCaller', false);
     pageVideo.set('showTarget', false);
   };
+
+  VideoCallServices.onCallRejected = () => {
+    console.log('onCallRejected');
+    IonPopup.alert({
+      title: TAPi18n.__('onCallRejected'),
+    });
+  };
 });
 
 Template.callRTC.events({
   'click .endPhoneCall'(event, instance) {
     event.preventDefault();
-    Meteor.VideoCallServices.endPhoneCall();
+    VideoCallServices.endPhoneCall();
     pageVideo.set('showChat', false);
     pageVideo.set('showCaller', false);
     pageVideo.set('showTarget', false);

@@ -398,7 +398,8 @@ Organizations.helpers({
     return this.links && this.links.members && _.size(this.links.members);
   },
   typeValue () {
-    return Lists.findOne({ name: 'organisationTypes' }).list[this.type];
+    const organisationTypes = Lists.findOne({ name: 'organisationTypes' });
+    return this.type && organisationTypes && organisationTypes.list && organisationTypes.list[this.type];
   },
   listOrganisationTypes () {
     return Lists.find({ name: 'organisationTypes' });

@@ -4,6 +4,7 @@ import { Router } from 'meteor/iron:router';
 import { TAPi18n } from 'meteor/tap:i18n';
 import { IonPopup } from 'meteor/meteoric:ionic';
 import Howl from 'howler';
+import { VideoCallServices } from 'meteor/elmarti:video-chat';
 
 import { pageVideo } from '../../api/client/reactive.js';
 
@@ -12,11 +13,13 @@ Meteor.startup(() => {
   pageVideo.set('showCaller', false);
   pageVideo.set('showTarget', false);
 
-  Meteor.VideoCallServices.RTCConfiguration = { iceServers: [{
-    urls: 'turn:numb.viagenie.ca',
-    credential: 'codjab974',
-    username: 'thomas.craipeau@gmail.com',
-  }] };
+  VideoCallServices.init({
+    iceServers: [{
+      urls: 'turn:numb.viagenie.ca',
+      credential: 'codjab974',
+      username: 'thomas.craipeau@gmail.com',
+    }],
+  });
 
   const sound = new Howl.Howl({
     src: ['sounds/highbell.mp3'],
@@ -28,7 +31,7 @@ Meteor.startup(() => {
 
   Tracker.autorun((c) => {
     if (Meteor.userId() && Meteor.user()) {
-      Meteor.VideoCallServices.onReceivePhoneCall = (callerId) => {
+      VideoCallServices.onReceivePhoneCall = (callerId) => {
         Meteor.call('getUser', callerId, (error, user) => {
           if (!error) {
             pageVideo.set('showChat', user._id._str);
@@ -47,7 +50,8 @@ Meteor.startup(() => {
               onCancel() {
                 pageVideo.set('showChat', false);
                 pageVideo.set('showTarget', false);
-                Meteor.VideoCallServices.endPhoneCall();
+                // VideoCallServices.rejectCall()
+                VideoCallServices.endPhoneCall();
               },
             });
           }

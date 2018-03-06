@@ -1,67 +1,131 @@
 # Meteor Video Chat
 This extension allows you to implement user-to-user video calling in React, Angular and Blaze.
+This package now uses [RTCFly](https://github.com/rtcfly/rtcfly)
 
 
-[Example](https://meteorvideochat.herokuapp.com) - Try creating 2 user accounts (one incognito) and calling one another. 
+[Example with React](https://meteorvideochat.herokuapp.com)
 
-[Click here for the example source code.](https://github.com/elmarti/meteor-video-chat-example)
+[Click here for the React example source code.](https://github.com/elmarti/meteor-video-chat-example)
+
+
+[Example with Blaze](https://blazevideochat.herokuapp.com)
+
+[Click here for the Blaze example source code.](https://github.com/elmarti/blaze-video-chat)
 
 [![Stories in Ready](https://badge.waffle.io/elmarti/meteor-video-chat.svg?label=ready&title=Ready)](http://waffle.io/elmarti/meteor-video-chat)
 [![Travis CI](https://travis-ci.org/elmarti/meteor-video-chat.svg?branch=master)](https://travis-ci.org/elmarti/meteor-video-chat)
-## Configuration
+[![Maintainability](https://api.codeclimate.com/v1/badges/1ac37840becd7f729338/maintainability)](https://codeclimate.com/github/elmarti/meteor-video-chat/maintainability)
+
+## A note on previous versions
+Meteor Video Chat used to use `Meteor.VideoCallServices`, however we have moved to a more modular system, opting for ES6 imports like so: 
+
+`import { VideoCallServices } from 'meteor/elmarti:video-chat';`
+Old style code will be supported for the forseeable future, but we suggest moving over to the new format.
+
+## init
 Here you can set the [RTCConfiguration](https://developer.mozilla.org/en-US/docs/Web/API/RTCConfiguration). If you are testing outside of a LAN, you'll need to procure some [STUN & TURN](https://gist.github.com/yetithefoot/7592580) servers.
 
 ```
-Meteor.VideoCallServices.RTCConfiguration = [{'iceServers': [{
+VideoCallServices.init({'iceServers': [{
     'urls': 'stun:stun.example.org'
   }]
-}];
+});
 ```
 #### Calling a user
-To call a user, call the following method with their _id, the local video element/ react ref and the target video/react ref.
+To call a user, use the following method. 
 ```
-Meteor.VideoCallServices.call(targetUserId, this.refs.caller, this.refs.target);
+VideoCallServices.call(ICallParams);
+
 ```
+These are the parameters that can be used: 
+```
+interface ICallParams {
+    id:string; //ID of the callee
+    localElement: IHTMLMediaElement; //local HTMLElement
+    remoteElement: IHTMLMediaElement; //remote HTMLElement
+    video:boolean; //Do you want to show video?
+    audio:boolean; //Do you want to show audio?
+}
+```
+
+
 #### Deciding who can connect to whom
 The follow method can be overridden on the server side to implement some kind of filtering. Returning `false` will cancel the call, and `true` will allow it to go ahead.
+
 ```
-Meteor.VideoCallServices.checkConnect = function(caller, target){
+VideoCallServices.checkConnect = function(caller, target){
 return *can caller and target call each other"
 };
 ```
+
+
+
 #### Answering a call
-The first step is to handle the onReceivePhoneCall callback and then to accept the call. The answerPhoneCall method accepts the local video and the target video.
+The first step is to handle the onReceiveCall callback and then to accept the call. The answerCall method accepts the ICallParams interfaces, just like the "call" method above
 ```
- Meteor.VideoCallServices.onReceivePhoneCall = (userId) => {
-Meteor.VideoCallServices.answerPhoneCall(this.refs.caller, this.refs.target);
-        };
+ VideoCallServices.onReceiveCall = (userId) => {
+        VideoCallServices.answerCall(ICallParams);
+ };
 
 ```
-#### Ending phone call
+
+
+#### Muting local or remote videos
+```
+VideoCallServices.toggleLocalAudio();
+VideoCallServices.toggleRemoteAudio();
+```
+
+
+#### Application state
+The following values are stored in a reactive var 
+```
+localMuted:boolean, 
+remoteMuted:boolean, 
+ringing:boolean,
+inProgress:boolean
+
+```
+#### Getting the state 
+```
+VideoCallServices.getState("localMuted");
+
+```
+#### Accessing the video (HTMLMediaElement) elements
+
+```
+const localVideo = VideoCallServices.getLocalVideo();
+const remoteVideo = VideoCallServices.getRemoteVideo();
+
+``
+
+#### Ending call
 Simply call
 ```
-Meteor.VideoCallServices.endPhoneCall();
+VideoCallServices.endCall();
 ```
 #### Other events
-The following method is invoked when the callee accepts the phone call.
+The following method is invoked when the callee accepts the call.
 ```
-Meteor.VideoCallServices.onTargetAccept = () => {
+VideoCallServices.onTargetAccept = () => {
 }
 ```
 The following method is invoked when either user ends the call
 ```
-Meteor.VideoCallServices.onTerminateCall = () => {
+VideoCallServices.onTerminateCall = () => {
 }
 ```
 The following method invoked when the RTCPeerConnection instance has been created, making it possible to consitently mutate it or add a data channel
 ```
-Meteor.VideoCallServices.onPeerConnectionCreated = () => {
+VideoCallServices.onPeerConnectionCreated = () => {
 }
 
 ``` 
-The retry count can but used to limit the amount of reconnection attempts when ICE fails 
+The following method is invoked on the caller browser when the callee rejects the call 
 ```
-Meteor.VideoCallServices.RetryLimit = 5;  //defaulted to 5
+VideoCallServices.onCallRejected = () => {
+    
+}
 
 ```
 
@@ -70,8 +134,7 @@ The following method is invoked on both the client and server whenever an error 
 User is only passed on the server
 
 ```
-Meteor.VideoCallServices.onError = (err, data, user) => {
-}
+VideoCallServices.setOnError(callback);
 ```
 The onError section can also be used for handling errors thrown when obtaining the user media (Webcam/audio).
 [See here for more info](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia#Exceptions), or checkout the example.
