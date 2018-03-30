@@ -31,7 +31,7 @@ Meteor.startup(() => {
 
   Tracker.autorun((c) => {
     if (Meteor.userId() && Meteor.user()) {
-      VideoCallServices.onReceivePhoneCall = (callerId) => {
+      VideoCallServices.onReceiveCall = (callerId) => {
         Meteor.call('getUser', callerId, (error, user) => {
           if (!error) {
             pageVideo.set('showChat', user._id._str);
@@ -51,7 +51,7 @@ Meteor.startup(() => {
                 pageVideo.set('showChat', false);
                 pageVideo.set('showTarget', false);
                 // VideoCallServices.rejectCall()
-                VideoCallServices.endPhoneCall();
+                VideoCallServices.endCall();
               },
             });
           }

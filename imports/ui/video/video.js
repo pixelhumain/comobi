@@ -91,7 +91,7 @@ Template.callTargetRTC.onRendered(function() {
     if (pageVideo.get('showTarget') === true) {
       self.caller = self.$('#caller').get(0);
       self.target = self.$('#target').get(0);
-      VideoCallServices.answerPhoneCall({
+      VideoCallServices.answerCall({
         localElement: self.caller,
         remoteElement: self.target,
         video: true,
@@ -106,7 +106,7 @@ Template.callTargetRTC.onRendered(function() {
     IonPopup.alert({
       title: TAPi18n.__('onTerminateCall'),
     });
-    VideoCallServices.endPhoneCall();
+    // VideoCallServices.endCall();
     const stopStreamedVideo = (videoElem) => {
       const stream = videoElem.srcObject;
       if (stream) {
@@ -157,7 +157,7 @@ Template.callCallerRTC.onRendered(function() {
     IonPopup.alert({
       title: TAPi18n.__('onTerminateCall'),
     });
-    VideoCallServices.endPhoneCall();
+    // VideoCallServices.endCall();
     const stopStreamedVideo = (videoElem) => {
       const stream = videoElem.srcObject;
       if (stream) {
@@ -186,7 +186,7 @@ Template.callCallerRTC.onRendered(function() {
 Template.callRTC.events({
   'click .endPhoneCall'(event, instance) {
     event.preventDefault();
-    VideoCallServices.endPhoneCall();
+    VideoCallServices.endCall();
     pageVideo.set('showChat', false);
     pageVideo.set('showCaller', false);
     pageVideo.set('showTarget', false);

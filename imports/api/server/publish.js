@@ -2510,7 +2510,7 @@ Meteor.publish('users', function() {
     return null;
   }
   return [
-    Meteor.users.find({ 'status.online': true }, { fields: { profile: 1, username: 1 } }),
+    Meteor.users.find({ 'status.online': true }, { fields: { status: 1, profile: 1, username: 1 } }),
     Citoyens.find({ _id: new Mongo.ObjectID(this.userId) }, { fields: { pwd: 0 } }),
   ];
 });
@@ -2543,7 +2543,6 @@ Meteor.publishComposite('callUsers', function() {
                 _id: citoyen._id._str,
               }, {
                 fields: {
-                  'status.online': 1,
                   status: 1,
                 },
               });
