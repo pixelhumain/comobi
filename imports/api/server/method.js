@@ -411,6 +411,16 @@ Meteor.methods({
     }
     return false;
   },
+  validateEmail(url) {
+    check(url, String);
+    // console.log(url);
+    const retour = HTTP.get(url);
+    // console.log(JSON.stringify(retour));
+    if (retour) {
+      return true;
+    }
+    throw new Meteor.Error('error-validateEmail');
+  },
   likeScope (newsId, scope) {
     check(newsId, String);
     check(scope, String);

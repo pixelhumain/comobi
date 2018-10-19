@@ -65,11 +65,14 @@ Meteor.startup(function () {
       } else {
         const regex = /\/co2\/person\/activate\/user\/([^/]*)\/validationKey\/([a-z0-9]*)/g;
         const m = regex.exec(intent);
+        // alert(`${Meteor.settings.public.endpoint}${m[0]}`);
         if (m && m[0] && m[1] && m[2]) {
-          HTTP.get(m[0], {}, (error, response) => {
+          //${Meteor.settings.public.endpoint}
+          Meteor.call('validateEmail', `${Meteor.settings.public.endpoint}${m[0]}`, (error, result) => {
             if (error) {
-
+              // alert(`${error}`);
             } else {
+              // alert(`Ok`);
               return Router.go('/login');
             }
           });

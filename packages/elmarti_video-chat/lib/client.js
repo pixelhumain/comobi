@@ -6,7 +6,7 @@ const streamHandlers = {
     handleStreamReceivingPhoneCall(msg) {
         msg.fields._id = msg.id;
         this.setCallLog(msg.fields);
-        this.stream = new this.meteor.Streamer(msg.id);
+        this.stream = new this.Streamer(msg.id);
         this.stream.on('video_message', this.handleTargetStream.bind(this));
         this.setState({
             localMuted: false,
@@ -19,7 +19,7 @@ const streamHandlers = {
     handleStreamCallOwnCallSessionInitialized(msg) {
         msg.fields._id = msg.id;
         this.setCallLog(msg.fields);
-        this.stream = new this.meteor.Streamer(msg.id);
+        this.stream = new this.Streamer(msg.id);
         this.stream.on('video_message', this.handleCallerStream.bind(this));
     },
     handleStreamCalleeAccept(msg) {
@@ -38,7 +38,7 @@ const streamHandlers = {
         }
     },
     handleStreamCalleeRejected(msg) {
-        if (msg.fields.status === 'REJECTED' && this.callLog.caller === Meteor.userId()) {
+        if (msg.fields.status === 'REJECTED' && this.callLog.caller === this.meteor.userId()) {
             this.setCallLog(msg.fields);
             this.onCallRejected();
             this.meteor.call("VideoCallServices/ackReject", msg.id);
@@ -46,7 +46,7 @@ const streamHandlers = {
     },
     handleStreamCallFinished(msg) {
         if (msg.fields.status === 'FINISHED') {
-            if (this.callLog.caller !== Meteor.userId() || this.callLog.status !== "REJECTED") {
+            if (this.callLog.caller !== this.meteor.userId() || this.callLog.status !== "REJECTED") {
                 this.terminateCall();
             }
             this.callLog = null;
@@ -67,10 +67,12 @@ class VideoCallServices {
 
     constructor(args) {
 
-        let { meteor, tracker, core, reactiveVar } = args;
+        let { meteor, tracker, core, reactiveVar, ddp, Streamer } = args;
         this.meteor = meteor;
         this.core = core;
-        this.state = new ReactiveVar({
+        this.ddp = ddp;
+        this.Streamer = Streamer;
+        this.state = new reactiveVar({
             localMuted: false,
             remoteMuted: false,
             ringing: false,
@@ -82,7 +84,7 @@ class VideoCallServices {
         tracker.autorun(() => {
             this.sub = this.meteor.subscribe('VideoChatPublication');
         });
-        this.meteor.connection._stream.on('message', this.handleStream.bind(this));
+        this.ddp.on('message', this.handleStream.bind(this));
 
 
     }
@@ -282,7 +284,7 @@ class VideoCallServices {
      * Reject the phone call
      */
     rejectCall() {
-        Meteor.call("VideoCallServices/reject", err => {
+        this.meteor.call("VideoCallServices/reject", err => {
             if (err) {
                 this.onError(err);
             }
@@ -299,7 +301,7 @@ class VideoCallServices {
      * End the call
      */
     endCall() {
-        Meteor.call("VideoCallServices/end", err => {
+        this.meteor.call("VideoCallServices/end", err => {
             if (err) {
                 this.onError(err);
             }

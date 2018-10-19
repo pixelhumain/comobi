@@ -59,7 +59,7 @@
     }
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0-beta.40",
+    "@babel/runtime": "^7.1.2",
     "autolinker": "^1.4.3",
     "bcrypt": "^0.8.7",
     "howler": "^2.0.4",

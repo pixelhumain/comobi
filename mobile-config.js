@@ -4,12 +4,12 @@ App.info({
   description: 'communecter mobile',
   author: 'thomas',
   email: 'thomas.craipeau@gmail.com',
-  version: '0.0.18',
-  buildNumber: '118'
+  version: '0.0.19',
+  buildNumber: '119'
 });
 
-App.setPreference('android-targetSdkVersion', '23');
-App.setPreference('android-minSdkVersion', '19');
+App.setPreference('android-targetSdkVersion', '26');
+App.setPreference('android-minSdkVersion', '21');
 
 App.configurePlugin('phonegap-plugin-push', {
   SENDER_ID: 376774334081
