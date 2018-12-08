@@ -23,6 +23,8 @@ const pushUser = (title, text, payload, query, badge) => {
     apn: {
       sound: 'default',
     },
+    contentAvailable: 1,
+    androidChannel: 'PushPluginChannel',
     notId,
   });
 };

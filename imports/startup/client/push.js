@@ -46,7 +46,47 @@ Meteor.startup(function () {
       }
     });
   } else if (Meteor.isCordova) {
+    PushNotification.createChannel(
+      function () {
+        console.log('Channel Created!');
+      },
+      function () {
+        console.log('Channel not created :(');
+      }, {
+        id: 'PushPluginChannel',
+        description: 'Channel Name Shown To Users',
+        importance: 3,
+        vibration: true,
+      },
+    );
+
     Push.Configure({
+      cordovaOptions: {
+        // Options here are passed to phonegap-plugin-push
+        android: {
+          sound: true,
+          vibrate: true,
+          clearBadge: false,
+          clearNotifications: true,
+          forceShow: false,
+          icon: 'ic_stat_co_24',
+          iconColor: '#6B97AF',
+        },
+        ios: {
+          // voip: false,
+          alert: true,
+          badge: true,
+          sound: true,
+          clearBadge: false,
+          // categories: {},
+          // fcmSandbox: false, // Doesn't need to be set if using fcm with 'APNs Authentication Key' not 'APNs Certificates'
+          // topics: []
+        }
+      },
+      appName: 'main'
+    });
+
+    /* Push.Configure({
       android: {
         senderID: 376774334081,
         alert: true,
@@ -62,7 +102,7 @@ Meteor.startup(function () {
         badge: true,
         sound: true,
       },
-    });
+    }); */
 
     Push.addListener('startup', function() {
       Router.go('/notifications');

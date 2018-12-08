@@ -58,6 +58,12 @@ App.launchScreens({
 	'ipad_landscape_2x':'ressource/ios/splash/Default-Landscape@2x.png'
 });
 
+/*App.appendToConfig(`<platform name="android">
+  <resource-file src="google-services.json" target="google-services.json" />
+</platform>`);*/
+
+App.addResourceFile('google-services.json', 'google-services.json', 'android');
+
 App.setPreference('StatusBarOverlaysWebView', 'false');
 App.setPreference('StatusBarBackgroundColor', '#324553');
 App.setPreference('Orientation', 'portrait');

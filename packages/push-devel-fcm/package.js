@@ -1,5 +1,5 @@
 Package.describe({
-  name: 'raix:pushold',
+  name: 'raix:push',
   version: '3.1.0-pre.1',
   summary: 'Isomorphic Push notifications for APN and GCM',
   git: 'https://github.com/raix/push.git'
@@ -8,12 +8,13 @@ Package.describe({
 // Server-side push deps
 Npm.depends({
   'apn' : '1.6.2', // '1.7.4', // working: 1.6.2
-  'node-gcm' : '0.14.6', // previously: 0.9.6
+  'node-gcm' : '0.14.4', // previously: 0.9.6
+  'firebase-admin': '6.1.0'
 });
 
 Cordova.depends({
-  'phonegap-plugin-push': '1.10.5', // previously 1.6.4
-  'cordova-plugin-device': '1.1.6', // previously 1.1.1
+  'phonegap-plugin-push': '2.1.3',  // previously 1.9.0
+  'cordova-plugin-device': '2.0.2' // previously 1.1.3
 });
 
 Package.registerBuildPlugin({
