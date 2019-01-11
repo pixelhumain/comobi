@@ -30,7 +30,7 @@ import { Proposals } from '../proposals.js';
 import { Gamesmobile, Playersmobile, Questsmobile } from '../gamemobile.js';
 import { Highlight } from '../highlight.js';
 
-import { nameToCollection } from '../helpers.js';
+import { nameToCollection, arrayParent, arrayLinkParent, arrayChildrenParent } from '../helpers.js';
 
 global.Events = Events;
 global.Organizations = Organizations;
@@ -229,7 +229,7 @@ Meteor.publish('geo.dashboard', function (geoId, latlng, radius) {
           coordinates: [latlng.longitude, latlng.latitude],
         },
         $maxDistance: radius,
-      }
+      },
     };
   } else {
     check(latlng.type, String);
@@ -310,6 +310,7 @@ Meteor.publishComposite('geo.scope', function(scope, latlng, radius) {
   if (!this.userId) {
     return null;
   }
+
   return {
     find() {
       const options = {};
@@ -1246,6 +1247,7 @@ Meteor.publishComposite('directoryListClassified', function(scope, scopeId) {
             return scopeD.listClassifiedCreator();
           }
         },
+        // children: arrayChildrenParent(scope, ['citoyens', 'organizations', 'projects', 'events']),
         children: [
           {
             find(scopeD) {
@@ -1262,19 +1264,9 @@ Meteor.publishComposite('directoryListClassified', function(scope, scopeId) {
                 });
               }
             },
-          }, /* ,
-          {
-            find(scopeD) {
-              return scopeD.documents();
-            },
-          }, */
+          },
         ],
-      }, /* ,
-      {
-        find(scopeD) {
-          return scopeD.documents();
-        },
-      }, */
+      },
     ] };
 });
 
@@ -1376,7 +1368,7 @@ Meteor.publish('listeventSous', function (scopeId) {
 
   return [
     counterEvents,
-    Events.find({ parentId: scopeId })
+    Events.find({ parentId: scopeId }),
   ];
 });
 
@@ -1542,7 +1534,7 @@ Meteor.publishComposite('proposalsDetailComments', function(scope, scopeId, room
       {
         find(scopeD) {
           if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
-            //return Rooms.find({ _id: new Mongo.ObjectID(roomId) });
+            // return Rooms.find({ _id: new Mongo.ObjectID(roomId) });
             return scopeD.detailRooms(roomId);
           }
         },
@@ -1615,7 +1607,7 @@ Meteor.publishComposite('detailActions', function(scope, scopeId, roomId, action
       {
         find(scopeD) {
           if (scope === 'organizations' || scope === 'projects' || scope === 'events') {
-            //return Rooms.find({ _id: new Mongo.ObjectID(roomId) });
+            // return Rooms.find({ _id: new Mongo.ObjectID(roomId) });
             return scopeD.detailRooms(roomId);
           }
         },

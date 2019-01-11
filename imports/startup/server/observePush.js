@@ -12,11 +12,22 @@ if (Meteor.isDevelopment) {
 const pushUser = (title, text, payload, query, badge) => {
   const notId = Math.round(new Date().getTime() / 1000);
   // console.log(payload);
+  const payloadStringify = {};
+  /* 
+  for (const key in payload) {
+    if (_.isString(payload[key])) {
+      payloadStringify[key] = payload[key];
+    }else {
+      payloadStringify[key] = JSON.stringify(payload[key]);
+    }
+  } */
+  payloadStringify.custom_key1 = JSON.stringify(payload);
+  //console.log(payloadStringify);
   Push.send({
     from: 'push',
     title,
     text,
-    payload,
+    payload: payloadStringify,
     sound: 'default',
     query,
     badge,
@@ -59,6 +70,7 @@ Meteor.startup(function() {
             const payload = JSON.parse(JSON.stringify(notification));
             const badge = ActivityStream.api.queryUnseen(value).count();
             // console.log({ value, badge });
+            //console.log(payload);
             pushUser(title, text, payload, query, badge);
           }, title, notification);
         }

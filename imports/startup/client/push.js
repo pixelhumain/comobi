@@ -72,16 +72,6 @@ Meteor.startup(function () {
           icon: 'ic_stat_co_24',
           iconColor: '#6B97AF',
         },
-        ios: {
-          // voip: false,
-          alert: true,
-          badge: true,
-          sound: true,
-          clearBadge: false,
-          // categories: {},
-          // fcmSandbox: false, // Doesn't need to be set if using fcm with 'APNs Authentication Key' not 'APNs Certificates'
-          // topics: []
-        }
       },
       appName: 'main'
     });
@@ -111,7 +101,8 @@ Meteor.startup(function () {
     Push.addListener('message', function(notification) {
       function alertDismissed(buttonIndex) {
         if (buttonIndex === 1) {
-          if (notification.payload.url) {
+          const payload = JSON.parse(notification.payload);
+          if (payload.url) {
             // Meteor.call('markRead',notification.payload.notifId);
             // Meteor.call('registerClick', notification.payload.notifId);
             // Router.go(notification.payload.link);
@@ -189,3 +180,4 @@ Tracker.autorun(() => {
     }
   }
 });
+

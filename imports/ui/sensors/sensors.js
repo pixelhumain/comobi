@@ -8,6 +8,7 @@ import { TAPi18n } from 'meteor/tap:i18n';
 import { IonPopup } from 'meteor/meteoric:ionic';
 import { $ } from 'meteor/jquery';
 
+/*
 import sensorApi from '../../api/client/sensors.js';
 
 import './sensors.html';
@@ -25,10 +26,6 @@ Template.sensors.events({
   'click .watchSensors'(event, instance) {
     event.preventDefault();
     const sensor = $(event.currentTarget).data('sensor');
-    // sensorApi.disables();
-    /* if (sensorApi.get('typeSensor') !== null) {
-      sensorApi.disable(sensorApi.get('typeSensor'));
-    } */
     console.log(`watchSensors : ${sensor}`);
     sensorApi.setWatch(true);
     sensorApi.getState(sensor);
@@ -112,3 +109,4 @@ Template.sensors.helpers({
     return Template.instance().ready.get();
   },
 });
+*/

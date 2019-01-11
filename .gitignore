@@ -25,3 +25,4 @@ npm-debug.log
 .rancher/
 package-lock.json
 /google-services.json
+/GoogleService-Info.plist

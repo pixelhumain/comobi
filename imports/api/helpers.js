@@ -173,6 +173,137 @@ export const arrayLinkAttendees = (array, type) => {
   return arrayIds;
 };
 
+export const arrayLinkParent = (array, type) => {
+  const arrayIds = Object.keys(array)
+    .filter(k => array[k].type === type)
+    .map(k => new Mongo.ObjectID(k));
+  return arrayIds;
+};
+
+export const arrayParent = (array, arrayType) => {
+  const arrayIds = Object.keys(array)
+    .filter(k => _.contains(arrayType, array[k].type))
+    .map(k => new Mongo.ObjectID(k));
+  return arrayIds;
+};
+
+export const arrayChildrenParent = (scope, parentAuthorise, scopeParent = null, fields = {
+  name: 1,
+  links: 1,
+  profilThumbImageUrl: 1,
+}) => {
+  const childrenParent = [];
+
+  if (scope === 'events') {
+    // sous events
+    const parentEventPush = {
+      find(scopeD) {
+        if (scopeD.parent) {
+          const arrayIdsParent = arrayLinkParent(scopeD.parent, 'events');
+          const collectionType = nameToCollection(parent);
+          return collectionType.find({
+            _id: {
+              $in: arrayIdsParent,
+            },
+          }, {
+            fields,
+          });
+        }
+        if (scopeD.parentId) {
+          const collectionType = nameToCollection('events');
+          return collectionType.find({
+            _id: new Mongo.ObjectID(scopeD.parentId),
+          }, {
+            fields,
+          });
+        }
+      },
+    };
+    childrenParent.push(parentEventPush);
+  }
+
+  parentAuthorise.forEach((parent) => {
+    if (scope === 'events') {
+      const parentPush = {
+        find(scopeD) {
+          if (scopeD.organizer) {
+            const arrayIdsParent = arrayLinkParent(scopeD.organizer, parent);
+            const collectionType = nameToCollection(parent);
+            return collectionType.find({
+              _id: {
+                $in: arrayIdsParent,
+              },
+            }, {
+              fields,
+            });
+          }
+          if (scopeD.organizerType && scopeD.organizerId && _.contains(parentAuthorise, scopeD.organizerType)) {
+            const collectionType = nameToCollection(scopeD.organizerType);
+            return collectionType.find({
+              _id: new Mongo.ObjectID(scopeD.organizerId),
+            }, {
+              fields,
+            });
+          }
+        },
+      };
+
+      childrenParent.push(parentPush);
+    } else {
+      const parentPush = {
+        find(scopeD) {
+          if (scopeParent) {
+            if (_.contains(scopeParent, scope)) {
+              if (scopeD.parent) {
+                const arrayIdsParent = arrayLinkParent(scopeD.parent, parent);
+                const collectionType = nameToCollection(parent);
+                return collectionType.find({
+                  _id: {
+                    $in: arrayIdsParent,
+                  },
+                }, {
+                  fields,
+                });
+              }
+              if (scopeD.parentType && scopeD.parentId && _.contains(parentAuthorise, scopeD.parentType)) {
+                const collectionType = nameToCollection(scopeD.parentType);
+                return collectionType.find({
+                  _id: new Mongo.ObjectID(scopeD.parentId),
+                }, {
+                  fields,
+                });
+              }
+            }
+          } else {
+            if (scopeD.parent) {
+              const arrayIdsParent = arrayLinkParent(scopeD.parent, parent);
+              const collectionType = nameToCollection(parent);
+              return collectionType.find({
+                _id: {
+                  $in: arrayIdsParent,
+                },
+              }, {
+                fields,
+              });
+            }
+            if (scopeD.parentType && scopeD.parentId && _.contains(parentAuthorise, scopeD.parentType)) {
+              const collectionType = nameToCollection(scopeD.parentType);
+              return collectionType.find({
+                _id: new Mongo.ObjectID(scopeD.parentId),
+              }, {
+                fields,
+              });
+            }
+          }
+        },
+      };
+      childrenParent.push(parentPush);
+    }
+  });
+  return childrenParent;
+};
+
+
 export const queryLinkAttendees = (array, search, type) => {
   const arrayIds = arrayLinkAttendees(array, type);
   let query = {};
