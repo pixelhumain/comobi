@@ -4,8 +4,8 @@ App.info({
   description: 'communecter mobile',
   author: 'thomas',
   email: 'thomas.craipeau@gmail.com',
-  version: '0.0.19',
-  buildNumber: '119',
+  version: '0.0.20',
+  buildNumber: '120',
 });
 
 App.setPreference('android-targetSdkVersion', '26');
@@ -110,5 +110,6 @@ App.accessRule('https://co-mobile.communecter.org/*');
 // App.accessRule('http://localhost*');
 App.accessRule('*.openstreetmap.org/*', { type: 'navigation' });
 App.accessRule('*.tile.thunderforest.com/*', { type: 'navigation' });
+App.accessRule('http://a.tiles.mapbox.com/*', { type: 'navigation' });
 App.accessRule('https://api.tiles.mapbox.com/*', { type: 'navigation' });
 App.accessRule('https://placeholdit.imgix.net/*', { type: 'navigation' });

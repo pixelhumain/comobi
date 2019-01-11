@@ -7,7 +7,7 @@ import { Router } from 'meteor/iron:router';
 import { Mongo } from 'meteor/mongo';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { IonLoading } from 'meteor/meteoric:ionic';
-import { Session } from 'meteor/session'
+import { Session } from 'meteor/session';
 
 import { Events } from '../../api/events.js';
 import { Organizations } from '../../api/organizations.js';

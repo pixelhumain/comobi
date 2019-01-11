@@ -6,7 +6,7 @@ import { Tracker } from 'meteor/tracker';
 Meteor.startup(() => {
   if (Meteor.isCordova && !Meteor.isDesktop) {
     if (device.platform === 'Android') {
-      sensorApi.config();
+      //sensorApi.config();
       //sensorApi.disables();
 
       /*Tracker.autorun((c) => {
