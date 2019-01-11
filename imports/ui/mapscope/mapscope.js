@@ -7,6 +7,7 @@ import { Router } from 'meteor/iron:router';
 import { Mongo } from 'meteor/mongo';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { IonLoading } from 'meteor/meteoric:ionic';
+import { Session } from 'meteor/session'
 
 import { Events } from '../../api/events.js';
 import { Organizations } from '../../api/organizations.js';
@@ -312,10 +313,12 @@ Template.mapCanvas.onCreated(function () {
 
   self.readyDetail = new ReactiveVar();
   self.autorun(function() {
-    pageSession.set('currentScopeId', Router.current().params._id);
-    const handleDetail = Meteor.subscribe('scopeDetail', Router.current().params.scope, Router.current().params._id);
-    if (handleDetail.ready()) {
-      self.readyDetail.set(handleDetail.ready());
+    if (Router.current().params._id) {
+      pageSession.set('currentScopeId', Router.current().params._id);
+      const handleDetail = Meteor.subscribe('scopeDetail', Router.current().params.scope, Router.current().params._id);
+      if (handleDetail.ready()) {
+        self.readyDetail.set(handleDetail.ready());
+      }
     }
   });
 });

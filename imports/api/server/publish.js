@@ -363,6 +363,7 @@ Meteor.publishComposite('geo.scope', function(scope, latlng, radius) {
       }
 
       // Counts.publish(this, `countScopeGeo.${scope}`, collection.find(query), { noReady: true });
+      console.log(query);
       return collection.find(query, options);
     },
     children: [
