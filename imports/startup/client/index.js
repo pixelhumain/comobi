@@ -3,7 +3,7 @@ import './permisions.js';
 import './locale.js';
 import './device.js';
 import './reload.js';
-import './videortc.js';
+//import './videortc.js';
 import './position.js';
 import './routes.js';
 import './push.js';

@@ -50,7 +50,6 @@
       <a class="item item-stable item-icon-right" href="{{pathFor 'listPoi'}}" data-ion-menu-close>{{_ "poi"}} <i class="icon fa fa-map-marker"></i></a>
       <a class="item item-stable item-icon-right" href="{{pathFor 'listClassified'}}" data-ion-menu-close>{{_ "classified"}} <i class="icon fa fa-bullhorn"></i></a>
       <a class="item item-stable item-icon-right" href="{{pathFor 'searchGlobal'}}" data-ion-menu-close>{{_ "search"}} {{> ionIcon icon="search"}}</a>
-      <a class="item item-stable item-icon-right" href="{{pathFor 'videoRTC'}}" data-ion-menu-close>{{_ "video call"}} <i class="icon fa fa-video-camera"></i></a>
 
       {{#if isCordova}}
       <a class="item item-stable item-icon-right" href="{{pathFor 'contacts'}}" data-ion-menu-close>{{_ "Invitations contacts"}} {{> ionIcon icon="android-contacts"}}</a>
@@ -58,10 +57,6 @@
       <a class="item item-stable item-icon-right" href="{{pathFor 'notifications'}}" data-ion-menu-close>{{_ "Notifications"}} <span class="badge badge-positive">{{#if notificationsCount}}{{notificationsCount}}{{else}}0{{/if}}</span></a>
       {{#if isCordova}}
       <a class="item item-stable item-icon-right scanner" href="" data-ion-menu-close>{{_ "scanner QR"}} {{> ionIcon icon="ios-barcode"}}</a>
-      {{/if}}
-      
-      {{#if equals currentUser._id '55ed9107e41d75a41a558524'}}
-      <a class="item item-stable item-icon-right" href="{{pathFor 'gamesDetail' _id='c33d55fe31905a689c7cfe68' }}" data-ion-menu-close>{{_ "Games"}} <i class="icon fa fa-play"></i></a>
       {{/if}}
 
       {{> settings}}

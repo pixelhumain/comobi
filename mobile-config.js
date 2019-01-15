@@ -4,8 +4,8 @@ App.info({
   description: 'communecter mobile',
   author: 'thomas',
   email: 'thomas.craipeau@gmail.com',
-  version: '0.0.20',
-  buildNumber: '120',
+  version: '0.0.22',
+  buildNumber: '122',
 });
 
 App.setPreference('android-targetSdkVersion', '26');
@@ -76,7 +76,7 @@ App.launchScreens({
 </platform>`); */
 
 App.addResourceFile('google-services.json', 'google-services.json', 'android');
-App.addResourceFile('GoogleService-Info.plist', 'Communecter/Resources/GoogleService-Info.plist', 'ios');
+App.addResourceFile('GoogleService-Info.plist', 'GoogleService-Info.plist', 'ios');
 
 App.setPreference('StatusBarOverlaysWebView', 'false');
 App.setPreference('StatusBarBackgroundColor', '#324553');
@@ -94,6 +94,9 @@ App.appendToConfig(`<platform name="ios">
     </config-file>
     <config-file platform="ios" target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
       <string>Your current location is used to show offers and services that are nearby</string>
+    </config-file>
+    <config-file platform="ios" target="*-Info.plist" parent="NSContactsUsageDescription">
+      <string>Your current contacts is used to invite your friends who have an email</string>
     </config-file>
   </platform>`);
 
