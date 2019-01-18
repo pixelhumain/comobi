@@ -75,7 +75,7 @@ App.launchScreens({
   <resource-file src="google-services.json" target="google-services.json" />
 </platform>`); */
 
-App.addResourceFile('google-services.json', 'google-services.json', 'android');
+App.addResourceFile('google-services.json', 'app/google-services.json', 'android');
 App.addResourceFile('GoogleService-Info.plist', 'GoogleService-Info.plist', 'ios');
 
 App.setPreference('StatusBarOverlaysWebView', 'false');
