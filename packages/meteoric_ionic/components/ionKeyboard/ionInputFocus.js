@@ -1,5 +1,5 @@
 Meteor.startup(function() {
-  if (Meteor.isCordova) {
+  if (Meteor.isCordova && Platform.isAndroid()) {
 
     var getScrollContainer = function($element) {
       return $($element.parents('.content.overflow-scroll').get(0));

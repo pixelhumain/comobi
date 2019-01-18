@@ -4,8 +4,8 @@ App.info({
   description: 'communecter mobile',
   author: 'thomas',
   email: 'thomas.craipeau@gmail.com',
-  version: '0.0.22',
-  buildNumber: '122',
+  version: '0.0.26',
+  buildNumber: '126',
 });
 
 App.setPreference('android-targetSdkVersion', '26');
@@ -84,16 +84,16 @@ App.setPreference('Orientation', 'portrait');
 
 App.appendToConfig(`<platform name="ios">
     <config-file platform="ios" target="*-Info.plist" parent="NSPhotoLibraryUsageDescription">
-      <string>Communecter requires your camera for taking pictures of your products</string>
+      <string>Communecter requires your camera for taking pictures</string>
     </config-file>
     <config-file platform="ios" target="*-Info.plist" parent="NSCameraUsageDescription">
-      <string>Communecter requires your camera for taking pictures of your products</string>
+      <string>Communecter requires your camera for taking pictures</string>
     </config-file>
     <config-file platform="ios" target="*-Info.plist" parent="NSLocationUsageDescription">
-      <string>Your current location is used to show offers and services that are nearby</string>      
+      <string>Your current location is used to show services that are nearby</string>      
     </config-file>
     <config-file platform="ios" target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
-      <string>Your current location is used to show offers and services that are nearby</string>
+      <string>Your current location is used to show services that are nearby</string>
     </config-file>
     <config-file platform="ios" target="*-Info.plist" parent="NSContactsUsageDescription">
       <string>Your current contacts is used to invite your friends who have an email</string>

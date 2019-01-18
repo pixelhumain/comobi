@@ -8,7 +8,9 @@ import { TAPi18n } from 'meteor/tap:i18n';
 import { _ } from 'meteor/underscore';
 import { $ } from 'meteor/jquery';
 import { HTTP } from 'meteor/http';
+import { Blaze } from 'meteor/blaze';
 import { Counter } from 'meteor/natestrauser:publish-performant-counts';
+import MarkdownIt from 'markdown-it';
 
 // collections
 import { ActivityStream } from '../../api/activitystream.js';
@@ -286,6 +288,24 @@ Meteor.startup(function () {
     }
   });
   
+  Template.registerHelper('markdown', new Blaze.Template('markdown', function () {
+      const view = this;
+      let content = '';
+
+      if (view.templateContentBlock) {
+        content = Blaze._toText(view.templateContentBlock, HTML.TEXTMODE.STRING);
+        //content = view.templateContentBlock;
+      }
+      const md = new MarkdownIt('default',{
+        html: true,
+        linkify: true,
+        typographer: true
+      });
+      
+    const result = md.render(content);
+      return HTML.Raw(result);
+    }));
+
   Template.registerHelper('SchemasFollowRest', SchemasFollowRest);
   Template.registerHelper('SchemasInviteAttendeesEventRest', SchemasInviteAttendeesEventRest);
   Template.registerHelper('SchemasInvitationsRest', SchemasInvitationsRest);
