@@ -10,14 +10,14 @@
       <h2 class="homestead">{{name}}</h2>
 
       {{#if equals scopeVar 'events'}}
-      {{> scopeCreator organizerType=organizerType organizerId=organizerId organizer=organizerEvent creator=creatorProfile }}
+      {{> scopeCreator organizer=organizerEvent creator=creatorProfile }}
       {{> scopeEventsParent eventsParent=eventsParent }}
       {{else if equals scopeVar 'projects'}}
-      {{> scopeCreator organizerType=parentType organizerId=parentId organizer=organizerProject creator=creatorProfile }}
+      {{> scopeCreator organizer=organizerProject creator=creatorProfile }}
       {{else if equals scopeVar 'poi'}}
-      {{> scopeCreator organizerType=parentType organizerId=parentId organizer=organizerPoi creator=creatorProfile }}
+      {{> scopeCreator organizer=organizerPoi creator=creatorProfile }}
       {{else if equals scopeVar 'classified'}}
-      {{> scopeCreator organizerType=parentType organizerId=parentId organizer=organizerClassified creator=creatorProfile }}
+      {{> scopeCreator organizer=organizerClassified creator=creatorProfile }}
       {{else}}
       {{#if creatorProfile}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
       {{/if}}
@@ -83,14 +83,17 @@
         {{/if}}
         {{#if modified}}<i class="icon ion-android-alarm-clock"></i> {{_ "modified"}} : {{livestamp modified}}<br>{{/if}}
         {{#if preferences}}
-        {{#if equals preferences.isOpenData 'true'}}
+        {{#if preferenceTrue preferences.isOpenData}}
         <span class="icon fa-stack opendata" style="font-size:14px;width:14px;">
                 <i class="icon fa fa-database main fa-stack-1x dark"></i>
                 <i class="icon fa fa-share-alt  mainTop fa-stack-1x light" style="text-shadow: 0px 0px 2px rgb(15,15,15);"></i>
               </span>
         {{/if}}
-        {{#if equals preferences.isOpenEdition 'true'}}
+        {{#if preferenceTrue preferences.isOpenEdition}}
         <i class="icon fa fa-creative-commons dark"></i>
+        {{/if}}
+        {{#if preferenceTrue preferences.private}}
+        <i class="icon fa fa-lock positive"></i> {{_ "Private"}}
         {{/if}}
         {{/if}}
       </p>
@@ -241,8 +244,14 @@
 </template>
 
 <template name="scopeCreator">
-{{#if organizerType}}
-{{#if organizer}}<p>{{_ "organizer"}} : <a href="{{pathFor 'detailList' _id=organizerId scope=organizerType}}" class="positive">{{organizer.name}}</a></p>{{/if}}
+{{#if organizer}}
+<p>{{_ "organizer"}} :
+{{#each organizerItem in organizer}}
+{{#each organizerItemValue in organizerItem.values}}
+ <a href="{{pathFor 'detailList' _id=organizerItemValue._id._str scope=organizerItem.type}}" class="positive">{{organizerItemValue.name}}</a>
+{{/each}}
+{{/each}}
+</p>
 {{else}}
 {{#if creatorProfile}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
 {{/if}}
@@ -250,8 +259,15 @@
 
 <template name="scopeEventsParent">
 {{#if eventsParent}}
-<p>{{_ "on the program of"}} <a href="{{pathFor 'detailList' _id=eventsParent._id._str scope='events'}}" class="positive">{{eventsParent.name}}</a></p>
+<p>{{_ "on the program of"}} :
+{{#each organizerItem in eventsParent}}
+  {{#each organizerItemValue in organizerItem.values}}
+<a href="{{pathFor 'detailList' _id=organizerItemValue._id._str scope=organizerItem.type}}" class="positive">{{organizerItemValue.name}}</a>
+  {{/each}}
+  {{/each}}
+</p>
 {{/if}}
+
 </template>
 
 

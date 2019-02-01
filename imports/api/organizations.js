@@ -17,7 +17,7 @@ import { Projects } from './projects.js';
 import { Poi } from './poi.js';
 import { Rooms } from './rooms.js';
 import { ActivityStream } from './activitystream.js';
-import { queryLink, queryLinkType, queryLinkToBeValidated, searchQuery, queryOptions } from './helpers.js';
+import { queryLink, queryLinkType, arrayLinkParent, queryLinkToBeValidated, searchQuery, queryOptions } from './helpers.js';
 
 export const Organizations = new Mongo.Collection('organizations', { idGeneration: 'MONGO' });
 
@@ -356,31 +356,41 @@ Organizations.helpers({
     return this.listMembersOrganizations(search, selectorga) && this.listMembersOrganizations(search, selectorga).count();
   },
   listProjectsCreator () {
-    const query = {};
-    query.parentId = this._id._str;
-    queryOptions.fields.parentId = 1;
-    return Projects.find(query, queryOptions);
+    if (this.links && this.links.projects) {
+      const projectIds = arrayLinkParent(this.links.projects, 'projects');
+      const query = {};
+      query._id = {
+        $in: projectIds,
+      };
+      // queryOptions.fields.parentId = 1;
+      return Projects.find(query, queryOptions);
+    }
   },
   countProjectsCreator () {
     return this.listProjectsCreator() && this.listProjectsCreator().count();
   },
   listPoiCreator () {
     const query = {};
-    query.parentId = this._id._str;
+    query[`parent.${this._id._str}`] = {
+      $exists: true
+    };
     return Poi.find(query);
   },
   countPoiCreator () {
     return this.listPoiCreator() && this.listPoiCreator().count();
   },
   listEventsCreator () {
-    const query = {};
-    query.organizerId = this._id._str;
-    queryOptions.fields.organizerId = 1;
-    queryOptions.fields.parentId = 1;
-    queryOptions.fields.startDate = 1;
-    queryOptions.fields.startDate = 1;
-    queryOptions.fields.geo = 1;
-    return Events.find(query, queryOptions);
+    if (this.links && this.links.events) {
+      const eventsIds = arrayLinkParent(this.links.events, 'events');
+      const query = {};
+      query._id = {
+        $in: eventsIds,
+      };
+      queryOptions.fields.startDate = 1;
+      queryOptions.fields.startDate = 1;
+      queryOptions.fields.geo = 1;
+      return Events.find(query, queryOptions);
+    }
   },
   countEventsCreator () {
     // return this.links && this.links.events && _.size(this.links.events);

@@ -111,6 +111,19 @@ class PushHandle extends EventState {
                 data.payload = EJSON.fromJSONValue(data.additionalData.ejson);
                 this.log('Push.EJSON.Payload:', data.payload);
               }
+            } else {
+              if (data.additionalData === '' + data.additionalData) {
+                try {
+                  data.payload = EJSON.parse(data.additionalData);
+                  this.log('Push.Parsed.EJSON.Payload:', data.payload);
+                } catch (err) {
+                  this.log('Push.Parsed.EJSON.Payload.Error', err.message, data
+                    .payload);
+                }
+              } else {
+                data.payload = EJSON.fromJSONValue(data.additionalData);
+                this.log('Push.EJSON.Payload:', data.payload);
+              }
             }
 
             // Emit alert event - this requires the app to be in forground

@@ -97,3 +97,22 @@
 
   {{/ionBody}}
 </template>
+
+<template name="forceUpdateAvailable">
+  {{#if forceUpdateBuild}}
+  <div class="item item-assertive item-text-wrap item-divider">
+    Votre version {{AppVersion}} est dépassé, vous devez mettre à jour votre application depuis le store avec la
+    version <a href="{{urlApp}}" class="positive-url">{{Cordovaversion.buildVersion}}</a>
+  </div>
+  {{/if}}
+</template>
+
+<template name="updateAvailable">
+  {{#if isAndroid}}
+  {{#if updateAvailable}}
+  <div class="item item-divider">
+    <a class="button button-assertive button-block" reloader-update>Appuyez ici pour mettre à jour</a>
+  </div>
+  {{/if}}
+  {{/if}}
+</template>

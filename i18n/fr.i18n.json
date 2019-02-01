@@ -158,7 +158,8 @@
   "activitystream":{
     "verb":{
       "share":"a partagé",
-      "create":"a créé"
+      "create":"a créé",
+      "publish": "a publié"
     },
     "type":{
       "organizations":"une organisation",
@@ -279,7 +280,13 @@
           "in_a_news": "dans un post",
           "in_a_comment": "dans un commentaire",
           "with": "avec",
-          "and": "et"
+          "and": "et",
+          "who_added_a_chat_on_where": "__who__ a ajouté une conversation sur __where__",
+          "who_react_on_your_news_what": "__who__ ont réagi sur votre publication __what__",
+          "who_react_on_a_news_what_from_where": "__who__ ont réagi sur la publication __what__ de __where__",
+          "who_reacts_on_a_news_what_from_where": "__who__ a réagi sur la publication __what__ de __where__",
+          "who_added_new_projects_on_where": "__who__ vous invite à rejoindre __where__",
+          "who_commented_on_resolution_what_in_where": "__who__ a commenté la résolution __what__ dans __where__"
         }
   },
   "on the program of":"au programme de:",
@@ -867,6 +874,9 @@
       },
       "endDate":{
         "label": "Date de fin"
+      },
+      "public": {
+        "label": "Rendre le projet visible publiquement"
       },
       "country":{
         "label": "Pays",

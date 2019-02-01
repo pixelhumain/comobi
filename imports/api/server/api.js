@@ -6,8 +6,9 @@ export const apiCommunecter = {};
 
 const callPixelRest = (token, method, controller, action, post) => {
   post['X-Auth-Token'] = token;
+  // post['json'] = 1;
   // console.log(post);
-  const responsePost = HTTP.call(method, `${Meteor.settings.endpoint}/${Meteor.settings.module}/${controller}/${action}`, {
+  const responsePost = HTTP.call(method, `${Meteor.settings.endpoint}/${controller}/${action}`, {
     headers: {
       'X-Auth-Token': token,
       Origin: 'https://co-mobile.communecter.org',
@@ -31,8 +32,9 @@ const callPixelRest = (token, method, controller, action, post) => {
 
 const callPixelMethodRest = (token, method, controller, action, post) => {
   post['X-Auth-Token'] = token;
+  post['json'] = 1;
   // console.log(post);
-  const responsePost = HTTP.call(method, `${Meteor.settings.endpoint}/${Meteor.settings.module}/${controller}/${action}`, {
+  const responsePost = HTTP.call(method, `${Meteor.settings.endpoint}/${controller}/${action}`, {
     headers: {
       'X-Auth-Token': token,
       Origin: 'https://co-mobile.communecter.org',
@@ -134,10 +136,64 @@ const callPixelUploadRest = (token, folder, ownerId, input, dataURI, name) => {
   }
 };
 
+const callPixelUploadSaveRest = (token, folder, ownerId, input, dataURI, name, doctype, contentKey, params = null) => {
+  const fileBuf = dataUriToBuffer(dataURI);
+  const formData = {};
+  formData['X-Auth-Token'] = token;
+  formData[input] = {
+    value: fileBuf,
+    options: {
+      filename: name,
+      contentType: 'image/jpeg',
+    },
+  };
+  if (params){
+    if (params['parentId']){
+      formData['parentId'] = params['parentId'];
+    }
+    if (params['parentType']) {
+      formData['parentType'] = params['parentType'];
+    }
+    if (input) {
+      formData['formOrigin'] = input;
+    }
+  }
+
+  const responsePost = request.postSync(`${Meteor.settings.endpoint}/${Meteor.settings.module}/document/uploadSave/dir/communecter/folder/${folder}/ownerId/${ownerId}/input/${input}/docType/${doctype}/contentKey/${contentKey}`, {
+    formData,
+    jar: true,
+  });
+  responsePost.data = JSON.parse(responsePost.response.body);
+  if (responsePost && responsePost.data && responsePost.data.success === true) {
+    return responsePost.data;
+  }
+  if (responsePost && responsePost.data && responsePost.data.msg) {
+    throw new Meteor.Error('error_call', responsePost.data.msg);
+  } else {
+    throw new Meteor.Error('error_server', 'error server');
+  }
+};
+
+
 apiCommunecter.postUploadPixel = (folder, ownerId, input, dataBlob, name) => {
   const userC = Meteor.users.findOne({ _id: Meteor.userId() });
   if (userC && userC.services && userC.services.resume && userC.services.resume.loginTokens && userC.services.resume.loginTokens[0] && userC.services.resume.loginTokens[0].hashedToken) {
     const retour = callPixelUploadRest(userC.services.resume.loginTokens[0].hashedToken, folder, ownerId, input, dataBlob, name);
+    if (retour && retour.name) {
+      return retour;
+    }
+    throw new Meteor.Error('Error upload');
+  } else {
+    throw new Meteor.Error('Error identification');
+  }
+};
+
+apiCommunecter.postUploadSavePixel = (folder, ownerId, input, dataBlob, name, doctype, contentKey, params = null) => {
+  const userC = Meteor.users.findOne({
+    _id: Meteor.userId()
+  });
+  if (userC && userC.services && userC.services.resume && userC.services.resume.loginTokens && userC.services.resume.loginTokens[0] && userC.services.resume.loginTokens[0].hashedToken) {
+    const retour = callPixelUploadSaveRest(userC.services.resume.loginTokens[0].hashedToken, folder, ownerId, input, dataBlob, name, doctype, contentKey, params);
     if (retour && retour.name) {
       return retour;
     }

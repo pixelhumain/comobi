@@ -10,7 +10,13 @@ Meteor.startup(() => {
 
   Template.registerHelper('distance', function (coordinates) {
     const geo = position.getLatlngObject();
-    if (geo && geo.latitude && coordinates) {
+
+    if (coordinates && coordinates[0]) {
+      coordinates.latitude = [1];
+      coordinates.longitude = [0];
+    }
+
+    if (geo && geo.latitude && coordinates && coordinates.latitude) {
       const rmetre = geolib.getDistance(
         { latitude: parseFloat(coordinates.latitude),
           longitude: parseFloat(coordinates.longitude) },

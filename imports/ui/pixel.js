@@ -171,3 +171,11 @@ Template.layout.helpers({
     return ActivityStream.api.isUnread();
   },
 });
+
+Template.forceUpdateAvailable.events({
+  'click .positive-url'(event) {
+    event.preventDefault();
+    const url = event.currentTarget.getAttribute('href');
+    window.open(url, '_system');
+  },
+});

@@ -101,15 +101,12 @@ Meteor.startup(function () {
     Push.addListener('message', function(notification) {
       function alertDismissed(buttonIndex) {
         if (buttonIndex === 1) {
-          const payload = JSON.parse(notification.payload);
-          if (payload.url) {
-            // Meteor.call('markRead',notification.payload.notifId);
-            // Meteor.call('registerClick', notification.payload.notifId);
-            // Router.go(notification.payload.link);
+          //const payload = JSON.parse(notification.payload);
+          //if (payload.url) {
+          //  Router.go('/notifications');
+          //} else {
             Router.go('/notifications');
-          } else {
-            Router.go('/notifications');
-          }
+          //}
         }
       }
       window.confirm(notification.message, alertDismissed, 'notifications', ['Voir', 'fermer']);
