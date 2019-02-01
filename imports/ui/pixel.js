@@ -16,6 +16,13 @@ Template.layout.onCreated(function() {
 });
 
 Template.layout.events({
+  'click [target=_blank]'(event) {
+    event.preventDefault();
+    if (Meteor.isCordova) {
+      const url = $(event.currentTarget).attr('href');
+      cordova.InAppBrowser.open(url, '_system');
+    }
+  },
   'click [target=_system]'(event) {
     event.preventDefault();
     if (Meteor.isCordova) {
@@ -162,5 +169,13 @@ Template.layout.helpers({
   },
   notifications () {
     return ActivityStream.api.isUnread();
+  },
+});
+
+Template.forceUpdateAvailable.events({
+  'click .positive-url'(event) {
+    event.preventDefault();
+    const url = event.currentTarget.getAttribute('href');
+    window.open(url, '_system');
   },
 });

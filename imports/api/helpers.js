@@ -173,6 +173,355 @@ export const arrayLinkAttendees = (array, type) => {
   return arrayIds;
 };
 
+export const arrayLinkParent = (array, type) => {
+  const arrayIds = Object.keys(array)
+    .filter(k => array[k].type === type)
+    .map(k => new Mongo.ObjectID(k));
+  return arrayIds;
+};
+
+export const arrayParent = (array, arrayType) => {
+  const arrayIds = Object.keys(array)
+    .filter(k => _.contains(arrayType, array[k].type))
+    .map(k => new Mongo.ObjectID(k));
+  return arrayIds;
+};
+
+
+export const arrayChildrenParent = (scope, parentAuthorise, scopeParent = null, fields = {
+  name: 1,
+  links: 1,
+  profilThumbImageUrl: 1,
+  preferences: 1,
+}) => {
+  const childrenParent = [];
+
+  if (scope === 'events') {
+    // sous events
+    const parentEventPush = {
+      find(scopeD) {
+        // console.log(scopeD);
+        if (scopeD.parent) {
+          const arrayIdsParent = arrayLinkParent(scopeD.parent, 'events');
+          // console.log(arrayIdsParent);
+          const collectionType = nameToCollection('events');
+
+          let query = {};
+          query.$or = [];
+          query.$or.push({
+            _id: {
+              $in: arrayIdsParent,
+            },
+            'preferences.private': false,
+          });
+          query = queryOrPrivatescopeIds(query, 'attendees', arrayIdsParent, Meteor.userId());
+
+          return collectionType.find(query, {
+            fields,
+          });
+        }
+      },
+    };
+    childrenParent.push(parentEventPush);
+  }
+
+  parentAuthorise.forEach((parent) => {
+    if (scope === 'events') {
+      const parentPush = {
+        find(scopeD) {
+          // console.log(scopeD);
+          if (scopeD.organizer) {
+            const arrayIdsParent = arrayLinkParent(scopeD.organizer, parent);
+            // console.log(arrayIdsParent);
+            const collectionType = nameToCollection(parent);
+            let query = {};
+            if (_.contains(['events', 'projects', 'organizations'], parent)) {
+              query.$or = [];
+              query.$or.push({
+                _id: {
+                  $in: arrayIdsParent,
+                },
+                'preferences.private': false,
+              });
+
+              if (parent === 'projects') {
+                query = queryOrPrivatescopeIds(query, 'contributors', arrayIdsParent, Meteor.userId());
+              } else if (parent === 'organizations') {
+                query = queryOrPrivatescopeIds(query, 'members', arrayIdsParent, Meteor.userId());
+              } else if (parent === 'events') {
+                query = queryOrPrivatescopeIds(query, 'attendees', arrayIdsParent, Meteor.userId());
+              }
+            } else {
+              query._id = {
+                _id: {
+                  $in: arrayIdsParent,
+                },
+              };
+            }
+
+            return collectionType.find(query, {
+              fields,
+            });
+          }
+        },
+      };
+
+      childrenParent.push(parentPush);
+    } else {
+      const parentPush = {
+        find(scopeD) {
+          // console.log(scopeD);
+          if (scopeParent) {
+            if (_.contains(scopeParent, scope)) {
+              if (scopeD.parent) {
+                const arrayIdsParent = arrayLinkParent(scopeD.parent, parent);
+                // console.log(arrayIdsParent);
+                const collectionType = nameToCollection(parent);
+                let query = {};
+                if (_.contains(['events', 'projects', 'organizations'], parent)) {
+                  query.$or = [];
+                  query.$or.push({
+                    _id: {
+                      $in: arrayIdsParent,
+                    },
+                    'preferences.private': false,
+                  });
+
+                  if (parent === 'projects') {
+                    query = queryOrPrivatescopeIds(query, 'contributors', arrayIdsParent, Meteor.userId());
+                  } else if (parent === 'organizations') {
+                    query = queryOrPrivatescopeIds(query, 'members', arrayIdsParent, Meteor.userId());
+                  } else if (parent === 'events') {
+                    query = queryOrPrivatescopeIds(query, 'attendees', arrayIdsParent, Meteor.userId());
+                  }
+                } else {
+                  query._id = {
+                    _id: {
+                      $in: arrayIdsParent,
+                    },
+                  };
+                }
+                return collectionType.find(query, {
+                  fields,
+                });
+              }
+              if (scopeD.parentType && scopeD.parentId && _.contains(parentAuthorise, scopeD.parentType)) {
+                const collectionType = nameToCollection(scopeD.parentType);
+                return collectionType.find({
+                  _id: new Mongo.ObjectID(scopeD.parentId),
+                }, {
+                  fields,
+                });
+              }
+            }
+          } else {
+            if (scopeD.parent) {
+              const arrayIdsParent = arrayLinkParent(scopeD.parent, parent);
+              // console.log(arrayIdsParent);
+              const collectionType = nameToCollection(parent);
+              let query = {};
+              if (_.contains(['events', 'projects', 'organizations'], parent)) {
+                query.$or = [];
+                query.$or.push({
+                  _id: {
+                    $in: arrayIdsParent,
+                  },
+                  'preferences.private': false,
+                });
+
+                if (parent === 'projects') {
+                  query = queryOrPrivatescopeIds(query, 'contributors', arrayIdsParent, Meteor.userId());
+                } else if (parent === 'organizations') {
+                  query = queryOrPrivatescopeIds(query, 'members', arrayIdsParent, Meteor.userId());
+                } else if (parent === 'events') {
+                  query = queryOrPrivatescopeIds(query, 'attendees', arrayIdsParent, Meteor.userId());
+                }
+              } else {
+                query._id = {
+                  _id: {
+                    $in: arrayIdsParent,
+                  },
+                };
+              }
+              return collectionType.find(query, {
+                fields,
+              });
+            }
+            if (scopeD.parentType && scopeD.parentId && _.contains(parentAuthorise, scopeD.parentType)) {
+              const collectionType = nameToCollection(scopeD.parentType);
+              return collectionType.find({
+                _id: new Mongo.ObjectID(scopeD.parentId),
+              }, {
+                fields,
+              });
+            }
+          }
+        },
+      };
+      childrenParent.push(parentPush);
+    }
+  });
+
+  return childrenParent;
+};
+
+export const isAdminArray = (organizerArray, citoyen) => {
+  let isAdmin = false;
+  if (organizerArray) {
+    organizerArray.forEach((parent) => {
+      // parent.type
+      parent.values.forEach((value) => {
+        // value._id
+        if (parent.type === 'events' && citoyen.links && citoyen.links.events && citoyen.links.events[value._id._str] && citoyen.links.events[value._id._str].isAdmin) {
+          isAdmin = true;
+        } else if (parent.type === 'projects' && citoyen.links && citoyen.links.projects && citoyen.links.projects[value._id._str] && citoyen.links.projects[value._id._str].isAdmin) {
+          isAdmin = true;
+        } else if (parent.type === 'organizations' && citoyen.links && citoyen.links.memberOf && citoyen.links.memberOf[value._id._str] && citoyen.links.memberOf[value._id._str].isAdmin) {
+          isAdmin = true;
+        }
+      });
+    });
+  }
+  return isAdmin;
+};
+
+export const arrayOrganizerParent = (arrayParent, parentAuthorise, fields = {
+  name: 1,
+  links: 1,
+  preferences: 1,
+}) => {
+  const childrenParent = [];
+  parentAuthorise.forEach((parent) => {
+    const arrayIds = arrayLinkParent(arrayParent, parent);
+    const collectionType = nameToCollection(parent);
+    const arrayType = collectionType.find({
+      _id: {
+        $in: arrayIds,
+      },
+    }, {
+      fields,
+    }).fetch();
+    if (arrayType && arrayType.length > 0) {
+      childrenParent.push({
+        type: parent,
+        values: arrayType,
+      });
+    }
+  });
+  return childrenParent;
+};
+
+export const queryOrPrivateScopeLinks = (scope, scopeId) => {
+  const query = {};
+  query.$or = [];
+  const queryOrDefault = {};
+  queryOrDefault['preferences.private'] = false;
+  queryOrDefault[`links.${scope}.${scopeId}`] = { $exists: true };
+  // queryOrDefault[`links.contributors.${this._id._str}.toBeValidated`] = { $exists: false };
+  // queryOrDefault[`links.contributors.${this._id._str}.isInviting`] = { $exists: false };
+  query.$or.push(queryOrDefault);
+  const queryOrDefaultVide = {};
+  queryOrDefaultVide['preferences.private'] = { $exists: false };
+  queryOrDefaultVide[`links.${scope}.${scopeId}`] = { $exists: true };
+  // queryOrDefaultVide[`links.contributors.${this._id._str}.toBeValidated`] = { $exists: false };
+  // queryOrDefaultVide[`links.contributors.${this._id._str}.isInviting`] = { $exists: false };
+  query.$or.push(queryOrDefaultVide);
+  // private userId validate
+  const queryOrPrivate = {};
+  queryOrPrivate['preferences.private'] = true;
+  queryOrPrivate[`links.${scope}.${scopeId}`] = { $exists: true };
+  queryOrPrivate[`links.${scope}.${scopeId}.toBeValidated`] = { $exists: false };
+  queryOrPrivate[`links.${scope}.${scopeId}.isInviting`] = { $exists: false };
+  queryOrPrivate[`links.${scope}.${Meteor.userId()}`] = { $exists: true };
+  queryOrPrivate[`links.${scope}.${Meteor.userId()}.toBeValidated`] = { $exists: false };
+  query.$or.push(queryOrPrivate);
+  // private userId IsInviting
+  const queryOrPrivateIsInviting = {};
+  queryOrPrivateIsInviting['preferences.private'] = true;
+  queryOrPrivateIsInviting[`links.${scope}.${scopeId}`] = { $exists: true };
+  queryOrPrivateIsInviting[`links.${scope}.${scopeId}.toBeValidated`] = { $exists: false };
+  queryOrPrivateIsInviting[`links.${scope}.${scopeId}.isInviting`] = { $exists: false };
+  queryOrPrivateIsInviting[`links.${scope}.${Meteor.userId()}`] = { $exists: true };
+  queryOrPrivateIsInviting[`links.${scope}.${Meteor.userId()}.isInviting`] = { $exists: true };
+  query.$or.push(queryOrPrivateIsInviting);
+  return query;
+};
+
+export const queryOrPrivateScopeLinksIds = (queryStart, scope) => {
+  const query = {};
+  query.$or = [];
+  const queryOrDefault = { ...queryStart };
+  queryOrDefault['preferences.private'] = false;
+  query.$or.push(queryOrDefault);
+  const queryOrDefaultVide = { ...queryStart };
+  queryOrDefaultVide['preferences.private'] = { $exists: false };
+  query.$or.push(queryOrDefaultVide);
+  // private userId validate
+  const queryOrPrivate = { ...queryStart };
+  queryOrPrivate['preferences.private'] = true;
+  queryOrPrivate[`links.${scope}.${Meteor.userId()}`] = { $exists: true };
+  queryOrPrivate[`links.${scope}.${Meteor.userId()}.toBeValidated`] = { $exists: false };
+  query.$or.push(queryOrPrivate);
+  // private userId IsInviting
+  const queryOrPrivateIsInviting = { ...queryStart };
+  queryOrPrivateIsInviting['preferences.private'] = true;
+  queryOrPrivateIsInviting[`links.${scope}.${Meteor.userId()}`] = { $exists: true };
+  queryOrPrivateIsInviting[`links.${scope}.${Meteor.userId()}.isInviting`] = { $exists: true };
+  query.$or.push(queryOrPrivateIsInviting);
+  // console.log(JSON.stringify(query));
+  return query;
+};
+
+export const queryOrPrivateScope = (query, scope, scopeId, userId) => {
+  const queryOrPrivate = {};
+  queryOrPrivate._id = new Mongo.ObjectID(scopeId);
+  queryOrPrivate['preferences.private'] = true;
+  queryOrPrivate[`links.${scope}.${userId}`] = {
+    $exists: true,
+  };
+  queryOrPrivate[`links.${scope}.${userId}.toBeValidated`] = {
+    $exists: false,
+  };
+  query.$or.push(queryOrPrivate);
+
+  const queryOrPrivateInvite = {};
+  queryOrPrivateInvite._id = new Mongo.ObjectID(scopeId);
+  queryOrPrivateInvite['preferences.private'] = true;
+  queryOrPrivateInvite[`links.${scope}.${userId}`] = {
+    $exists: true,
+  };
+  queryOrPrivateInvite[`links.${scope}.${userId}.isInviting`] = {
+    $exists: true,
+  };
+  query.$or.push(queryOrPrivateInvite);
+  return query;
+};
+
+export const queryOrPrivatescopeIds = (query, scope, scopeIds, userId) => {
+  const queryOrPrivate = {};
+  queryOrPrivate._id = { $in: scopeIds };
+  queryOrPrivate['preferences.private'] = true;
+  queryOrPrivate[`links.${scope}.${userId}`] = {
+    $exists: true,
+  };
+  queryOrPrivate[`links.${scope}.${userId}.toBeValidated`] = {
+    $exists: false,
+  };
+  query.$or.push(queryOrPrivate);
+
+  const queryOrPrivateInvite = {};
+  queryOrPrivateInvite._id = { $in: scopeIds };
+  queryOrPrivateInvite['preferences.private'] = true;
+  queryOrPrivateInvite[`links.${scope}.${userId}`] = {
+    $exists: true,
+  };
+  queryOrPrivateInvite[`links.${scope}.${userId}.isInviting`] = {
+    $exists: true,
+  };
+  query.$or.push(queryOrPrivateInvite);
+  return query;
+};
+
 export const queryLinkAttendees = (array, search, type) => {
   const arrayIds = arrayLinkAttendees(array, type);
   let query = {};
@@ -227,6 +576,13 @@ export const queryOptions = { sort: { name: 1 },
     _id: 1,
     name: 1,
     links: 1,
+    parent: 1,
+    organizer: 1,
+    preferences: 1,
+    parentId: 1,
+    parentType: 1,
+    organizerId: 1,
+    organizerType: 1,
     tags: 1,
     type: 1,
     profilThumbImageUrl: 1,

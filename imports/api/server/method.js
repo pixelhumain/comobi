@@ -171,6 +171,9 @@ const baseDocRetour = (docRetour, doc, scope) => {
     docRetour.endDate = moment(doc.endDate).format();
     docRetour.organizerId = doc.organizerId;
     docRetour.organizerType = doc.organizerType;
+    docRetour.organizer = {};
+    docRetour.organizer[doc.organizerId] = { type: doc.organizerType };
+    docRetour.public = doc.public;
     docRetour.tags = doc.tags ? doc.tags : '';
     if (doc.parentId) {
       docRetour.parentId = doc.parentId;
@@ -200,6 +203,9 @@ const baseDocRetour = (docRetour, doc, scope) => {
     docRetour.endDate = doc.endDate ? moment(doc.endDate).format() : '';
     docRetour.parentId = doc.parentId;
     docRetour.parentType = doc.parentType;
+    docRetour.parent = {};
+    docRetour.parent[doc.parentId] = { type: doc.parentType };
+    docRetour.public = doc.public;
     if (doc.preferences) {
       docRetour.preferences = doc.preferences;
     }
@@ -211,6 +217,8 @@ const baseDocRetour = (docRetour, doc, scope) => {
     docRetour.urls = doc.urls ? doc.urls : '';
     docRetour.parentId = doc.parentId;
     docRetour.parentType = doc.parentType;
+    docRetour.parent = {};
+    docRetour.parent[doc.parentId] = { type: doc.parentType };
     docRetour.type = doc.type;
     docRetour.tags = doc.tags ? doc.tags : '';
   } else if (scope === 'classified') {
@@ -223,6 +231,8 @@ const baseDocRetour = (docRetour, doc, scope) => {
     docRetour.price = doc.price ? doc.price : '';
     docRetour.parentId = doc.parentId;
     docRetour.parentType = doc.parentType;
+    docRetour.parent = {};
+    docRetour.parent[doc.parentId] = { type: doc.parentType };
     docRetour.tags = doc.tags ? doc.tags : '';
   } else {
     if (doc.name) {
@@ -411,6 +421,16 @@ Meteor.methods({
     }
     return false;
   },
+  validateEmail(url) {
+    check(url, String);
+    // console.log(url);
+    const retour = HTTP.get(url);
+    // console.log(JSON.stringify(retour));
+    if (retour) {
+      return true;
+    }
+    throw new Meteor.Error('error-validateEmail');
+  },
   likeScope (newsId, scope) {
     check(newsId, String);
     check(scope, String);
@@ -493,7 +513,12 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
-    const retour = apiCommunecter.postPixel('action', 'addaction', doc);
+    if (doc.status) {
+      doc.details = {};
+      doc.details.status = status;
+    }
+
+    const retour = apiCommunecter.postPixel('co2/action', 'addaction', doc);
     return retour;
   },
   followPersonExist (connectUserId) {
@@ -505,7 +530,7 @@ Meteor.methods({
     }
     const doc = {};
     doc.connectUserId = connectUserId;
-    const retour = apiCommunecter.postPixel('person', 'follows', doc);
+    const retour = apiCommunecter.postPixel('co2/person', 'follows', doc);
     return retour;
   },
   followPerson (doc) {
@@ -516,7 +541,7 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
-    const retour = apiCommunecter.postPixel('person', 'follows', doc);
+    const retour = apiCommunecter.postPixel('co2/person', 'follows', doc);
     return retour;
   },
   saveattendeesEvent (eventId, email, inviteUserId) {
@@ -535,7 +560,7 @@ Meteor.methods({
     } else {
       doc.childId = this.userId;
     }
-    const retour = apiCommunecter.postPixel('link', 'connect', doc);
+    const retour = apiCommunecter.postPixel('co2/link', 'connect', doc);
     return retour;
   },
   followEntity (connectId, parentType, childId) {
@@ -562,7 +587,7 @@ Meteor.methods({
 
     doc.childId = (typeof childId !== 'undefined') ? childId : this.userId;
     doc.parentType = parentType;
-    const retour = apiCommunecter.postPixel('link', 'follow', doc);
+    const retour = apiCommunecter.postPixel('co2/link', 'follow', doc);
     return retour;
   },
   shareEntity (doc) {
@@ -574,7 +599,7 @@ Meteor.methods({
     doc.childType = 'citoyens';
     doc.connectType = 'share';
     doc.childId = this.userId;
-    const retour = apiCommunecter.postPixel('news', 'share', doc);
+    const retour = apiCommunecter.postPixel('news/co', 'share?json=1', doc);
     return retour;
   },
   collectionsAdd (id, type) {
@@ -590,7 +615,7 @@ Meteor.methods({
     doc.id = id;
     doc.type = type;
     doc.collection = 'favorites';
-    const retour = apiCommunecter.postPixel('collections', 'add', doc);
+    const retour = apiCommunecter.postPixel('co2/collections', 'add', doc);
     return retour;
   },
   connectEntity (connectId, parentType, childId, connectType) {
@@ -624,7 +649,7 @@ Meteor.methods({
 
     doc.childId = (typeof childId !== 'undefined') ? childId : this.userId;
     doc.parentType = parentType;
-    const retour = apiCommunecter.postPixel('link', 'connect', doc);
+    const retour = apiCommunecter.postPixel('co2/link', 'connect', doc);
     return retour;
   },
   disconnectEntity (connectId, parentType, connectType, childId, childType) {
@@ -665,7 +690,7 @@ Meteor.methods({
     }
     doc.parentType = parentType;
     console.log(doc);
-    const retour = apiCommunecter.postPixel('link', 'disconnect', doc);
+    const retour = apiCommunecter.postPixel('co2/link', 'disconnect', doc);
     return retour;
   },
   validateEntity (parentId, parentType, childId, childType, linkOption) {
@@ -698,7 +723,7 @@ Meteor.methods({
     doc.childId = childId;
     doc.childType = childType;
     doc.linkOption = linkOption;
-    const retour = apiCommunecter.postPixel('link', 'validate', doc);
+    const retour = apiCommunecter.postPixel('co2/link', 'validate', doc);
     return retour;
   },
   multiConnectEntity (parentId, parentType, connectType, childs) {
@@ -717,7 +742,7 @@ Meteor.methods({
     doc.connectType = connectType;
     doc.parentType = parentType;
     doc.childs = childs;
-    const retour = apiCommunecter.postPixel('link', 'multiconnect', doc);
+    const retour = apiCommunecter.postPixel('co2/link', 'multiconnect', doc);
     return retour;
   },
   inviteattendeesEvent (doc) {
@@ -738,7 +763,7 @@ Meteor.methods({
     insertDoc.childName = doc.invitedUserName;
     insertDoc.connectType = 'attendees';
     insertDoc.childId = '';
-    const retour = apiCommunecter.postPixel('link', 'connect', insertDoc);
+    const retour = apiCommunecter.postPixel('co2/link', 'connect', insertDoc);
     return retour;
   },
   invitationScopeForm (doc) {
@@ -775,7 +800,7 @@ Meteor.methods({
       insertDoc.childId = '';
     }
     console.log(insertDoc);
-    const retour = apiCommunecter.postPixel('link', 'connect', insertDoc);
+    const retour = apiCommunecter.postPixel('co2/link', 'connect', insertDoc);
     return retour;
   },
   invitationScope (parentId, parentType, connectType, childType, childEmail, childName, childId) {
@@ -836,7 +861,7 @@ Meteor.methods({
       }
       doc.childId = childId;
     }
-    const retour = apiCommunecter.postPixel('link', 'connect', doc);
+    const retour = apiCommunecter.postPixel('co2/link', 'connect', doc);
     return retour;
   },
   checkUsername (username) {
@@ -895,7 +920,7 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
-    const retour = apiCommunecter.postPixelMethod('search', 'searchmemberautocomplete', search);
+    const retour = apiCommunecter.postPixelMethod('co2/search', 'searchmemberautocomplete', search);
     // console.log(retour);
     return retour.data;
   },
@@ -916,7 +941,7 @@ indexMin:0
 indexMax:20 */
     search.indexMin = 0;
     search.indexMax = 20;
-    const retour = apiCommunecter.postPixelMethod('search', 'globalautocomplete', search);
+    const retour = apiCommunecter.postPixelMethod('co2/search', 'globalautocomplete', search);
     return retour.data;
   },
   updateSettings (type, value, typeEntity, idEntity) {
@@ -961,7 +986,7 @@ indexMax:20 */
     doc.idEntity = idEntity;
     doc.value = value;
 
-    const retour = apiCommunecter.postPixel('element', 'updatesettings', doc);
+    const retour = apiCommunecter.postPixel('co2/element', 'updatesettings', doc);
     return retour;
   },
   insertComment (doc) {
@@ -973,7 +998,7 @@ indexMax:20 */
     if (!doc.parentCommentId) {
       doc.parentCommentId = '';
     }
-    const retour = apiCommunecter.postPixel('comment', 'save', doc);
+    const retour = apiCommunecter.postPixel('co2/comment', 'save', doc);
     return retour;
   },
   updateComment (modifier, documentId) {
@@ -1012,8 +1037,8 @@ indexMax:20 */
       doc.params.mentions = modifier.$set.mentions;
     }
     console.log(modifier.$set);
-    // const retour = apiCommunecter.postPixel('comment', 'updatefield', doc);
-    const retour = apiCommunecter.postPixel('comment', 'update', doc);
+    // const retour = apiCommunecter.postPixel('co2/comment', 'updatefield', doc);
+    const retour = apiCommunecter.postPixel('co2/comment', 'update', doc);
     return retour;
   },
   deleteComment (commentId) {
@@ -1026,7 +1051,7 @@ indexMax:20 */
       throw new Meteor.Error('not-authorized');
     }
 
-    const retour = apiCommunecter.postPixel('comment', `delete/id/${commentId}`, {});
+    const retour = apiCommunecter.postPixel('co2/comment', `delete/id/${commentId}`, {});
     return retour;
   },
   updateBlock (modifier, documentId) {
@@ -1092,7 +1117,7 @@ indexMax:20 */
       docRetour.pk = documentId;
       docRetour.type = modifier.$set.typeElement;
       // console.log(docRetour);
-      const retour = apiCommunecter.postPixel('element', `updatefields/type/${modifier.$set.typeElement}`, docRetour);
+      const retour = apiCommunecter.postPixel('co2/element', `updatefields/type/${modifier.$set.typeElement}`, docRetour);
       return retour;
     } else if (modifier.$set.block === 'preferences') {
     // console.log('preferences');
@@ -1115,7 +1140,7 @@ indexMax:20 */
     docRetour.block = modifier.$set.block;
     docRetour.typeElement = modifier.$set.typeElement;
     // console.log(docRetour);
-    const retour = apiCommunecter.postPixel('element', 'updateblock', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'updateblock', docRetour);
     return retour;
   },
   updateCitoyen (modifier, documentId) {
@@ -1135,7 +1160,7 @@ indexMax:20 */
 
     // console.log(docRetour);
 
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
   insertNew (doc) {
@@ -1186,7 +1211,9 @@ indexMax:20 */
       }
     }
 
-    const retour = apiCommunecter.postPixel('news', 'save', doc);
+    doc.type = 'news';
+
+    const retour = apiCommunecter.postPixel('news/co', 'save?json=1', doc);
     return retour;
   },
   updateNew (modifier, documentId) {
@@ -1215,7 +1242,7 @@ indexMax:20 */
 
     const doc = modifier.$set;
     doc.idNews = documentId;
-    const retour = apiCommunecter.postPixel('news', 'update', doc);
+    const retour = apiCommunecter.postPixel('news/co', 'update?json=1', doc);
     return retour;
   },
   updateNewOld (modifier, documentId) {
@@ -1233,7 +1260,7 @@ indexMax:20 */
     updateNew.value = modifier.$set.text;
     updateNew.pk = documentId._str;
 
-    const retour = apiCommunecter.postPixel('news', 'updatefield', updateNew);
+    const retour = apiCommunecter.postPixel('news/co', 'updatefield?json=1', updateNew);
     return retour;
   },
   deleteNew (newsId) {
@@ -1267,11 +1294,11 @@ indexMax:20 */
         doc.parentType = newsOne.target.type;
         doc.path = newsDoc.path;
         doc.docId = newsDoc._id._str;
-        apiCommunecter.postPixel('document', `delete/dir/${Meteor.settings.module}/type/${newsOne.target.type}/parentId/${newsOne.target.id}`, doc);
+        apiCommunecter.postPixel('co2/document', `delete/dir/${Meteor.settings.module}/type/${newsOne.target.type}/parentId/${newsOne.target.id}`, doc);
       });
     } */
 
-    const retour = apiCommunecter.postPixel('news', `delete/id/${newsId}`, {});
+    const retour = apiCommunecter.postPixel('news/co', `delete/id/${newsId}?json=1`, {});
     return retour;
   },
   photoNews (photo, str, type, idType, newsId) {
@@ -1311,9 +1338,11 @@ indexMax:20 */
     } else if (!collection.findOne({ _id: new Mongo.ObjectID(idType) }).isAdmin()) {
       throw new Meteor.Error('not-authorized');
     }
-    const retourUpload = apiCommunecter.postUploadPixel(type, idType, 'newsImage', photo, str);
-    if (retourUpload) {
-      const insertDoc = {};
+    const doc = apiCommunecter.postUploadSavePixel(type, idType, 'newsImage', photo, str, 'image', 'slider');
+    // const retourUpload = apiCommunecter.postUploadPixel(type, idType, 'newsImage', photo, str);
+    if (doc) {
+      console.log(doc);
+      /* const insertDoc = {};
       insertDoc.id = idType;
       insertDoc.type = type;
       insertDoc.folder = `${type}/${idType}/album`;
@@ -1321,44 +1350,44 @@ indexMax:20 */
       insertDoc.doctype = 'image';
       insertDoc.name = retourUpload.name;
       insertDoc.size = retourUpload.size;
-      // insertDoc.date = "";
       insertDoc.contentKey = 'slider';
       insertDoc.formOrigin = 'news';
-      // console.log(insertDoc);
-      const doc = apiCommunecter.postPixel('document', 'save', insertDoc);
-      if (doc) {
-        // {"result":true,"msg":"Document bien enregistr\u00e9","id":{"$id":"58df810add04528643014012"},"name":"moon.png"}
-        if (typeof newsId !== 'undefined') {
-          const array = News.findOne({ _id: new Mongo.ObjectID(newsId) });
-          if (array && array.media && array.media.images && array.media.images.length > 0) {
-            // console.log(array.media.images.length);
-            const countImages = array.media.images.length + 1;
-            News.update({ _id: new Mongo.ObjectID(newsId) }, { $set: { 'media.countImages': countImages.toString() }, $push: { 'media.images': doc.data.id.$id } });
-            return { photoret: doc.data.id.$id, newsId };
-          }
-          const media = {};
-          media.type = 'gallery_images';
-          media.countImages = '1';
-          media.images = [doc.data.id.$id];
-          News.update({ _id: new Mongo.ObjectID(newsId) }, { $set: { media } });
-          return { photoret: doc.data.id.$id, newsId };
+      const doc = apiCommunecter.postPixel('co2/document', 'save', insertDoc); */
+
+      // if (doc) {
+      // {"result":true,"msg":"Document bien enregistr\u00e9","id":{"$id":"58df810add04528643014012"},"name":"moon.png"}
+      if (typeof newsId !== 'undefined') {
+        const array = News.findOne({ _id: new Mongo.ObjectID(newsId) });
+        if (array && array.media && array.media.images && array.media.images.length > 0) {
+          // console.log(array.media.images.length);
+          const countImages = array.media.images.length + 1;
+          News.update({ _id: new Mongo.ObjectID(newsId) }, { $set: { 'media.countImages': countImages.toString() }, $push: { 'media.images': doc.id.$id } });
+          return { photoret: doc.id.$id, newsId };
         }
-        const insertNew = {};
-        insertNew.parentId = idType;
-        insertNew.parentType = type;
-        insertNew.text = ' ';
-        insertNew.media = {};
-        insertNew.media.type = 'gallery_images';
-        insertNew.media.countImages = '1';
-        insertNew.media.images = [doc.data.id.$id];
-        const newsIdRetour = Meteor.call('insertNew', insertNew);
-        if (newsIdRetour) {
-          return { photoret: doc.data.id.$id, newsId: newsIdRetour.data.id.$id };
-        }
-        throw new Meteor.Error('photoNews error');
-      } else {
-        throw new Meteor.Error('insertDocument error');
+        const media = {};
+        media.type = 'gallery_images';
+        media.countImages = '1';
+        media.images = [doc.id.$id];
+        News.update({ _id: new Mongo.ObjectID(newsId) }, { $set: { media } });
+        return { photoret: doc.id.$id, newsId };
       }
+      const insertNew = {};
+      insertNew.parentId = idType;
+      insertNew.parentType = type;
+      insertNew.text = ' ';
+      insertNew.media = {};
+      insertNew.media.type = 'gallery_images';
+      insertNew.media.countImages = '1';
+      insertNew.media.images = [doc.id.$id];
+      const newsIdRetour = Meteor.call('insertNew', insertNew);
+      console.log(newsIdRetour);
+      if (newsIdRetour) {
+        return { photoret: doc.id.$id, newsId: newsIdRetour.id.$id };
+      }
+      throw new Meteor.Error('photoNews error');
+      /* } else {
+        throw new Meteor.Error('insertDocument error');
+      } */
     } else {
       throw new Meteor.Error('postUploadPixel error');
     }
@@ -1390,7 +1419,7 @@ indexMax:20 */
 
     // console.log(docRetour);
 
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
   updateEvent (modifier, documentId) {
@@ -1423,7 +1452,7 @@ indexMax:20 */
 
     // console.log(docRetour);
 
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
   insertProject (doc) {
@@ -1452,7 +1481,7 @@ indexMax:20 */
 
     // console.log(docRetour);
 
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
   updateProject (modifier, documentId) {
@@ -1485,7 +1514,7 @@ indexMax:20 */
 
     // console.log(docRetour);
 
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
   insertPoi (doc) {
@@ -1514,7 +1543,7 @@ indexMax:20 */
 
     // console.log(docRetour);
 
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
   updatePoi (modifier, documentId) {
@@ -1547,7 +1576,7 @@ indexMax:20 */
 
     // console.log(docRetour);
 
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
   insertClassified (doc) {
@@ -1576,7 +1605,7 @@ indexMax:20 */
 
     // console.log(docRetour);
 
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
   updateClassified (modifier, documentId) {
@@ -1609,7 +1638,7 @@ indexMax:20 */
 
     // console.log(docRetour);
 
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
   photoScope (scope, photo, str, idType) {
@@ -1626,9 +1655,10 @@ indexMax:20 */
     if (!collection.findOne({ _id: new Mongo.ObjectID(idType) }).isAdmin()) {
       throw new Meteor.Error('not-authorized');
     }
-    const retourUpload = apiCommunecter.postUploadPixel(scope, idType, 'avatar', photo, str);
-    if (retourUpload) {
-      const insertDoc = {};
+    // const retourUpload = apiCommunecter.postUploadPixel(scope, idType, 'avatar', photo, str);
+    const doc = apiCommunecter.postUploadSavePixel(scope, idType, 'avatar', photo, str, 'image', 'profil');
+    if (doc) {
+      /*const insertDoc = {};
       insertDoc.id = idType;
       insertDoc.type = scope;
       insertDoc.folder = `${scope}/${idType}`;
@@ -1638,20 +1668,20 @@ indexMax:20 */
       insertDoc.name = retourUpload.name;
       insertDoc.size = retourUpload.size;
       insertDoc.contentKey = 'profil';
-      const doc = apiCommunecter.postPixel('document', 'save', insertDoc);
+      const doc = apiCommunecter.postPixel('co2/document', 'save', insertDoc);*/
       // console.log(doc);
-      if (doc) {
-        collection.update({ _id: new Mongo.ObjectID(idType) }, { $set: {
+      //if (doc) {
+        /*collection.update({ _id: new Mongo.ObjectID(idType) }, { $set: {
           profilImageUrl: `/upload/communecter/${scope}/${idType}/${retourUpload.name}`,
           profilThumbImageUrl: `/upload/communecter/${scope}/${idType}/thumb/profil-resized.png?=${new Date()}${Math.floor((Math.random() * 100) + 1)}`,
           profilMarkerImageUrl: `/upload/communecter/${scope}/${idType}/thumb/profil-marker.png?=${new Date()}${Math.floor((Math.random() * 100) + 1)}`,
-        } });
-        return doc.data.id.$id;
-      }
-      throw new Meteor.Error('insertDocument error');
-    } else {
+        } });*/
+        return doc.id.$id;
+      //}
+      //throw new Meteor.Error('insertDocument error');
+    } 
       throw new Meteor.Error('postUploadPixel error');
-    }
+    
   },
   insertOrganization (doc) {
     // console.log(doc);
@@ -1667,7 +1697,7 @@ indexMax:20 */
 
     // console.log(docRetour);
 
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
   updateOrganization (modifier, documentId) {
@@ -1687,7 +1717,7 @@ indexMax:20 */
 
     // console.log(docRetour);
 
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
   createUserAccountRest (user) {
@@ -1794,7 +1824,7 @@ indexMax:20 */
     }
     const notif = {};
     notif.id = notifId;
-    const retour = apiCommunecter.postPixel('notification', 'marknotificationasread', notif);
+    const retour = apiCommunecter.postPixel('co2/notification', 'marknotificationasread', notif);
     return retour;
   },
   markSeen (notifId) {
@@ -1804,7 +1834,7 @@ indexMax:20 */
     }
     const notif = {};
     notif.id = notifId;
-    const retour = apiCommunecter.postPixel('notification', 'update', notif);
+    const retour = apiCommunecter.postPixel('co2/notification', 'update', notif);
     return retour;
   },
   alertCount () {
@@ -1825,7 +1855,7 @@ indexMax:20 */
     const notif = {};
     notif.action = 'read';
     notif.all = true;
-    const retour = apiCommunecter.postPixel('notification', 'update', notif);
+    const retour = apiCommunecter.postPixel('co2/notification', 'update', notif);
     return retour;
   },
   allSeen () {
@@ -1835,7 +1865,7 @@ indexMax:20 */
     const notif = {};
     notif.action = 'seen';
     notif.all = true;
-    const retour = apiCommunecter.postPixel('notification', 'update', notif);
+    const retour = apiCommunecter.postPixel('co2/notification', 'update', notif);
     return retour;
   },
   isEmailValid(address) {
@@ -1940,7 +1970,7 @@ export const updateRoles = new ValidatedMethod({
       docRetour.roles = modifier.$set.roles.join(',');
     }
 
-    const retour = apiCommunecter.postPixel('link', 'removerole', docRetour);
+    const retour = apiCommunecter.postPixel('co2/link', 'removerole', docRetour);
     return retour;
   },
 });
@@ -1966,7 +1996,7 @@ export const insertRoom = new ValidatedMethod({
     docRetour.key = 'room';
     docRetour.collection = 'rooms';
 
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
 });
@@ -2004,7 +2034,7 @@ export const updateRoom = new ValidatedMethod({
     docRetour.key = 'room';
     docRetour.collection = 'rooms';
     docRetour.id = _id;
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
 });
@@ -2020,8 +2050,7 @@ export const insertProposal = new ValidatedMethod({
     const room = Rooms.findOne({ _id: new Mongo.ObjectID(doc.idParentRoom) });
     if (!room) {
       throw new Meteor.Error('not-authorized');
-    } else {
-      if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
+    } else if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
         if (room.roles && room.roles.length > 0) {
           const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
           if (roles && room.roles.some(role => roles.includes(role))) {
@@ -2034,7 +2063,6 @@ export const insertProposal = new ValidatedMethod({
       } else {
         throw new Meteor.Error('not-authorized');
       }
-    }
     const docRetour = doc;
     docRetour.majority = doc.majority.toString();
     if (doc.amendementDateEnd) {
@@ -2045,7 +2073,7 @@ export const insertProposal = new ValidatedMethod({
     }
     docRetour.key = 'proposal';
     docRetour.collection = 'proposals';
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
 });
@@ -2107,7 +2135,7 @@ export const updateProposal = new ValidatedMethod({
     docRetour.key = 'proposal';
     docRetour.collection = 'proposals';
     docRetour.id = _id;
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
 });
@@ -2123,8 +2151,7 @@ export const insertAction = new ValidatedMethod({
     const room = Rooms.findOne({ _id: new Mongo.ObjectID(doc.idParentRoom) });
     if (!room) {
       throw new Meteor.Error('not-authorized');
-    } else {
-      if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
+    } else if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
         if (room.roles && room.roles.length > 0) {
           const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
           if (roles && room.roles.some(role => roles.includes(role))) {
@@ -2137,7 +2164,6 @@ export const insertAction = new ValidatedMethod({
       } else {
         throw new Meteor.Error('not-authorized');
       }
-    }
 
     const docRetour = doc;
 
@@ -2155,7 +2181,7 @@ export const insertAction = new ValidatedMethod({
     docRetour.idUserAuthor = this.userId;
     docRetour.key = 'action';
     docRetour.collection = 'actions';
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
 });
@@ -2200,7 +2226,7 @@ export const updateAction = new ValidatedMethod({
     docRetour.key = 'action';
     docRetour.collection = 'actions';
     docRetour.id = _id;
-    const retour = apiCommunecter.postPixel('element', 'save', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
 });
@@ -2222,8 +2248,7 @@ export const insertAmendement = new ValidatedMethod({
       const room = Rooms.findOne({ _id: new Mongo.ObjectID(proposal.idParentRoom) });
       if (!room) {
         throw new Meteor.Error('not-authorized');
-      } else {
-        if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
+      } else if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
           if (room.roles && room.roles.length > 0) {
             const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
             if (roles && room.roles.some(role => roles.includes(role))) {
@@ -2236,7 +2261,6 @@ export const insertAmendement = new ValidatedMethod({
         } else {
           throw new Meteor.Error('not-authorized');
         }
-      }
     }
     const docRetour = doc;
 
@@ -2246,7 +2270,7 @@ export const insertAmendement = new ValidatedMethod({
     txtAmdt:proposition amendement
     typeAmdt:add */
 
-    const retour = apiCommunecter.postPixel('element', 'updateblock', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'updateblock', docRetour);
     return retour;
   },
 });
@@ -2272,7 +2296,7 @@ export const updateAmendement = new ValidatedMethod({
 
     const docRetour = modifier.$set;
     docRetour.id = _id;
-    const retour = apiCommunecter.postPixel('element', 'updateblock', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'updateblock', docRetour);
     return retour;
   },
 });
@@ -2306,8 +2330,7 @@ export const saveVote = new ValidatedMethod({
       const room = Rooms.findOne({ _id: new Mongo.ObjectID(proposal.idParentRoom) });
       if (!room) {
         throw new Meteor.Error('not-authorized');
-      } else {
-        if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
+      } else if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
           if (room.roles && room.roles.length > 0) {
             const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
             if (roles && room.roles.some(role => roles.includes(role))) {
@@ -2320,7 +2343,6 @@ export const saveVote = new ValidatedMethod({
         } else {
           throw new Meteor.Error('not-authorized');
         }
-      }
     }
 
     const docRetour = {};
@@ -2335,7 +2357,7 @@ export const saveVote = new ValidatedMethod({
       }
     }
 
-    const retour = apiCommunecter.postPixel('cooperation', 'savevote', docRetour);
+    const retour = apiCommunecter.postPixel('dda/co', 'savevote', docRetour);
     return retour;
   },
 });
@@ -2351,7 +2373,7 @@ export const assignmeActionRooms = new ValidatedMethod({
       throw new Meteor.Error('not-authorized');
     }
     // TODO verifier si id est une room existante et les droit pour ce l'assigner
-    //id action > recupérer idParentRoom,parentType,parentId > puis roles dans room
+    // id action > recupérer idParentRoom,parentType,parentId > puis roles dans room
     const action = Actions.findOne({ _id: new Mongo.ObjectID(id) });
     if (!action) {
       throw new Meteor.Error('not-authorized');
@@ -2359,8 +2381,7 @@ export const assignmeActionRooms = new ValidatedMethod({
       const room = Rooms.findOne({ _id: new Mongo.ObjectID(action.idParentRoom) });
       if (!room) {
         throw new Meteor.Error('not-authorized');
-      } else {
-        if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
+      } else if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
           if (room.roles && room.roles.length > 0) {
             const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
             if (roles && room.roles.some(role => roles.includes(role))) {
@@ -2373,12 +2394,11 @@ export const assignmeActionRooms = new ValidatedMethod({
         } else {
           throw new Meteor.Error('not-authorized');
         }
-      }
     }
 
     const docRetour = {};
     docRetour.id = id;
-    const retour = apiCommunecter.postPixel('rooms', 'assignme', docRetour);
+    const retour = apiCommunecter.postPixel('co2/actionroom', 'assignme', docRetour);
     return retour;
   },
 });
@@ -2412,7 +2432,7 @@ export const deleteAmendement = new ValidatedMethod({
     const docRetour = {};
     docRetour.numAm = numAm;
     docRetour.idProposal = idProposal;
-    const retour = apiCommunecter.postPixel('cooperation', 'deleteamendement', docRetour);
+    const retour = apiCommunecter.postPixel('dda/co', 'deleteamendement', docRetour);
     return retour;
   },
 });
@@ -2449,7 +2469,7 @@ export const actionsType = new ValidatedMethod({
     docRetour.id = id;
     docRetour.name = name;
     docRetour.value = value;
-    const retour = apiCommunecter.postPixel('element', 'updatefield', docRetour);
+    const retour = apiCommunecter.postPixel('co2/element', 'updatefield', docRetour);
     return retour;
   },
 });

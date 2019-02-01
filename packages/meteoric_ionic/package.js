@@ -5,9 +5,9 @@ Package.describe({
   git: "https://github.com/meteoric/meteor-ionic.git"
 });
 
-Cordova.depends({
+/*Cordova.depends({
   'ionic-plugin-keyboard': '1.0.8'
-});
+});*/
 
 Package.onUse(function(api) {
   api.versionsFrom("1.2");
@@ -54,8 +54,8 @@ Package.onUse(function(api) {
     "components/ionItem/ionItem.html",
     "components/ionItem/ionItem.js",
 
-    "components/ionKeyboard/ionKeyboard.js",
-    "components/ionKeyboard/ionInputFocus.js",
+    //"components/ionKeyboard/ionKeyboard.js",
+    //"components/ionKeyboard/ionInputFocus.js",
 
     "components/ionList/ionList.html",
     "components/ionList/ionList.js",
@@ -133,7 +133,7 @@ Package.onUse(function(api) {
   api.export("IonActionSheet");
   api.export("IonBackdrop");
   api.export("IonHeaderBar");
-  api.export("IonKeyboard");
+  //api.export("IonKeyboard");
   api.export("IonLoading");
   api.export("IonModal");
   api.export("IonNavigation");

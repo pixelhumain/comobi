@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { SessionSensors } from './reactive.js';
 
-const sensorApi = {
+/* const sensorApi = {
   Motion: ['ACCELEROMETER', 'GRAVITY', 'GYROSCOPE', 'ROTATION_VECTOR', 'STEP_COUNTER'],
   Environmental: ['AMBIENT_TEMPERATURE', 'RELATIVE_HUMIDITY', 'PRESSURE', 'LIGHT', 'TEMPERATURE'],
   Position: ['MAGNETIC_FIELD', 'GAME_ROTATION_VECTOR', 'PROXIMITY'],
@@ -92,4 +92,5 @@ const sensorApi = {
 };
 
 
-export { sensorApi as default };
+export { sensorApi as default }; 
+*/

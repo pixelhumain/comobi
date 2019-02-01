@@ -20,7 +20,7 @@ import { Gamesmobile } from './gamemobile.js';
 import { News } from './news.js';
 import { Documents } from './documents.js';
 import { ActivityStream } from './activitystream.js';
-import { queryLink, queryLinkIsInviting, queryLinkAttendees, arrayLinkAttendees, queryOptions, nameToCollection } from './helpers.js';
+import { queryLink, arrayLinkParent, arrayOrganizerParent, isAdminArray, queryLinkIsInviting, queryLinkAttendees, arrayLinkAttendees, queryOptions, nameToCollection } from './helpers.js';
 
 export const Events = new Mongo.Collection('events', { idGeneration: 'MONGO' });
 
@@ -182,16 +182,11 @@ Events.helpers({
     return this.links && this.links[scopeCible] && this.links[scopeCible][scopeId] && this.links[scopeCible][scopeId].roles && this.links[scopeCible][scopeId].roles.join(',');
   },
   organizerEvent () {
-    if (this.organizerType && this.organizerId && _.contains(['events', 'projects', 'organizations', 'citoyens'], this.organizerType)) {
-      const collectionType = nameToCollection(this.organizerType);
-      return collectionType.findOne({
-        _id: new Mongo.ObjectID(this.organizerId),
-      }, {
-        fields: {
-          name: 1,
-          links: 1,
-        },
-      });
+    if (this.organizer) {
+      const childrenParent = arrayOrganizerParent(this.organizer, ['events', 'projects', 'organizations', 'citoyens']);
+      if (childrenParent) {
+        return childrenParent;
+      }
     }
     return undefined;
   },
@@ -213,12 +208,17 @@ Events.helpers({
   },
   isAdmin (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
-    if (bothUserId && this.organizerId && this.organizerType && _.contains(['events', 'projects', 'organizations'], this.organizerType)) {
-      // console.log(this.organizerEvent());
-      if (this.organizerEvent() && this.organizerEvent().isAdmin(bothUserId)) {
+
+    const citoyen = Citoyens.findOne({ _id: new Mongo.ObjectID(bothUserId) });
+    const organizerEvent = this.organizerEvent();
+
+    if (bothUserId && this.parent) {
+      if (this.parent[bothUserId] && this.parent[bothUserId].type === 'citoyens') {
         return true;
       }
+      return isAdminArray(organizerEvent, citoyen);
     }
+
     return !!((this.links && this.links.attendees && this.links.attendees[bothUserId] && this.links.attendees[bothUserId].isAdmin && this.isIsInviting('attendees', bothUserId)));
   },
   isScope (scope, scopeId) {
@@ -278,8 +278,8 @@ Events.helpers({
   },
   isAttendees (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
-    //return !!((this.links && this.links.attendees && this.links.attendees[bothUserId]));
-    return !!((this.links && this.links.attendees && this.links.attendees[bothUserId] && this.isIsInviting('attendees', bothUserId)))
+    // return !!((this.links && this.links.attendees && this.links.attendees[bothUserId]));
+    return !!((this.links && this.links.attendees && this.links.attendees[bothUserId] && this.isIsInviting('attendees', bothUserId)));
   },
   listAttendees (search) {
     if (this.links && this.links.attendees) {
@@ -317,30 +317,35 @@ Events.helpers({
     return Lists.find({ name: 'eventTypes' });
   },
   listEventsCreator () {
-    const query = {};
-    //query.organizerId = this._id._str;
-    queryOptions.fields.organizerId = 1;
-    queryOptions.fields.parentId = 1;
-    queryOptions.fields.startDate = 1;
-    queryOptions.fields.startDate = 1;
-    queryOptions.fields.geo = 1;
-    query.parentId = this._id._str;
-    return Events.find(query, queryOptions);
+    if (this.links && this.links.subEvents) {
+      const eventsIds = arrayLinkParent(this.links.subEvents, 'events');
+      const query = {};
+      query._id = {
+        $in: eventsIds,
+      };
+      queryOptions.fields.startDate = 1;
+      queryOptions.fields.startDate = 1;
+      queryOptions.fields.geo = 1;
+      return Events.find(query, queryOptions);
+    }
   },
   countEventsCreator () {
     // return this.links && this.links.events && _.size(this.links.events);
     return this.listEventsCreator() && this.listEventsCreator().count();
   },
   eventsParent () {
-    const query = {};
-    queryOptions.fields.organizerId = 1;
-    queryOptions.fields.parentId = 1;
-    query._id = new Mongo.ObjectID(this.parentId);
-    return Events.findOne(query, queryOptions);
+    if (this.parent) {
+      const childrenParent = arrayOrganizerParent(this.parent, ['events']);
+      if (childrenParent) {
+        return childrenParent;
+      }
+    }
   },
   listPoiCreator () {
     const query = {};
-    query.parentId = this._id._str;
+    query[`parent.${this._id._str}`] = {
+      $exists: true,
+    };
     return Poi.find(query);
   },
   countPoiCreator () {

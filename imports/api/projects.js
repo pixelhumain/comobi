@@ -17,7 +17,7 @@ import { Events } from './events.js';
 import { Poi } from './poi.js';
 import { Rooms } from './rooms.js';
 import { ActivityStream } from './activitystream.js';
-import { queryLink, queryLinkToBeValidated, queryOptions, nameToCollection } from './helpers.js';
+import { queryLink, arrayLinkParent, arrayOrganizerParent, isAdminArray, queryLinkToBeValidated, queryOptions, nameToCollection } from './helpers.js';
 
 export const Projects = new Mongo.Collection('projects', { idGeneration: 'MONGO' });
 
@@ -64,6 +64,10 @@ export const SchemasProjectsRest = new SimpleSchema([baseSchema, geoSchema, {
     autoform: {
       type: 'select',
     },
+  },
+  public: {
+    type: Boolean,
+    defaultValue: true,
   },
 }]);
 
@@ -146,17 +150,11 @@ Projects.helpers({
     }, { sort: { created: -1 }, limit: 1 });
   },
   organizerProject () {
-    if (this.parentId && this.parentType && _.contains(['organizations', 'citoyens'], this.parentType)) {
-      // console.log(this.parentType);
-      const collectionType = nameToCollection(this.parentType);
-      return collectionType.findOne({
-        _id: new Mongo.ObjectID(this.parentId),
-      }, {
-        fields: {
-          name: 1,
-          links: 1,
-        },
-      });
+    if (this.parent) {
+      const childrenParent = arrayOrganizerParent(this.parent, ['citoyens', 'organizations', 'projects']);
+      if (childrenParent) {
+        return childrenParent;
+      }
     }
     return undefined;
   },
@@ -201,12 +199,15 @@ Projects.helpers({
   },
   isAdmin (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
-    if (bothUserId && this.parentId && this.parentType && _.contains(['organizations'], this.parentType)) {
-      // console.log(this.organizerProject());
-      // console.log(`${this.parentType}:${this.parentId}`);
-      if (this.organizerProject() && this.organizerProject().isAdmin(bothUserId)) {
+
+    const citoyen = Citoyens.findOne({ _id: new Mongo.ObjectID(bothUserId) });
+    const organizerProject = this.organizerProject();
+
+    if (bothUserId && this.parent) {
+      if (this.parent[bothUserId] && this.parent[bothUserId].type === 'citoyens') {
         return true;
       }
+      return isAdminArray(organizerProject, citoyen);
     }
     return !!((this.links && this.links.contributors && this.links.contributors[bothUserId] && this.links.contributors[bothUserId].isAdmin && this.isToBeValidated(bothUserId) && this.isIsInviting('contributors', bothUserId)));
   },
@@ -304,38 +305,48 @@ Projects.helpers({
     return this.listEvents(search) && this.listEvents(search).count();
   },
   listEventsCreator () {
-    const query = {};
-    query.organizerId = this._id._str;
-    queryOptions.fields.organizerId = 1;
-    queryOptions.fields.parentId = 1;
-    queryOptions.fields.startDate = 1;
-    queryOptions.fields.startDate = 1;
-    queryOptions.fields.geo = 1;
-    return Events.find(query, queryOptions);
+    if (this.links && this.links.events) {
+      const eventIds = arrayLinkParent(this.links.events, 'events');
+      const query = {};
+      query._id = {
+        $in: eventIds,
+      };
+      queryOptions.fields.startDate = 1;
+      queryOptions.fields.startDate = 1;
+      queryOptions.fields.geo = 1;
+      return Events.find(query, queryOptions);
+    }
   },
   countEventsCreator () {
     // return this.links && this.links.events && _.size(this.links.events);
     return this.listEventsCreator() && this.listEventsCreator().count();
   },
   listProjectsCreator() {
-    const query = {};
-    query.parentId = this._id._str;
-    queryOptions.fields.parentId = 1;
-    return Projects.find(query, queryOptions);
+    if (this.links && this.links.projects) {
+      const projectIds = arrayLinkParent(this.links.projects, 'projects');
+      const query = {};
+      query._id = {
+        $in: projectIds,
+      };
+      return Projects.find(query, queryOptions);
+    }
   },
   countProjectsCreator() {
     return this.listProjectsCreator() && this.listProjectsCreator().count();
   },
   projectsParent() {
-    const query = {};
-    queryOptions.fields.creator = 1;
-    queryOptions.fields.parentId = 1;
-    query._id = new Mongo.ObjectID(this.parentId);
-    return Projects.findOne(query, queryOptions);
+    if (this.parent) {
+      const childrenParent = arrayOrganizerParent(this.parent, ['projects']);
+      if (childrenParent) {
+        return childrenParent;
+      }
+    }
   },
   listPoiCreator () {
     const query = {};
-    query.parentId = this._id._str;
+    query[`parent.${this._id._str}`] = {
+      $exists: true,
+    };
     return Poi.find(query);
   },
   countPoiCreator () {

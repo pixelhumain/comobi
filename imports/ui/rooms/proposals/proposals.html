@@ -44,7 +44,7 @@
     </div>
     {{> statusProposals status=status}}
     <div class="item item-text-wrap">
-      <p>{{description}}</p>
+      {{#markdown}}{{description}}{{/markdown}}
     </div>
     {{#if arguments}}
     <div class="item item-divider">

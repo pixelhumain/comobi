@@ -46,7 +46,37 @@ Meteor.startup(function () {
       }
     });
   } else if (Meteor.isCordova) {
+    PushNotification.createChannel(
+      function () {
+        console.log('Channel Created!');
+      },
+      function () {
+        console.log('Channel not created :(');
+      }, {
+        id: 'PushPluginChannel',
+        description: 'Channel Name Shown To Users',
+        importance: 3,
+        vibration: true,
+      },
+    );
+
     Push.Configure({
+      cordovaOptions: {
+        // Options here are passed to phonegap-plugin-push
+        android: {
+          sound: true,
+          vibrate: true,
+          clearBadge: false,
+          clearNotifications: true,
+          forceShow: false,
+          icon: 'ic_stat_co_24',
+          iconColor: '#6B97AF',
+        },
+      },
+      appName: 'main'
+    });
+
+    /* Push.Configure({
       android: {
         senderID: 376774334081,
         alert: true,
@@ -62,7 +92,7 @@ Meteor.startup(function () {
         badge: true,
         sound: true,
       },
-    });
+    }); */
 
     Push.addListener('startup', function() {
       Router.go('/notifications');
@@ -71,14 +101,12 @@ Meteor.startup(function () {
     Push.addListener('message', function(notification) {
       function alertDismissed(buttonIndex) {
         if (buttonIndex === 1) {
-          if (notification.payload.url) {
-            // Meteor.call('markRead',notification.payload.notifId);
-            // Meteor.call('registerClick', notification.payload.notifId);
-            // Router.go(notification.payload.link);
+          //const payload = JSON.parse(notification.payload);
+          //if (payload.url) {
+          //  Router.go('/notifications');
+          //} else {
             Router.go('/notifications');
-          } else {
-            Router.go('/notifications');
-          }
+          //}
         }
       }
       window.confirm(notification.message, alertDismissed, 'notifications', ['Voir', 'fermer']);
@@ -149,3 +177,4 @@ Tracker.autorun(() => {
     }
   }
 });
+

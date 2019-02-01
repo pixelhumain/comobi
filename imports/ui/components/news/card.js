@@ -13,6 +13,9 @@ Template.scopeCard.helpers({
   issousEvents () {
     return Counts.get(`countSous.${Router.current().params._id}`) > 0;
   },
+  preferenceTrue (value) {
+    return !!((value === true || value === 'true'));
+  },
 });
 
 Template.actionSheet.events({

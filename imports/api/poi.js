@@ -12,7 +12,7 @@ import { Organizations } from './organizations.js';
 import { Documents } from './documents.js';
 import { Events } from './events.js';
 import { Projects } from './projects.js';
-import { nameToCollection } from './helpers.js';
+import { arrayOrganizerParent, isAdminArray, nameToCollection } from './helpers.js';
 
 export const Poi = new Mongo.Collection('poi', { idGeneration: 'MONGO' });
 
@@ -80,17 +80,11 @@ Poi.helpers({
     }, { sort: { created: -1 }, limit: 1 });
   },
   organizerPoi () {
-    if (this.parentId && this.parentType && _.contains(['events', 'projects', 'organizations', 'citoyens'], this.parentType)) {
-      // console.log(this.parentType);
-      const collectionType = nameToCollection(this.parentType);
-      return collectionType.findOne({
-        _id: new Mongo.ObjectID(this.parentId),
-      }, {
-        fields: {
-          name: 1,
-          links: 1,
-        },
-      });
+    if (this.parent) {
+      const childrenParent = arrayOrganizerParent(this.parent, ['events', 'projects', 'organizations', 'citoyens']);
+      if (childrenParent) {
+        return childrenParent;
+      }
     }
     return undefined;
   },
@@ -106,12 +100,16 @@ Poi.helpers({
   },
   isAdmin (userId) {
     const bothUserId = (typeof userId !== 'undefined') ? userId : Meteor.userId();
-    if (bothUserId && this.parentId && this.parentType && _.contains(['events', 'projects', 'organizations', 'citoyens'], this.parentType)) {
-      if (this.parentType === 'citoyens') {
-        return (this.parentId === bothUserId);
+
+    const citoyen = Citoyens.findOne({ _id: new Mongo.ObjectID(bothUserId) });
+    const organizerPoi = this.organizerPoi();
+
+    if (bothUserId && this.parent) {
+      if (this.parent[bothUserId]  && this.parent[bothUserId].type === 'citoyens') {
+        return true;
       }
       // console.log(this.organizerPoi());
-      return this.organizerPoi() && this.organizerPoi().isAdmin(bothUserId);
+      return isAdminArray(organizerPoi, citoyen);
     }
     return undefined;
   },

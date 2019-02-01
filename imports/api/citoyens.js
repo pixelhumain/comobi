@@ -17,7 +17,7 @@ import { Classified } from './classified.js';
 import { Organizations } from './organizations.js';
 import { Documents } from './documents.js';
 import { ActivityStream } from './activitystream.js';
-import { arrayLinkProperNoObject, queryLink, queryOptions, queryLinkInter, nameToCollection } from './helpers.js';
+import { queryOrPrivateScopeLinksIds, queryOrPrivateScopeLinks, arrayLinkProperNoObject, queryLink, queryOptions, queryLinkInter, nameToCollection } from './helpers.js';
 
 // Person
 export const Citoyens = new Mongo.Collection('citoyens', { idGeneration: 'MONGO' });
@@ -399,7 +399,8 @@ Citoyens.helpers({
   },
   listMemberOf (search, selectorga) {
     if (this.links && this.links.memberOf) {
-      const query = queryLink(this.links.memberOf, search, selectorga);
+      const queryStart = queryLink(this.links.memberOf, search, selectorga);
+      const query = queryOrPrivateScopeLinksIds(queryStart, 'members');
       return Organizations.find(query, queryOptions);
     }
     return false;
@@ -409,7 +410,8 @@ Citoyens.helpers({
   },
   listEvents (search) {
     if (this.links && this.links.events) {
-      const query = queryLink(this.links.events, search);
+      const queryStart = queryLink(this.links.events, search);
+      const query = queryOrPrivateScopeLinksIds(queryStart, 'attendees');
       return Events.find(query, queryOptions);
     }
     return false;
@@ -420,7 +422,8 @@ Citoyens.helpers({
   },
   listProjects (search) {
     if (this.links && this.links.projects) {
-      const query = queryLink(this.links.projects, search);
+      const queryStart = queryLink(this.links.projects, search);
+      const query = queryOrPrivateScopeLinksIds(queryStart, 'contributors');
       return Projects.find(query, queryOptions);
     }
     return false;
@@ -442,13 +445,7 @@ Citoyens.helpers({
     return this.listCollections(type, collections, search) && this.listCollections(type, collections, search).count();
   },
   listProjectsCreator () {
-    const query = {};
-    // query['creator'] = this._id._str;
-    /* query[`links.contributors.${this._id._str}.isAdmin`] = true;
-    query[`links.contributors.${this._id._str}.toBeValidated`] = { $exists: false }; */
-    query[`links.contributors.${this._id._str}`] = { $exists: true };
-    query[`links.contributors.${this._id._str}.toBeValidated`] = { $exists: false };
-    query[`links.contributors.${this._id._str}.isInviting`] = { $exists: false };
+    const query = queryOrPrivateScopeLinks('contributors', this._id._str);
     return Projects.find(query, queryOptions);
   },
   countProjectsCreator () {
@@ -456,26 +453,19 @@ Citoyens.helpers({
   },
   listPoiCreator () {
     const query = {};
-    query.parentId = this._id._str;
-    // query[`links.contributors.${this._id._str}.isAdmin`] = true;
-    // query[`links.contributors.${this._id._str}.toBeValidated`] = {$exists: false};
+    query[`parent.${this._id._str}`] = {
+      $exists: true,
+    };
     return Poi.find(query);
   },
   countPoiCreator () {
     return this.listPoiCreator() && this.listPoiCreator().count();
   },
   listEventsCreator () {
-    const query = {};
-    // query.organizerId = this._id._str;
-    // query[`links.organizer.${this._id._str}`] = {$exist:1};
-    queryOptions.fields.organizerId = 1;
-    queryOptions.fields.parentId = 1;
     queryOptions.fields.startDate = 1;
     queryOptions.fields.startDate = 1;
     queryOptions.fields.geo = 1;
-    query[`links.attendees.${this._id._str}`] = { $exists: true };
-    query[`links.attendees.${this._id._str}.toBeValidated`] = { $exists: false };
-    query[`links.attendees.${this._id._str}.isInviting`] = { $exists: false };
+    const query = queryOrPrivateScopeLinks('attendees', this._id._str);
     return Events.find(query, queryOptions);
   },
   countEventsCreator () {
@@ -483,13 +473,7 @@ Citoyens.helpers({
     return this.listEventsCreator() && this.listEventsCreator().count();
   },
   listOrganizationsCreator () {
-    const query = {};
-    // query['creator'] = this._id._str;
-    /* query[`links.members.${this._id._str}.isAdmin`] = true;
-    query[`links.members.${this._id._str}.toBeValidated`] = { $exists: false }; */
-    query[`links.members.${this._id._str}`] = { $exists: true };
-    query[`links.members.${this._id._str}.toBeValidated`] = { $exists: false };
-    query[`links.members.${this._id._str}.isInviting`] = { $exists: false };
+    const query = queryOrPrivateScopeLinks('members', this._id._str);
     return Organizations.find(query, queryOptions);
   },
   countOrganizationsCreator () {

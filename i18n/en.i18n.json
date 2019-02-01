@@ -158,7 +158,8 @@
   "activitystream":{
     "verb":{
       "share":"shared",
-      "create":"created"
+      "create":"created",
+      "publish": "publish"
     },
     "type":{
       "organizations":"an organization",
@@ -279,7 +280,13 @@
 "in_a_news": "in a news",
 "in_a_comment": "in a comment",
 "with":"with",
-"and": "and"
+"and": "and",
+"who_added_a_chat_on_where": "__who__ added a chat on __where__",
+"who_react_on_your_news_what": "__who__ react on your news __what__",
+"who_react_on_a_news_what_from_where": "__who__ react on your news __what__ from __where__",
+"who_reacts_on_a_news_what_from_where": "__who__ reacts on your news __what__ from __where__",
+"who_added_new_projects_on_where": "__who__ added new projects on __where__",
+"who_commented_on_resolution_what_in_where": "__who__ commented on resolution __what__ in __where__"
     }
   },
   "on the program of":"on the program of :",
@@ -870,6 +877,9 @@
       },
       "endDate":{
         "label": "end date"
+      },
+      "public":{
+        "label": "Make the project publicly visible"
       },
       "country":{
         "label": "address country",

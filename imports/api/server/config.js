@@ -28,9 +28,15 @@ Accounts.onLogin(function(user) {
   }
 });
 
+let serviceAccountJson = JSON.parse(Assets.getText('communecter-5647e-firebase-adminsdk-0baqw-4ea1186253.json'));
+
+
 if (Meteor.isDevelopment) {
   Push.debug = true;
   Push.Configure({
+    fcm: {
+      serviceAccountJson: serviceAccountJson
+    },
     gcm: {
       apiKey: Meteor.settings.pushapiKey,
       projectNumber: 376774334081,
@@ -40,10 +46,14 @@ if (Meteor.isDevelopment) {
     badge: true,
     alert: true,
     vibrate: true,
-    sendInterval: null,
+    //sendInterval: null,
+    appName: 'main',
   });
 } else {
   Push.Configure({
+    fcm: {
+      serviceAccountJson: serviceAccountJson
+    },
     gcm: {
       apiKey: Meteor.settings.pushapiKey,
       projectNumber: 376774334081,
@@ -53,6 +63,7 @@ if (Meteor.isDevelopment) {
     badge: true,
     alert: true,
     vibrate: true,
+    appName: 'main',
   });
 }
 

@@ -31,8 +31,7 @@
   {{#ionContent class="scroll-bg"}}
   <div class="row">
     <div class="col">
-      Les données afficher correspondent à votre position géolocalisée ou à celle de votre profil : {{#if city.name}}<strong>{{city.name}}</strong>{{/if}}, si la géolocalistion ne fonctionne pas
-      ou si vous changer de position par celle de la commune selectionner {{#if radius}} dans un rayon de <strong>{{radius}} métres</strong>{{/if}}
+      {{#if city.name}}<strong>{{city.name}}</strong>{{/if}}, {{#if radius}} dans un rayon de <strong>{{radius}} métres</strong>{{/if}}
     </div>
   </div>
    {{> highlight}}

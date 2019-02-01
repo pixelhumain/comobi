@@ -1,12 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 
-import sensorApi from '../../api/client/sensors.js';
+// import sensorApi from '../../api/client/sensors.js';
 
 Meteor.startup(() => {
   if (Meteor.isCordova && !Meteor.isDesktop) {
     if (device.platform === 'Android') {
-      sensorApi.config();
+      //sensorApi.config();
       //sensorApi.disables();
 
       /*Tracker.autorun((c) => {

@@ -41,17 +41,17 @@ Router.map(function() {
     loadingTemplate: 'loading',
   });
 
-  this.route('videoRTC', {
+  /*this.route('videoRTC', {
     path: '/call',
     template: 'videoRTC',
     loadingTemplate: 'loading',
-  });
+  });*/
 
-  this.route('sensors', {
+  /*this.route('sensors', {
     path: '/sensors',
     template: 'sensors',
     loadingTemplate: 'loading',
-  });
+  });*/
 
   this.route('listEvents', {
     path: '/events',
