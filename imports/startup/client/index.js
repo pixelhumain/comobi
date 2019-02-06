@@ -11,4 +11,5 @@ import './autolinker.js';
 // import './sensors.js';
 import '../../api/method_both.js';
 import './mapbox.js';
+import '../../api/client/userTest.js';
 

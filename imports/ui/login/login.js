@@ -38,7 +38,7 @@ Template.login.events({
     pageSession.set('loading-logging', true);
     Meteor.loginAsPixel(email, password, (error) => {
       if (!error) {
-        Meteor.logoutOtherClients();
+        // Meteor.logoutOtherClients();
         pageSession.set('loading-logging', false);
         pageSession.set('error', null);
         return Router.go('/');

@@ -29,8 +29,25 @@ Router.map(function() {
     },
   });
 
-  this.route('dashboard', {
+  /* this.route('dashboard', {
     path: '/',
+    template: 'dashboard',
+    loadingTemplate: 'loading',
+  }); */
+
+  this.route('detailListHome', {
+    before () {
+      if (Meteor.loggingIn() && Meteor.user()) {
+        this.redirect('detailList', { scope: 'citoyens', _id: Meteor.userId() });
+      }
+    },
+    template: 'dashboard',
+    path: '/',
+    loadingTemplate: 'loading',
+  });
+
+  this.route('dashboard', {
+    path: '/dashboardhome',
     template: 'dashboard',
     loadingTemplate: 'loading',
   });
@@ -41,17 +58,17 @@ Router.map(function() {
     loadingTemplate: 'loading',
   });
 
-  /*this.route('videoRTC', {
+  /* this.route('videoRTC', {
     path: '/call',
     template: 'videoRTC',
     loadingTemplate: 'loading',
-  });*/
+  }); */
 
-  /*this.route('sensors', {
+  /* this.route('sensors', {
     path: '/sensors',
     template: 'sensors',
     loadingTemplate: 'loading',
-  });*/
+  }); */
 
   this.route('listEvents', {
     path: '/events',
@@ -386,7 +403,7 @@ Router.map(function() {
     path: '/games/:_id/scoreboard',
     loadingTemplate: 'loading',
   });
-  
+
   this.route('directory', {
     template: 'directory',
     path: '/:scope/directory/:_id',

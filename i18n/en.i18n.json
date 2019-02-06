@@ -169,7 +169,8 @@
       "actions":"an action",
       "proposals":"a proposal",
       "resolutions":"a resolution",
-      "rooms":"a cooperative space"
+      "rooms":"a cooperative space",
+      "poi":"a point of interest"
     },
     "notification":{
       "whoNumber": "and %s others",
@@ -286,7 +287,8 @@
 "who_react_on_a_news_what_from_where": "__who__ react on your news __what__ from __where__",
 "who_reacts_on_a_news_what_from_where": "__who__ reacts on your news __what__ from __where__",
 "who_added_new_projects_on_where": "__who__ added new projects on __where__",
-"who_commented_on_resolution_what_in_where": "__who__ commented on resolution __what__ in __where__"
+"who_commented_on_resolution_what_in_where": "__who__ commented on resolution __what__ in __where__",
+"who_reacts_on_your_news_what": "__who__ reacts on your news __what__"
     }
   },
   "on the program of":"on the program of :",
