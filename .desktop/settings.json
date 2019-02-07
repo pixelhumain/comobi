@@ -1,6 +1,6 @@
 {
     "name": "communecter",
-    "version": "0.0.31",
+    "version": "0.0.32",
     "projectName": "communecter",
     "devTools": true,
     "devtron": true,
@@ -41,8 +41,6 @@
     },
     "builderOptions": {
         "win": {
-            "title": "communecter",
-            "authors": "Thomas Craipeau",
             "target": ["squirrel","nsis"]
         },
         "squirrelWindows": {

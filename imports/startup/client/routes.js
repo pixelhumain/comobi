@@ -37,9 +37,10 @@ Router.map(function() {
 
   this.route('detailListHome', {
     before () {
-      if (Meteor.loggingIn() && Meteor.user()) {
+      if (Meteor.userId()) {
         this.redirect('actusList', { scope: 'citoyens', _id: Meteor.userId() });
       }
+      this.next();
     },
     template: 'dashboard',
     path: '/',
