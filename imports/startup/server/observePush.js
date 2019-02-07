@@ -45,7 +45,7 @@ Meteor.startup(function() {
   query.created = { $gt: new Date() };
   const options = {};
   options.sort = { created: 1 };
-  console.log(query);
+
   var initNotifystart = ActivityStream.find(query, options).observe({
     added(notification) {
       if (!initNotifystart) return;
