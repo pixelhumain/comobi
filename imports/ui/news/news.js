@@ -110,6 +110,9 @@ Template.newsList.helpers({
   selectview () {
     return pageSession.get('selectview');
   },
+  scopeMe() {
+    return pageSession.get('scope') === 'citoyens' && Router.current().params._id === Meteor.userId();
+  },
 });
 
 Template.scopeDetailTemplate.helpers({
@@ -144,19 +147,24 @@ Template.scopeNewsTemplate.onCreated(function() {
 
 Template.scopeNewsTemplate.onRendered(function() {
   const showMoreVisible = () => {
-    const target = $('#showMoreResults');
-    if (!target.length) {
+    const $target = $('#showMoreResults');
+    if (!$target.length) {
       return;
     }
-    const threshold = $('.content.overflow-scroll').scrollTop() + $('.content.overflow-scroll').height();
-    if (target.offset().top < threshold) {
-      if (!target.data('visible')) {
-        target.data('visible', true);
-        pageSession.set('limit',
-          pageSession.get('limit') + 5);
+    const threshold =
+      $('.content.overflow-scroll').scrollTop() +
+      $('.content.overflow-scroll').height() + 154;
+    /* console.log(`threshold: ${threshold}`);
+    console.log(`traget top: ${$target.offset().top}`);
+    console.log(`list height: ${$('.content.overflow-scroll .list').height()}`); */
+    const heightLimit = $('.content.overflow-scroll .list').height();
+    if (heightLimit < threshold) {
+      if (!$target.data('visible')) {
+        $target.data('visible', true);
+        pageSession.set('limit', pageSession.get('limit') + 5);
       }
-    } else if (target.data('visible')) {
-      target.data('visible', false);
+    } else if ($target.data('visible')) {
+      $target.data('visible', false);
     }
   };
 
@@ -203,19 +211,24 @@ Template.scopeFilActusTemplate.onCreated(function() {
 
 Template.scopeFilActusTemplate.onRendered(function() {
   const showMoreVisible = () => {
-    const target = $('#showMoreResultslimitFilActus');
-    if (!target.length) {
+    const $target = $('#showMoreResultslimitFilActus');
+    if (!$target.length) {
       return;
     }
-    const threshold = $('.content.overflow-scroll').scrollTop() + $('.content.overflow-scroll').height();
-    if (target.offset().top < threshold) {
-      if (!target.data('visiblelimitFilActus')) {
-        target.data('visiblelimitFilActus', true);
-        pageSession.set('limitFilActus',
-          pageSession.get('limitFilActus') + 5);
+    const threshold =
+      $('.content.overflow-scroll').scrollTop() +
+      $('.content.overflow-scroll').height() + 130;
+    /* console.log(`threshold: ${threshold}`);
+    console.log(`traget top: ${$target.offset().top}`);
+    console.log(`list height: ${$('.content.overflow-scroll .list').height()}`); */
+    const heightLimit = $('.content.overflow-scroll .list').height();
+    if (heightLimit < threshold) {
+      if (!$target.data('visiblelimitFilActus')) {
+        $target.data('visiblelimitFilActus', true);
+        pageSession.set('limitFilActus', pageSession.get('limit') + 5);
       }
-    } else if (target.data('visiblelimitFilActus')) {
-      target.data('visiblelimitFilActus', false);
+    } else if ($target.data('visiblelimitFilActus')) {
+      $target.data('visiblelimitFilActus', false);
     }
   };
 
