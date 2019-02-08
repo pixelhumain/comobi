@@ -57,6 +57,7 @@
   "Name is Too short":"Name is Too short",
   "Password is Too short":"Password is Too short",
   "Not the same password":"Not the same password",
+  "The-username-is-incorrect": "The username is incorrect: Only the characters A-Z, a-z, 0-9 and '-' are accepted.",
   "are you sure you want to delete":"Are you sure you want to delete ?",
   "Current":"Current",
   "Upcoming":"Upcoming",

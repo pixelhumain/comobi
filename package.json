@@ -1,6 +1,6 @@
 {
   "name": "communecter",
-  "version": "0.0.31",
+  "version": "0.0.33",
   "description": "communecter",
   "private": true,
   "scripts": {
@@ -59,12 +59,12 @@
     }
   },
   "dependencies": {
-    "@babel/runtime": "^7.2.0",
-    "autolinker": "^1.4.3",
-    "bcrypt": "^0.8.7",
+    "@babel/runtime": "^7.3.1",
+    "autolinker": "^3.0.0",
+    "bcrypt": "^3.0.4",
     "markdown-it": "^8.4.2",
     "meteor-node-stubs": "^0.4.1",
-    "sanitize-html": "^1.14.1"
+    "sanitize-html": "^1.20.0"
   },
   "repository": {
     "type": "git",
@@ -79,13 +79,17 @@
   "devDependencies": {
     "@meteorjs/eslint-config-meteor": "^1.0.5",
     "babel-eslint": "^7.2.3",
+    "electron": "2.0.17",
+    "electron-builder": "20.38.5",
+    "electron-builder-squirrel-windows": "20.38.5",
     "eslint": "^4.3.0",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-import-resolver-meteor": "^0.4.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^5.0.1",
     "eslint-plugin-meteor": "^4.1.0",
-    "eslint-plugin-react": "^7.1.0"
+    "eslint-plugin-react": "^7.1.0",
+    "meteor-desktop": "^2.0.0"
   },
   "meteor": {
     "mainModule": {

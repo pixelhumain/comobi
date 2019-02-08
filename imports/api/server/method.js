@@ -1747,6 +1747,11 @@ indexMax:20 */
       throw new Meteor.Error('Username not unique');
     }
 
+    const urlRegEx = new RegExp(/^[a-z0-9-]+$/, 'i');
+    if (urlRegEx.test(user.username) !== true) {
+      throw new Meteor.Error('The-username-is-incorrect');
+    }
+
     const insee = Cities.findOne({ insee: user.city });
 
     console.log({
