@@ -69,7 +69,7 @@ Meteor.startup(function () {
         const m = regex.exec(intent);
         // alert(`${Meteor.settings.public.endpoint}${m[0]}`);
         if (m && m[0] && m[1] && m[2]) {
-          //${Meteor.settings.public.endpoint}
+          // ${Meteor.settings.public.endpoint}
           Meteor.call('validateEmail', `${Meteor.settings.public.endpoint}${m[0]}`, (error, result) => {
             if (error) {
               // alert(`${error}`);
@@ -203,6 +203,14 @@ Meteor.startup(function () {
   },
   );
 
+  Template.registerHelper('calculateAge', (birth) => {
+    const bday = moment(birth, 'YYYYMMDD HH:mm');
+    const today = moment().startOf('day').hour(12);
+    let age = today.year() - bday.year();
+    if (bday > today.subtract(age, 'years')) { age -= 1; }
+    return age;
+  });
+
   Template.registerHelper('i18npref', (prefix, text) => TAPi18n.__(`${prefix}.${text}`));
 
 
@@ -287,24 +295,24 @@ Meteor.startup(function () {
       return count >= 0;
     }
   });
-  
-  Template.registerHelper('markdown', new Blaze.Template('markdown', function () {
-      const view = this;
-      let content = '';
 
-      if (view.templateContentBlock) {
-        content = Blaze._toText(view.templateContentBlock, HTML.TEXTMODE.STRING);
-        //content = view.templateContentBlock;
-      }
-      const md = new MarkdownIt('default',{
-        html: true,
-        linkify: true,
-        typographer: true
-      });
-      
+  Template.registerHelper('markdown', new Blaze.Template('markdown', function () {
+    const view = this;
+    let content = '';
+
+    if (view.templateContentBlock) {
+      content = Blaze._toText(view.templateContentBlock, HTML.TEXTMODE.STRING);
+      // content = view.templateContentBlock;
+    }
+    const md = new MarkdownIt('default', {
+      html: true,
+      linkify: true,
+      typographer: true,
+    });
+
     const result = md.render(content);
-      return HTML.Raw(result);
-    }));
+    return HTML.Raw(result);
+  }));
 
   Template.registerHelper('SchemasFollowRest', SchemasFollowRest);
   Template.registerHelper('SchemasInviteAttendeesEventRest', SchemasInviteAttendeesEventRest);

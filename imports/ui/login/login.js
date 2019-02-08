@@ -152,6 +152,15 @@ Template.signin.events({
       return false;
     };
 
+    const isValidUsernameChar = (val) => {
+      const urlRegEx = new RegExp(/^[a-z0-9-]+$/, 'i');
+      if (urlRegEx.test(val) === true) {
+        return true;
+      }
+      pageSession.set('error', 'The-username-is-incorrect');
+      return false;
+    };
+
     const isValidPassword = (val) => {
       if (val.length > 7) {
         return true;
@@ -165,6 +174,9 @@ Template.signin.events({
       return;
     }
     if (!isValidUsername(username)) {
+      return;
+    }
+    if (!isValidUsernameChar(username)) {
       return;
     }
     if (!IsValidEmail(email)) {

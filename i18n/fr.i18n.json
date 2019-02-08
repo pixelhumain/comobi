@@ -57,6 +57,7 @@
   "Name is Too short":"Votre nom est trop court",
   "Password is Too short":"Votre mot de passe est trop court",
   "Not the same password":"Vous n'avez pas saisis le même mot de passe",
+  "The-username-is-incorrect": "Le nom d'utilisateur est incorrect : Seul les caractères A-Z, a-z, 0-9 et '-' sont acceptés.",
   "are you sure you want to delete":"Etes-vous sûr que vous voulez supprimer ?",
   "Current":"En cours",
   "Upcoming":"A venir",

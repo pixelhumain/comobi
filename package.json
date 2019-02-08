@@ -1,6 +1,6 @@
 {
   "name": "communecter",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "description": "communecter",
   "private": true,
   "scripts": {
@@ -79,8 +79,9 @@
   "devDependencies": {
     "@meteorjs/eslint-config-meteor": "^1.0.5",
     "babel-eslint": "^7.2.3",
-    "electron": "2.0.10",
-    "electron-builder": "20.28.4",
+    "electron": "2.0.17",
+    "electron-builder": "20.38.5",
+    "electron-builder-squirrel-windows": "20.38.5",
     "eslint": "^4.3.0",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-import-resolver-meteor": "^0.4.0",

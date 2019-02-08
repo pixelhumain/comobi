@@ -25,7 +25,7 @@
       {{#if typeValue}}{{typeValue}}{{/if}}
       {{#if isVisibleFields 'birthDate'}}
       {{#if birthDate}}
-      <p><i class="icon fa fa-birthday-cake"></i> {{formatBirthDate}} ({{diffInText birthDate}})</p>
+      <p><i class="icon fa fa-birthday-cake"></i> {{formatBirthDate}} ({{calculateAge birthDate}})</p>
       {{/if}}
       {{/if}}
       {{#unless ../shareVisible}}

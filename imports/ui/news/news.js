@@ -217,7 +217,7 @@ Template.scopeFilActusTemplate.onRendered(function() {
     }
     const threshold =
       $('.content.overflow-scroll').scrollTop() +
-      $('.content.overflow-scroll').height() + 130;
+      $('.content.overflow-scroll').height() + 150;
     /* console.log(`threshold: ${threshold}`);
     console.log(`traget top: ${$target.offset().top}`);
     console.log(`list height: ${$('.content.overflow-scroll .list').height()}`); */
@@ -225,7 +225,7 @@ Template.scopeFilActusTemplate.onRendered(function() {
     if (heightLimit < threshold) {
       if (!$target.data('visiblelimitFilActus')) {
         $target.data('visiblelimitFilActus', true);
-        pageSession.set('limitFilActus', pageSession.get('limit') + 5);
+        pageSession.set('limitFilActus', pageSession.get('limitFilActus') + 5);
       }
     } else if ($target.data('visiblelimitFilActus')) {
       $target.data('visiblelimitFilActus', false);

@@ -25,7 +25,7 @@ export const Citoyens = new Mongo.Collection('citoyens', { idGeneration: 'MONGO'
 const baseSchemaCitoyens = baseSchema.pick(['name', 'shortDescription', 'description', 'url', 'tags', 'tags.$']);
 
 const updateSchemaCitoyens = new SimpleSchema({
-  username: {
+  /* username: {
     type: String,
     custom () {
       if (Meteor.isClient && this.isSet) {
@@ -37,7 +37,7 @@ const updateSchemaCitoyens = new SimpleSchema({
         });
       }
     },
-  },
+  }, */
   email: {
     type: String,
     unique: true,
@@ -102,21 +102,7 @@ export const SchemasCitoyensRest = new SimpleSchema([baseSchemaCitoyens, updateS
 
 export const BlockCitoyensRest = {};
 BlockCitoyensRest.descriptions = new SimpleSchema([blockBaseSchema, baseSchema.pick(['shortDescription', 'description', 'tags', 'tags.$'])]);
-BlockCitoyensRest.info = new SimpleSchema([blockBaseSchema, baseSchema.pick(['name', 'url']), updateSchemaCitoyens.pick(['email', 'fixe', 'mobile', 'fax', 'birthDate']), {
-  username: {
-    type: String,
-    custom () {
-      if (Meteor.isClient && this.isSet) {
-        Meteor.call('checkUsername', this.value, function (error, result) {
-          // console.log(result);
-          if (!result) {
-            BlockCitoyensRest.info.namedContext('editBlockCitoyen').addInvalidKeys([{ name: 'username', type: 'usernameNotUnique' }]);
-          }
-        });
-      }
-    },
-  },
-}]);
+BlockCitoyensRest.info = new SimpleSchema([blockBaseSchema, baseSchema.pick(['name', 'url']), updateSchemaCitoyens.pick(['email', 'fixe', 'mobile', 'fax', 'birthDate'])]);
 BlockCitoyensRest.network = new SimpleSchema([blockBaseSchema, updateSchemaCitoyens.pick(['github', 'telegram', 'skype', 'gpplus', 'twitter', 'facebook'])]);
 BlockCitoyensRest.locality = new SimpleSchema([blockBaseSchema, geoSchema]);
 BlockCitoyensRest.preferences = new SimpleSchema([blockBaseSchema, {
