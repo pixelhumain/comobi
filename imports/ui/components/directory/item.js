@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveDict } from 'meteor/reactive-dict';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { Router } from 'meteor/iron:router';
 import { IonPopup } from 'meteor/meteoric:ionic';
 
@@ -46,13 +46,13 @@ Template.Directory_item.events({
     event.preventDefault();
     const self = this;
     instance.state.set('call', true);
-    IonPopup.confirm({ title: TAPi18n.__('Disconnect'),
-      template: TAPi18n.__('Want to remove the link between you and the entity'),
+    IonPopup.confirm({ title: i18n.__('Disconnect'),
+      template: i18n.__('Want to remove the link between you and the entity'),
       onOk() {
         Meteor.call('disconnectEntity', self.id, self.scope, (error) => {
           if (error) {
             instance.state.set('call', false);
-            IonPopup.alert({ template: TAPi18n.__(error.reason) });
+            IonPopup.alert({ template: i18n.__(error.reason) });
           } else {
             instance.state.set('call', false);
           }
@@ -61,8 +61,8 @@ Template.Directory_item.events({
       onCancel() {
         instance.state.set('call', false);
       },
-      cancelText: TAPi18n.__('no'),
-      okText: TAPi18n.__('yes'),
+      cancelText: i18n.__('no'),
+      okText: i18n.__('yes'),
     });
   },
   'click .connectscope-link-js' (event, instance) {
@@ -71,7 +71,7 @@ Template.Directory_item.events({
     Meteor.call('connectEntity', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -83,7 +83,7 @@ Template.Directory_item.events({
     Meteor.call('connectEntity', this.id, this.scope, this.childId, 'admin', (error) => {
       if (error) {
         instance.state.set('call', false);
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
         if (this.scope === 'events') {
@@ -98,13 +98,13 @@ Template.Directory_item.events({
     event.preventDefault();
     const self = this;
     instance.state.set('call', true);
-    IonPopup.confirm({ title: TAPi18n.__('Unfollow'),
-      template: TAPi18n.__('no longer follow this entity'),
+    IonPopup.confirm({ title: i18n.__('Unfollow'),
+      template: i18n.__('no longer follow this entity'),
       onOk() {
         Meteor.call('disconnectEntity', self.id, 'citoyens', (error) => {
           if (error) {
             instance.state.set('call', false);
-            IonPopup.alert({ template: TAPi18n.__(error.reason) });
+            IonPopup.alert({ template: i18n.__(error.reason) });
           } else {
             instance.state.set('call', false);
           }
@@ -113,8 +113,8 @@ Template.Directory_item.events({
       onCancel() {
         instance.state.set('call', false);
       },
-      cancelText: TAPi18n.__('no'),
-      okText: TAPi18n.__('yes'),
+      cancelText: i18n.__('no'),
+      okText: i18n.__('yes'),
     });
   },
   'click .followperson-link-js' (event, instance) {
@@ -123,7 +123,7 @@ Template.Directory_item.events({
     Meteor.call('followEntity', this.id, 'citoyens', (error) => {
       if (error) {
         instance.state.set('call', false);
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -135,7 +135,7 @@ Template.Directory_item.events({
     Meteor.call('collectionsAdd', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -152,7 +152,7 @@ Template.Directory_item.events({
     Meteor.call('invitationScope', this.id, this.scope, connectType, this.childType, null, null, this.childId, (error) => {
       if (error) {
         instance.state.set('call', false);
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }

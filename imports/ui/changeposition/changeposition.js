@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { Router } from 'meteor/iron:router';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { Random } from 'meteor/random';
 import { IonPopup } from 'meteor/meteoric:ionic';
@@ -48,8 +48,8 @@ Template.changePosition.events({
   },
   'click .city'() {
     const self = this;
-    IonPopup.confirm({ title: TAPi18n.__('Location'),
-      template: TAPi18n.__('Use the position of this city'),
+    IonPopup.confirm({ title: i18n.__('Location'),
+      template: i18n.__('Use the position of this city'),
       onOk() {
         position.setCity(self);
         if (self.geoShape && self.geoShape.coordinates) {
@@ -62,8 +62,8 @@ Template.changePosition.events({
         geoId.set('geoId', geoIdRandom);
         Router.go('dashboard', { replaceState: true });
       },
-      cancelText: TAPi18n.__('no'),
-      okText: TAPi18n.__('yes'),
+      cancelText: i18n.__('no'),
+      okText: i18n.__('yes'),
     });
   },
 });

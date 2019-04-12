@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { Router } from 'meteor/iron:router';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { IonPopup } from 'meteor/meteoric:ionic';
 
 import { ActivityStream } from '../api/activitystream.js';
@@ -63,12 +63,12 @@ Template.layout.events({
             if (qr && qr.type && qr._id) {
               if (qr.type === 'citoyens') {
                 Router.go('detailList', { scope: qr.type, _id: qr._id });
-                IonPopup.confirm({ title: TAPi18n.__('Scanner QRcode'),
-                  template: TAPi18n.__('would you like to connect to this'),
+                IonPopup.confirm({ title: i18n.__('Scanner QRcode'),
+                  template: i18n.__('would you like to connect to this'),
                   onOk() {
                     Meteor.call('followPersonExist', qr._id, function (error) {
                       if (!error) {
-                        window.alert(TAPi18n.__('successful connection'));
+                        window.alert(i18n.__('successful connection'));
                       // Router.go('detailList', {scope:qr.type,_id:qr._id});
                       } else {
                         window.alert(error.reason);
@@ -79,17 +79,17 @@ Template.layout.events({
                   onCancel() {
                     // Router.go('detailList', {scope:qr.type,_id:qr._id});
                   },
-                  cancelText: TAPi18n.__('no'),
-                  okText: TAPi18n.__('yes'),
+                  cancelText: i18n.__('no'),
+                  okText: i18n.__('yes'),
                 });
               } else if (qr.type === 'events') {
                 Router.go('detailList', { scope: qr.type, _id: qr._id });
-                IonPopup.confirm({ title: TAPi18n.__('Scanner QRcode'),
-                  template: TAPi18n.__('would you like to connect to this'),
+                IonPopup.confirm({ title: i18n.__('Scanner QRcode'),
+                  template: i18n.__('would you like to connect to this'),
                   onOk() {
                     Meteor.call('saveattendeesEvent', qr._id, function (error) {
                       if (!error) {
-                        window.alert(TAPi18n.__('successful connection'));
+                        window.alert(i18n.__('successful connection'));
                       // Router.go("detailList",{scope:qr.type,_id:qr._id});
                       } else {
                         window.alert(error.reason);
@@ -100,17 +100,17 @@ Template.layout.events({
                   onCancel() {
                     // Router.go('detailList', {scope:qr.type,_id:qr._id});
                   },
-                  cancelText: TAPi18n.__('no'),
-                  okText: TAPi18n.__('yes'),
+                  cancelText: i18n.__('no'),
+                  okText: i18n.__('yes'),
                 });
               } else if (qr.type === 'organizations') {
                 Router.go('detailList', { scope: qr.type, _id: qr._id });
-                IonPopup.confirm({ title: TAPi18n.__('Scanner QRcode'),
-                  template: TAPi18n.__('would you like to connect to this'),
+                IonPopup.confirm({ title: i18n.__('Scanner QRcode'),
+                  template: i18n.__('would you like to connect to this'),
                   onOk() {
                     Meteor.call('connectEntity', qr._id, qr.type, function (error) {
                       if (!error) {
-                        window.alert(TAPi18n.__('successful connection'));
+                        window.alert(i18n.__('successful connection'));
                       // Router.go("detailList",{scope:qr.type,_id:qr._id});
                       } else {
                         window.alert(error.reason);
@@ -121,18 +121,18 @@ Template.layout.events({
                   onCancel() {
                     // Router.go('detailList', {scope:qr.type,_id:qr._id});
                   },
-                  cancelText: TAPi18n.__('no'),
-                  okText: TAPi18n.__('yes'),
+                  cancelText: i18n.__('no'),
+                  okText: i18n.__('yes'),
                 });
               } else if (qr.type === 'projects') {
                 Router.go('detailList', { scope: qr.type, _id: qr._id });
 
-                IonPopup.confirm({ title: TAPi18n.__('Scanner QRcode'),
-                  template: TAPi18n.__('would you like to connect to this'),
+                IonPopup.confirm({ title: i18n.__('Scanner QRcode'),
+                  template: i18n.__('would you like to connect to this'),
                   onOk() {
                     Meteor.call('connectEntity', qr._id, qr.type, function (error) {
                       if (!error) {
-                        window.alert(TAPi18n.__('successful connection'));
+                        window.alert(i18n.__('successful connection'));
                       // Router.go("detailList",{scope:qr.type,_id:qr._id});
                       } else {
                         window.alert(error.reason);
@@ -143,8 +143,8 @@ Template.layout.events({
                   onCancel() {
                     // Router.go('detailList', {scope:qr.type,_id:qr._id});
                   },
-                  cancelText: TAPi18n.__('no'),
-                  okText: TAPi18n.__('yes'),
+                  cancelText: i18n.__('no'),
+                  okText: i18n.__('yes'),
                 });
               }
             } else {

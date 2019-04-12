@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { moment } from 'meteor/momentjs:moment';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { _ } from 'meteor/underscore';
+import { Tracker } from 'meteor/tracker';
 
 // schemas
 import { baseSchema } from './schema.js';
@@ -41,7 +42,7 @@ if (Meteor.isServer) {
 }
 
 /*
-Todo : 
+Todo :
 equipe,groupe
 validateQuest detail
 valider/ou pas
@@ -57,17 +58,23 @@ export const SchemasPlayersmobileRest = new SimpleSchema({
     type: String,
   },
   totalPoint: {
-    type: Number,
+    type: SimpleSchema.Integer,
     optional: true,
     defaultValue: 0,
   },
   validateQuest: {
-    type: [String],
+    type: Array,
     optional: true,
   },
+  'validateQuest.$': {
+    type: String,
+  },
   errorQuest: {
-    type: [String],
+    type: Array,
     optional: true,
+  },
+  'errorQuest.$': {
+    type: String,
   },
   finishedAt: {
     type: Date,
@@ -80,9 +87,8 @@ export const SchemasPlayersmobileRest = new SimpleSchema({
         return new Date();
       } else if (this.isUpsert) {
         return { $setOnInsert: new Date() };
-      } else {
-        this.unset();
       }
+      this.unset();
     },
   },
   updatedAt: {
@@ -97,10 +103,12 @@ export const SchemasPlayersmobileRest = new SimpleSchema({
   },
 });
 
-Playersmobile.attachSchema(SchemasPlayersmobileRest);
+Playersmobile.attachSchema(SchemasPlayersmobileRest, {
+  tracker: Tracker,
+});
 
 /* Todo
-questionType : 
+questionType :
 
 */
 export const SchemasQuestsmobileRest = new SimpleSchema({
@@ -108,19 +116,19 @@ export const SchemasQuestsmobileRest = new SimpleSchema({
     type: String,
   },
   pointWin: {
-    type: Number,
+    type: SimpleSchema.Integer,
     min: 1,
   },
   order: {
-    type: Number,
+    type: SimpleSchema.Integer,
   },
   numberPlayerValidate: {
-    type: Number,
+    type: SimpleSchema.Integer,
     optional: true,
     defaultValue: 0,
   },
   numberPlayerError: {
-    type: Number,
+    type: SimpleSchema.Integer,
     optional: true,
     defaultValue: 0,
   },
@@ -140,9 +148,8 @@ export const SchemasQuestsmobileRest = new SimpleSchema({
         return new Date();
       } else if (this.isUpsert) {
         return { $setOnInsert: new Date() };
-      } else {
-        this.unset();
       }
+      this.unset();
     },
   },
   updatedAt: {
@@ -157,9 +164,12 @@ export const SchemasQuestsmobileRest = new SimpleSchema({
   },
 });
 
-Questsmobile.attachSchema(SchemasQuestsmobileRest);
+Questsmobile.attachSchema(SchemasQuestsmobileRest, {
+  tracker: Tracker,
+});
 
-export const SchemasGamesmobileRest = new SimpleSchema([baseSchema.pick(['name', 'description']), {
+export const SchemasGamesmobileRest = new SimpleSchema(baseSchema.pick('name', 'description'));
+SchemasGamesmobileRest.extend({
   startDate: {
     type: Date,
     optional: true,
@@ -189,7 +199,72 @@ export const SchemasGamesmobileRest = new SimpleSchema([baseSchema.pick(['name',
     },
   },
   numberPlayers: {
-    type: Number,
+    type: SimpleSchema.Integer,
+    defaultValue: 0,
+  },
+  parentId: {
+    type: String,
+  },
+  parentType: {
+    type: String,
+    allowedValues: ['projects', 'organizations', 'events'],
+  },
+  createdAt: {
+    type: Date,
+    autoValue() {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return {
+          $setOnInsert: new Date()
+        };
+      }
+      this.unset();
+    },
+  },
+  updatedAt: {
+    type: Date,
+    autoValue() {
+      if (this.isUpdate) {
+        return new Date();
+      }
+    },
+    denyInsert: true,
+    optional: true,
+  },
+});
+
+/* export const SchemasGamesmobileRest = new SimpleSchema([baseSchema.pick('name', 'description'), {
+  startDate: {
+    type: Date,
+    optional: true,
+    custom() {
+      if (this.field('endDate').value && !this.isSet && (!this.operator || (this.value === null || this.value === ''))) {
+        return 'required';
+      }
+      const startDate = moment(this.value).toDate();
+      const endDate = moment(this.field('endDate').value).toDate();
+      if (moment(endDate).isBefore(startDate)) {
+        return 'maxDateStart';
+      }
+    },
+  },
+  endDate: {
+    type: Date,
+    optional: true,
+    custom() {
+      if (this.field('startDate').value && !this.isSet && (!this.operator || (this.value === null || this.value === ''))) {
+        return 'required';
+      }
+      const startDate = moment(this.field('startDate').value).toDate();
+      const endDate = moment(this.value).toDate();
+      if (moment(endDate).isBefore(startDate)) {
+        return 'minDateEnd';
+      }
+    },
+  },
+  numberPlayers: {
+    type: SimpleSchema.Integer,
     defaultValue: 0,
   },
   parentId: {
@@ -206,9 +281,8 @@ export const SchemasGamesmobileRest = new SimpleSchema([baseSchema.pick(['name',
         return new Date();
       } else if (this.isUpsert) {
         return { $setOnInsert: new Date() };
-      } else {
-        this.unset();
       }
+      this.unset();
     },
   },
   updatedAt: {
@@ -221,9 +295,11 @@ export const SchemasGamesmobileRest = new SimpleSchema([baseSchema.pick(['name',
     denyInsert: true,
     optional: true,
   },
-}]);
+}]); */
 
-Gamesmobile.attachSchema(SchemasGamesmobileRest);
+Gamesmobile.attachSchema(SchemasGamesmobileRest, {
+  tracker: Tracker,
+});
 
 
 if (Meteor.isClient) {

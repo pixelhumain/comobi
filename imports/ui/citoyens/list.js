@@ -124,9 +124,6 @@ Template.citoyensEdit.helpers({
       if (citoyen.socialNetwork.skype) {
         citoyenEdit.skypeAccount = citoyen.socialNetwork.skype;
       }
-      if (citoyen.socialNetwork.googleplus) {
-        citoyenEdit.gpplusAccount = citoyen.socialNetwork.googleplus;
-      }
       if (citoyen.socialNetwork.github) {
         citoyenEdit.githubAccount = citoyen.socialNetwork.github;
       }
@@ -241,9 +238,6 @@ Template.citoyensBlockEdit.helpers({
         }
         if (citoyen.socialNetwork.skype) {
           citoyenEdit.skype = citoyen.socialNetwork.skype;
-        }
-        if (citoyen.socialNetwork.googleplus) {
-          citoyenEdit.gpplus = citoyen.socialNetwork.googleplus;
         }
         if (citoyen.socialNetwork.github) {
           citoyenEdit.github = citoyen.socialNetwork.github;

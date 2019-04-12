@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { _ } from 'meteor/underscore';
+import { Tracker } from 'meteor/tracker';
 
 // schemas
 import { baseSchema, geoSchema } from './schema.js';
@@ -19,7 +20,7 @@ export const Classified = new Mongo.Collection('classified', { idGeneration: 'MO
 
 // SimpleSchema.debug = true;
 
-export const SchemasClassifiedRest = new SimpleSchema([baseSchema, geoSchema, {
+/* export const SchemasClassifiedRest = new SimpleSchema([baseSchema, geoSchema, {
   section: {
     type: String,
     autoform: {
@@ -57,7 +58,51 @@ export const SchemasClassifiedRest = new SimpleSchema([baseSchema, geoSchema, {
       type: 'select',
     },
   },
-}]);
+}]); */
+
+export const SchemasClassifiedRest = new SimpleSchema(baseSchema, {
+  tracker: Tracker,
+});
+SchemasClassifiedRest.extend(geoSchema);
+SchemasClassifiedRest.extend({
+  section: {
+    type: String,
+    autoform: {
+      type: 'select',
+    },
+  },
+  type: {
+    type: String,
+    autoform: {
+      type: 'select',
+    },
+  },
+  subtype: {
+    type: String,
+    autoform: {
+      type: 'select',
+    },
+  },
+  contactInfo: {
+    type: String,
+  },
+  price: {
+    type: Number,
+    optional: true,
+  },
+  parentType: {
+    type: String,
+    autoform: {
+      type: 'select',
+    },
+  },
+  parentId: {
+    type: String,
+    autoform: {
+      type: 'select',
+    },
+  },
+});
 
 if (Meteor.isClient) {
   window.Organizations = Organizations;

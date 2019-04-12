@@ -3,7 +3,8 @@ import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Mongo } from 'meteor/mongo';
 import { Router } from 'meteor/iron:router';
-import { TAPi18n } from 'meteor/tap:i18n';
+import { AutoForm } from 'meteor/aldeed:autoform';
+import i18n from 'meteor/universe:i18n';
 import { IonPopup } from 'meteor/meteoric:ionic';
 import { $ } from 'meteor/jquery';
 
@@ -59,7 +60,7 @@ Template.votesAmendements.events({
     const voteValue = $(event.currentTarget).data('vote');
     Meteor.call('saveVote', { parentType: 'amendement', parentId: pageSession.get('proposalId'), voteValue, idAmdt: this.amendementId }, (error) => {
       if (error) {
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       }
     });
   },
@@ -71,7 +72,7 @@ Template.votesProposals.events({
     const voteValue = $(event.currentTarget).data('vote');
     Meteor.call('saveVote', { parentType: 'proposal', parentId: pageSession.get('proposalId'), voteValue }, (error) => {
       if (error) {
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       }
     });
   },
@@ -84,7 +85,7 @@ Template.buttonsProposals.events({
     const action = $(event.currentTarget).data('action');
     Meteor.call('actionsType', { parentType: pageSession.get('scope'), parentId: pageSession.get('scopeId'), type: 'proposals', id: pageSession.get('proposalId'), name:'status', value: action }, (error) => {
       if (error) {
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       }
     });
   },
@@ -94,20 +95,20 @@ Template.itemAmendementsProposals.events({
   'click .action-amendement-js' (event) {
     const self = this;
     event.preventDefault();
-    IonPopup.confirm({ title: TAPi18n.__('Delete this amendment'),
-      template: TAPi18n.__('Are you sure you want to delete your amendment'),
+    IonPopup.confirm({ title: i18n.__('Delete this amendment'),
+      template: i18n.__('Are you sure you want to delete your amendment'),
       onOk() {
         Meteor.call('deleteAmendement', { numAm: self.amendement.idKey, idProposal: pageSession.get('proposalId') }, (error) => {
           if (error) {
-            IonPopup.alert({ template: TAPi18n.__(error.reason) });
+            IonPopup.alert({ template: i18n.__(error.reason) });
           }
         });
       },
       onCancel() {
 
       },
-      cancelText: TAPi18n.__('no'),
-      okText: TAPi18n.__('yes'),
+      cancelText: i18n.__('no'),
+      okText: i18n.__('yes'),
     });
   },
 });

@@ -3,7 +3,7 @@ import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Mongo } from 'meteor/mongo';
 import { Router } from 'meteor/iron:router';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { IonPopup } from 'meteor/meteoric:ionic';
 import { $ } from 'meteor/jquery';
 
@@ -58,7 +58,7 @@ Template.detailViewActions.events({
     event.preventDefault();
     Meteor.call('assignmeActionRooms', { id: pageSession.get('actionId') }, (error) => {
       if (error) {
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       }
     });
   },
@@ -70,7 +70,7 @@ Template.buttonsActions.events({
     const action = $(event.currentTarget).data('action');
     Meteor.call('actionsType', { parentType: pageSession.get('scope'), parentId: pageSession.get('scopeId'), type: 'actions', id: pageSession.get('actionId'), name:'status', value: action }, (error) => {
       if (error) {
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       }
     });
   },

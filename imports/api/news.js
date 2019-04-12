@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { _ } from 'meteor/underscore';
 import { Router } from 'meteor/iron:router';
+import { Tracker } from 'meteor/tracker';
 
 import { Documents } from './documents.js';
 import { Citoyens } from './citoyens.js';
@@ -95,8 +96,11 @@ export const SchemasNewsRest = new SimpleSchema({
     type: String,
   },
   tags: {
-    type: [String],
+    type: Array,
     optional: true,
+  },
+  'tags.$': {
+    type: String,
   },
   media: {
     type: Object,
@@ -111,8 +115,11 @@ export const SchemasNewsRest = new SimpleSchema({
     optional: true,
   },
   'media.images': {
-    type: [String],
+    type: Array,
     optional: true,
+  },
+  'media.images.$': {
+    type: String,
   },
   'media.content': {
     type: Object,
@@ -143,7 +150,11 @@ export const SchemasNewsRest = new SimpleSchema({
     optional: true,
   },
   mentions: {
-    type: [Object],
+    type: Array,
+    optional: true,
+  },
+  'mentions.$': {
+    type: Object,
     optional: true,
   },
   'mentions.$.id': {
@@ -170,10 +181,12 @@ export const SchemasNewsRest = new SimpleSchema({
     type: String,
     optional: true,
   },
+}, {
+  tracker: Tracker,
 });
 
 export const SchemasNewsRestBase = {};
-SchemasNewsRestBase.citoyens = new SimpleSchema([SchemasNewsRest, {
+/* SchemasNewsRestBase.citoyens = new SimpleSchema([SchemasNewsRest, {
   scope: {
     type: String,
     autoValue() {
@@ -185,8 +198,25 @@ SchemasNewsRestBase.citoyens = new SimpleSchema([SchemasNewsRest, {
     },
     optional: true,
   },
-}]);
-SchemasNewsRestBase.projects = new SimpleSchema([SchemasNewsRest, {
+}]); */
+SchemasNewsRestBase.citoyens = new SimpleSchema(SchemasNewsRest, {
+  tracker: Tracker,
+});
+SchemasNewsRestBase.citoyens.extend({
+  scope: {
+    type: String,
+    autoValue() {
+      if (this.isSet) {
+        // console.log(this.value);
+        return this.value;
+      }
+      return 'restricted';
+    },
+    optional: true,
+  },
+});
+
+/* SchemasNewsRestBase.projects = new SimpleSchema([SchemasNewsRest, {
   scope: {
     type: String,
     autoValue() {
@@ -203,8 +233,11 @@ SchemasNewsRestBase.projects = new SimpleSchema([SchemasNewsRest, {
     defaultValue: 'false',
     optional: true,
   },
-}]);
-SchemasNewsRestBase.organizations = new SimpleSchema([SchemasNewsRest, {
+}]); */
+SchemasNewsRestBase.projects = new SimpleSchema(SchemasNewsRest, {
+  tracker: Tracker,
+});
+SchemasNewsRestBase.projects.extend({
   scope: {
     type: String,
     autoValue() {
@@ -221,8 +254,10 @@ SchemasNewsRestBase.organizations = new SimpleSchema([SchemasNewsRest, {
     defaultValue: 'false',
     optional: true,
   },
-}]);
-SchemasNewsRestBase.events = new SimpleSchema([SchemasNewsRest, {
+});
+
+
+/* SchemasNewsRestBase.organizations = new SimpleSchema([SchemasNewsRest, {
   scope: {
     type: String,
     autoValue() {
@@ -234,7 +269,63 @@ SchemasNewsRestBase.events = new SimpleSchema([SchemasNewsRest, {
     },
     optional: true,
   },
-}]);
+  targetIsAuthor: {
+    type: String,
+    defaultValue: 'false',
+    optional: true,
+  },
+}]); */
+SchemasNewsRestBase.organizations = new SimpleSchema(SchemasNewsRest, {
+  tracker: Tracker,
+});
+SchemasNewsRestBase.organizations.extend({
+  scope: {
+    type: String,
+    autoValue() {
+      if (this.isSet) {
+        // console.log(this.value);
+        return this.value;
+      }
+      return 'restricted';
+    },
+    optional: true,
+  },
+  targetIsAuthor: {
+    type: String,
+    defaultValue: 'false',
+    optional: true,
+  },
+});
+
+/* SchemasNewsRestBase.events = new SimpleSchema([SchemasNewsRest, {
+  scope: {
+    type: String,
+    autoValue() {
+      if (this.isSet) {
+        // console.log(this.value);
+        return this.value;
+      }
+      return 'restricted';
+    },
+    optional: true,
+  },
+}]); */
+SchemasNewsRestBase.events = new SimpleSchema(SchemasNewsRest, {
+  tracker: Tracker,
+});
+SchemasNewsRestBase.events.extend({
+  scope: {
+    type: String,
+    autoValue() {
+      if (this.isSet) {
+        // console.log(this.value);
+        return this.value;
+      }
+      return 'restricted';
+    },
+    optional: true,
+  },
+});
 
 // collection
 if (Meteor.isClient) {

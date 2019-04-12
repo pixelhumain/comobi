@@ -1,5 +1,5 @@
 import { Template } from 'meteor/templating';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { Mongo } from 'meteor/mongo';
 
 import './item.js';
@@ -8,7 +8,7 @@ import './list.html';
 Template.Directory_list.onCreated(function () {
    // console.log(Template.currentData());
   this.autorun(() => {
-    new SimpleSchema({
+    /* new SimpleSchema({
       isConnect: { type: String, optional: true },
       list: { type: Mongo.Cursor, optional: true },
       person: { type: Boolean, optional: true },
@@ -17,6 +17,6 @@ Template.Directory_list.onCreated(function () {
       scopeId: { type: String, optional: true },
       scopeCible: { type: String, optional: true },
       isScopeAdmin: { type: Boolean, optional: true },
-    }).validate(Template.currentData());
+    }).validate(Template.currentData()); */
   });
 });

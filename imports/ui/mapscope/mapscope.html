@@ -8,7 +8,7 @@
 {{/contentFor}}
 
 {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "Carte"}}</h1>
+  <h1 class="title">{{__ "Carte"}}</h1>
 {{/contentFor}}
 
  {{#ionView}}
@@ -28,15 +28,15 @@
   {{#if startDate}}
   <p>
     {{#if isStart}}
-    <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
+    <i class="icon ion-android-alarm-clock"></i> {{__ "start"}} : {{livestamp startDate}} <br>
     {{#if endDate}}
-    <i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>
-    <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
+    <i class="icon ion-android-alarm-clock"></i> {{__ "end"}} : {{livestamp endDate}} <br>
+    <i class="icon ion-android-time"></i> {{__ "duration"}} : {{diffInText startDate endDate}}<br>
     {{/if}}
     {{else}}
-    <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
+    <i class="icon ion-android-alarm-clock"></i> {{__ "start"}} : {{livestamp startDate}} <br>
     {{#if endDate}}
-    <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
+    <i class="icon ion-android-time"></i> {{__ "duration"}} : {{diffInText startDate endDate}}<br>
     {{/if}}
     {{/if}}
   </p>

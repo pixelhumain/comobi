@@ -1,6 +1,6 @@
 <template name="contacts">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "Contacts"}}</h1>
+  <h1 class="title">{{__ "Contacts"}}</h1>
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
@@ -21,12 +21,12 @@
   <div class="list list-inset">
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input id="search" type="text" placeholder="{{_ "Search..."}}">
+      <input id="search" type="text" placeholder="{{__ "Search..."}}">
     </label>
   </div>
   {{#if contacts}}
   <div class="item item-divider">
-    <i class="icon ion-android-contacts"></i> {{_ "Contacts"}} <span class="badge badge-dark">{{countContacts}}</span>
+    <i class="icon ion-android-contacts"></i> {{__ "Contacts"}} <span class="badge badge-dark">{{countContacts}}</span>
   </div>
   {{/if}}
   {{#each contacts}}
@@ -42,9 +42,9 @@
   {{else}}
   {{#ionItem}}
   {{#if filter}}
-  {{_ "No Items found"}}
+  {{__ "No Items found"}}
   {{else}}
-  {{_ "Enter a search term"}}
+  {{__ "Enter a search term"}}
   {{/if}}
   {{/ionItem}}
   {{/each}}
@@ -57,14 +57,14 @@
 <template name="_contactsUser">
   {{#ionModal customTemplate=true}}
   <div class="bar bar-header bar-dark">
-    <button data-dismiss="modal" type="button" class="button button-clear">{{_ "Reset"}}</button>
-    <h2 class="title">{{_ "Invite"}}</h2>
-    <button type="submit" class="button button-positive button-clear" id="inviteNewUser">{{_ "Send"}}</button>
+    <button data-dismiss="modal" type="button" class="button button-clear">{{__ "Reset"}}</button>
+    <h2 class="title">{{__ "Invite"}}</h2>
+    <button type="submit" class="button button-positive button-clear" id="inviteNewUser">{{__ "Send"}}</button>
   </div>
 <div class="content has-header overflow-scroll">
   <div class="list">
     <div class="item item-divider">
-      {{_ "Send invite"}}
+      {{__ "Send invite"}}
     </div>
     {{#with contact}}
     {{#autoForm id="followPerson" schema=SchemasFollowRest type="method" meteormethod="followPerson" template="ionic" class="padding"}}
@@ -72,7 +72,7 @@
     {{> afQuickField name='invitedUserEmail' type="select-radio" options=emailsOptions}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "send"}}</button>
+        <button type="submit" class="button button-dark">{{__ "send"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -85,21 +85,21 @@
 <template name="_inviteEmailUser">
   {{#ionModal customTemplate=true}}
   <div class="bar bar-header bar-dark">
-    <button data-dismiss="modal" type="button" class="button button-clear">{{_ "Reset"}}</button>
-    <h2 class="title">{{_ "Invite"}}</h2>
-    <button type="submit" class="button button-positive button-clear" id="inviteNewUser">{{_ "Send"}}</button>
+    <button data-dismiss="modal" type="button" class="button button-clear">{{__ "Reset"}}</button>
+    <h2 class="title">{{__ "Invite"}}</h2>
+    <button type="submit" class="button button-positive button-clear" id="inviteNewUser">{{__ "Send"}}</button>
   </div>
 <div class="content has-header overflow-scroll">
   <div class="list">
     <div class="item item-divider">
-      {{_ "Send invite"}}
+      {{__ "Send invite"}}
     </div>
     {{#autoForm id="followPerson" schema=SchemasFollowRest type="method" meteormethod="followPerson" template="ionic" class="padding"}}
     {{> afQuickField name='invitedUserName'}}
     {{> afQuickField name='invitedUserEmail'}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "send"}}</button>
+        <button type="submit" class="button button-dark">{{__ "send"}}</button>
       </div>
     </div>
     {{/autoForm}}

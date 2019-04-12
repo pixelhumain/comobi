@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { Router } from 'meteor/iron:router';
 import { AutoForm } from 'meteor/aldeed:autoform';
 import { Mongo } from 'meteor/mongo';
@@ -80,11 +80,11 @@ Template.rolesEdit.helpers({
   },
   scopeVarTrad () {
     if (pageSession.get('scope') === 'organizations') {
-      return TAPi18n.__('member');
+      return i18n.__('member');
     } else if (pageSession.get('scope') === 'projects') {
-      return TAPi18n.__('contributor');
+      return i18n.__('contributor');
     } else if (pageSession.get('scope') === 'events') {
-      return TAPi18n.__('attendee');
+      return i18n.__('attendee');
     }
   },
   dataReady() {

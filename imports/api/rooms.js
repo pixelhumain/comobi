@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { _ } from 'meteor/underscore';
 import { Router } from 'meteor/iron:router';
+import { Tracker } from 'meteor/tracker';
 
 // schemas
 import { baseSchema, SchemasRolesRest } from './schema.js';
@@ -15,7 +16,11 @@ import { queryOptions } from './helpers.js';
 
 export const Rooms = new Mongo.Collection('rooms', { idGeneration: 'MONGO' });
 
-export const SchemasRoomsRest = new SimpleSchema([baseSchema.pick(['description', 'name']), SchemasRolesRest.pick(['roles', 'roles.$']), {
+export const SchemasRoomsRest = new SimpleSchema(baseSchema.pick('description', 'name'), {
+  tracker: Tracker,
+});
+SchemasRoomsRest.extend(SchemasRolesRest.pick('roles', 'roles.$'));
+SchemasRoomsRest.extend({
   parentId: {
     type: String,
   },
@@ -27,7 +32,17 @@ export const SchemasRoomsRest = new SimpleSchema([baseSchema.pick(['description'
     type: String,
     allowedValues: ['open', 'closed'],
   }, */
-}]);
+});
+
+/* export const SchemasRoomsRest = new SimpleSchema([baseSchema.pick('description', 'name']), SchemasRolesRest.pick(['roles', 'roles.$'), {
+  parentId: {
+    type: String,
+  },
+  parentType: {
+    type: String,
+    allowedValues: ['projects', 'organizations', 'events'],
+  },
+}]); */
 
 /* parentId:574db1e540bb4e1e0d2762e6
 parentType:organizations

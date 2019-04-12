@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { moment } from 'meteor/momentjs:moment';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { _ } from 'meteor/underscore';
+import { Tracker } from 'meteor/tracker';
 
 // schemas
 import { baseSchema, geoSchema } from './schema.js';
@@ -85,7 +86,9 @@ export const SchemasHighlightRest = new SimpleSchema({
   },
 });
 
-Highlight.attachSchema(SchemasHighlightRest);
+Highlight.attachSchema(SchemasHighlightRest, {
+  tracker: Tracker,
+});
 
 if (Meteor.isClient) {
     window.Organizations = Organizations;

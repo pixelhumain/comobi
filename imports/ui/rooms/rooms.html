@@ -1,6 +1,6 @@
 <template name="detailRooms">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "cooperative space"}}</h1>
+  <h1 class="title">{{__ "cooperative space"}}</h1>
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
@@ -28,7 +28,7 @@
 <template name="listRooms_search">
   <label class="item item-input">
     <i class="icon ion-search placeholder-icon"></i>
-    <input id="search" type="text" placeholder="{{_ "Search..."}}" value="{{search}}">
+    <input id="search" type="text" placeholder="{{__ "Search..."}}" value="{{search}}">
   </label>
 </template>
 
@@ -83,7 +83,7 @@
     </div>
       {{> listRooms_search}}
     <div class="item item-divider">
-    <i class="icon fa fa-inbox"></i> {{_ "proposals"}}
+    <i class="icon fa fa-inbox"></i> {{__ "proposals"}}
     </div>
 
     {{#if ../isScopeMe}}
@@ -104,7 +104,7 @@
 
   {{> listResolutions room=this}}
   <div class="item item-divider">
-    <i class="icon fa fa-inbox"></i> {{_ "actions"}}
+    <i class="icon fa fa-inbox"></i> {{__ "actions"}}
   </div>
 
   {{#if ../isScopeMe}}
@@ -127,7 +127,7 @@
 <template name="listProposalsStatus">
   {{#if room.countProposalsStatus status search}}
       <div class="item item-divider">
-        {{_ status}} <span class="badge badge-dark">{{room.countProposalsStatus status search}}</span>
+        {{__ status}} <span class="badge badge-dark">{{room.countProposalsStatus status search}}</span>
       </div>
       {{#transition in="zoomIn" out="bounceOut"}}
       {{#each item in (room.listProposalsStatus status search)}}
@@ -142,7 +142,7 @@
 <template name="listActionsStatus">
   {{#if room.countActionsStatus status search}}
       <div class="item item-divider">
-        {{_ status}} <span class="badge badge-dark">{{room.countActionsStatus status search}}</span>
+        {{__ status}} <span class="badge badge-dark">{{room.countActionsStatus status search}}</span>
       </div>
       {{#transition in="zoomIn" out="bounceOut"}}
       {{#each item in (room.listActionsStatus status search)}}
@@ -157,7 +157,7 @@
 <template name="listResolutions">
   {{#if room.countResolutions search}}
       <div class="item item-divider">
-        <i class="icon fa fa-inbox"></i> {{_ "resolutions"}} <span class="badge badge-dark">{{room.countResolutions search}}</span>
+        <i class="icon fa fa-inbox"></i> {{__ "resolutions"}} <span class="badge badge-dark">{{room.countResolutions search}}</span>
       </div>
       {{#transition in="zoomIn" out="bounceOut"}}
       {{#each item in (room.listResolutions search)}}
@@ -179,19 +179,19 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "cooperative space"}}</h1>
+  <h1 class="title">{{__ "cooperative space"}}</h1>
   {{/contentFor}}
 
   {{#ionView}}
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "creating a new cooperative space"}}
+      {{__ "creating a new cooperative space"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -199,7 +199,7 @@
     {{> roomsFields}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "create"}}</button>
+        <button type="submit" class="button button-dark">{{__ "create"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -219,7 +219,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "cooperative space"}}</h1>
+  <h1 class="title">{{__ "cooperative space"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -227,12 +227,12 @@
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "Edit a cooperative space"}}
+      {{__ "Edit a cooperative space"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -240,7 +240,7 @@
     {{> roomsFields}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+        <button type="submit" class="button button-dark">{{__ "edit"}}</button>
       </div>
     </div>
     {{/autoForm}}

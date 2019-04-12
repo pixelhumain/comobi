@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { _ } from 'meteor/underscore';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { Router } from 'meteor/iron:router';
 import { AutoForm } from 'meteor/aldeed:autoform';
 import { Mongo } from 'meteor/mongo';
@@ -265,9 +265,6 @@ Template.organizationsBlockEdit.helpers({
         if (organization.socialNetwork.skype) {
           organizationEdit.skype = organization.socialNetwork.skype;
         }
-        if (organization.socialNetwork.googleplus) {
-          organizationEdit.gpplus = organization.socialNetwork.googleplus;
-        }
         if (organization.socialNetwork.github) {
           organizationEdit.github = organization.socialNetwork.github;
         }
@@ -300,14 +297,15 @@ Template.organizationsBlockEdit.helpers({
         organizationEdit.geoPosLongitude = organization.geo.longitude;
       }
     } else if (Router.current().params.block === 'preferences') {
+      // type de préférence change
       if (organization && organization.preferences) {
         organizationEdit.preferences = {};
-        if (organization.preferences.isOpenData === true) {
+        if (organization.preferences.isOpenData === 'true' || organization.preferences.isOpenData === true) {
           organizationEdit.preferences.isOpenData = true;
         } else {
           organizationEdit.preferences.isOpenData = false;
         }
-        if (organization.preferences.isOpenEdition === true) {
+        if (organization.preferences.isOpenEdition === 'true' || organization.preferences.isOpenEdition === true) {
           organizationEdit.preferences.isOpenEdition = true;
         } else {
           organizationEdit.preferences.isOpenEdition = false;
@@ -403,7 +401,7 @@ Template.organizationsFields.onRendered(function() {
   && Router.current().route.getName() !== 'eventsEdit' && Router.current().route.getName() !== 'eventsBlockEdit'
   && Router.current().route.getName() !== 'poiEdit' && Router.current().route.getName() !== 'poiBlockEdit'
   && Router.current().route.getName() !== 'classifiedEdit') {
-    IonPopup.confirm({ template: TAPi18n.__('Use your current location'),
+    IonPopup.confirm({ template: i18n.__('Use your current location'),
       onOk() {
         const latlngObj = position.getLatlngObject();
         if (latlngObj) {
@@ -431,8 +429,8 @@ Template.organizationsFields.onRendered(function() {
           });
         }
       },
-      cancelText: TAPi18n.__('no'),
-      okText: TAPi18n.__('yes'),
+      cancelText: i18n.__('no'),
+      okText: i18n.__('yes'),
     });
   }
 
@@ -440,7 +438,7 @@ Template.organizationsFields.onRendered(function() {
     const postalCode = pageSession.get('postalCode') || AutoForm.getFieldValue('postalCode');
     const country = pageSession.get('country') || AutoForm.getFieldValue('country');
     if (!!postalCode && !!country) {
-      if (postalCode.length > 4) {
+      if (postalCode.length > 3) {
         self.subscribe('cities', postalCode, country);
       }
     }
@@ -516,7 +514,7 @@ Template.organizationsFields.events({
     // console.log(insee.geo.latitude);
     // console.log(insee.geo.longitude);
   },
-  'change input[name="streetAddress"]': _.throttle((event, instance) => {
+  'change/keyup input[name="streetAddress"]': _.throttle((event, instance) => {
     // remplace les espaces par des +
     const transformNominatimUrl = (str) => {
       let res = '';

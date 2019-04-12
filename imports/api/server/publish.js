@@ -1359,26 +1359,6 @@ Meteor.publishComposite('directoryListOrganizations', function(scope, scopeId) {
       if (scope === 'citoyens') {
         options.fields = { pwd: 0 };
       }
-      let query = {};
-      if (_.contains(['organizations'], scope)) {
-        query.$or = [];
-        query.$or.push({
-          _id: new Mongo.ObjectID(scopeId),
-          'preferences.private': false,
-        });
-        query.$or.push({
-          _id: new Mongo.ObjectID(scopeId),
-          'preferences.private': {
-            $exists: false
-          },
-        });
-
-        if (scope === 'organizations') {
-          query = queryOrPrivateScope(query, 'members', scopeId, this.userId);
-        }
-      } else {
-        query._id = new Mongo.ObjectID(scopeId);
-      }
       return collection.find({ _id: new Mongo.ObjectID(scopeId) }, options);
     },
     children: [

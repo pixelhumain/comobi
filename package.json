@@ -64,7 +64,8 @@
     "bcrypt": "^3.0.4",
     "markdown-it": "^8.4.2",
     "meteor-node-stubs": "^0.4.1",
-    "sanitize-html": "^1.20.0"
+    "sanitize-html": "^1.20.0",
+    "simpl-schema": "^1.5.5"
   },
   "repository": {
     "type": "git",

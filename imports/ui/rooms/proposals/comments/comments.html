@@ -10,7 +10,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "comments"}}</h1>
+  <h1 class="title">{{__ "comments"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -29,7 +29,7 @@
   {{#with scope.room}}
   {{#with proposal}}
   <div class="item item-divider">
-  {{_ 'dda.proposal.proposal'}} : <a href="{{pathFor 'proposalsDetail' _id=parentId scope=parentType roomId=idParentRoom proposalId=_id._str}}" class="positive">{{title}}</a>
+  {{__ 'dda.proposal.proposal'}} : <a href="{{pathFor 'proposalsDetail' _id=parentId scope=parentType roomId=idParentRoom proposalId=_id._str}}" class="positive">{{title}}</a>
   </div>
   {{#each listComments}}
   <div class="list card">
@@ -79,7 +79,7 @@
   {{> afQuickField name='argval' type='select'}}
   <div class="item">
     <div class="button-bar">
-      <button type="submit" class="button button-dark">{{_ "publish"}}</button>
+      <button type="submit" class="button button-dark">{{__ "publish"}}</button>
     </div>
   </div>
   {{/autoForm}}
@@ -95,7 +95,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "comment"}}</h1>
+  <h1 class="title">{{__ "comment"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -103,18 +103,18 @@
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "edit a comment"}}
+      {{__ "edit a comment"}}
     </div>
     {{#if error}}
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     {{/if}}
     {{#autoForm id="editProposalsComment" schema=SchemasCommentsEditRest type="method-update" meteormethod="updateComment" doc=comment template="ionic" class="padding"}}
     {{> afQuickField name='text' label-type='placeholder' rows=2}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+        <button type="submit" class="button button-dark">{{__ "edit"}}</button>
       </div>
     </div>
     {{/autoForm}}

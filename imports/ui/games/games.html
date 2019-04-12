@@ -1,6 +1,6 @@
 <template name="detailGames">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "games.game"}}</h1>
+  <h1 class="title">{{__ "games.game"}}</h1>
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
@@ -92,28 +92,28 @@
 
                         <div class="row-center">
                             <div class="col text-center">
-                                {{_ "games.start_date_of_the_game"}}
+                                {{__ "games.start_date_of_the_game"}}
                             </div>
                             <div class="col text-center">
                                 <strong>{{formatStartDate}}</strong>
                             </div>
 
                             <div class="col text-center">
-                                {{_ "games.end_date_of_the_game"}}
+                                {{__ "games.end_date_of_the_game"}}
                             </div>
                             <div class="col text-center">
                                 <strong>{{formatEndDate}}</strong>
                             </div>
 
                             <div class="col text-center">
-                                {{_ "games.end_of_the_game"}}
+                                {{__ "games.end_of_the_game"}}
                             </div>
                             <div class="col text-center">
                                 <strong>{{timeSpentEnd}}</strong>
                             </div>
 
                             <div class="col text-center">
-                                {{_ "games.the_game_will_start"}}
+                                {{__ "games.the_game_will_start"}}
                             </div>
                             <div class="col text-center">
                                 <strong>{{timeSpentStart}}</strong>
@@ -134,35 +134,35 @@
 <div class="list">
 <div class="item item-text-wrap">
     <p class="text-center">
-        <span class="assertive">{{_ "games.game_not_start"}}</span>
+        <span class="assertive">{{__ "games.game_not_start"}}</span>
     </p>
 </div>
 
 
                         <div class="row-center">
                             <div class="col text-center">
-                                {{_ "games.start_date_of_the_game"}}
+                                {{__ "games.start_date_of_the_game"}}
                             </div>
                             <div class="col text-center">
                                 <strong>{{formatStartDate}}</strong>
                             </div>
                         
                             <div class="col text-center">
-                                {{_ "games.end_date_of_the_game"}}
+                                {{__ "games.end_date_of_the_game"}}
                             </div>
                             <div class="col text-center">
                                 <strong>{{formatEndDate}}</strong>
                             </div>
                         
                             <div class="col text-center">
-                                {{_ "games.end_of_the_game"}}
+                                {{__ "games.end_of_the_game"}}
                             </div>
                             <div class="col text-center">
                                 <strong>{{timeSpentEnd}}</strong>
                             </div>
                         
                             <div class="col text-center">
-                                {{_ "games.the_game_will_start"}}
+                                {{__ "games.the_game_will_start"}}
                             </div>
                             <div class="col text-center">
                                 <strong>{{timeSpentStart}}</strong>
@@ -174,23 +174,23 @@
 <template name="gameIsEnd">
 <div class="list">
 <div class="item item-text-wrap">
-    <p><span class="assertive">{{_ "games.game_is_end"}} - {{_ "games.player" count=numberPlayers}}</span></p>
+    <p><span class="assertive">{{__ "games.game_is_end"}} - {{__ "games.player" count=numberPlayers}}</span></p>
 </div>
 {{#with playerMe}} 
 {{#if finishedAt}}
 <div class="item item-text-wrap">
-    <p>{{_ "games.finished"}}
+    <p>{{__ "games.finished"}}
         <strong>{{livestamp finishedAt}}</strong>
-        <br> {{_ "games.game_completed_in"}}
+        <br> {{__ "games.game_completed_in"}}
         <strong>{{diffInText createdAt finishedAt}}</strong>
         <br>
-        {{{_ "games.point" count=totalPoint}}}
+        {{{__ "games.point" count=totalPoint}}}
     </p>
 </div>
 {{else}}
-    <p>{{_ "games.not_finished"}}
+    <p>{{__ "games.not_finished"}}
         <br>
-         {{{_ "games.point" count=totalPoint}}}
+         {{{__ "games.point" count=totalPoint}}}
     </p>
 {{/if}}
 
@@ -202,14 +202,14 @@
 <div class="list">
 <div class="item item-text-wrap">
     <p class="text-center">
-        <span class="balanced">{{_ "games.game_is_start"}} - {{_ "games.player" count=numberPlayers}}</span>
+        <span class="balanced">{{__ "games.game_is_start"}} - {{__ "games.player" count=numberPlayers}}</span>
     </p>
 </div>
 
     
     <div class="row">
         <div class="col text-center">
-             {{_ "games.end_date_of_the_game"}}
+             {{__ "games.end_date_of_the_game"}}
         </div>
         <div class="col text-center">
             <strong>{{formatEndDate}}</strong>
@@ -217,7 +217,7 @@
     </div>
     <div class="row">
         <div class="col text-center">
-             {{_ "games.end_of_the_game"}}
+             {{__ "games.end_of_the_game"}}
         </div>
         <div class="col text-center">
             <strong>{{timeSpentEnd}}</strong>
@@ -225,7 +225,7 @@
     </div>
     <div class="row">
         <div class="col text-center">
-             {{_ "games.game_is_start"}}
+             {{__ "games.game_is_start"}}
         </div>
         <div class="col text-center">
             <strong>{{timeSpentStart}}</strong>
@@ -238,7 +238,7 @@
 <div class="list">
     <div class="row">
         <div class="col text-center">
-             {{_ "games.finished"}}
+             {{__ "games.finished"}}
         </div>
         <div class="col text-center">
             <strong>{{livestamp finishedAt}}</strong>
@@ -246,7 +246,7 @@
     </div>
     <div class="row">
         <div class="col text-center">
-             {{_ "games.game_completed_in"}}
+             {{__ "games.game_completed_in"}}
         </div>
         <div class="col text-center">
             <strong>{{diffInText createdAt finishedAt}}</strong>
@@ -254,25 +254,25 @@
     </div>
         <div class="row">
             <div class="col text-center">
-                 <strong style="font-family: Homestead;color: #E33551;text-align: center;">{{{_ "games.point" count=totalPoint}}}</strong>
+                 <strong style="font-family: Homestead;color: #E33551;text-align: center;">{{{__ "games.point" count=totalPoint}}}</strong>
             </div>
         </div>
 </div>
 {{else}}
 <div class="list">
 <div class="item item-text-wrap text-center">
-        {{{_ "games.you_started_playing" playTimeSpentStart=playTimeSpentStart point=(_ "games.point" count=totalPoint)}}}
+        {{{__ "games.you_started_playing" playTimeSpentStart=playTimeSpentStart point=(_ "games.point" count=totalPoint)}}}
 </div>
 </div>
 <div class="list">
     <div class="item item-divider">
-        {{_ "games.question"}}
+        {{__ "games.question"}}
     </div>
 {{#transition in="slideInUp:500" out="slideOutRight"}}
 {{#each quest in listQuestsNoValid}}
 <div class="item item-text-wrap animated out">
     <p>
-       {{_ "games.question"}} {{quest.order}} : {{quest.question}}
+       {{__ "games.question"}} {{quest.order}} : {{quest.question}}
     </p>
      {{> buttonQuestValidate gameId=../_id._str questId=quest._id._str choiceId=quest.questId}}
 </div>
@@ -282,7 +282,7 @@
 {{/if}}
 <div class="list">
     <div class="item item-divider">
-        {{_ "games.result_of_the_questions"}}
+        {{__ "games.result_of_the_questions"}}
     </div>
 {{#each quest in listQuestsValid}}
 {{>itemQuest quest=quest questvalid=(questIsValid quest._id._str)}}
@@ -299,20 +299,20 @@
 </template>
 
 <template name="buttonGameParticipate">
-<button class="button button-positive button-block game-participate-js"><i class="icon fa fa-play-circle"></i> {{_ "games.play_the_game"}}</button>
+<button class="button button-positive button-block game-participate-js"><i class="icon fa fa-play-circle"></i> {{__ "games.play_the_game"}}</button>
 </template>
 
 <template name="buttonQuestValidate">
 
 <button class="button button-positive button-block scanner-quest-validate-js">
-    <i class="icon fa fa-qrcode"></i> {{_ "games.scan_qr_code"}}
+    <i class="icon fa fa-qrcode"></i> {{__ "games.scan_qr_code"}}
 </button>
 
 </template>
 
 <template name="itemQuest">
 <div class="item item-text-wrap {{#if questvalid}}item-balanced{{else}}item-assertive{{/if}}">
-     {{_ "games.question"}} {{quest.order}} : {{quest.question}}
+     {{__ "games.question"}} {{quest.order}} : {{quest.question}}
 </div>
 {{#with quest.objectQuest}}
 <a class="item {{#if profilThumbImageUrl}}item-thumbnail-left{{/if}}" href="{{pathFor 'detailList' _id=_id._str scope=scopeVar}}">
@@ -322,7 +322,7 @@
     {{#if geo}}
     <p>
         <a class="positive" href="{{pathFor 'mapWith' _id=_id._str scope=scopeVar}}">
-            <i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a>
+            <i class="icon ion-ios-location"></i> {{__ "distance"}} : {{distance geo}} </a>
     </p>
     {{/if}}
     <span class="badge badge-balanced">{{../quest.numberPlayerValidate}}</span>
@@ -333,7 +333,7 @@
 <template name="gameScoreBoard">
 <div class="list">
     <div class="item item-divider">
-        {{_ "games.scoreboard"}}
+        {{__ "games.scoreboard"}}
     </div>
     {{#each player in listPlayers}}
     <div class="item {{#if player.playerProfile.profilThumbImageUrl}}item-avatar{{/if}}">
@@ -342,19 +342,19 @@
         <h2>
             <a href="{{pathFor 'detailList' _id=player.playerProfile._id._str scope='citoyens'}}" class="dark">{{player.playerProfile.name}}</a>
         </h2>
-        {{#if player.isMe}}<p>{{_ "games.me"}}</p>{{/if}}
+        {{#if player.isMe}}<p>{{__ "games.me"}}</p>{{/if}}
         {{#if player.finishedAt}}
-        <p>{{_ "games.finished"}} <strong>{{livestamp player.finishedAt}}</strong><br>
-           {{_ "games.game_completed_in"}} <strong>{{diffInText player.createdAt player.finishedAt}}</strong>
+        <p>{{__ "games.finished"}} <strong>{{livestamp player.finishedAt}}</strong><br>
+           {{__ "games.game_completed_in"}} <strong>{{diffInText player.createdAt player.finishedAt}}</strong>
         </p>
         {{/if}}
          
          
-        <span class="badge {{#if player.finishedAt}}badge-balanced{{else}}badge-energized{{/if}}">{{{_ "games.point" count=player.totalPoint}}}</span>
+        <span class="badge {{#if player.finishedAt}}badge-balanced{{else}}badge-energized{{/if}}">{{{__ "games.point" count=player.totalPoint}}}</span>
     </div>
     {{else}}
         <div class="item">
-            {{_ "games.no_players"}}
+            {{__ "games.no_players"}}
         </div>
     {{/each}}
 </div>

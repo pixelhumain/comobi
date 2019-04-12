@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { _ } from 'meteor/underscore';
 import { Router } from 'meteor/iron:router';
+import { Tracker } from 'meteor/tracker';
 
 // schemas
 import { baseSchema, blockBaseSchema, geoSchema, preferences } from './schema.js';
@@ -23,7 +24,66 @@ export const Organizations = new Mongo.Collection('organizations', { idGeneratio
 
 // SimpleSchema.debug = true;
 
-export const SchemasOrganizationsRest = new SimpleSchema([baseSchema, geoSchema, {
+export const SchemasOrganizationsRest = new SimpleSchema(baseSchema, {
+  tracker: Tracker,
+  clean: {
+    filter: true,
+    autoConvert: true,
+    removeEmptyStrings: true,
+    trimStrings: true,
+    getAutoValues: true,
+    removeNullsFromArrays: true,
+  },
+});
+SchemasOrganizationsRest.extend(geoSchema);
+SchemasOrganizationsRest.extend({
+  type: {
+    type: String,
+    autoform: {
+      type: 'select',
+      options() {
+        if (Meteor.isClient) {
+          const listSelect = Lists.findOne({
+            name: 'organisationTypes'
+          });
+          if (listSelect && listSelect.list) {
+            return _.map(listSelect.list, function (value, key) {
+              return {
+                label: value,
+                value: key
+              };
+            });
+          }
+        }
+        return undefined;
+      },
+    },
+  },
+  role: {
+    type: String,
+    min: 1,
+    denyUpdate: true,
+  },
+  email: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Email,
+    optional: true,
+  },
+  fixe: {
+    type: String,
+    optional: true,
+  },
+  mobile: {
+    type: String,
+    optional: true,
+  },
+  fax: {
+    type: String,
+    optional: true,
+  },
+});
+
+/* export const SchemasOrganizationsRest = new SimpleSchema([baseSchema, geoSchema, {
   type: {
     type: String,
     autoform: {
@@ -63,12 +123,19 @@ export const SchemasOrganizationsRest = new SimpleSchema([baseSchema, geoSchema,
     type: String,
     optional: true,
   },
-}]);
+}]); */
 
 export const BlockOrganizationsRest = {};
-BlockOrganizationsRest.descriptions = new SimpleSchema([blockBaseSchema, baseSchema.pick(['shortDescription', 'description', 'tags', 'tags.$'])]);
-BlockOrganizationsRest.info = new SimpleSchema([blockBaseSchema, baseSchema.pick(['name', 'url']), SchemasOrganizationsRest.pick(['type', 'email', 'fixe', 'mobile', 'fax'])]);
-BlockOrganizationsRest.network = new SimpleSchema([blockBaseSchema, {
+// BlockOrganizationsRest.descriptions = new SimpleSchema([blockBaseSchema, baseSchema.pick('shortDescription', 'description', 'tags', 'tags.$)]');
+BlockOrganizationsRest.descriptions = new SimpleSchema(blockBaseSchema);
+BlockOrganizationsRest.descriptions.extend(baseSchema.pick('shortDescription', 'description', 'tags', 'tags.$'));
+
+// BlockOrganizationsRest.info = new SimpleSchema([blockBaseSchema, baseSchema.pick('name', 'url']), SchemasOrganizationsRest.pick(['type', 'email', 'fixe', 'mobile', 'fax)]');
+BlockOrganizationsRest.info = new SimpleSchema(blockBaseSchema);
+BlockOrganizationsRest.info.extend(baseSchema.pick('name', 'url'));
+BlockOrganizationsRest.info.extend(SchemasOrganizationsRest.pick('type', 'email', 'fixe', 'mobile', 'fax'));
+
+/* BlockOrganizationsRest.network = new SimpleSchema([blockBaseSchema, {
   github: {
     type: String,
     regEx: SimpleSchema.RegEx.Url,
@@ -99,14 +166,69 @@ BlockOrganizationsRest.network = new SimpleSchema([blockBaseSchema, {
     regEx: SimpleSchema.RegEx.Url,
     optional: true,
   },
-}]);
-BlockOrganizationsRest.locality = new SimpleSchema([blockBaseSchema, geoSchema]);
-BlockOrganizationsRest.preferences = new SimpleSchema([blockBaseSchema, {
+}]); */
+BlockOrganizationsRest.network = new SimpleSchema(blockBaseSchema);
+BlockOrganizationsRest.network.extend({
+  github: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Url,
+    optional: true,
+  },
+  instagram: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Url,
+    optional: true,
+  },
+  skype: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Url,
+    optional: true,
+  },
+  gpplus: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Url,
+    optional: true,
+  },
+  twitter: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Url,
+    optional: true,
+  },
+  facebook: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Url,
+    optional: true,
+  },
+});
+
+// BlockOrganizationsRest.locality = new SimpleSchema([blockBaseSchema, geoSchema]);
+BlockOrganizationsRest.locality = new SimpleSchema(blockBaseSchema);
+BlockOrganizationsRest.locality.extend(geoSchema);
+
+/* BlockOrganizationsRest.preferences = new SimpleSchema([blockBaseSchema, {
   preferences: {
     type: preferences,
     optional: true,
   },
-}]);
+}]); */
+BlockOrganizationsRest.preferences = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+  clean: {
+    filter: true,
+    autoConvert: true,
+    removeEmptyStrings: true,
+    trimStrings: true,
+    getAutoValues: true,
+    removeNullsFromArrays: true,
+  },
+});
+BlockOrganizationsRest.preferences.extend({
+  preferences: {
+    type: preferences,
+    optional: true,
+  },
+});
+
 
 Organizations.helpers({
   isVisibleFields (field) {

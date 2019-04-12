@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { moment } from 'meteor/momentjs:moment';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { _ } from 'meteor/underscore';
+import { Tracker } from 'meteor/tracker';
 
 // schemas
 import { baseSchema } from './schema.js';
@@ -27,7 +28,59 @@ key:action
 collection:actions
 */
 
-export const SchemasActionsRest = new SimpleSchema([baseSchema.pick(['name', 'description', 'tags', 'tags.$']), {
+export const SchemasActionsRest = new SimpleSchema(baseSchema.pick('name', 'description', 'tags', 'tags.$'), {
+  tracker: Tracker,
+});
+SchemasActionsRest.extend({
+  idParentRoom: {
+    type: String,
+  },
+  startDate: {
+    type: Date,
+    optional: true,
+    custom() {
+      if (this.field('endDate').value && !this.isSet && (!this.operator || (this.value === null || this.value === ''))) {
+        return 'required';
+      }
+      const startDate = moment(this.value).toDate();
+      const endDate = moment(this.field('endDate').value).toDate();
+      if (moment(endDate).isBefore(startDate)) {
+        return 'maxDateStart';
+      }
+    },
+  },
+  endDate: {
+    type: Date,
+    optional: true,
+    custom() {
+      if (this.field('startDate').value && !this.isSet && (!this.operator || (this.value === null || this.value === ''))) {
+        return 'required';
+      }
+      const startDate = moment(this.field('startDate').value).toDate();
+      const endDate = moment(this.value).toDate();
+      if (moment(endDate).isBefore(startDate)) {
+        return 'minDateEnd';
+      }
+    },
+  },
+  parentId: {
+    type: String,
+  },
+  parentType: {
+    type: String,
+    allowedValues: ['projects', 'organizations', 'events'],
+  },
+  urls: {
+    type: Array,
+    optional: true,
+  },
+  'urls.$': {
+    type: String,
+  },
+
+});
+
+/* export const SchemasActionsRest = new SimpleSchema([baseSchema.pick('name', 'description', 'tags', 'tags.$'), {
   idParentRoom: {
     type: String,
   },
@@ -66,15 +119,15 @@ export const SchemasActionsRest = new SimpleSchema([baseSchema.pick(['name', 'de
     type: String,
     allowedValues: ['projects', 'organizations', 'events'],
   },
-  /* status: {
-    type: String,
-    allowedValues: ['todo', 'disabled', 'done'],
-  }, */
   urls: {
-    type: [String],
+    type: Array,
     optional: true,
   },
-}]);
+  'urls.$': {
+    type: String,
+  },
+
+}]); */
 
 if (Meteor.isClient) {
   import { Chronos } from './client/chronos.js';

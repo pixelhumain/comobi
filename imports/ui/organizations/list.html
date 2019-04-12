@@ -1,7 +1,7 @@
 <template name="listOrganizations">
   {{> testgeo}}
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "organizations"}} {{> cityTitle}}</h1>
+  <h1 class="title">{{__ "organizations"}} {{> cityTitle}}</h1>
   {{/contentFor}}
   {{#contentFor "headerButtonLeft"}}
   <button class="button button-clear pull-left" data-ion-menu-toggle="left">
@@ -31,7 +31,7 @@
   <div class="list list-inset">
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input id="search" type="text" placeholder="{{_ "searchPlaceholder"}}" value="{{searchOrganizations}}">
+      <input id="search" type="text" placeholder="{{__ "searchPlaceholder"}}" value="{{searchOrganizations}}">
     </label>
     <div class="button-bar button-small">
     {{#each listOrganisationTypes}}
@@ -43,7 +43,7 @@
     <div class="list list-inset">
 
       <div class="item item-divider">
-        <i class="icon fa fa-users"></i> {{_ "organizations"}} <span class="badge badge-dark">{{countOrganizations}}</span>
+        <i class="icon fa fa-users"></i> {{__ "organizations"}} <span class="badge badge-dark">{{countOrganizations}}</span>
       </div>
 
       {{#if dataReady}}
@@ -94,7 +94,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "organizations"}}</h1>
+  <h1 class="title">{{__ "organizations"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -102,12 +102,12 @@
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "Create a organization"}}
+      {{__ "Create a organization"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -115,7 +115,7 @@
     {{> organizationsFields}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "create"}}</button>
+        <button type="submit" class="button button-dark">{{__ "create"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -138,7 +138,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "organizations"}}</h1>
+  <h1 class="title">{{__ "organizations"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -146,12 +146,12 @@
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "Edit a organization"}}
+      {{__ "Edit a organization"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -159,7 +159,7 @@
     {{> organizationsFields update="1"}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+        <button type="submit" class="button button-dark">{{__ "edit"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -181,7 +181,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "organizations"}}</h1>
+  <h1 class="title">{{__ "organizations"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -189,12 +189,12 @@
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "Edit a organization"}}
+      {{__ "Edit a organization"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -207,7 +207,7 @@
     {{> organizationsFields block=block}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+        <button type="submit" class="button button-dark">{{__ "edit"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -236,7 +236,6 @@
   {{> afQuickField name='instagram'}}
   {{> afQuickField name='skype'}}
   {{> afQuickField name='github'}}
-  {{> afQuickField name='gpplus'}}
   {{> afQuickField name='twitter'}}
   {{> afQuickField name='facebook'}}
   {{/if}}
@@ -249,12 +248,13 @@
   {{#if equals block 'preferences'}}
   <div class="list card">
   <div class="item item-body">
-    <strong>{{_ "Open Data"}}</strong>  : {{_ "Vous proposez vos données en accès libre, afin de contribuer au bien commun"}}<br>
-    <strong>{{_ "Open Edition"}}</strong>  : {{_ "Tous les utilisateurs ont la possibilité de participer / modifier les informations"}}
+    <strong>{{__ "Open Data"}}</strong>  : {{__ "Vous proposez vos données en accès libre, afin de contribuer au bien commun"}}<br>
+    <strong>{{__ "Open Edition"}}</strong>  : {{__ "Tous les utilisateurs ont la possibilité de participer / modifier les informations"}}
   </div>
   </div>
-  {{> afQuickField name='preferences.isOpenData'}}
-  {{> afQuickField name='preferences.isOpenEdition'}}
+
+  {{> afQuickField name='preferences'}}
+
   {{/if}}
 
   {{#if equals block 'locality'}}
@@ -266,7 +266,7 @@
   {{> afQuickField name='city' options=optionsInsee value=city}}
   {{> afQuickField name='cityName' type="hidden" value=cityName}}
   {{else}}
-  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
+  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{__ "Error not postal code match"}}</div>
   {{/if}}
   {{/if}}
   {{> afQuickField name='streetAddress' autocomplete="off"}}
@@ -302,7 +302,7 @@
   {{> afQuickField name='city' options=optionsInsee value=city}}
   {{> afQuickField name='cityName' type="hidden" value=cityName}}
   {{else}}
-  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
+  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{__ "Error not postal code match"}}</div>
   {{/if}}
   {{/if}}
   {{> afQuickField name='streetAddress' autocomplete="off"}}
@@ -314,9 +314,8 @@
   {{> afQuickField name='regionName' type="hidden" value=regionName}}
   {{> afQuickField name='depName' type="hidden" value=depName}}
   {{> afQuickField name='localityId' type="hidden" value=localityId}}
-  {{#if update}}
-  {{> afQuickField name='preferences'}}
-  {{/if}}
+
+
   {{/if}}
   {{/unless}}
 </template>

@@ -19,7 +19,7 @@
       {{else if equals scopeVar 'classified'}}
       {{> scopeCreator organizer=organizerClassified creator=creatorProfile }}
       {{else}}
-      {{#if creatorProfile}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
+      {{#if creatorProfile}}<p>{{__ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
       {{/if}}
 
       {{#if typeValue}}{{typeValue}}{{/if}}
@@ -61,7 +61,7 @@
       {{#if equals scopeVar 'citoyens'}}
       {{#transition in="slideInDown" out="slideOutUp"}}
       <p class="right-top animated in">
-        {{#if modified}}<i class="icon ion-android-alarm-clock"></i> {{_ "modified"}} : {{livestamp modified}}<br>{{/if}}
+        {{#if modified}}<i class="icon ion-android-alarm-clock"></i> {{__ "modified"}} : {{livestamp modified}}<br>{{/if}}
         {{#if preferences}}
         {{#if equals preferences.isOpenData 'true'}}
         <span class="icon fa-stack opendata" style="font-size:14px;width:14px;">
@@ -77,11 +77,11 @@
 
       <p class="right-top animated in">
         {{#if startDate}}
-        {{#if startDate}}<i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>{{/if}}
-        {{#if endDate}}<i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>{{/if}}
-        {{#if endDate}}<i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>{{/if}}
+        {{#if startDate}}<i class="icon ion-android-alarm-clock"></i> {{__ "start"}} : {{livestamp startDate}} <br>{{/if}}
+        {{#if endDate}}<i class="icon ion-android-alarm-clock"></i> {{__ "end"}} : {{livestamp endDate}} <br>{{/if}}
+        {{#if endDate}}<i class="icon ion-android-time"></i> {{__ "duration"}} : {{diffInText startDate endDate}}<br>{{/if}}
         {{/if}}
-        {{#if modified}}<i class="icon ion-android-alarm-clock"></i> {{_ "modified"}} : {{livestamp modified}}<br>{{/if}}
+        {{#if modified}}<i class="icon ion-android-alarm-clock"></i> {{__ "modified"}} : {{livestamp modified}}<br>{{/if}}
         {{#if preferences}}
         {{#if preferenceTrue preferences.isOpenData}}
         <span class="icon fa-stack opendata" style="font-size:14px;width:14px;">
@@ -93,7 +93,7 @@
         <i class="icon fa fa-creative-commons dark"></i>
         {{/if}}
         {{#if preferenceTrue preferences.private}}
-        <i class="icon fa fa-lock positive"></i> {{_ "Private"}}
+        <i class="icon fa fa-lock positive"></i> {{__ "Private"}}
         {{/if}}
         {{/if}}
       </p>
@@ -236,7 +236,7 @@
 
     <div class="item tabs tabs-secondary tabs-icon-left">
       {{#if isVisibleFields 'locality'}}
-      {{#if geo}}<a class="tab-item" href="{{pathFor 'mapWith' _id=_id._str scope=scopeVar}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a>{{/if}}
+      {{#if geo}}<a class="tab-item" href="{{pathFor 'mapWith' _id=_id._str scope=scopeVar}}"><i class="icon ion-ios-location"></i> {{__ "distance"}} : {{distance geo}} </a>{{/if}}
       {{/if}}
     </div>
     {{/with}}
@@ -245,7 +245,7 @@
 
 <template name="scopeCreator">
 {{#if organizer}}
-<p>{{_ "organizer"}} :
+<p>{{__ "organizer"}} :
 {{#each organizerItem in organizer}}
 {{#each organizerItemValue in organizerItem.values}}
  <a href="{{pathFor 'detailList' _id=organizerItemValue._id._str scope=organizerItem.type}}" class="positive">{{organizerItemValue.name}}</a>
@@ -253,13 +253,13 @@
 {{/each}}
 </p>
 {{else}}
-{{#if creatorProfile}}<p>{{_ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
+{{#if creatorProfile}}<p>{{__ "creator"}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="positive">{{creatorProfile.name}}</a></p>{{/if}}
 {{/if}}
 </template>
 
 <template name="scopeEventsParent">
 {{#if eventsParent}}
-<p>{{_ "on the program of"}} :
+<p>{{__ "on the program of"}} :
 {{#each organizerItem in eventsParent}}
   {{#each organizerItemValue in organizerItem.values}}
 <a href="{{pathFor 'detailList' _id=organizerItemValue._id._str scope=organizerItem.type}}" class="positive">{{organizerItemValue.name}}</a>

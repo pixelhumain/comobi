@@ -1,4 +1,6 @@
 {
+  "_namespace": "",
+  "_locale": "en",
   "Close":"Close",
   "Add event":"Add event",
   "notifications":"Notifications",
@@ -174,8 +176,8 @@
       "poi":"a point of interest"
     },
     "notification":{
-      "whoNumber": "and %s others",
-      "whoNumber_plural": "and %s others",
+      "whoNumber": "and __count__ others",
+      "whoNumber_plural": "and __count__ others",
 "who_is_following_where": "__who__ is following __where__",
 "who_are_following_where": "__who__ are following __where__",
 "who_is_following_you": "__who__ is following you",
@@ -734,7 +736,8 @@
           "YT": "Mayotte",
           "NC": "New Caledonia",
           "RE": "Reunion",
-          "PM": "St Pierre and Miquelon"
+          "PM": "St Pierre and Miquelon",
+          "BE": "Belgium"
         }
       },
       "postalCode":{
@@ -818,7 +821,8 @@
           "YT": "Mayotte",
           "NC": "New Caledonia",
           "RE": "Reunion",
-          "PM": "St Pierre and Miquelon"
+          "PM": "St Pierre and Miquelon",
+          "BE": "Belgium"
         }
       },
       "postalCode":{
@@ -895,7 +899,8 @@
           "YT": "Mayotte",
           "NC": "New Caledonia",
           "RE": "Reunion",
-          "PM": "St Pierre and Miquelon"
+          "PM": "St Pierre and Miquelon",
+          "BE": "Belgium"
         }
       },
       "postalCode":{
@@ -995,7 +1000,8 @@
           "YT": "Mayotte",
           "NC": "New Caledonia",
           "RE": "Reunion",
-          "PM": "St Pierre and Miquelon"
+          "PM": "St Pierre and Miquelon",
+          "BE": "Belgium"
         }
       },
       "postalCode":{
@@ -1197,7 +1203,8 @@
           "YT": "Mayotte",
           "NC": "New Caledonia",
           "RE": "Reunion",
-          "PM": "St Pierre and Miquelon"
+          "PM": "St Pierre and Miquelon",
+          "BE": "Belgium"
         }
       },
       "postalCode":{
@@ -1486,7 +1493,8 @@
           "YT": "Mayotte",
           "NC": "New Caledonia",
           "RE": "Reunion",
-          "PM": "St Pierre and Miquelon"
+          "PM": "St Pierre and Miquelon",
+          "BE": "Belgium"
         }
       },
       "postalCode":{

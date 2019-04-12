@@ -228,9 +228,6 @@ Template.projectsBlockEdit.helpers({
         if (project.socialNetwork.skype) {
           projectEdit.skype = project.socialNetwork.skype;
         }
-        if (project.socialNetwork.googleplus) {
-          projectEdit.gpplus = project.socialNetwork.googleplus;
-        }
         if (project.socialNetwork.github) {
           projectEdit.github = project.socialNetwork.github;
         }

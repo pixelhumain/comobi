@@ -8,7 +8,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "Parameter"}} : {{scope.name}}</h1>
+  <h1 class="title">{{__ "Parameter"}} : {{scope.name}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -17,12 +17,12 @@
 
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      <i class="icon fa fa-cog"></i> {{_ "Parameter"}}
+      <i class="icon fa fa-cog"></i> {{__ "Parameter"}}
     </div>
     {{#if equals childType 'citoyens'}}
     {{#if scope.isAdmin childId}}
     <div class="item">
-      {{_ 'Is admin'}}
+      {{__ 'Is admin'}}
     </div>
     {{else}}
     <div class="item">
@@ -40,12 +40,12 @@
   </div>
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      <i class="icon fa fa-cog"></i> {{_ "Edit a roles"}}
+      <i class="icon fa fa-cog"></i> {{__ "Edit a roles"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -53,7 +53,7 @@
     {{> afQuickField name='roles' type='select-checkbox' }}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+        <button type="submit" class="button button-dark">{{__ "edit"}}</button>
       </div>
     </div>
     {{/autoForm}}

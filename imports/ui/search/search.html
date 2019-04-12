@@ -1,6 +1,6 @@
 <template name="Page_search">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "search"}}</h1>
+  <h1 class="title">{{__ "search"}}</h1>
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
@@ -25,12 +25,12 @@
   <div class="list list-inset">
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input id="search" type="text" placeholder="{{_ "searchPlaceholder"}}" value="{{filter}}">
+      <input id="search" type="text" placeholder="{{__ "searchPlaceholder"}}" value="{{filter}}">
     </label>
   </div>
   {{#if searchGlobal}}
   <div class="item item-divider">
-    <i class="icon ion-search"></i> {{_ "search"}} <span class="badge badge-dark">{{countSearchGlobal}}</span>
+    <i class="icon ion-search"></i> {{__ "search"}} <span class="badge badge-dark">{{countSearchGlobal}}</span>
   </div>
   {{/if}}
 
@@ -49,9 +49,9 @@
 
   {{#ionItem}}
   {{#if filter}}
-  {{_ "No found"}}
+  {{__ "No found"}}
   {{else}}
-  {{_ "Enter a search term"}}
+  {{__ "Enter a search term"}}
   {{/if}}
   {{/ionItem}}
 

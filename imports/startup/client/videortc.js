@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 import { Router } from 'meteor/iron:router';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { IonPopup } from 'meteor/meteoric:ionic';
 import Howl from 'howler';
 import { VideoCallServices } from 'meteor/elmarti:video-chat';
@@ -37,7 +37,7 @@ Meteor.startup(() => {
             pageVideo.set('showChat', user._id._str);
             sound.play();
             IonPopup.confirm({
-              title: `<i class="icon fa fa-video-camera"></i> ${TAPi18n.__('You are receiving a phone call')}`,
+              title: `<i class="icon fa fa-video-camera"></i> ${i18n.__('You are receiving a phone call')}`,
               template: (user.profilThumbImageUrl ? `<div class="list card"><div class="item item-avatar"><img src="${Meteor.settings.public.urlimage}${user.profilThumbImageUrl}"> <h2>${user.name}</h2></div></div>` : `<div class="list card"><div class="item"><h2>${user.name}</h2></div></div>`),
               onOk() {
                 pageVideo.set('showTarget', true);

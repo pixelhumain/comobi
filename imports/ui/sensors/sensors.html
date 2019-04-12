@@ -8,7 +8,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "Sensors"}}</h1>
+  <h1 class="title">{{__ "Sensors"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -18,55 +18,55 @@
 <div class="list" data-snap-ignore="true">
 
   <div class="item item-button-right">
-    <i class="icon fa fa-sun-o"></i> {{_ "Sensors"}} <button class="button button-positive refreshSensors"><i class="icon fa fa-refresh"></i></button>
+    <i class="icon fa fa-sun-o"></i> {{__ "Sensors"}} <button class="button button-positive refreshSensors"><i class="icon fa fa-refresh"></i></button>
   </div>
 {{#if getTemperature}}
 <div class='item item-icon-right item-button-left'>
-  {{#if getTypeSensor 'AMBIENT_TEMPERATURE'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="AMBIENT_TEMPERATURE"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="AMBIENT_TEMPERATURE"><i class="icon fa fa-play"></i></button>{{/if}} {{_ 'temperature'}} <span class="badge badge-positive">{{getTemperature}} °C</span></div>
+  {{#if getTypeSensor 'AMBIENT_TEMPERATURE'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="AMBIENT_TEMPERATURE"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="AMBIENT_TEMPERATURE"><i class="icon fa fa-play"></i></button>{{/if}} {{__ 'temperature'}} <span class="badge badge-positive">{{getTemperature}} °C</span></div>
 {{/if}}
 {{#if getHumidity}}
 <div class='item item-icon-right item-button-left'>
-  {{#if getTypeSensor 'RELATIVE_HUMIDITY'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="RELATIVE_HUMIDITY"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="RELATIVE_HUMIDITY"><i class="icon fa fa-play"></i></button>{{/if}} {{_ 'humidity'}} <span class="badge badge-positive">{{getHumidity}} %</span></div>
+  {{#if getTypeSensor 'RELATIVE_HUMIDITY'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="RELATIVE_HUMIDITY"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="RELATIVE_HUMIDITY"><i class="icon fa fa-play"></i></button>{{/if}} {{__ 'humidity'}} <span class="badge badge-positive">{{getHumidity}} %</span></div>
 {{/if}}
 {{#if getPressure}}
 <div class='item item-icon-right item-button-left'>
-  {{#if getTypeSensor 'PRESSURE'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="PRESSURE"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="PRESSURE"><i class="icon fa fa-play"></i></button>{{/if}} {{_ 'pressure'}} <span class="badge badge-positive">{{getPressure}} hPa</span></div>
+  {{#if getTypeSensor 'PRESSURE'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="PRESSURE"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="PRESSURE"><i class="icon fa fa-play"></i></button>{{/if}} {{__ 'pressure'}} <span class="badge badge-positive">{{getPressure}} hPa</span></div>
 {{/if}}
 {{#if getLight}}
 <div class='item item-icon-right item-button-left'>
-  {{#if getTypeSensor 'LIGHT'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="LIGHT"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="LIGHT"><i class="icon fa fa-play"></i></button>{{/if}} {{_ 'light'}} <span class="badge badge-positive">{{getLight}} lux</span> </div>
+  {{#if getTypeSensor 'LIGHT'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="LIGHT"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="LIGHT"><i class="icon fa fa-play"></i></button>{{/if}} {{__ 'light'}} <span class="badge badge-positive">{{getLight}} lux</span> </div>
 {{/if}}
 {{#if getProximity}}
 <div class='item item-icon-right item-button-left'>
-  {{#if getTypeSensor 'PROXIMITY'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="PROXIMITY"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="PROXIMITY"><i class="icon fa fa-play"></i></button>{{/if}} {{_ 'proximity'}} <span class="badge badge-positive">{{getProximity}} cm</span> </div>
+  {{#if getTypeSensor 'PROXIMITY'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="PROXIMITY"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="PROXIMITY"><i class="icon fa fa-play"></i></button>{{/if}} {{__ 'proximity'}} <span class="badge badge-positive">{{getProximity}} cm</span> </div>
 {{/if}}
 {{#if getTemperatureIn}}
 <div class='item item-icon-right item-button-left'>
-  {{#if getTypeSensor 'TEMPERATURE'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="TEMPERATURE"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="TEMPERATURE"><i class="icon fa fa-play"></i></button>{{/if}} {{_ 'temperature'}} <span class="badge badge-positive">{{getTemperatureIn}} °C</span> </div>
+  {{#if getTypeSensor 'TEMPERATURE'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="TEMPERATURE"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="TEMPERATURE"><i class="icon fa fa-play"></i></button>{{/if}} {{__ 'temperature'}} <span class="badge badge-positive">{{getTemperatureIn}} °C</span> </div>
 {{/if}}
 {{#if getAccelerometer}}
 <div class='item item-icon-right item-button-left'>
-  {{#if getTypeSensor 'ACCELEROMETER'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="ACCELEROMETER"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="ACCELEROMETER"><i class="icon fa fa-play"></i></button>{{/if}} {{_ 'accelerometer'}} <p>{{{getAccelerometer}}} m/s2</p> </div>
+  {{#if getTypeSensor 'ACCELEROMETER'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="ACCELEROMETER"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="ACCELEROMETER"><i class="icon fa fa-play"></i></button>{{/if}} {{__ 'accelerometer'}} <p>{{{getAccelerometer}}} m/s2</p> </div>
 {{/if}}
 {{#if getGravity}}
 <div class='item item-icon-right item-button-left'>
-  {{#if getTypeSensor 'GRAVITY'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="GRAVITY"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="GRAVITY"><i class="icon fa fa-play"></i></button>{{/if}} {{_ 'gravity'}} <p>{{{getGravity}}} m/s2</p> </div>
+  {{#if getTypeSensor 'GRAVITY'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="GRAVITY"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="GRAVITY"><i class="icon fa fa-play"></i></button>{{/if}} {{__ 'gravity'}} <p>{{{getGravity}}} m/s2</p> </div>
 {{/if}}
 {{#if getGyroscope}}
 <div class='item item-icon-right item-button-left'>
-  {{#if getTypeSensor 'GYROSCOPE'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="GYROSCOPE"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="GYROSCOPE"><i class="icon fa fa-play"></i></button>{{/if}} {{_ 'gyroscope'}} <p>{{{getGyroscope}}} rad/s</p> </div>
+  {{#if getTypeSensor 'GYROSCOPE'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="GYROSCOPE"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="GYROSCOPE"><i class="icon fa fa-play"></i></button>{{/if}} {{__ 'gyroscope'}} <p>{{{getGyroscope}}} rad/s</p> </div>
 {{/if}}
 {{#if getMagneticField}}
 <div class='item item-icon-right item-button-left'>
-  {{#if getTypeSensor 'MAGNETIC_FIELD'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="MAGNETIC_FIELD"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="MAGNETIC_FIELD"><i class="icon fa fa-play"></i></button>{{/if}} {{_ 'magnetic field'}} <p>{{{getMagneticField}}} μT</p> </div>
+  {{#if getTypeSensor 'MAGNETIC_FIELD'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="MAGNETIC_FIELD"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="MAGNETIC_FIELD"><i class="icon fa fa-play"></i></button>{{/if}} {{__ 'magnetic field'}} <p>{{{getMagneticField}}} μT</p> </div>
 {{/if}}
 {{#if getRotationVector}}
 <div class='item item-icon-right item-button-left'>
-  {{#if getTypeSensor 'ROTATION_VECTOR'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="ROTATION_VECTOR"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="ROTATION_VECTOR"><i class="icon fa fa-play"></i></button>{{/if}} {{_ 'rotation vector'}} <p>{{{getRotationVector}}}</p> </div>
+  {{#if getTypeSensor 'ROTATION_VECTOR'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="ROTATION_VECTOR"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="ROTATION_VECTOR"><i class="icon fa fa-play"></i></button>{{/if}} {{__ 'rotation vector'}} <p>{{{getRotationVector}}}</p> </div>
 {{/if}}
 {{#if getStepCounter}}
 <div class='item item-icon-right item-button-left'>
-  {{#if getTypeSensor 'STEP_COUNTER'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="STEP_COUNTER"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="STEP_COUNTER"><i class="icon fa fa-play"></i></button>{{/if}}{{_ 'step counter'}} <span class="badge badge-positive">{{getStepCounter}}/{{_ 'step'}}</span>
+  {{#if getTypeSensor 'STEP_COUNTER'}}<button class="button button-small button-assertive StopWatchSensors" data-sensor="STEP_COUNTER"><i class="icon fa fa-stop"></i></button>{{else}}<button class="button button-small button-balanced watchSensors" data-sensor="STEP_COUNTER"><i class="icon fa fa-play"></i></button>{{/if}}{{__ 'step counter'}} <span class="badge badge-positive">{{getStepCounter}}/{{__ 'step'}}</span>
 </div>
 {{/if}}
 

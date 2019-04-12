@@ -5,7 +5,7 @@ import { moment } from 'meteor/momentjs:moment';
 import { HTTP } from 'meteor/http';
 import { URL } from 'meteor/url';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { Mongo } from 'meteor/mongo';
 import { ValidEmail, IsValidEmail } from 'meteor/froatsnook:valid-email';
 // collection et schemas
@@ -47,6 +47,13 @@ global.Actions = Actions;
 global.Resolutions = Resolutions;
 global.Rooms = Rooms;
 global.Proposals = Proposals;
+
+SimpleSchema.defineValidationErrorTransform((error) => {
+  const ddpError = new Meteor.Error(error.message);
+  ddpError.error = 'validation-error';
+  ddpError.details = error.details;
+  return ddpError;
+});
 
 const baseDocRetour = (docRetour, doc, scope) => {
   if (scope === 'block') {
@@ -149,7 +156,7 @@ const baseDocRetour = (docRetour, doc, scope) => {
       if (doc.block === 'info') {
         docRetour.name = doc.name;
         docRetour.type = doc.type;
-        docRetour.email = doc.email ? doc.email : '';
+        docRetour.email = doc.email ? doc.email : null;
         docRetour.url = doc.url ? doc.url : '';
         docRetour.fixe = doc.fixe ? doc.fixe : '';
         docRetour.mobile = doc.mobile ? doc.mobile : '';
@@ -183,7 +190,8 @@ const baseDocRetour = (docRetour, doc, scope) => {
     }
   } else if (scope === 'organizations') {
     docRetour.name = doc.name;
-    docRetour.description = doc.description ? doc.description : '';
+    // docRetour.description = doc.description ? doc.description : '';
+    docRetour.shortDescription = doc.shortDescription ? doc.shortDescription : '';
     docRetour.type = doc.type;
     docRetour.role = doc.role;
     docRetour.email = doc.email ? doc.email : '';
@@ -537,11 +545,13 @@ Meteor.methods({
     // type : person / follows
     // invitedUserName
     // invitedUserEmail
-    check(doc, SchemasFollowRest);
+    SchemasFollowRest.validate(doc);
+    const docClean = SchemasFollowRest.clean(doc);
+    // check(doc, SchemasFollowRest);
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
-    const retour = apiCommunecter.postPixel('co2/person', 'follows', doc);
+    const retour = apiCommunecter.postPixel('co2/person', 'follows', docClean);
     return retour;
   },
   saveattendeesEvent (eventId, email, inviteUserId) {
@@ -592,14 +602,16 @@ Meteor.methods({
   },
   shareEntity (doc) {
   // console.log(doc);
-    check(doc, SchemasShareRest);
+    const docClean = SchemasShareRest.clean(doc);
+    SchemasShareRest.validate(docClean);
+    // check(doc, SchemasShareRest);
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
-    doc.childType = 'citoyens';
-    doc.connectType = 'share';
-    doc.childId = this.userId;
-    const retour = apiCommunecter.postPixel('news/co', 'share?json=1', doc);
+    docClean.childType = 'citoyens';
+    docClean.connectType = 'share';
+    docClean.childId = this.userId;
+    const retour = apiCommunecter.postPixel('news/co', 'share?json=1', docClean);
     return retour;
   },
   collectionsAdd (id, type) {
@@ -689,7 +701,7 @@ Meteor.methods({
       }
     }
     doc.parentType = parentType;
-    console.log(doc);
+    // console.log(doc);
     const retour = apiCommunecter.postPixel('co2/link', 'disconnect', doc);
     return retour;
   },
@@ -746,8 +758,10 @@ Meteor.methods({
     return retour;
   },
   inviteattendeesEvent (doc) {
-    check(doc, SchemasInviteAttendeesEventRest);
-    check(doc.invitedUserEmail, ValidEmail);
+    const docClean = SchemasInviteAttendeesEventRest.clean(doc);
+    SchemasInviteAttendeesEventRest.validate(docClean);
+    // check(doc, SchemasInviteAttendeesEventRest);
+    check(docClean.invitedUserEmail, ValidEmail);
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
@@ -756,18 +770,20 @@ Meteor.methods({
       throw new Meteor.Error('Email not valid');
     } */
     const insertDoc = {};
-    insertDoc.parentId = doc.eventId;
+    insertDoc.parentId = docClean.eventId;
     insertDoc.parentType = 'events';
     insertDoc.childType = 'citoyens';
-    insertDoc.childEmail = doc.invitedUserEmail;
-    insertDoc.childName = doc.invitedUserName;
+    insertDoc.childEmail = docClean.invitedUserEmail;
+    insertDoc.childName = docClean.invitedUserName;
     insertDoc.connectType = 'attendees';
     insertDoc.childId = '';
     const retour = apiCommunecter.postPixel('co2/link', 'connect', insertDoc);
     return retour;
   },
-  invitationScopeForm (doc) {
-    check(doc, SchemasInvitationsRest);
+  invitationScopeForm(docNoClean) {
+    const doc = SchemasInvitationsRest.clean(docNoClean);
+    SchemasInvitationsRest.validate(doc);
+    // check(doc, SchemasInvitationsRest);
     check(doc.childEmail, ValidEmail);
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
@@ -799,12 +815,12 @@ Meteor.methods({
       insertDoc.childName = doc.childName;
       insertDoc.childId = '';
     }
-    console.log(insertDoc);
+    // console.log(insertDoc);
     const retour = apiCommunecter.postPixel('co2/link', 'connect', insertDoc);
     return retour;
   },
   invitationScope (parentId, parentType, connectType, childType, childEmail, childName, childId) {
-    console.log(`${parentId}, ${parentType}, ${connectType}, ${childType}, ${childEmail}, ${childName}, ${childId}`);
+    // console.log(`${parentId}, ${parentType}, ${connectType}, ${childType}, ${childEmail}, ${childName}, ${childId}`);
     check(parentId, String);
     check(parentType, String);
     check(parentType, Match.Where(function(name) {
@@ -989,9 +1005,11 @@ indexMax:20 */
     const retour = apiCommunecter.postPixel('co2/element', 'updatesettings', doc);
     return retour;
   },
-  insertComment (doc) {
-    console.log(doc);
-    check(doc, SchemasCommentsRest);
+  insertComment (docNoClean) {
+    const doc = SchemasCommentsRest.clean(docNoClean);
+    SchemasCommentsRest.validate(doc);
+    // console.log(doc);
+    // check(doc, SchemasCommentsRest);
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
@@ -1001,8 +1019,12 @@ indexMax:20 */
     const retour = apiCommunecter.postPixel('co2/comment', 'save', doc);
     return retour;
   },
-  updateComment (modifier, documentId) {
-    check(modifier.$set, SchemasCommentsEditRest);
+  updateComment ({ modifier, _id }) {
+    check(_id, String);
+    const documentId = _id;
+    const cleanModifierSet = SchemasCommentsEditRest.clean(modifier.$set);
+    SchemasCommentsEditRest.validate(cleanModifierSet);
+    // check(modifier.$set, SchemasCommentsEditRest);
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
@@ -1036,7 +1058,7 @@ indexMax:20 */
     if (modifier.$set.mentions) {
       doc.params.mentions = modifier.$set.mentions;
     }
-    console.log(modifier.$set);
+    // console.log(modifier.$set);
     // const retour = apiCommunecter.postPixel('co2/comment', 'updatefield', doc);
     const retour = apiCommunecter.postPixel('co2/comment', 'update', doc);
     return retour;
@@ -1054,7 +1076,9 @@ indexMax:20 */
     const retour = apiCommunecter.postPixel('co2/comment', `delete/id/${commentId}`, {});
     return retour;
   },
-  updateBlock (modifier, documentId) {
+  updateBlock ({ modifier, _id }) {
+    check(_id, String);
+    const documentId = _id;
     check(modifier.$set.typeElement, Match.Where(function(name) {
       return _.contains(['events', 'projects', 'poi', 'organizations', 'citoyens'], name);
     }));
@@ -1075,36 +1099,41 @@ indexMax:20 */
         return _.contains(['descriptions', 'network', 'info', 'locality', 'preferences'], name);
       }));
       // block description,contact,info
-      BlockCitoyensRest[modifier.$set.block].clean(modifier.$set);
-      check(modifier.$set, BlockCitoyensRest[modifier.$set.block]);
+      const cleanModifierSet = BlockCitoyensRest[modifier.$set.block].clean(modifier.$set);
+      // check(modifier.$set, BlockCitoyensRest[modifier.$set.block]);
+      BlockCitoyensRest[modifier.$set.block].validate(cleanModifierSet);
     } else if (modifier.$set.typeElement === 'events') {
       check(modifier.$set.block, Match.Where(function(name) {
         return _.contains(['descriptions', 'network', 'info', 'when', 'locality', 'preferences'], name);
       }));
       // block description,contact,info,when
-      BlockEventsRest[modifier.$set.block].clean(modifier.$set);
-      check(modifier.$set, BlockEventsRest[modifier.$set.block]);
+      const cleanModifierSet = BlockEventsRest[modifier.$set.block].clean(modifier.$set);
+      // check(modifier.$set, BlockEventsRest[modifier.$set.block]);
+      BlockEventsRest[modifier.$set.block].validate(cleanModifierSet);
     } else if (modifier.$set.typeElement === 'organizations') {
       check(modifier.$set.block, Match.Where(function(name) {
         return _.contains(['descriptions', 'network', 'info', 'locality', 'preferences'], name);
       }));
       // block description,contact,info,when
-      BlockOrganizationsRest[modifier.$set.block].clean(modifier.$set);
-      check(modifier.$set, BlockOrganizationsRest[modifier.$set.block]);
+      const cleanModifierSet = BlockOrganizationsRest[modifier.$set.block].clean(modifier.$set);
+      // check(modifier.$set, BlockOrganizationsRest[modifier.$set.block]);
+      BlockOrganizationsRest[modifier.$set.block].validate(cleanModifierSet);
     } else if (modifier.$set.typeElement === 'projects') {
       check(modifier.$set.block, Match.Where(function(name) {
         return _.contains(['descriptions', 'network', 'info', 'when', 'locality', 'preferences'], name);
       }));
       // block description,contact,info,when
-      BlockProjectsRest[modifier.$set.block].clean(modifier.$set);
-      check(modifier.$set, BlockProjectsRest[modifier.$set.block]);
+      const cleanModifierSet = BlockProjectsRest[modifier.$set.block].clean(modifier.$set);
+      // check(modifier.$set, BlockProjectsRest[modifier.$set.block]);
+      BlockProjectsRest[modifier.$set.block].validate(cleanModifierSet);
     } else if (modifier.$set.typeElement === 'poi') {
       check(modifier.$set.block, Match.Where(function(name) {
         return _.contains(['descriptions', 'info', 'locality', 'preferences'], name);
       }));
       // block description,contact,info,when
-      BlockProjectsRest[modifier.$set.block].clean(modifier.$set);
-      check(modifier.$set, BlockProjectsRest[modifier.$set.block]);
+      const cleanModifierSet = BlockProjectsRest[modifier.$set.block].clean(modifier.$set);
+      // check(modifier.$set, BlockProjectsRest[modifier.$set.block]);
+      BlockProjectsRest[modifier.$set.block].validate(cleanModifierSet);
     }
 
     const docRetour = baseDocRetour({}, modifier.$set, 'block');
@@ -1143,9 +1172,12 @@ indexMax:20 */
     const retour = apiCommunecter.postPixel('co2/element', 'updateblock', docRetour);
     return retour;
   },
-  updateCitoyen (modifier, documentId) {
-    SchemasCitoyensRest.clean(modifier.$set);
-    check(modifier.$set, SchemasCitoyensRest);
+  updateCitoyen ({ modifier, _id }) {
+    check(_id, String);
+    const documentId = _id;
+    const cleanModifierSet = SchemasCitoyensRest.clean(modifier.$set);
+    SchemasCitoyensRest.validate(cleanModifierSet);
+    // check(modifier.$set, SchemasCitoyensRest);
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
@@ -1163,11 +1195,13 @@ indexMax:20 */
     const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
-  insertNew (doc) {
-    check(doc.parentType, Match.Where(function(name) {
+  insertNew(docNoClean) {
+    check(docNoClean.parentType, Match.Where(function (name) {
       return _.contains(['events', 'projects', 'organizations', 'citoyens'], name);
     }));
-    check(doc, SchemasNewsRestBase[doc.parentType]);
+    const doc = SchemasNewsRestBase[docNoClean.parentType].clean(docNoClean);
+    SchemasNewsRestBase[docNoClean.parentType].validate(doc);
+    // check(doc, SchemasNewsRestBase[doc.parentType]);
 
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
@@ -1216,7 +1250,9 @@ indexMax:20 */
     const retour = apiCommunecter.postPixel('news/co', 'save?json=1', doc);
     return retour;
   },
-  updateNew (modifier, documentId) {
+  updateNew ({ modifier, _id }) {
+    check(_id, String);
+    const documentId = _id;
     check(modifier.$set.parentType, Match.Where(function(name) {
       return _.contains(['events', 'projects', 'organizations', 'citoyens'], name);
     }));
@@ -1341,7 +1377,7 @@ indexMax:20 */
     const doc = apiCommunecter.postUploadSavePixel(type, idType, 'newsImage', photo, str, 'image', 'slider');
     // const retourUpload = apiCommunecter.postUploadPixel(type, idType, 'newsImage', photo, str);
     if (doc) {
-      console.log(doc);
+      // console.log(doc);
       /* const insertDoc = {};
       insertDoc.id = idType;
       insertDoc.type = type;
@@ -1380,7 +1416,7 @@ indexMax:20 */
       insertNew.media.countImages = '1';
       insertNew.media.images = [doc.id.$id];
       const newsIdRetour = Meteor.call('insertNew', insertNew);
-      console.log(newsIdRetour);
+      // console.log(newsIdRetour);
       if (newsIdRetour) {
         return { photoret: doc.id.$id, newsId: newsIdRetour.id.$id };
       }
@@ -1392,9 +1428,10 @@ indexMax:20 */
       throw new Meteor.Error('postUploadPixel error');
     }
   },
-  insertEvent (doc) {
-    SchemasEventsRest.clean(doc);
-    check(doc, SchemasEventsRest);
+  insertEvent(docNoClean) {
+    const doc = SchemasEventsRest.clean(docNoClean);
+    SchemasEventsRest.validate(doc);
+    // check(doc, SchemasEventsRest);
     check(doc.organizerType, Match.Where(function(name) {
       return _.contains(['projects', 'organizations', 'citoyens'], name);
     }));
@@ -1422,9 +1459,12 @@ indexMax:20 */
     const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
-  updateEvent (modifier, documentId) {
-    SchemasEventsRest.clean(modifier.$set);
-    check(modifier.$set, SchemasEventsRest);
+  updateEvent ({ modifier, _id }) {
+    check(_id, String);
+    const documentId = _id;
+    const cleanModifierSet = SchemasEventsRest.clean(modifier.$set);
+    SchemasEventsRest.validate(cleanModifierSet);
+    // check(modifier.$set, SchemasEventsRest);
     check(modifier.$set.organizerType, Match.Where(function(name) {
       return _.contains(['projects', 'organizations', 'citoyens'], name);
     }));
@@ -1455,9 +1495,10 @@ indexMax:20 */
     const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
-  insertProject (doc) {
-    SchemasProjectsRest.clean(doc);
-    check(doc, SchemasProjectsRest);
+  insertProject (docNoClean) {
+    const doc = SchemasProjectsRest.clean(docNoClean);
+    SchemasProjectsRest.validate(doc);
+    // check(doc, SchemasProjectsRest);
     check(doc.parentType, Match.Where(function(name) {
       return _.contains(['organizations', 'citoyens'], name);
     }));
@@ -1484,9 +1525,12 @@ indexMax:20 */
     const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
-  updateProject (modifier, documentId) {
-    SchemasProjectsRest.clean(modifier.$set);
-    check(modifier.$set, SchemasProjectsRest);
+  updateProject ({ modifier, _id }) {
+    check(_id, String);
+    const documentId = _id;
+    const cleanModifierSet = SchemasProjectsRest.clean(modifier.$set);
+    SchemasProjectsRest.validate(cleanModifierSet);
+    // check(modifier.$set, SchemasProjectsRest);
     check(modifier.$set.parentType, Match.Where(function(name) {
       return _.contains(['organizations', 'citoyens'], name);
     }));
@@ -1517,9 +1561,10 @@ indexMax:20 */
     const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
-  insertPoi (doc) {
-    SchemasPoiRest.clean(doc);
-    check(doc, SchemasPoiRest);
+  insertPoi (docNoClean) {
+    const doc = SchemasPoiRest.clean(docNoClean);
+    SchemasPoiRest.validate(doc);
+    // check(doc, SchemasPoiRest);
     check(doc.parentType, Match.Where(function(name) {
       return _.contains(['events', 'projects', 'organizations', 'citoyens'], name);
     }));
@@ -1546,9 +1591,12 @@ indexMax:20 */
     const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
-  updatePoi (modifier, documentId) {
-    SchemasPoiRest.clean(modifier.$set);
-    check(modifier.$set, SchemasPoiRest);
+  updatePoi ({ modifier, _id }) {
+    check(_id, String);
+    const documentId = _id;
+    const cleanModifierSet = SchemasPoiRest.clean(modifier.$set);
+    SchemasPoiRest.validate(cleanModifierSet);
+    // check(modifier.$set, SchemasPoiRest);
     check(modifier.$set.parentType, Match.Where(function(name) {
       return _.contains(['events', 'projects', 'organizations', 'citoyens'], name);
     }));
@@ -1579,9 +1627,10 @@ indexMax:20 */
     const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
-  insertClassified (doc) {
-    SchemasClassifiedRest.clean(doc);
-    check(doc, SchemasClassifiedRest);
+  insertClassified (docNoClean) {
+    const doc = SchemasClassifiedRest.clean(docNoClean);
+    SchemasClassifiedRest.validate(doc);
+    // check(doc, SchemasClassifiedRest);
     check(doc.parentType, Match.Where(function(name) {
       return _.contains(['events', 'projects', 'organizations', 'citoyens'], name);
     }));
@@ -1608,9 +1657,12 @@ indexMax:20 */
     const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
-  updateClassified (modifier, documentId) {
-    SchemasClassifiedRest.clean(modifier.$set);
-    check(modifier.$set, SchemasClassifiedRest);
+  updateClassified ({ modifier, _id }) {
+    check(_id, String);
+    const documentId = _id;
+    const cleanModifierSet = SchemasClassifiedRest.clean(modifier.$set);
+    SchemasClassifiedRest.validate(cleanModifierSet);
+    // check(modifier.$set, SchemasClassifiedRest);
     check(modifier.$set.parentType, Match.Where(function(name) {
       return _.contains(['events', 'projects', 'organizations', 'citoyens'], name);
     }));
@@ -1658,7 +1710,7 @@ indexMax:20 */
     // const retourUpload = apiCommunecter.postUploadPixel(scope, idType, 'avatar', photo, str);
     const doc = apiCommunecter.postUploadSavePixel(scope, idType, 'avatar', photo, str, 'image', 'profil');
     if (doc) {
-      /*const insertDoc = {};
+      /* const insertDoc = {};
       insertDoc.id = idType;
       insertDoc.type = scope;
       insertDoc.folder = `${scope}/${idType}`;
@@ -1668,25 +1720,24 @@ indexMax:20 */
       insertDoc.name = retourUpload.name;
       insertDoc.size = retourUpload.size;
       insertDoc.contentKey = 'profil';
-      const doc = apiCommunecter.postPixel('co2/document', 'save', insertDoc);*/
+      const doc = apiCommunecter.postPixel('co2/document', 'save', insertDoc); */
       // console.log(doc);
-      //if (doc) {
-        /*collection.update({ _id: new Mongo.ObjectID(idType) }, { $set: {
+      // if (doc) {
+      /* collection.update({ _id: new Mongo.ObjectID(idType) }, { $set: {
           profilImageUrl: `/upload/communecter/${scope}/${idType}/${retourUpload.name}`,
           profilThumbImageUrl: `/upload/communecter/${scope}/${idType}/thumb/profil-resized.png?=${new Date()}${Math.floor((Math.random() * 100) + 1)}`,
           profilMarkerImageUrl: `/upload/communecter/${scope}/${idType}/thumb/profil-marker.png?=${new Date()}${Math.floor((Math.random() * 100) + 1)}`,
-        } });*/
-        return doc.id.$id;
-      //}
-      //throw new Meteor.Error('insertDocument error');
-    } 
-      throw new Meteor.Error('postUploadPixel error');
-    
+        } }); */
+      return doc.id.$id;
+      // }
+      // throw new Meteor.Error('insertDocument error');
+    }
+    throw new Meteor.Error('postUploadPixel error');
   },
-  insertOrganization (doc) {
-    // console.log(doc);
-    SchemasOrganizationsRest.clean(doc);
-    check(doc, SchemasOrganizationsRest);
+  insertOrganization (docClean) {
+    const doc = SchemasOrganizationsRest.clean(docClean);
+    SchemasOrganizationsRest.validate(doc);
+    // check(doc, SchemasOrganizationsRest);
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
@@ -1695,14 +1746,15 @@ indexMax:20 */
     docRetour.key = 'organization';
     docRetour.collection = 'organizations';
 
-    // console.log(docRetour);
-
     const retour = apiCommunecter.postPixel('co2/element', 'save', docRetour);
     return retour;
   },
-  updateOrganization (modifier, documentId) {
-    SchemasOrganizationsRest.clean(modifier.$set);
-    check(modifier.$set, SchemasOrganizationsRest);
+  updateOrganization ({ modifier, _id }) {
+    check(_id, String);
+    const documentId = _id;
+    const cleanModifierSet = SchemasOrganizationsRest.clean(modifier.$set);
+    SchemasOrganizationsRest.validate(cleanModifierSet);
+    // check(modifier.$set, SchemasOrganizationsRest);
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
@@ -1727,8 +1779,8 @@ indexMax:20 */
     check(user.username, String);
     check(user.email, String);
     check(user.password, String);
-    check(user.codepostal, String);
-    check(user.city, String);
+    check(user.codepostal, Match.Maybe(String));
+    check(user.city, Match.Maybe(String));
 
     const passwordTest = new RegExp('(?=.{8,}).*', 'g');
     if (passwordTest.test(user.password) === false) {
@@ -1752,31 +1804,34 @@ indexMax:20 */
       throw new Meteor.Error('The-username-is-incorrect');
     }
 
-    const insee = Cities.findOne({ insee: user.city });
-
-    console.log({
+    const params = {
       name: user.name,
       email: user.email,
       username: user.username,
       pwd: user.password,
       cp: user.codepostal,
-      city: insee.insee,
-      geoPosLatitude: insee.geo.latitude,
-      geoPosLongitude: insee.geo.longitude,
-    });
+    };
+
+    if (user.codepostal) {
+      params.cp = user.codepostal;
+    }
+    if (user.city) {
+      const insee = Cities.findOne({
+        insee: user.city,
+      });
+      if (insee.insee && insee.insee) {
+        params.city = insee.insee;
+        params.geoPosLatitude = insee.geo.latitude;
+        params.geoPosLongitude = insee.geo.longitude;
+      }
+    }
+
+
+    // console.log(params);
 
     try {
       const response = HTTP.call('POST', `${Meteor.settings.endpoint}/${Meteor.settings.module}/person/register`, {
-        params: {
-          name: user.name,
-          email: user.email,
-          username: user.username,
-          pwd: user.password,
-          cp: user.codepostal,
-          city: insee.insee,
-          geoPosLatitude: insee.geo.latitude,
-          geoPosLongitude: insee.geo.longitude,
-        },
+        params,
       });
       // console.log(response);
       if (response.data.result && response.data.id) {
@@ -2056,18 +2111,18 @@ export const insertProposal = new ValidatedMethod({
     if (!room) {
       throw new Meteor.Error('not-authorized');
     } else if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
-        if (room.roles && room.roles.length > 0) {
-          const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
-          if (roles && room.roles.some(role => roles.includes(role))) {
-            // true
-          } else {
-            // false
-            throw new Meteor.Error('not-authorized');
-          }
+      if (room.roles && room.roles.length > 0) {
+        const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
+        if (roles && room.roles.some(role => roles.includes(role))) {
+          // true
+        } else {
+          // false
+          throw new Meteor.Error('not-authorized');
         }
-      } else {
-        throw new Meteor.Error('not-authorized');
       }
+    } else {
+      throw new Meteor.Error('not-authorized');
+    }
     const docRetour = doc;
     docRetour.majority = doc.majority.toString();
     if (doc.amendementDateEnd) {
@@ -2157,18 +2212,18 @@ export const insertAction = new ValidatedMethod({
     if (!room) {
       throw new Meteor.Error('not-authorized');
     } else if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
-        if (room.roles && room.roles.length > 0) {
-          const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
-          if (roles && room.roles.some(role => roles.includes(role))) {
-            // true
-          } else {
-            // false
-            throw new Meteor.Error('not-authorized');
-          }
+      if (room.roles && room.roles.length > 0) {
+        const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
+        if (roles && room.roles.some(role => roles.includes(role))) {
+          // true
+        } else {
+          // false
+          throw new Meteor.Error('not-authorized');
         }
-      } else {
-        throw new Meteor.Error('not-authorized');
       }
+    } else {
+      throw new Meteor.Error('not-authorized');
+    }
 
     const docRetour = doc;
 
@@ -2254,18 +2309,18 @@ export const insertAmendement = new ValidatedMethod({
       if (!room) {
         throw new Meteor.Error('not-authorized');
       } else if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
-          if (room.roles && room.roles.length > 0) {
-            const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
-            if (roles && room.roles.some(role => roles.includes(role))) {
-              // true
-            } else {
-              // false
-              throw new Meteor.Error('not-authorized');
-            }
+        if (room.roles && room.roles.length > 0) {
+          const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
+          if (roles && room.roles.some(role => roles.includes(role))) {
+            // true
+          } else {
+            // false
+            throw new Meteor.Error('not-authorized');
           }
-        } else {
-          throw new Meteor.Error('not-authorized');
         }
+      } else {
+        throw new Meteor.Error('not-authorized');
+      }
     }
     const docRetour = doc;
 
@@ -2336,18 +2391,18 @@ export const saveVote = new ValidatedMethod({
       if (!room) {
         throw new Meteor.Error('not-authorized');
       } else if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
-          if (room.roles && room.roles.length > 0) {
-            const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
-            if (roles && room.roles.some(role => roles.includes(role))) {
-              // true
-            } else {
-              // false
-              throw new Meteor.Error('not-authorized');
-            }
+        if (room.roles && room.roles.length > 0) {
+          const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
+          if (roles && room.roles.some(role => roles.includes(role))) {
+            // true
+          } else {
+            // false
+            throw new Meteor.Error('not-authorized');
           }
-        } else {
-          throw new Meteor.Error('not-authorized');
         }
+      } else {
+        throw new Meteor.Error('not-authorized');
+      }
     }
 
     const docRetour = {};
@@ -2387,18 +2442,18 @@ export const assignmeActionRooms = new ValidatedMethod({
       if (!room) {
         throw new Meteor.Error('not-authorized');
       } else if (Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).isScope(room.parentType, room.parentId)) {
-          if (room.roles && room.roles.length > 0) {
-            const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
-            if (roles && room.roles.some(role => roles.includes(role))) {
-              // true
-            } else {
-              // false
-              throw new Meteor.Error('not-authorized');
-            }
+        if (room.roles && room.roles.length > 0) {
+          const roles = Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId) ? Citoyens.findOne({ _id: new Mongo.ObjectID(this.userId) }).funcRoles(room.parentType, room.parentId).split(',') : null;
+          if (roles && room.roles.some(role => roles.includes(role))) {
+            // true
+          } else {
+            // false
+            throw new Meteor.Error('not-authorized');
           }
-        } else {
-          throw new Meteor.Error('not-authorized');
         }
+      } else {
+        throw new Meteor.Error('not-authorized');
+      }
     }
 
     const docRetour = {};
@@ -2485,8 +2540,8 @@ export const questValidateGeo = new ValidatedMethod({
     gameId: { type: String },
     questId: { type: String },
     latlng: { type: Object },
-    'latlng.latitude': { type: Number, decimal: true },
-    'latlng.longitude': { type: Number, decimal: true },
+    'latlng.latitude': { type: Number },
+    'latlng.longitude': { type: Number },
   }).validator(),
   run({ gameId, questId, latlng }) {
     if (!this.userId) {

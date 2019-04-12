@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveDict } from 'meteor/reactive-dict';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { Router } from 'meteor/iron:router';
 import { IonPopup } from 'meteor/meteoric:ionic';
 
@@ -30,7 +30,7 @@ Template.Bouton_card.events({
     Meteor.call('saveattendeesEvent', this.id, (error) => {
       if (error) {
         instance.state.set('call', false);
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -42,7 +42,7 @@ Template.Bouton_card.events({
     Meteor.call('inviteattendeesEvent', this.id, (error) => {
       if (error) {
         instance.state.set('call', false);
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -54,7 +54,7 @@ Template.Bouton_card.events({
     Meteor.call('connectEntity', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -66,7 +66,7 @@ Template.Bouton_card.events({
     Meteor.call('connectEntity', this.id, this.scope, this.childId, 'admin', (error) => {
       if (error) {
         instance.state.set('call', false);
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
         if (this.scope === 'events') {
@@ -81,13 +81,13 @@ Template.Bouton_card.events({
     event.preventDefault();
     const self = this;
     instance.state.set('call', true);
-    IonPopup.confirm({ title: TAPi18n.__('Disconnect'),
-      template: TAPi18n.__('Want to remove the link between the entity'),
+    IonPopup.confirm({ title: i18n.__('Disconnect'),
+      template: i18n.__('Want to remove the link between the entity'),
       onOk() {
         Meteor.call('disconnectEntity', self.id, self.scope, null, this.childId, this.childType, (error) => {
           if (error) {
             instance.state.set('call', false);
-            IonPopup.alert({ template: TAPi18n.__(error.reason) });
+            IonPopup.alert({ template: i18n.__(error.reason) });
           } else {
             instance.state.set('call', false);
             if (self.scope === 'events') {
@@ -101,8 +101,8 @@ Template.Bouton_card.events({
       onCancel() {
         instance.state.set('call', false);
       },
-      cancelText: TAPi18n.__('no'),
-      okText: TAPi18n.__('yes'),
+      cancelText: i18n.__('no'),
+      okText: i18n.__('yes'),
     });
   },
   'click .validatescope-link' (event, instance) {
@@ -111,7 +111,7 @@ Template.Bouton_card.events({
     Meteor.call('validateEntity', this.id, this.scope, Meteor.userId(), 'citoyens', 'isInviting', (error) => {
       if (error) {
         instance.state.set('call', false);
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -121,13 +121,13 @@ Template.Bouton_card.events({
     event.preventDefault();
     const self = this;
     instance.state.set('call', true);
-    IonPopup.confirm({ title: TAPi18n.__('Disconnect'),
-      template: TAPi18n.__('Want to remove the link between you and the entity'),
+    IonPopup.confirm({ title: i18n.__('Disconnect'),
+      template: i18n.__('Want to remove the link between you and the entity'),
       onOk() {
         Meteor.call('disconnectEntity', self.id, self.scope, (error) => {
           if (error) {
             instance.state.set('call', false);
-            IonPopup.alert({ template: TAPi18n.__(error.reason) });
+            IonPopup.alert({ template: i18n.__(error.reason) });
           } else {
             instance.state.set('call', false);
           }
@@ -136,8 +136,8 @@ Template.Bouton_card.events({
       onCancel() {
         instance.state.set('call', false);
       },
-      cancelText: TAPi18n.__('no'),
-      okText: TAPi18n.__('yes'),
+      cancelText: i18n.__('no'),
+      okText: i18n.__('yes'),
     });
   },
   'click .followperson-link' (event, instance) {
@@ -146,7 +146,7 @@ Template.Bouton_card.events({
     Meteor.call('followEntity', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -156,13 +156,13 @@ Template.Bouton_card.events({
     event.preventDefault();
     const self = this;
     instance.state.set('call', true);
-    IonPopup.confirm({ title: TAPi18n.__('Unfollow'),
-      template: TAPi18n.__('no longer follow that person'),
+    IonPopup.confirm({ title: i18n.__('Unfollow'),
+      template: i18n.__('no longer follow that person'),
       onOk() {
         Meteor.call('disconnectEntity', self.id, self.scope, (error) => {
           if (error) {
             instance.state.set('call', false);
-            IonPopup.alert({ template: TAPi18n.__(error.reason) });
+            IonPopup.alert({ template: i18n.__(error.reason) });
           } else {
             instance.state.set('call', false);
           }
@@ -171,21 +171,21 @@ Template.Bouton_card.events({
       onCancel() {
         instance.state.set('call', false);
       },
-      cancelText: TAPi18n.__('no'),
-      okText: TAPi18n.__('yes'),
+      cancelText: i18n.__('no'),
+      okText: i18n.__('yes'),
     });
   },
   'click .unfollowscope-link' (event, instance) {
     event.preventDefault();
     const self = this;
     instance.state.set('call', true);
-    IonPopup.confirm({ title: TAPi18n.__('Unfollow'),
-      template: TAPi18n.__('no longer follow this entity'),
+    IonPopup.confirm({ title: i18n.__('Unfollow'),
+      template: i18n.__('no longer follow this entity'),
       onOk() {
         Meteor.call('disconnectEntity', self.id, self.scope, 'followers', (error) => {
           if (error) {
             instance.state.set('call', false);
-            IonPopup.alert({ template: TAPi18n.__(error.reason) });
+            IonPopup.alert({ template: i18n.__(error.reason) });
           } else {
             instance.state.set('call', false);
           }
@@ -194,8 +194,8 @@ Template.Bouton_card.events({
       onCancel() {
         instance.state.set('call', false);
       },
-      cancelText: TAPi18n.__('no'),
-      okText: TAPi18n.__('yes'),
+      cancelText: i18n.__('no'),
+      okText: i18n.__('yes'),
     });
   },
   'click .favorites-link' (event, instance) {
@@ -204,7 +204,7 @@ Template.Bouton_card.events({
     Meteor.call('collectionsAdd', this.id, this.scope, (error) => {
       if (error) {
         instance.state.set('call', false);
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }
@@ -221,7 +221,7 @@ Template.Bouton_card.events({
     Meteor.call('invitationScope', this.id, this.scope, connectType, this.childType, null, null, this.childId, (error) => {
       if (error) {
         instance.state.set('call', false);
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         instance.state.set('call', false);
       }

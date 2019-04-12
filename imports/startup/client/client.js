@@ -4,7 +4,8 @@ import { AutoForm } from 'meteor/aldeed:autoform';
 import { moment } from 'meteor/momentjs:moment';
 import { Router } from 'meteor/iron:router';
 import { DeepLink } from 'meteor/communecter:deep-link';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
+import SimpleSchema from 'simpl-schema';
 import { _ } from 'meteor/underscore';
 import { $ } from 'meteor/jquery';
 import { HTTP } from 'meteor/http';
@@ -141,53 +142,185 @@ Meteor.startup(function () {
     window.confirm = navigator.notification.confirm;
   }
 
-  SchemasEventsRest.i18n('schemas.eventsrest');
-  SchemasOrganizationsRest.i18n('schemas.organizationsrest');
-  SchemasProjectsRest.i18n('schemas.projectsrest');
-  SchemasPoiRest.i18n('schemas.poirest');
-  SchemasClassifiedRest.i18n('schemas.classifiedrest');
-  SchemasRoomsRest.i18n('schemas.roomsrest');
-  SchemasProposalsRest.i18n('schemas.proposalsrest');
-  BlockProposalsRest.i18n('schemas.blockproposalsrest');
-  SchemasActionsRest.i18n('schemas.actionsrest');
-  SchemasFollowRest.i18n('schemas.followrest');
-  SchemasInviteAttendeesEventRest.i18n('schemas.followrest');
-  SchemasShareRest.i18n('schemas.sharerest');
-  SchemasRolesRest.i18n('schemas.rolesrest');
-  SchemasNewsRest.i18n('schemas.news.global');
-  SchemasNewsRestBase.citoyens.i18n('schemas.news.citoyens');
-  SchemasNewsRestBase.projects.i18n('schemas.news.projects');
-  SchemasNewsRestBase.organizations.i18n('schemas.news.organizations');
-  SchemasNewsRestBase.events.i18n('schemas.news.events');
-  SchemasCommentsRest.i18n('schemas.comments');
-  SchemasCommentsEditRest.i18n('schemas.comments');
-  SchemasCitoyensRest.i18n('schemas.citoyens');
-  SchemasInvitationsRest.i18n('schemas.invitations');
-  BlockCitoyensRest.info.i18n('schemas.global');
-  BlockCitoyensRest.network.i18n('schemas.global');
-  BlockCitoyensRest.descriptions.i18n('schemas.global');
-  BlockCitoyensRest.locality.i18n('schemas.global');
-  BlockCitoyensRest.preferences.i18n('schemas.global');
-  BlockEventsRest.info.i18n('schemas.global');
-  BlockEventsRest.network.i18n('schemas.global');
-  BlockEventsRest.descriptions.i18n('schemas.global');
-  BlockEventsRest.when.i18n('schemas.global');
-  BlockEventsRest.locality.i18n('schemas.global');
-  BlockEventsRest.preferences.i18n('schemas.global');
-  BlockOrganizationsRest.info.i18n('schemas.global');
-  BlockOrganizationsRest.network.i18n('schemas.global');
-  BlockOrganizationsRest.descriptions.i18n('schemas.global');
-  BlockOrganizationsRest.locality.i18n('schemas.global');
-  BlockOrganizationsRest.preferences.i18n('schemas.global');
-  BlockProjectsRest.info.i18n('schemas.global');
-  BlockProjectsRest.network.i18n('schemas.global');
-  BlockProjectsRest.descriptions.i18n('schemas.global');
-  BlockProjectsRest.when.i18n('schemas.global');
-  BlockProjectsRest.locality.i18n('schemas.global');
-  BlockProjectsRest.preferences.i18n('schemas.global');
-  BlockPoiRest.info.i18n('schemas.global');
-  BlockPoiRest.descriptions.i18n('schemas.global');
-  BlockPoiRest.locality.i18n('schemas.global');
+  const humanize = function (property) {
+    return property
+      .replace(/_/g, ' ')
+      .replace(/(\w+)/g, function (match) {
+        return match.charAt(0).toUpperCase() + match.slice(1);
+      });
+  };
+
+  const getKeys = function (jsonPath, key) {
+    // console.log(JSON.stringify(__([jsonPath, key].join('.'))));
+    return __([jsonPath, key].join('.')) || {};
+  };
+
+  SimpleSchema.prototype.i18n = function (jsonPath, defaults) {
+    if (Meteor.isServer) return;
+
+    defaults = defaults || {};
+    defaults.placeholder = defaults.placeholder || 'Type something...';
+    defaults.firstOption = defaults.firstOption || 'Select something...';
+
+    const schema = this._schema;
+    _.each(schema, function (value, key) {
+      // console.log(key);
+
+      /* console.log(key);
+        console.log(value);
+        console.log(JSON.stringify(getKeys(jsonPath, key))); */
+
+      if (!value) return;
+      const keys = getKeys(jsonPath, key);
+
+      schema[key].autoform = schema[key].autoform || {};
+
+      if (schema[key].autoform.placeholder || keys.placeholder) {
+        schema[key].autoform.placeholder = schema[key].autoform.placeholder || function () {
+          return getKeys(jsonPath, key).placeholder || defaults.placeholder;
+        };
+      }
+
+      if (schema[key].autoform.options || keys.options) {
+        schema[key].autoform.options = schema[key].autoform.options || function () {
+          const options = getKeys(jsonPath, key).options;
+          _.each(options, function (option, key) {
+            if (key.slice(-7) === '_plural') delete options[key];
+          });
+          return options;
+        };
+      }
+
+      if (schema[key].autoform.firstOption || keys.options) {
+        schema[key].autoform.firstOption = schema[key].autoform.firstOption || function () {
+          return getKeys(jsonPath, key).placeholder || defaults.firstOption;
+        };
+      }
+
+      schema[key].type.definitions.forEach((typeDef) => {
+        if (!(SimpleSchema.isSimpleSchema(typeDef.type))) return;
+        Object.keys(typeDef.type._schema).forEach((subKey) => {
+          if (schema[key].type.definitions['0'].type._schema[subKey].label) {
+            schema[key].type.definitions['0'].type._schema[subKey].label = function () {
+              return getKeys(jsonPath, `${key}.${subKey}`).label || humanize(subKey);
+            };
+          }
+        });
+      });
+
+      if (schema[key].autoform.label || keys.label) {
+        schema[key].label = schema[key].autoform.label || function () {
+          return getKeys(jsonPath, key).label || humanize(key);
+        };
+      }
+    });
+
+    /* schema.messageBox.messages({
+    fr: {
+      required: 'Veuillez saisir quelque chose',
+      minString: 'Veuillez saisir au moins {{min}} caractères',
+      maxString: 'Veuillez saisir moins de {{max}} caractères',
+      minNumber: 'Ce champ doit être superieur ou égal à {{min}}',
+      maxNumber: 'Ce champ doit être inferieur ou égal à {{max}}',
+      minNumberExclusive: 'Ce champ doit être superieur à {{min}}',
+      maxNumberExclusive: 'Ce champ doit être inferieur à {{max}}',
+      minDate: 'La date doit est posterieure au {{min}}',
+      maxDate: 'La date doit est anterieure au {{max}}',
+      badDate: 'Cette date est invalide',
+      minCount: 'Vous devez saisir plus de {{minCount}} valeurs',
+      maxCount: 'Vous devez saisir moins de {{maxCount}} valeurs',
+      noDecimal: 'Ce champ doit être un entier',
+      notAllowed: "{{{value}}} n'est pas une valeur acceptée",
+      expectedType: '{{{label}}} must be of type {{dataType}}',
+      regEx({
+        label,
+        regExp,
+      }) {
+        switch (regExp) {
+          case (SimpleSchema.RegEx.Email.toString()):
+          case (SimpleSchema.RegEx.EmailWithTLD.toString()):
+            return 'Cette adresse e-mail est incorrecte';
+          case (SimpleSchema.RegEx.Domain.toString()):
+          case (SimpleSchema.RegEx.WeakDomain.toString()):
+            return 'Ce champ doit être un domaine valide';
+          case (SimpleSchema.RegEx.IP.toString()):
+            return 'Cette adresse IP est invalide';
+          case (SimpleSchema.RegEx.IPv4.toString()):
+            return 'Cette adresse IPv4 est invalide';
+          case (SimpleSchema.RegEx.IPv6.toString()):
+            return 'Cette adresse IPv6 est invalide';
+          case (SimpleSchema.RegEx.Url.toString()):
+            return 'Cette URL is invalide';
+          case (SimpleSchema.RegEx.Id.toString()):
+            return 'Cet identifiant alphanumérique est invalide';
+          case (SimpleSchema.RegEx.ZipCode.toString()):
+            return 'Ce code ZIP est invalide';
+          case (SimpleSchema.RegEx.Phone.toString()):
+            return 'Ce numéro de téléphone est invalide';
+          default:
+            return 'Ce champ a échoué la validation par Regex';
+        }
+      },
+      keyNotInSchema: "Le champ {{name}} n'est pas permis par le schéma",
+    },
+  },); */
+    this.messageBox.setLanguage(i18n.getLocale());
+
+    return schema;
+  };
+
+  const registerSchemaMessages = () => {
+    SchemasOrganizationsRest.i18n('schemas.organizationsrest');
+    SchemasPoiRest.i18n('schemas.poirest');
+    SchemasEventsRest.i18n('schemas.eventsrest');
+    SchemasProjectsRest.i18n('schemas.projectsrest');
+    SchemasClassifiedRest.i18n('schemas.classifiedrest');
+    SchemasRoomsRest.i18n('schemas.roomsrest');
+    SchemasProposalsRest.i18n('schemas.proposalsrest');
+    BlockProposalsRest.i18n('schemas.blockproposalsrest');
+    SchemasActionsRest.i18n('schemas.actionsrest');
+    SchemasFollowRest.i18n('schemas.followrest');
+    SchemasInviteAttendeesEventRest.i18n('schemas.followrest');
+    SchemasShareRest.i18n('schemas.sharerest');
+    SchemasRolesRest.i18n('schemas.rolesrest');
+    SchemasNewsRest.i18n('schemas.news.global');
+    SchemasNewsRestBase.citoyens.i18n('schemas.news.citoyens');
+    SchemasNewsRestBase.projects.i18n('schemas.news.projects');
+    SchemasNewsRestBase.organizations.i18n('schemas.news.organizations');
+    SchemasNewsRestBase.events.i18n('schemas.news.events');
+    SchemasCommentsRest.i18n('schemas.comments');
+    SchemasCommentsEditRest.i18n('schemas.comments');
+    SchemasCitoyensRest.i18n('schemas.citoyens');
+    SchemasInvitationsRest.i18n('schemas.invitations');
+    BlockCitoyensRest.info.i18n('schemas.global');
+    BlockCitoyensRest.network.i18n('schemas.global');
+    BlockCitoyensRest.descriptions.i18n('schemas.global');
+    BlockCitoyensRest.locality.i18n('schemas.global');
+    BlockCitoyensRest.preferences.i18n('schemas.global');
+    BlockEventsRest.info.i18n('schemas.global');
+    BlockEventsRest.network.i18n('schemas.global');
+    BlockEventsRest.descriptions.i18n('schemas.global');
+    BlockEventsRest.when.i18n('schemas.global');
+    BlockEventsRest.locality.i18n('schemas.global');
+    BlockEventsRest.preferences.i18n('schemas.global');
+    BlockOrganizationsRest.info.i18n('schemas.global');
+    BlockOrganizationsRest.network.i18n('schemas.global');
+    BlockOrganizationsRest.descriptions.i18n('schemas.global');
+    BlockOrganizationsRest.locality.i18n('schemas.global');
+    BlockOrganizationsRest.preferences.i18n('schemas.global');
+    BlockProjectsRest.info.i18n('schemas.global');
+    BlockProjectsRest.network.i18n('schemas.global');
+    BlockProjectsRest.descriptions.i18n('schemas.global');
+    BlockProjectsRest.when.i18n('schemas.global');
+    BlockProjectsRest.locality.i18n('schemas.global');
+    BlockProjectsRest.preferences.i18n('schemas.global');
+    BlockPoiRest.info.i18n('schemas.global');
+    BlockPoiRest.descriptions.i18n('schemas.global');
+    BlockPoiRest.locality.i18n('schemas.global');
+  };
+
+  i18n.onChangeLocale(registerSchemaMessages);
+  registerSchemaMessages();
 
   Template.registerHelper('equals', (v1, v2) => (v1 === v2));
 
@@ -211,7 +344,7 @@ Meteor.startup(function () {
     return age;
   });
 
-  Template.registerHelper('i18npref', (prefix, text) => TAPi18n.__(`${prefix}.${text}`));
+  Template.registerHelper('i18npref', (prefix, text) => i18n.__(`${prefix}.${text}`));
 
 
   Template.registerHelper('isCordova', () => Meteor.isCordova);
