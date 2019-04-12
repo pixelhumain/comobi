@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { Router } from 'meteor/iron:router';
 import { IonPopup } from 'meteor/meteoric:ionic';
 
@@ -73,7 +73,7 @@ Template.signin.onRendered(function () {
 
   const geolocate = position.getGeolocate();
   if (geolocate) {
-    IonPopup.confirm({ template: TAPi18n.__('Use your current location'),
+    IonPopup.confirm({ template: i18n.__('Use your current location'),
       onOk() {
         const geo = position.getLatlng();
         if (geo && geo.latitude) {
@@ -92,15 +92,15 @@ Template.signin.onRendered(function () {
           });
         }
       },
-      cancelText: TAPi18n.__('no'),
-      okText: TAPi18n.__('yes'),
+      cancelText: i18n.__('no'),
+      okText: i18n.__('yes'),
     });
   }
 });
 
 Template.signin.events({
   'keyup #codepostal, change #codepostal' (event) {
-    if (event.currentTarget.value.length === 5) {
+    if (event.currentTarget.value.length > 3) {
       Meteor.call('getcitiesbypostalcode', event.currentTarget.value, function(error, data) {
         pageSession.set('cities', data);
       });
@@ -122,19 +122,19 @@ Template.signin.events({
     if (event.target.city && event.target.city.value) {
       city = event.target.city.value;
     }
-
-    if (!email || !password || !repassword || !name || !codepostal || !city || !username) {
+    // !codepostal || !city
+    if (!email || !password || !repassword || !name || !username) {
       pageSession.set('error', 'Not completed all fields');
       return;
     }
 
-    const isValidCodepostal = (val) => {
-      if (val.length === 5) {
+    /* const isValidCodepostal = (val) => {
+      if (val.length > 3) {
         return true;
       }
       pageSession.set('error', 'Postcode must be 5 digits');
       return false;
-    };
+    }; */
 
     const isValidName = (val) => {
       if (val.length >= 6) {
@@ -186,9 +186,9 @@ Template.signin.events({
     if (!isValidPassword(password)) {
       return;
     }
-    if (!isValidCodepostal(codepostal)) {
+    /* if (!isValidCodepostal(codepostal)) {
       return;
-    }
+    } */
     if (password !== repassword) {
       pageSession.set('error', 'Not the same password');
       return;
@@ -201,9 +201,13 @@ Template.signin.events({
     user.name = name;
     user.username = username;
     user.repassword = repassword;
-    user.codepostal = codepostal;
-    // numero insee
-    user.city = city;
+    if (codepostal) {
+      user.codepostal = codepostal;
+    }
+    if (city) {
+      // numero insee
+      user.city = city;
+    }
 
     pageSession.set('loading-signup', true);
     pageSession.set('error', null);
@@ -223,7 +227,7 @@ Template.signin.events({
           }
           pageSession.set('loading-signup', false);
           if (err.reason === 'notValidatedEmail') {
-            IonPopup.alert({ template: TAPi18n.__(err.reason) });
+            IonPopup.alert({ template: i18n.__(err.reason) });
             return Router.go('/login');
           }
           pageSession.set('error', err.reason);

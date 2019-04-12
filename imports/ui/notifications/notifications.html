@@ -8,7 +8,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "notifications"}}</h1>
+  <h1 class="title">{{__ "notifications"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -27,7 +27,7 @@
     <label class="checkbox checkbox-positive all-read">
       <input type="checkbox" checked="{{allReadChecked}}">
     </label>
-    {{_ "All read"}}
+    {{__ "All read"}}
   </div>
   {{#if currentUser}}
   {{> notificationsList notifications=notifications}}
@@ -38,7 +38,7 @@
 <template name="notificationsListSwip">
 <div class="list" data-snap-ignore="true">
   <div class="item item-divider no-swipe">
-    <i class="icon ion-speakerphone"></i> {{_ "notifications"}} <span class="badge badge-dark">{{notificationsCount}}</span>
+    <i class="icon ion-speakerphone"></i> {{__ "notifications"}} <span class="badge badge-dark">{{notificationsCount}}</span>
   </div>
   {{> notificationsList notifications=notifications}}
 </div>
@@ -66,7 +66,7 @@
 {{/if}}
 {{else}}
 <div class="item no-swipe">
-{{_ "not notifications"}}
+{{__ "not notifications"}}
 </div>
 {{/each}}
 {{/transition}}
@@ -90,12 +90,12 @@
 <div class="item tabs tabs-secondary tabs-icon-left">
   <a class="tab-item removeMe" href="#">
     <i class="icon ion-trash-a"></i>
-    {{_ "delete"}}
+    {{__ "delete"}}
   </a>
   {{#if news.likesCount}}
   <a class="tab-item" href="#">
     <i class="icon ion-thumbsup"></i>
-    {{news.likesCount}} {{_ "like"}}
+    {{news.likesCount}} {{__ "like"}}
   </a>
   {{/if}}
 </div>
@@ -111,13 +111,13 @@
 <div class="item tabs tabs-secondary tabs-icon-left">
   <a class="tab-item removeMe" href="#">
     <i class="icon ion-trash-a"></i>
-    {{_ "delete"}}
+    {{__ "delete"}}
   </a>
 </div>
 {{/if}}
 {{else}}
 {{#ionItem}}
-{{_ "not notifications"}}
+{{__ "not notifications"}}
 {{/ionItem}}
 {{/each}}
 {{/transition}}

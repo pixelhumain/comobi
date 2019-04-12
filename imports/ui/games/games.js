@@ -3,7 +3,7 @@ import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Mongo } from 'meteor/mongo';
 import { AutoForm } from 'meteor/aldeed:autoform';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { IonPopup } from 'meteor/meteoric:ionic';
 import { Router } from 'meteor/iron:router';
 import position from '../../api/client/position.js';
@@ -19,13 +19,13 @@ import './games.html';
 
 /*
 <button class="button button-positive button-block quest-validate-geo-js">
-    <i class="icon fa fa-check"></i> {{_ "games.check_position"}}
+    <i class="icon fa fa-check"></i> {{__ "games.check_position"}}
 </button>
 <button class="button button-positive button-block quest-validate-js">
-    <i class="icon fa fa-qrcode"></i> {{_ "games.validate"}}
+    <i class="icon fa fa-qrcode"></i> {{__ "games.validate"}}
 </button>
 <button class="button button-positive button-block quest-validate-error-js">
-    <i class="icon fa fa-qrcode"></i> {{_ "games.error"}}
+    <i class="icon fa fa-qrcode"></i> {{__ "games.error"}}
 </button>
 */
 
@@ -72,7 +72,7 @@ Template.buttonGameParticipate.events({
     event.preventDefault();
     Meteor.call('gameParticipate', { gameId: this.gameId }, (error) => {
       if (error) {
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       }
     });
   },
@@ -84,14 +84,14 @@ Template.buttonQuestValidate.events({
     console.log({ gameId: this.gameId, questId: this.questId, choiceId: this.choiceId });
     Meteor.call('questValidate', { gameId: this.gameId, questId: this.questId, choiceId: this.choiceId }, (error, result) => {
       if (error) {
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         if (result === 'error') {
           IonPopup.alert({
-            template: TAPi18n.__('games.wrong_answer')
+            template: i18n.__('games.wrong_answer')
           });
         } else if (result === 'valid') {
-          IonPopup.alert({ template: TAPi18n.__('games.good_answer') });
+          IonPopup.alert({ template: i18n.__('games.good_answer') });
         }
       }
     });
@@ -101,14 +101,14 @@ Template.buttonQuestValidate.events({
     console.log({ gameId: this.gameId, questId: this.questId, choiceId: 'ecd1197a262518a44fda35f3' });
     Meteor.call('questValidate', { gameId: this.gameId, questId: this.questId, choiceId: 'ecd1197a262518a44fda35f3' }, (error, result) => {
       if (error) {
-        IonPopup.alert({ template: TAPi18n.__(error.reason) });
+        IonPopup.alert({ template: i18n.__(error.reason) });
       } else {
         if (result === 'error') {
           IonPopup.alert({
-            template: TAPi18n.__('games.wrong_answer')
+            template: i18n.__('games.wrong_answer')
           });
         } else if (result === 'valid') {
-          IonPopup.alert({ template: TAPi18n.__('games.good_answer') });
+          IonPopup.alert({ template: i18n.__('games.good_answer') });
         }
       }
     });
@@ -137,13 +137,13 @@ Template.buttonQuestValidate.events({
             if (qr && qr.type && qr._id) {
               Meteor.call('questValidate', { gameId: self.gameId, questId: self.questId, choiceId: qr._id }, (error, result) => {
                 if (error) {
-                  IonPopup.alert({ template: TAPi18n.__(error.reason) });
+                  IonPopup.alert({ template: i18n.__(error.reason) });
                 } else {
                   if (result === 'error') {
                     IonPopup.alert({
-                      template: TAPi18n.__('games.wrong_answer') });
+                      template: i18n.__('games.wrong_answer') });
                   } else if (result === 'valid') {
-                    IonPopup.alert({ template: TAPi18n.__('games.good_answer') });
+                    IonPopup.alert({ template: i18n.__('games.good_answer') });
                   }
                 }
               });
@@ -168,11 +168,11 @@ Template.buttonQuestValidate.events({
         questId: this.questId,
         latlng: latlngObj }, (error) => {
         if (error) {
-          IonPopup.alert({ template: TAPi18n.__(error.reason) });
+          IonPopup.alert({ template: i18n.__(error.reason) });
         }
       });
     } else {
-      IonPopup.alert({ template: TAPi18n.__('not position') });
+      IonPopup.alert({ template: i18n.__('not position') });
     }
   },
 });

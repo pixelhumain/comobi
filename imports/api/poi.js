@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { _ } from 'meteor/underscore';
+import { Tracker } from 'meteor/tracker';
 
 // schemas
 import { baseSchema, blockBaseSchema, geoSchema } from './schema.js';
@@ -18,7 +19,7 @@ export const Poi = new Mongo.Collection('poi', { idGeneration: 'MONGO' });
 
 // SimpleSchema.debug = true;
 
-export const SchemasPoiRest = new SimpleSchema([baseSchema, geoSchema, {
+/* export const SchemasPoiRest = new SimpleSchema([baseSchema, geoSchema, {
   type: {
     type: String,
     autoform: {
@@ -38,15 +39,64 @@ export const SchemasPoiRest = new SimpleSchema([baseSchema, geoSchema, {
     },
   },
   urls: {
-    type: [String],
+    type: Array,
     optional: true,
   },
-}]);
+  'urls.$': {
+    type: String,
+  },
+}]); */
+
+export const SchemasPoiRest = new SimpleSchema(baseSchema, {
+  tracker: Tracker,
+});
+SchemasPoiRest.extend(geoSchema);
+SchemasPoiRest.extend({
+  type: {
+    type: String,
+    autoform: {
+      type: 'select',
+    },
+  },
+  parentType: {
+    type: String,
+    autoform: {
+      type: 'select',
+    },
+  },
+  parentId: {
+    type: String,
+    autoform: {
+      type: 'select',
+    },
+  },
+  urls: {
+    type: Array,
+    optional: true,
+  },
+  'urls.$': {
+    type: String,
+  },
+});
 
 export const BlockPoiRest = {};
-BlockPoiRest.descriptions = new SimpleSchema([blockBaseSchema, baseSchema.pick(['shortDescription', 'description', 'tags', 'tags.$'])]);
-BlockPoiRest.info = new SimpleSchema([blockBaseSchema, baseSchema.pick(['name'])]);
-BlockPoiRest.locality = new SimpleSchema([blockBaseSchema, geoSchema]);
+// BlockPoiRest.descriptions = new SimpleSchema([blockBaseSchema, baseSchema.pick('shortDescription', 'description', 'tags', 'tags.$)]');
+BlockPoiRest.descriptions = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+BlockPoiRest.descriptions.extend(baseSchema.pick('shortDescription', 'description', 'tags', 'tags.$'));
+
+// BlockPoiRest.info = new SimpleSchema([blockBaseSchema, baseSchema.pick('name)]');
+BlockPoiRest.info = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+BlockPoiRest.info.extend(baseSchema.pick('name'));
+
+// BlockPoiRest.locality = new SimpleSchema([blockBaseSchema, geoSchema]);
+BlockPoiRest.locality = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+BlockPoiRest.locality.extend(geoSchema);
 
 
 if (Meteor.isClient) {
@@ -105,7 +155,7 @@ Poi.helpers({
     const organizerPoi = this.organizerPoi();
 
     if (bothUserId && this.parent) {
-      if (this.parent[bothUserId]  && this.parent[bothUserId].type === 'citoyens') {
+      if (this.parent[bothUserId] && this.parent[bothUserId].type === 'citoyens') {
         return true;
       }
       // console.log(this.organizerPoi());

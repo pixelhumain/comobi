@@ -1,9 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { _ } from 'meteor/underscore';
 import { moment } from 'meteor/momentjs:moment';
 import { Router } from 'meteor/iron:router';
+import { Tracker } from 'meteor/tracker';
 
 // schemas
 import { baseSchema, blockBaseSchema, geoSchema, preferencesSelect } from './schema.js';
@@ -22,7 +23,7 @@ import { queryOrPrivateScopeLinksIds, queryOrPrivateScopeLinks, arrayLinkProperN
 // Person
 export const Citoyens = new Mongo.Collection('citoyens', { idGeneration: 'MONGO' });
 
-const baseSchemaCitoyens = baseSchema.pick(['name', 'shortDescription', 'description', 'url', 'tags', 'tags.$']);
+const baseSchemaCitoyens = baseSchema.pick('name', 'shortDescription', 'description', 'url', 'tags', 'tags.$');
 
 const updateSchemaCitoyens = new SimpleSchema({
   /* username: {
@@ -32,7 +33,7 @@ const updateSchemaCitoyens = new SimpleSchema({
         Meteor.call('checkUsername', this.value, function (error, result) {
           // console.log(result);
           if (!result) {
-            updateSchemaCitoyens.namedContext('editBlockCitoyen').addInvalidKeys([{ name: 'username', type: 'notUnique' }]);
+            updateSchemaCitoyens.namedContext('editBlockCitoyen').addValidationErrors([{ name: 'username', type: 'notUnique' }]);
           }
         });
       }
@@ -72,11 +73,11 @@ const updateSchemaCitoyens = new SimpleSchema({
     regEx: SimpleSchema.RegEx.Url,
     optional: true,
   },
-  gpplus: {
+  /* gpplus: {
     type: String,
     regEx: SimpleSchema.RegEx.Url,
     optional: true,
-  },
+  }, */
   twitter: {
     type: String,
     regEx: SimpleSchema.RegEx.Url,
@@ -90,7 +91,7 @@ const updateSchemaCitoyens = new SimpleSchema({
 });
 
 
-export const SchemasCitoyensRest = new SimpleSchema([baseSchemaCitoyens, updateSchemaCitoyens, geoSchema, {
+/* export const SchemasCitoyensRest = new SimpleSchema([baseSchemaCitoyens, updateSchemaCitoyens, geoSchema, {
   preferences: {
     type: Object,
     optional: true,
@@ -98,14 +99,51 @@ export const SchemasCitoyensRest = new SimpleSchema([baseSchemaCitoyens, updateS
   'preferences.isOpenData': {
     type: Boolean,
   },
-}]);
+}]); */
+
+export const SchemasCitoyensRest = new SimpleSchema(baseSchemaCitoyens, {
+  tracker: Tracker,
+});
+SchemasCitoyensRest.extend(updateSchemaCitoyens);
+SchemasCitoyensRest.extend(geoSchema);
+SchemasCitoyensRest.extend(updateSchemaCitoyens);
+SchemasCitoyensRest.extend({
+  preferences: {
+    type: Object,
+    optional: true,
+  },
+  'preferences.isOpenData': {
+    type: Boolean,
+  },
+});
 
 export const BlockCitoyensRest = {};
-BlockCitoyensRest.descriptions = new SimpleSchema([blockBaseSchema, baseSchema.pick(['shortDescription', 'description', 'tags', 'tags.$'])]);
-BlockCitoyensRest.info = new SimpleSchema([blockBaseSchema, baseSchema.pick(['name', 'url']), updateSchemaCitoyens.pick(['email', 'fixe', 'mobile', 'fax', 'birthDate'])]);
-BlockCitoyensRest.network = new SimpleSchema([blockBaseSchema, updateSchemaCitoyens.pick(['github', 'telegram', 'skype', 'gpplus', 'twitter', 'facebook'])]);
-BlockCitoyensRest.locality = new SimpleSchema([blockBaseSchema, geoSchema]);
-BlockCitoyensRest.preferences = new SimpleSchema([blockBaseSchema, {
+// BlockCitoyensRest.descriptions = new SimpleSchema([blockBaseSchema, baseSchema.pick('shortDescription', 'description', 'tags', 'tags.$)]');
+BlockCitoyensRest.descriptions = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+BlockCitoyensRest.descriptions.extend(baseSchema.pick('shortDescription', 'description', 'tags', 'tags.$'));
+
+// BlockCitoyensRest.info = new SimpleSchema([blockBaseSchema, baseSchema.pick('name', 'url']), updateSchemaCitoyens.pick(['email', 'fixe', 'mobile', 'fax', 'birthDate)]');
+BlockCitoyensRest.info = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+BlockCitoyensRest.info.extend(baseSchema.pick('name', 'url'));
+BlockCitoyensRest.info.extend(updateSchemaCitoyens.pick('email', 'fixe', 'mobile', 'fax', 'birthDate'));
+
+// BlockCitoyensRest.network = new SimpleSchema([blockBaseSchema, updateSchemaCitoyens.pick('github', 'telegram', 'skype', 'gpplus', 'twitter', 'facebook)]');
+BlockCitoyensRest.network = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+BlockCitoyensRest.network.extend(updateSchemaCitoyens.pick('github', 'telegram', 'skype', 'twitter', 'facebook'));
+
+// BlockCitoyensRest.locality = new SimpleSchema([blockBaseSchema, geoSchema]);
+BlockCitoyensRest.locality = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+BlockCitoyensRest.locality.extend(geoSchema);
+
+/* BlockCitoyensRest.preferences = new SimpleSchema([blockBaseSchema, {
   preferences: {
     type: Object,
     optional: true,
@@ -139,7 +177,46 @@ BlockCitoyensRest.preferences = new SimpleSchema([blockBaseSchema, {
     type: Boolean,
     optional: true,
   },
-}]);
+}]); */
+
+BlockCitoyensRest.preferences = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+BlockCitoyensRest.preferences.extend({
+  preferences: {
+    type: Object,
+    optional: true,
+  },
+  'preferences.email': {
+    type: String,
+    allowedValues: preferencesSelect,
+    optional: true,
+  },
+  'preferences.locality': {
+    type: String,
+    allowedValues: preferencesSelect,
+    optional: true,
+  },
+  'preferences.phone': {
+    type: String,
+    allowedValues: preferencesSelect,
+    optional: true,
+  },
+  'preferences.directory': {
+    type: String,
+    allowedValues: preferencesSelect,
+    optional: true,
+  },
+  'preferences.birthDate': {
+    type: String,
+    allowedValues: preferencesSelect,
+    optional: true,
+  },
+  'preferences.isOpenData': {
+    type: Boolean,
+    optional: true,
+  },
+});
 
 // type : person / follow
 // invitedUserName
@@ -152,6 +229,8 @@ export const SchemasFollowRest = new SimpleSchema({
     type: String,
     regEx: SimpleSchema.RegEx.Email,
   },
+}, {
+  tracker: Tracker,
 });
 
 export const SchemasInviteAttendeesEventRest = new SimpleSchema({
@@ -165,6 +244,8 @@ export const SchemasInviteAttendeesEventRest = new SimpleSchema({
   eventId: {
     type: String,
   },
+}, {
+  tracker: Tracker,
 });
 
 export const SchemasInvitationsRest = new SimpleSchema({
@@ -210,6 +291,8 @@ export const SchemasInvitationsRest = new SimpleSchema({
     type: String,
     optional: true,
   },
+}, {
+  tracker: Tracker,
 });
 
 /* childId:

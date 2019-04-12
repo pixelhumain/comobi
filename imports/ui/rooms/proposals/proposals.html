@@ -1,6 +1,6 @@
 <template name="detailProposals">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "dda.proposal.proposal"}} : </h1>
+  <h1 class="title">{{__ "dda.proposal.proposal"}} : </h1>
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
@@ -39,7 +39,7 @@
       {{> imgDoc profilThumbImageUrl=creatorProfile.profilThumbImageUrl resized="80x80"}}
       {{/if}}
       <h2>
-        {{_ 'author'}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="dark">{{creatorProfile.name}}</a>
+        {{__ 'author'}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="dark">{{creatorProfile.name}}</a>
       </h2>
     </div>
     {{> statusProposals status=status}}
@@ -48,7 +48,7 @@
     </div>
     {{#if arguments}}
     <div class="item item-divider">
-      {{_ 'dda.proposal.argumentstitle'}}
+      {{__ 'dda.proposal.argumentstitle'}}
     </div>
     <div class="item item-text-wrap">
       {{#markdown}}{{arguments}}{{/markdown}}
@@ -61,34 +61,34 @@
     {{#if amendementActivatedBool}}
     <div class="list card">
       <div class="item item-divider">
-        {{_ 'dda.proposal.amendments.title'}}
+        {{__ 'dda.proposal.amendments.title'}}
       </div>
     {{#if isNotEndAmendement}}
     <div class="button-bar bar-positive">
       <a href="{{pathFor 'amendementsAdd' _id=parentId scope=parentType roomId=idParentRoom proposalId=_id._str}}" class="button button-small">{{> ionIcon icon="plus"}}</a>
     </div>
     <div class="item item-text-wrap">
-      <p>{{_ 'dda.proposal.amendments.text'}} <strong>{{formatAmendementDateEnd}}</strong>
-       {{_ 'dda.proposal.amendments.endofamendments'}} <strong>{{livestamp amendementDateEnd}}</strong>
-      {{_ 'dda.proposal.amendments.proposetext'}}</p>
+      <p>{{__ 'dda.proposal.amendments.text'}} <strong>{{formatAmendementDateEnd}}</strong>
+       {{__ 'dda.proposal.amendments.endofamendments'}} <strong>{{livestamp amendementDateEnd}}</strong>
+      {{__ 'dda.proposal.amendments.proposetext'}}</p>
     </div>
     {{/if}}
     <div class="item item-divider">
-      {{_ 'dda.proposal.amendments.listofamendmentstemporarily'}}
+      {{__ 'dda.proposal.amendments.listofamendmentstemporarily'}}
     </div>
     {{> listAmendementsProposals _id=parentId scope=parentType roomId=idParentRoom proposalId=_id._str status=status isAdmin=../../isAdmin amendements=objectKeyArrayAmendements }}
     </div>
     {{else}}
     <div class="list">
     <div class="item">
-      {{_ 'dda.proposal.amendments.amendmentsdeactivated'}}
+      {{__ 'dda.proposal.amendments.amendmentsdeactivated'}}
     </div>
     </div>
     {{/if}}
 
     <div class="list">
     <a href="{{pathFor 'proposalsDetailComments' _id=parentId scope=parentType roomId=idParentRoom proposalId=_id._str}}" class="item">
-      <i class="icon fa fa-balance-scale"></i> {{_ 'dda.debate'}} <span class="badge badge-balanced">{{commentsCount}}</span>
+      <i class="icon fa fa-balance-scale"></i> {{__ 'dda.debate'}} <span class="badge badge-balanced">{{commentsCount}}</span>
     </a>
     </div>
 
@@ -97,31 +97,31 @@
     {{#if voteActivatedBool}}
     <div class="list card">
       <div class="item item-divider">
-        {{_ 'dda.proposal.tovote.title'}}
+        {{__ 'dda.proposal.tovote.title'}}
       </div>
     {{#if isNotEndVote}}
     <div class="item item-text-wrap">
-      <p>{{_ 'dda.proposal.tovote.text'}} <strong>{{formatVoteDateEnd}}</strong>
-      {{_ 'dda.proposal.tovote.endofvotes'}} <strong>{{livestamp voteDateEnd}}</strong></p>
+      <p>{{__ 'dda.proposal.tovote.text'}} <strong>{{formatVoteDateEnd}}</strong>
+      {{__ 'dda.proposal.tovote.endofvotes'}} <strong>{{livestamp voteDateEnd}}</strong></p>
     </div>
     {{> votesProposals status=status votes=votesResultat}}
     {{/if}}
     <div class="item item-divider">
-      {{_ 'dda.proposal.tovote.listofamendmentsvalidated'}} : {{majority}}%
+      {{__ 'dda.proposal.tovote.listofamendmentsvalidated'}} : {{majority}}%
     </div>
     {{> listAmendementsProposals _id=parentId scope=parentType roomId=idParentRoom proposalId=_id._str status=status isAdmin=../../isAdmin amendements=objectKeyArrayAmendements }}
     </div>
     {{else}}
     <div class="list">
     <div class="item">
-      {{_ 'dda.proposal.tovote.votesdisabled'}}
+      {{__ 'dda.proposal.tovote.votesdisabled'}}
     </div>
     </div>
     {{/if}}
 
     <div class="list">
     <a href="{{pathFor 'proposalsDetailComments' _id=parentId scope=parentType roomId=idParentRoom proposalId=_id._str}}" class="item">
-      <i class="icon fa fa-balance-scale"></i> {{_ 'dda.debate'}} <span class="badge badge-balanced">{{commentsCount}}</span>
+      <i class="icon fa fa-balance-scale"></i> {{__ 'dda.debate'}} <span class="badge badge-balanced">{{commentsCount}}</span>
     </a>
     </div>
 
@@ -129,27 +129,27 @@
 
     <div class="list card">
       <div class="item item-divider">
-        {{_ 'dda.resolution.resolution'}}
+        {{__ 'dda.resolution.resolution'}}
       </div>
     <div class="item item-text-wrap">
       {{#if votesResultat.voteValid}}
-      <p><i class="icon fa fa-bell"></i> {{{_ 'dda.resolution.adopted'}}}
-       {{_ 'dda.resolution.endofvote'}} <strong>{{livestamp voteDateEnd}}</strong>
+      <p><i class="icon fa fa-bell"></i> {{{__ 'dda.resolution.adopted'}}}
+       {{__ 'dda.resolution.endofvote'}} <strong>{{livestamp voteDateEnd}}</strong>
       </p>
       {{else}}
-      <p><i class="icon fa fa-bell"></i> {{{_ 'dda.resolution.refused'}}}
-       {{_ 'dda.resolution.endofvote'}} <strong>{{livestamp voteDateEnd}}</strong>
+      <p><i class="icon fa fa-bell"></i> {{{__ 'dda.resolution.refused'}}}
+       {{__ 'dda.resolution.endofvote'}} <strong>{{livestamp voteDateEnd}}</strong>
       </p>
       {{/if}}
 
     </div>
-    <a href="{{pathFor 'resolutionsDetail' _id=parentId scope=parentType roomId=idParentRoom resolutionId=_id._str}}" class="item"><i class="fa fa-chevron-right"></i> {{_ 'dda.resolution.showresolution'}}</a>
+    <a href="{{pathFor 'resolutionsDetail' _id=parentId scope=parentType roomId=idParentRoom resolutionId=_id._str}}" class="item"><i class="fa fa-chevron-right"></i> {{__ 'dda.resolution.showresolution'}}</a>
       <div class="item item-divider">
-        {{_ 'dda.resolution.resultstitle'}}
+        {{__ 'dda.resolution.resultstitle'}}
       </div>
     {{> votesProposals status=status votes=votesResultat}}
     <div class="item item-divider">
-      {{_ 'dda.proposal.tovote.listofamendmentsvalidated'}} : {{majority}}%
+      {{__ 'dda.proposal.tovote.listofamendmentsvalidated'}} : {{majority}}%
     </div>
     {{> listAmendementsProposals _id=parentId scope=parentType roomId=idParentRoom proposalId=_id._str status=status isAdmin=../../isAdmin amendements=objectKeyArrayAmendements }}
     <a href="{{pathFor 'proposalsDetailComments' _id=parentId scope=parentType roomId=idParentRoom proposalId=_id._str}}" class="item">
@@ -170,28 +170,28 @@
 {{#if isAdmin}}
 <div class="button-bar bar-positive">
   <a href="{{pathFor 'proposalsEdit' _id=_id scope=scope roomId=roomId proposalId=proposalId}}" class="button button-small"><i class="fa fa-pencil"></i></a>
-  <button class="button button-small action-proposal-js" data-action="disabled"><i class="fa fa-times"></i> {{_ "dda.proposal.buttons.disable"}}</button>
-  <button class="button button-small action-proposal-js" data-action="closed"><i class="fa fa-trash"></i> {{_ "dda.proposal.buttons.close"}}</button>
+  <button class="button button-small action-proposal-js" data-action="disabled"><i class="fa fa-times"></i> {{__ "dda.proposal.buttons.disable"}}</button>
+  <button class="button button-small action-proposal-js" data-action="closed"><i class="fa fa-trash"></i> {{__ "dda.proposal.buttons.close"}}</button>
 </div>
 {{else if isCreator}}
 <div class="button-bar bar-positive">
   <a href="{{pathFor 'proposalsEdit' _id=_id scope=scope roomId=roomId proposalId=proposalId}}" class="button button-small"><i class="fa fa-pencil"></i></a>
-  <button class="button button-small action-proposal-js" data-action="disabled"><i class="fa fa-times"></i> {{_ "dda.proposal.buttons.disable"}}</button>
-  <button class="button button-small action-proposal-js" data-action="closed"><i class="fa fa-trash"></i> {{_ "dda.proposal.buttons.close"}}</button>
+  <button class="button button-small action-proposal-js" data-action="disabled"><i class="fa fa-times"></i> {{__ "dda.proposal.buttons.disable"}}</button>
+  <button class="button button-small action-proposal-js" data-action="closed"><i class="fa fa-trash"></i> {{__ "dda.proposal.buttons.close"}}</button>
 </div>
 {{/if}}
 {{else if equals status 'tovote'}}
 {{#if isAdmin}}
 <div class="button-bar bar-positive">
   <a href="{{pathFor 'proposalsEdit' _id=_id scope=scope roomId=roomId proposalId=proposalId}}" class="button button-small"><i class="fa fa-pencil"></i></a>
-  <button class="button button-small action-proposal-js" data-action="disabled"><i class="fa fa-times"></i> {{_ "dda.proposal.buttons.disable"}}</button>
-  <button class="button button-small action-proposal-js" data-action="closed"><i class="fa fa-trash"></i> {{_ "dda.proposal.buttons.close"}}</button>
+  <button class="button button-small action-proposal-js" data-action="disabled"><i class="fa fa-times"></i> {{__ "dda.proposal.buttons.disable"}}</button>
+  <button class="button button-small action-proposal-js" data-action="closed"><i class="fa fa-trash"></i> {{__ "dda.proposal.buttons.close"}}</button>
 </div>
 {{else if isCreator}}
 <div class="button-bar bar-positive">
   <a href="{{pathFor 'proposalsEdit' _id=_id scope=scope roomId=roomId proposalId=proposalId}}" class="button button-small"><i class="fa fa-pencil"></i></a>
-  <button class="button button-small action-proposal-js" data-action="disabled"><i class="fa fa-times"></i> {{_ "dda.proposal.buttons.disable"}}</button>
-  <button class="button button-small action-proposal-js" data-action="closed"><i class="fa fa-trash"></i> {{_ "dda.proposal.buttons.close"}}</button>
+  <button class="button button-small action-proposal-js" data-action="disabled"><i class="fa fa-times"></i> {{__ "dda.proposal.buttons.disable"}}</button>
+  <button class="button button-small action-proposal-js" data-action="closed"><i class="fa fa-trash"></i> {{__ "dda.proposal.buttons.close"}}</button>
 </div>
 {{/if}}
 {{else if equals status 'resolved'}}
@@ -200,28 +200,28 @@
 {{#if isAdmin}}
 <div class="button-bar bar-positive">
   <a href="{{pathFor 'proposalsEdit' _id=_id scope=scope roomId=roomId proposalId=proposalId}}" class="button button-small"><i class="fa fa-pencil"></i></a>
-  <button class="button button-small action-proposal-js" data-action="amendable"><i class="fa fa-pencil"></i> {{_ "dda.proposal.buttons.backtoamendments"}}</button>
-  <button class="button button-small action-proposal-js" data-action="tovote"><i class="fa fa-gavel"></i> {{_ "dda.proposal.buttons.openthevotes"}}</button>
-  <button class="button button-small action-proposal-js" data-action="closed"><i class="fa fa-trash"></i> {{_ "dda.proposal.buttons.close"}}</button>
+  <button class="button button-small action-proposal-js" data-action="amendable"><i class="fa fa-pencil"></i> {{__ "dda.proposal.buttons.backtoamendments"}}</button>
+  <button class="button button-small action-proposal-js" data-action="tovote"><i class="fa fa-gavel"></i> {{__ "dda.proposal.buttons.openthevotes"}}</button>
+  <button class="button button-small action-proposal-js" data-action="closed"><i class="fa fa-trash"></i> {{__ "dda.proposal.buttons.close"}}</button>
 </div>
 {{else if isCreator}}
 <div class="button-bar bar-positive">
   <a href="{{pathFor 'proposalsEdit' _id=_id scope=scope roomId=roomId proposalId=proposalId}}" class="button button-small"><i class="fa fa-pencil"></i></a>
-  <button class="button button-small action-proposal-js" data-action="amendable"><i class="fa fa-pencil"></i> {{_ "dda.proposal.buttons.backtoamendments"}}</button>
-  <button class="button button-small action-proposal-js" data-action="tovote"><i class="fa fa-gavel"></i> {{_ "dda.proposal.buttons.openthevotes"}}</button>
-  <button class="button button-small action-proposal-js" data-action="closed"><i class="fa fa-trash"></i> {{_ "dda.proposal.buttons.close"}}</button>
+  <button class="button button-small action-proposal-js" data-action="amendable"><i class="fa fa-pencil"></i> {{__ "dda.proposal.buttons.backtoamendments"}}</button>
+  <button class="button button-small action-proposal-js" data-action="tovote"><i class="fa fa-gavel"></i> {{__ "dda.proposal.buttons.openthevotes"}}</button>
+  <button class="button button-small action-proposal-js" data-action="closed"><i class="fa fa-trash"></i> {{__ "dda.proposal.buttons.close"}}</button>
 </div>
 {{/if}}
 {{else if equals status 'closed'}}
 {{#if isAdmin}}
 <div class="button-bar bar-positive">
   <a href="{{pathFor 'proposalsEdit' _id=_id scope=scope roomId=roomId proposalId=proposalId}}" class="button button-small"><i class="fa fa-pencil"></i></a>
-  <button class="button button-small action-proposal-js" data-action="disabled"><i class="fa fa-times"></i> {{_ "dda.proposal.buttons.disable"}}</button>
+  <button class="button button-small action-proposal-js" data-action="disabled"><i class="fa fa-times"></i> {{__ "dda.proposal.buttons.disable"}}</button>
 </div>
 {{else if isCreator}}
 <div class="button-bar bar-positive">
   <a href="{{pathFor 'proposalsEdit' _id=_id scope=scope roomId=roomId proposalId=proposalId}}" class="button button-small"><i class="fa fa-pencil"></i></a>
-  <button class="button button-small action-proposal-js" data-action="disabled"><i class="fa fa-times"></i> {{_ "dda.proposal.buttons.disable"}}</button>
+  <button class="button button-small action-proposal-js" data-action="disabled"><i class="fa fa-times"></i> {{__ "dda.proposal.buttons.disable"}}</button>
 </div>
 {{/if}}
 {{/if}}
@@ -230,23 +230,23 @@
 <template name="statusProposals">
 {{#if equals status 'amendable'}}
 <div class="item">
-  <strong>{{_ 'dda.proposal.status.amendable'}}</strong>	> {{_ 'dda.proposal.status.tovote'}}	> {{_ 'dda.proposal.status.closed'}}
+  <strong>{{__ 'dda.proposal.status.amendable'}}</strong>	> {{__ 'dda.proposal.status.tovote'}}	> {{__ 'dda.proposal.status.closed'}}
 </div>
 {{else if equals status 'tovote'}}
 <div class="item">
-  {{_ 'dda.proposal.status.amendable'}}	> <strong>{{_ 'dda.proposal.status.tovote'}}</strong>	> {{_ 'dda.proposal.status.closed'}}
+  {{__ 'dda.proposal.status.amendable'}}	> <strong>{{__ 'dda.proposal.status.tovote'}}</strong>	> {{__ 'dda.proposal.status.closed'}}
 </div>
 {{else if equals status 'resolved'}}
 <div class="item">
-  {{_ 'dda.proposal.status.amendable'}}	> {{_ 'dda.proposal.status.tovote'}}	> <strong>{{_ 'dda.proposal.status.resolved'}}</strong>
+  {{__ 'dda.proposal.status.amendable'}}	> {{__ 'dda.proposal.status.tovote'}}	> <strong>{{__ 'dda.proposal.status.resolved'}}</strong>
 </div>
 {{else if equals status 'disabled'}}
 <div class="item">
-  {{_ 'dda.proposal.status.amendable'}}	> <strong>{{_ 'dda.proposal.status.disabled'}}</strong> > {{_ 'dda.proposal.status.closed'}}
+  {{__ 'dda.proposal.status.amendable'}}	> <strong>{{__ 'dda.proposal.status.disabled'}}</strong> > {{__ 'dda.proposal.status.closed'}}
 </div>
 {{else if equals status 'closed'}}
 <div class="item">
-  {{_ 'dda.proposal.status.amendable'}}{{_ 'dda.proposal.status.amendable'}}	> {{_ 'dda.proposal.status.tovote'}}	> <strong>{{_ 'dda.proposal.status.closed'}}</strong>
+  {{__ 'dda.proposal.status.amendable'}}{{__ 'dda.proposal.status.amendable'}}	> {{__ 'dda.proposal.status.tovote'}}	> <strong>{{__ 'dda.proposal.status.closed'}}</strong>
 </div>
 {{/if}}
 </template>
@@ -256,7 +256,7 @@
 {{> itemAmendementsProposals _id=_id scope=scope roomId=roomId proposalId=proposalId status=status isAdmin=isAdmin amendement=amendement}}
 {{else}}
 <div class="item">
-  {{_ 'dda.proposal.amendments.noamendments'}}
+  {{__ 'dda.proposal.amendments.noamendments'}}
 </div>
 {{/each}}
 </template>
@@ -275,7 +275,7 @@
   </div>
   {{/if}}
   <div class="item item-divider">
-    n°{{amendement.idKey}} {{_ amendement.typeAmdt}} {{> badgeAmendementsProposals status=status votes=amendement.votesObject}}
+    n°{{amendement.idKey}} {{__ amendement.typeAmdt}} {{> badgeAmendementsProposals status=status votes=amendement.votesObject}}
   </div>
   <div class="item item-text-wrap">
     <p>{{amendement.textAdd}}</p>
@@ -284,7 +284,7 @@
   {{else if equals status 'tovote'}}
   {{#if equals amendement.votesObject.voteValid true }}
   <div class="item item-divider">
-    n°{{amendement.idKey}} {{_ amendement.typeAmdt}} {{> badgeAmendementsProposals status=status votes=amendement.votesObject}}
+    n°{{amendement.idKey}} {{__ amendement.typeAmdt}} {{> badgeAmendementsProposals status=status votes=amendement.votesObject}}
   </div>
   <div class="item item-text-wrap">
     <p>{{amendement.textAdd}}</p>
@@ -299,32 +299,32 @@
       <div class="item item-text-wrap">
     {{#if votes.voteStart}}
     {{#if votes.voteValid}}
-    {{{_ 'dda.proposal.tovote.proposal_temporarily' context='validated'}}} · {{votes.totalVotes}} {{_ 'dda.proposal.tovote.voter' count=votes.totalVotes}}
+    {{{__ 'dda.proposal.tovote.proposal_temporarily' context='validated'}}} · {{votes.totalVotes}} {{__ 'dda.proposal.tovote.voter' count=votes.totalVotes}}
     {{else}}
-    {{{_ 'dda.proposal.tovote.proposal_temporarily' context='refused'}}} · {{votes.totalVotes}} {{_ 'dda.proposal.tovote.voter' count=votes.totalVotes}}
+    {{{__ 'dda.proposal.tovote.proposal_temporarily' context='refused'}}} · {{votes.totalVotes}} {{__ 'dda.proposal.tovote.voter' count=votes.totalVotes}}
     {{/if}}
     {{else}}
-    {{_ 'dda.proposal.tovote.bethefirsttovote'}}
+    {{__ 'dda.proposal.tovote.bethefirsttovote'}}
     {{/if}}
 
       <p>{{#if votes.meVote}}
-      <strong>{{_ 'dda.proposal.tovote.youvoted'}}
+      <strong>{{__ 'dda.proposal.tovote.youvoted'}}
       {{#if votes.voteUp.meVoteUp}}
-      <span class="balanced">{{_ 'dda.proposal.tovote.infavour'}}</span>
+      <span class="balanced">{{__ 'dda.proposal.tovote.infavour'}}</span>
       {{else if votes.voteDown.meVoteDown}}
-      <span class="assertive">{{_ 'dda.proposal.tovote.against'}}</span>
+      <span class="assertive">{{__ 'dda.proposal.tovote.against'}}</span>
       {{else if votes.voteWhite.meVoteWhite}}
-      <span class="dark">{{_ 'dda.proposal.tovote.blank'}}</span>
+      <span class="dark">{{__ 'dda.proposal.tovote.blank'}}</span>
       {{else if votes.voteUncomplet.meVoteUncomplet}}
-      <span class="energized">{{_ 'dda.proposal.tovote.incomplete'}}</span>
+      <span class="energized">{{__ 'dda.proposal.tovote.incomplete'}}</span>
       {{/if}}
       </strong>
       {{else}}
-      {{_ 'dda.proposal.tovote.youhavenotvotedyet'}}
+      {{__ 'dda.proposal.tovote.youhavenotvotedyet'}}
       {{/if}}
       </p>
       {{#if ../voteCanChangeBool}}
-    <p>{{_ 'dda.proposal.tovote.votecanchange'}}</p>
+    <p>{{__ 'dda.proposal.tovote.votecanchange'}}</p>
     {{else}}
 
     {{/if}}
@@ -335,32 +335,32 @@
     {{#if votes.meVote}}
     <div class="button-bar bar-clear animated in out">
       {{#if votes.voteUp.meVoteUp}}
-      <button class="button button-small button-balanced disabled">{{_ 'dda.proposal.tovote.infavour'}} ({{votes.voteUp.pourc}}%)</button>
+      <button class="button button-small button-balanced disabled">{{__ 'dda.proposal.tovote.infavour'}} ({{votes.voteUp.pourc}}%)</button>
       {{else}}
-      <button class="button button-small button-balanced savevote-js" data-vote="up">{{_ 'dda.proposal.tovote.infavour'}} ({{votes.voteUp.pourc}}%)</button>
+      <button class="button button-small button-balanced savevote-js" data-vote="up">{{__ 'dda.proposal.tovote.infavour'}} ({{votes.voteUp.pourc}}%)</button>
       {{/if}}
       {{#if votes.voteDown.meVoteDown}}
-      <button class="button button-small button-assertive disabled">{{_ 'dda.proposal.tovote.against'}} ({{votes.voteDown.pourc}}%)</button>
+      <button class="button button-small button-assertive disabled">{{__ 'dda.proposal.tovote.against'}} ({{votes.voteDown.pourc}}%)</button>
       {{else}}
-      <button class="button button-small button-assertive savevote-js" data-vote="down">{{_ 'dda.proposal.tovote.against'}} ({{votes.voteDown.pourc}}%)</button>
+      <button class="button button-small button-assertive savevote-js" data-vote="down">{{__ 'dda.proposal.tovote.against'}} ({{votes.voteDown.pourc}}%)</button>
       {{/if}}
       {{#if votes.voteWhite.meVoteWhite}}
-      <button class="button button-small button-stable disabled">{{_ 'dda.proposal.tovote.blank'}} ({{votes.voteWhite.pourc}}%)</button>
+      <button class="button button-small button-stable disabled">{{__ 'dda.proposal.tovote.blank'}} ({{votes.voteWhite.pourc}}%)</button>
       {{else}}
-      <button class="button button-small button-stable savevote-js" data-vote="white">{{_ 'dda.proposal.tovote.blank'}} ({{votes.voteWhite.pourc}}%)</button>
+      <button class="button button-small button-stable savevote-js" data-vote="white">{{__ 'dda.proposal.tovote.blank'}} ({{votes.voteWhite.pourc}}%)</button>
       {{/if}}
       {{#if votes.voteUncomplet.meVoteUncomplet}}
-      <button class="button button-small button-energized disabled">{{_ 'dda.proposal.tovote.incomplete'}} ({{votes.voteUncomplet.pourc}}%)</button>
+      <button class="button button-small button-energized disabled">{{__ 'dda.proposal.tovote.incomplete'}} ({{votes.voteUncomplet.pourc}}%)</button>
       {{else}}
-      <button class="button button-small button-energized savevote-js" data-vote="uncomplet">{{_ 'dda.proposal.tovote.incomplete'}} ({{votes.voteUncomplet.pourc}}%)</button>
+      <button class="button button-small button-energized savevote-js" data-vote="uncomplet">{{__ 'dda.proposal.tovote.incomplete'}} ({{votes.voteUncomplet.pourc}}%)</button>
       {{/if}}
     </div>
     {{else}}
     <div class="button-bar bar-clear animated in out">
-      <button class="button button-small button-balanced savevote-js" data-vote="up">{{_ 'dda.proposal.tovote.infavour'}} ({{votes.voteUp.pourc}}%)</button>
-      <button class="button button-small button-assertive savevote-js" data-vote="down">{{_ 'dda.proposal.tovote.against'}} ({{votes.voteDown.pourc}}%)</button>
-      <button class="button button-small button-stable savevote-js" data-vote="white">{{_ 'dda.proposal.tovote.blank'}} ({{votes.voteWhite.pourc}}%)</button>
-      <button class="button button-small button-energized savevote-js" data-vote="uncomplet">{{_ 'dda.proposal.tovote.incomplete'}} ({{votes.voteUncomplet.pourc}}%)</button>
+      <button class="button button-small button-balanced savevote-js" data-vote="up">{{__ 'dda.proposal.tovote.infavour'}} ({{votes.voteUp.pourc}}%)</button>
+      <button class="button button-small button-assertive savevote-js" data-vote="down">{{__ 'dda.proposal.tovote.against'}} ({{votes.voteDown.pourc}}%)</button>
+      <button class="button button-small button-stable savevote-js" data-vote="white">{{__ 'dda.proposal.tovote.blank'}} ({{votes.voteWhite.pourc}}%)</button>
+      <button class="button button-small button-energized savevote-js" data-vote="uncomplet">{{__ 'dda.proposal.tovote.incomplete'}} ({{votes.voteUncomplet.pourc}}%)</button>
     </div>
     {{/if}}
 
@@ -370,26 +370,26 @@
     {{#transition in="zoomIn" out="bounceOut"}}
     <div class="row animated in out">
       <div class="col text-center balanced-bg">
-        {{_ 'dda.proposal.tovote.infavour'}} <br>({{votes.voteUp.pourc}}%)
+        {{__ 'dda.proposal.tovote.infavour'}} <br>({{votes.voteUp.pourc}}%)
       </div>
       <div class="col text-center assertive-bg">
-        {{_ 'dda.proposal.tovote.against'}} <br>({{votes.voteDown.pourc}}%)
+        {{__ 'dda.proposal.tovote.against'}} <br>({{votes.voteDown.pourc}}%)
       </div>
       <div class="col text-center stable-bg dark">
-        {{_ 'dda.proposal.tovote.blank'}} <br>({{votes.voteWhite.pourc}}%)
+        {{__ 'dda.proposal.tovote.blank'}} <br>({{votes.voteWhite.pourc}}%)
       </div>
       <div class="col text-center energized-bg">
-        {{_ 'dda.proposal.tovote.incomplete'}} <br>({{votes.voteUncomplet.pourc}}%)
+        {{__ 'dda.proposal.tovote.incomplete'}} <br>({{votes.voteUncomplet.pourc}}%)
       </div>
     </div>
     {{/transition}}
     {{else}}
     {{#transition in="zoomIn" out="bounceOut"}}
     <div class="button-bar bar-clear animated in out">
-      <button class="button button-small button-balanced savevote-js" data-vote="up">{{_ 'dda.proposal.tovote.infavour'}} ({{votes.voteUp.pourc}}%)</button>
-      <button class="button button-small button-assertive savevote-js" data-vote="down">{{_ 'dda.proposal.tovote.against'}} ({{votes.voteDown.pourc}}%)</button>
-      <button class="button button-small button-stable savevote-js" data-vote="white">{{_ 'dda.proposal.tovote.blank'}} ({{votes.voteWhite.pourc}}%)</button>
-      <button class="button button-small button-energized savevote-js" data-vote="uncomplet">{{_ 'dda.proposal.tovote.incomplete'}} ({{votes.voteUncomplet.pourc}}%)</button>
+      <button class="button button-small button-balanced savevote-js" data-vote="up">{{__ 'dda.proposal.tovote.infavour'}} ({{votes.voteUp.pourc}}%)</button>
+      <button class="button button-small button-assertive savevote-js" data-vote="down">{{__ 'dda.proposal.tovote.against'}} ({{votes.voteDown.pourc}}%)</button>
+      <button class="button button-small button-stable savevote-js" data-vote="white">{{__ 'dda.proposal.tovote.blank'}} ({{votes.voteWhite.pourc}}%)</button>
+      <button class="button button-small button-energized savevote-js" data-vote="uncomplet">{{__ 'dda.proposal.tovote.incomplete'}} ({{votes.voteUncomplet.pourc}}%)</button>
     </div>
     {{/transition}}
     {{/if}}
@@ -413,31 +413,31 @@
 
     <div class="row">
       <div class="col text-left">
-        <h5 style="font-size:11px;"><i class="fa fa-gavel"></i> {{_ 'dda.proposal.tovote.changeofvote'}} : {{#if ../voteCanChangeBool}}<span class="balanced">{{_ 'yes'}}</span>{{else}}<span class="assertive">{{_ 'no'}}</span>{{/if}}</h5>
-        <h5 style="font-size:11px;"><i class="fa fa-user-secret"></i> {{_ 'dda.proposal.tovote.anonymousvote'}} : {{#if ../voteAnonymousBool}}<span class="balanced">{{_ 'yes'}}</span>{{else}}<span class="assertive">{{_ 'no'}}</span>{{/if}}</h5>
+        <h5 style="font-size:11px;"><i class="fa fa-gavel"></i> {{__ 'dda.proposal.tovote.changeofvote'}} : {{#if ../voteCanChangeBool}}<span class="balanced">{{__ 'yes'}}</span>{{else}}<span class="assertive">{{__ 'no'}}</span>{{/if}}</h5>
+        <h5 style="font-size:11px;"><i class="fa fa-user-secret"></i> {{__ 'dda.proposal.tovote.anonymousvote'}} : {{#if ../voteAnonymousBool}}<span class="balanced">{{__ 'yes'}}</span>{{else}}<span class="assertive">{{__ 'no'}}</span>{{/if}}</h5>
       </div>
       <div class="col text-right">
-        <h5 style="font-size:11px;">{{_ 'dda.proposal.tovote.majorityrule'}} : {{../majority}}%</h5>
+        <h5 style="font-size:11px;">{{__ 'dda.proposal.tovote.majorityrule'}} : {{../majority}}%</h5>
       </div>
     </div>
     {{else if equals status 'resolved'}}
       <div class="item item-text-wrap">
         {{#if votes.voteValid}}
-        {{_ 'dda.proposal.tovote.proposal' context='validated'}} · {{votes.totalVotes}} {{_ 'dda.proposal.tovote.voter' count=votes.totalVotes}}
+        {{__ 'dda.proposal.tovote.proposal' context='validated'}} · {{votes.totalVotes}} {{__ 'dda.proposal.tovote.voter' count=votes.totalVotes}}
         {{else}}
-        {{_ 'dda.proposal.tovote.proposal' context='refused'}} · {{votes.totalVotes}} {{_ 'dda.proposal.tovote.voter' count=votes.totalVotes}}
+        {{__ 'dda.proposal.tovote.proposal' context='refused'}} · {{votes.totalVotes}} {{__ 'dda.proposal.tovote.voter' count=votes.totalVotes}}
         {{/if}}
 
       <p>{{#if votes.meVote}}
-        <strong>{{_ 'dda.proposal.tovote.youvoted'}}
+        <strong>{{__ 'dda.proposal.tovote.youvoted'}}
         {{#if votes.voteUp.meVoteUp}}
-        <span class="balanced">{{_ 'dda.proposal.tovote.infavour'}}</span>
+        <span class="balanced">{{__ 'dda.proposal.tovote.infavour'}}</span>
         {{else if votes.voteDown.meVoteDown}}
-        <span class="assertive">{{_ 'dda.proposal.tovote.against'}}</span>
+        <span class="assertive">{{__ 'dda.proposal.tovote.against'}}</span>
         {{else if votes.voteWhite.meVoteWhite}}
-        <span class="dark">{{_ 'dda.proposal.tovote.blank'}}</span>
+        <span class="dark">{{__ 'dda.proposal.tovote.blank'}}</span>
         {{else if votes.voteUncomplet.meVoteUncomplet}}
-        <span class="energized">{{_ 'dda.proposal.tovote.incomplete'}}</span>
+        <span class="energized">{{__ 'dda.proposal.tovote.incomplete'}}</span>
         {{/if}}
         </strong>
       {{/if}}
@@ -447,16 +447,16 @@
 
     <div class="row">
       <div class="col text-center balanced-bg">
-        {{_ 'dda.proposal.tovote.infavour'}} <br>({{votes.voteUp.pourc}}%)
+        {{__ 'dda.proposal.tovote.infavour'}} <br>({{votes.voteUp.pourc}}%)
       </div>
       <div class="col text-center assertive-bg">
-        {{_ 'dda.proposal.tovote.against'}} <br>({{votes.voteDown.pourc}}%)
+        {{__ 'dda.proposal.tovote.against'}} <br>({{votes.voteDown.pourc}}%)
       </div>
       <div class="col text-center stable-bg dark">
-        {{_ 'dda.proposal.tovote.blank'}} <br>({{votes.voteWhite.pourc}}%)
+        {{__ 'dda.proposal.tovote.blank'}} <br>({{votes.voteWhite.pourc}}%)
       </div>
       <div class="col text-center energized-bg">
-        {{_ 'dda.proposal.tovote.incomplete'}} <br>({{votes.voteUncomplet.pourc}}%)
+        {{__ 'dda.proposal.tovote.incomplete'}} <br>({{votes.voteUncomplet.pourc}}%)
       </div>
     </div>
 
@@ -477,11 +477,11 @@
 
     <div class="row">
       <div class="col text-left">
-        <h5 style="font-size:11px;"><i class="fa fa-gavel"></i> {{_ 'dda.proposal.tovote.changeofvote'}}  : {{#if ../voteCanChangeBool}}<span class="balanced">{{_ 'yes'}}</span>{{else}}<span class="assertive">{{_ 'no'}}</span>{{/if}}</h5>
-        <h5 style="font-size:11px;"><i class="fa fa-user-secret"></i> {{_ 'dda.proposal.tovote.anonymousvote'}}  : {{#if ../voteAnonymousBool}}<span class="balanced">{{_ 'yes'}}</span>{{else}}<span class="assertive">{{_ 'no'}}</span>{{/if}}</h5>
+        <h5 style="font-size:11px;"><i class="fa fa-gavel"></i> {{__ 'dda.proposal.tovote.changeofvote'}}  : {{#if ../voteCanChangeBool}}<span class="balanced">{{__ 'yes'}}</span>{{else}}<span class="assertive">{{__ 'no'}}</span>{{/if}}</h5>
+        <h5 style="font-size:11px;"><i class="fa fa-user-secret"></i> {{__ 'dda.proposal.tovote.anonymousvote'}}  : {{#if ../voteAnonymousBool}}<span class="balanced">{{__ 'yes'}}</span>{{else}}<span class="assertive">{{__ 'no'}}</span>{{/if}}</h5>
       </div>
       <div class="col text-right">
-        <h5 style="font-size:11px;">{{_ 'dda.proposal.tovote.majorityrule'}} : {{../majority}}%</h5>
+        <h5 style="font-size:11px;">{{__ 'dda.proposal.tovote.majorityrule'}} : {{../majority}}%</h5>
       </div>
     </div>
     {{/if}}
@@ -492,26 +492,26 @@
 <template name="votesAmendements">
   <div class="item item-text-wrap">
   <p>{{#if votes.meVote}}
-  <strong>{{_ 'dda.proposal.tovote.youvoted'}}
+  <strong>{{__ 'dda.proposal.tovote.youvoted'}}
   {{#if votes.voteUp.meVoteUp}}
-  <span class="balanced">{{_ 'dda.proposal.tovote.infavour'}}</span>
+  <span class="balanced">{{__ 'dda.proposal.tovote.infavour'}}</span>
   {{else if votes.voteDown.meVoteDown}}
-  <span class="assertive">{{_ 'dda.proposal.tovote.against'}}</span>
+  <span class="assertive">{{__ 'dda.proposal.tovote.against'}}</span>
   {{else if votes.voteWhite.meVoteWhite}}
-  <span class="dark">{{_ 'dda.proposal.tovote.blank'}}</span>
+  <span class="dark">{{__ 'dda.proposal.tovote.blank'}}</span>
   {{/if}}
   </strong>
   {{else}}
-  {{_ 'dda.proposal.tovote.youhavenotvotedyet'}}
+  {{__ 'dda.proposal.tovote.youhavenotvotedyet'}}
   {{/if}}
   </p>
-<p>{{_ 'dda.proposal.tovote.votecanchange'}}</p>
+<p>{{__ 'dda.proposal.tovote.votecanchange'}}</p>
 </div>
 
 <div class="button-bar bar-clear">
-  <button class="button button-small button-balanced savevote-js" data-vote="up">{{_ 'dda.proposal.tovote.infavour'}} ({{votes.voteUp.pourc}}%)</button>
-  <button class="button button-small button-assertive savevote-js" data-vote="down">{{_ 'dda.proposal.tovote.against'}} ({{votes.voteDown.pourc}}%)</button>
-  <button class="button button-small button-stable savevote-js" data-vote="white">{{_ 'dda.proposal.tovote.blank'}} ({{votes.voteWhite.pourc}}%)</button>
+  <button class="button button-small button-balanced savevote-js" data-vote="up">{{__ 'dda.proposal.tovote.infavour'}} ({{votes.voteUp.pourc}}%)</button>
+  <button class="button button-small button-assertive savevote-js" data-vote="down">{{__ 'dda.proposal.tovote.against'}} ({{votes.voteDown.pourc}}%)</button>
+  <button class="button button-small button-stable savevote-js" data-vote="white">{{__ 'dda.proposal.tovote.blank'}} ({{votes.voteWhite.pourc}}%)</button>
 </div>
 
 <div class="row">
@@ -531,9 +531,9 @@
 <template name="badgeAmendementsProposals">
   {{#if votes.voteStart}}
   {{#if votes.voteValid}}
-<span class="badge badge-balanced">{{#if equals status 'amendable'}}{{_ 'dda.proposal.amendments.validated_temporarily'}}{{else if equals status 'tovote'}}{{_ 'dda.proposal.amendments.validated'}}{{/if}}</span>
+<span class="badge badge-balanced">{{#if equals status 'amendable'}}{{__ 'dda.proposal.amendments.validated_temporarily'}}{{else if equals status 'tovote'}}{{__ 'dda.proposal.amendments.validated'}}{{/if}}</span>
 {{else}}
-<span class="badge badge-assertive">{{#if equals status 'amendable'}}{{_ 'dda.proposal.amendments.refused_temporarily'}}{{else if equals status 'tovote'}}{{_ 'dda.proposal.amendments.refused'}}{{/if}}</span>
+<span class="badge badge-assertive">{{#if equals status 'amendable'}}{{__ 'dda.proposal.amendments.refused_temporarily'}}{{else if equals status 'tovote'}}{{__ 'dda.proposal.amendments.refused'}}{{/if}}</span>
 {{/if}}
 {{/if}}
 </template>
@@ -548,22 +548,22 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "proposals"}}</h1>
+  <h1 class="title">{{__ "proposals"}}</h1>
   {{/contentFor}}
 
   {{#ionView}}
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "creating a new proposal"}}
+      {{__ "creating a new proposal"}}
     </div>
     <div class="item item-text-wrap">
-      {{_ 'proposalFormInformation'}}
+      {{__ 'proposalFormInformation'}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -571,7 +571,7 @@
     {{> proposalsFields}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "create"}}</button>
+        <button type="submit" class="button button-dark">{{__ "create"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -591,7 +591,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "proposals"}}</h1>
+  <h1 class="title">{{__ "proposals"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -599,15 +599,15 @@
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "edit a proposal"}}
+      {{__ "edit a proposal"}}
     </div>
     <div class="item item-text-wrap">
-      {{_ 'proposalFormInformation'}}
+      {{__ 'proposalFormInformation'}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -615,7 +615,7 @@
     {{> proposalsFields}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+        <button type="submit" class="button button-dark">{{__ "edit"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -631,12 +631,12 @@
 {{> afQuickField name='title'}}
 {{> afQuickField name='description' label-type='stacked' rows=8}}
 <div class="item item-text-wrap stable-bg">
-  <i class='fa fa-info-circle'></i> {{_ 'schemas.proposalsrest.description.information'}}
+  <i class='fa fa-info-circle'></i> {{__ 'schemas.proposalsrest.description.information'}}
 </div>
 {{> afQuickField name='arguments' label-type='stacked' rows=8}}
 {{> afQuickField name='amendementActivated'}}
 <div class="item item-text-wrap stable-bg">
-  <i class='fa fa-info-circle'></i> {{_ 'schemas.proposalsrest.amendementActivated.information'}}
+  <i class='fa fa-info-circle'></i> {{__ 'schemas.proposalsrest.amendementActivated.information'}}
 </div>
 {{#if equalFieldValue 'amendementActivated' true}}
 {{> afQuickField name='amendementDateEnd' type="datetime-local"}}
@@ -645,18 +645,18 @@
 {{> afQuickField name='majority'}}
 <div class="item item-text-wrap stable-bg">
   {{#if currentFieldValue 'majority'}}
-  <i class='fa fa-info-circle'></i> {{{_ 'schemas.proposalsrest.majority.information' majority=(currentFieldValue 'majority')}}}
+  <i class='fa fa-info-circle'></i> {{{__ 'schemas.proposalsrest.majority.information' majority=(currentFieldValue 'majority')}}}
   {{else}}
-  <i class='fa fa-info-circle'></i> {{{_ 'schemas.proposalsrest.majority.information' majority=majority}}}
+  <i class='fa fa-info-circle'></i> {{{__ 'schemas.proposalsrest.majority.information' majority=majority}}}
   {{/if}}
 </div>
 {{> afQuickField name='voteAnonymous'}}
 <div class="item item-text-wrap stable-bg">
-  <i class='fa fa-info-circle'></i> {{_ 'schemas.proposalsrest.voteAnonymous.information'}}
+  <i class='fa fa-info-circle'></i> {{__ 'schemas.proposalsrest.voteAnonymous.information'}}
 </div>
 {{> afQuickField name='voteCanChange'}}
 <div class="item item-text-wrap stable-bg">
-  <i class='fa fa-info-circle'></i> {{_ 'schemas.proposalsrest.voteCanChange.information'}}
+  <i class='fa fa-info-circle'></i> {{__ 'schemas.proposalsrest.voteCanChange.information'}}
 </div>
 
 {{> afQuickField name='tags'}}
@@ -674,22 +674,22 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "dda.proposal.amendments.title"}}</h1>
+  <h1 class="title">{{__ "dda.proposal.amendments.title"}}</h1>
   {{/contentFor}}
 
   {{#ionView}}
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "creating a new amendment"}}
+      {{__ "creating a new amendment"}}
     </div>
     <div class="item item-text-wrap">
-      {{_ 'amendmentFormInformation'}}
+      {{__ 'amendmentFormInformation'}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -697,7 +697,7 @@
     {{> afQuickField name='txtAmdt' label-type='stacked' rows=8}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "create"}}</button>
+        <button type="submit" class="button button-dark">{{__ "create"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -717,7 +717,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "dda.proposal.amendments.title"}}</h1>
+  <h1 class="title">{{__ "dda.proposal.amendments.title"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -725,12 +725,12 @@
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "edit a amendment"}}
+      {{__ "edit a amendment"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -738,7 +738,7 @@
     {{> afQuickField name='txtAmdt' label-type='stacked' rows=8}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+        <button type="submit" class="button button-dark">{{__ "edit"}}</button>
       </div>
     </div>
     {{/autoForm}}

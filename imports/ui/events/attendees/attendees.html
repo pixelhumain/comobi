@@ -1,6 +1,6 @@
 <template name="listAttendees">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "attendees"}}</h1>
+  <h1 class="title">{{__ "attendees"}}</h1>
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
@@ -28,7 +28,7 @@
 <template name="listAttendees_search">
   <label class="item item-input">
     <i class="icon ion-search placeholder-icon"></i>
-    <input id="search" type="text" placeholder="{{_ "Search..."}}" value="{{search}}">
+    <input id="search" type="text" placeholder="{{__ "Search..."}}" value="{{search}}">
   </label>
 </template>
 
@@ -68,7 +68,7 @@
 <template name="listAttendeesValidate">
   {{#if countAttendeesValidate search}}
       <div class="item item-divider">
-        <i class="icon fa fa-user"></i> {{_ "persons"}} <span class="badge badge-dark">{{countAttendeesValidate search}}</span>
+        <i class="icon fa fa-user"></i> {{__ "persons"}} <span class="badge badge-dark">{{countAttendeesValidate search}}</span>
       </div>
       {{> Directory_list list=(listAttendeesValidate search) isConnect="isFollowersMe" person=true scope="citoyens" scopeCible=scopeVar scopeId=_id._str isScopeAdmin=isAdmin}}
   {{/if}}
@@ -77,7 +77,7 @@
 <template name="listAttendeesOrgaValidate">
   {{#if countAttendeesOrgaValidate search}}
       <div class="item item-divider">
-        <i class="icon fa fa-users"></i> {{_ "organizations"}} <span class="badge badge-dark">{{countAttendeesOrgaValidate search}}</span>
+        <i class="icon fa fa-users"></i> {{__ "organizations"}} <span class="badge badge-dark">{{countAttendeesOrgaValidate search}}</span>
       </div>
       {{> Directory_list list=(listAttendeesOrgaValidate search) isConnect="isMembers" person=false scope="organizations" scopeCible=scopeVar scopeId=_id._str isScopeAdmin=isAdmin}}
   {{/if}}
@@ -86,7 +86,7 @@
 <template name="listAttendeesIsInviting">
   {{#if countAttendeesIsInviting search}}
       <div class="item item-divider">
-        <i class="icon fa fa-send"></i> {{_ "guests"}} <span class="badge badge-dark">{{countAttendeesIsInviting search}}</span>
+        <i class="icon fa fa-send"></i> {{__ "guests"}} <span class="badge badge-dark">{{countAttendeesIsInviting search}}</span>
       </div>
       {{> Directory_list list=(listAttendeesIsInviting search) isConnect="isFollowersMe" person=true scope="citoyens"}}
   {{/if}}

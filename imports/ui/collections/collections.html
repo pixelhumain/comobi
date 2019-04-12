@@ -1,6 +1,6 @@
 <template name="collections">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "collections"}}</h1>
+  <h1 class="title">{{__ "collections"}}</h1>
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
@@ -27,7 +27,7 @@
 <template name="Collections_search">
   <label class="item item-input">
     <i class="icon ion-search placeholder-icon"></i>
-    <input id="search" type="text" placeholder="{{_ "Search..."}}" value="{{search}}">
+    <input id="search" type="text" placeholder="{{__ "Search..."}}" value="{{search}}">
   </label>
 </template>
 
@@ -71,7 +71,7 @@
 <template name="listCollections ">
   {{#if count}}
       <div class="item item-divider">
-        <i class="icon fa fa-map-marker"></i> {{_ view}} <span class="badge badge-dark">{{count}}</span>
+        <i class="icon fa fa-map-marker"></i> {{__ view}} <span class="badge badge-dark">{{count}}</span>
       </div>
       {{> Directory_list list=listCollections isConnect="isFavorites" person=person scope=view}}
   {{/if}}

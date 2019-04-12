@@ -1,6 +1,6 @@
 <template name="changePosition">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "Change location"}}</h1>
+  <h1 class="title">{{__ "Change location"}}</h1>
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
@@ -17,12 +17,12 @@
   <div class="list list-inset" data-snap-ignore="true">
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input id="search" type="text" placeholder="{{_ "Search a city or postal code"}}" value="{{filter}}">
+      <input id="search" type="text" placeholder="{{__ "Search a city or postal code"}}" value="{{filter}}">
     </label>
   </div>
   {{#if cities}}
   <div class="item item-divider">
-    <i class="icon ion-location"></i> {{_ "Cities"}} <span class="badge badge-dark">{{countCities}}</span>
+    <i class="icon ion-location"></i> {{__ "Cities"}} <span class="badge badge-dark">{{countCities}}</span>
   </div>
   {{/if}}
   {{#each cities}}
@@ -33,9 +33,9 @@
   {{else}}
   {{#ionItem}}
   {{#if filter}}
-  {{_ "No Cities found"}}
+  {{__ "No Cities found"}}
   {{else}}
-  {{_ "Enter a search term"}}
+  {{__ "Enter a search term"}}
   {{/if}}
   {{/ionItem}}
   {{/each}}

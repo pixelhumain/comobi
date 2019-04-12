@@ -2,7 +2,7 @@
   {{> testgeo}}
 
   {{#contentFor "headerTitle"}}
-    <h1 class="title">{{_ "dashboard"}} {{> cityTitle}}</h1>
+    <h1 class="title">{{__ "dashboard"}} {{> cityTitle}}</h1>
   {{/contentFor}}
   {{#contentFor "headerButtonLeft"}}
   <button class="button button-clear pull-left" data-ion-menu-toggle="left">
@@ -38,7 +38,7 @@
     <div class="row">
       <div class="col">
         <a class="button button-block button-large button-organization icon ion-person-stalker" href="{{pathFor 'listOrganizations'}}"><br>
-          {{_ "organizations"}}<br>
+          {{__ "organizations"}}<br>
           {{#if hasPublishedCounter (geoId 'organizations')}}
           {{getCount (geoId 'organizations')}}
           {{else}}
@@ -48,7 +48,7 @@
       </div>
       <div class="col">
         <a class="button button-block button-large button-event icon ion-calendar" href="{{pathFor 'listEvents'}}"><br>
-          {{_ "events"}}<br>
+          {{__ "events"}}<br>
           {{#if hasPublishedCounter (geoId 'events')}}
           {{getCount (geoId 'events')}}
           {{else}}
@@ -60,7 +60,7 @@
     <div class="row">
       <div class="col">
         <a class="button button-block button-large button-project icon ion-lightbulb" href="{{pathFor 'listProjects'}}"><br>
-          {{_ "projects"}}<br>
+          {{__ "projects"}}<br>
           {{#if hasPublishedCounter (geoId 'projects')}}
           {{getCount (geoId 'projects')}}
           {{else}}
@@ -70,7 +70,7 @@
       </div>
       <div class="col">
         <a class="button button-block button-large button-person icon ion-person" href="{{pathFor 'listCitoyens'}}"><br>
-          {{_ "persons"}}<br>
+          {{__ "persons"}}<br>
           {{#if hasPublishedCounter (geoId 'citoyens')}}
           {{getCount (geoId 'citoyens')}}
           {{else}}
@@ -82,7 +82,7 @@
     <div class="row">
       <div class="col">
         <a class="button button-block button-large button-poi icon ion-location" href="{{pathFor 'listPoi'}}"><br>
-          {{_ "poi"}}<br>
+          {{__ "poi"}}<br>
           {{#if hasPublishedCounter (geoId 'poi')}}
           {{getCount (geoId 'poi')}}
           {{else}}
@@ -92,7 +92,7 @@
       </div>
       <div class="col">
         <a class="button button-block button-large button-classified icon ion-speakerphone" href="{{pathFor 'listClassified'}}"><br>
-          {{_ "classified"}}<br>
+          {{__ "classified"}}<br>
           {{#if hasPublishedCounter (geoId 'classified')}}
           {{getCount (geoId 'classified')}}
           {{else}}
@@ -118,7 +118,7 @@
   {{> testgeo}}
 
   {{#contentFor "headerTitle"}}
-    <h1 class="title">{{_ "dashboard"}} {{> cityTitle}}</h1>
+    <h1 class="title">{{__ "dashboard"}} {{> cityTitle}}</h1>
   {{/contentFor}}
   {{#contentFor "headerButtonLeft"}}
   <button class="button button-clear pull-left" data-ion-menu-toggle="left">
@@ -155,7 +155,7 @@
     <div class="row">
       <div class="col">
         <a class="button button-block button-large button-organization icon ion-person-stalker" href="{{pathFor 'listOrganizations'}}"><br>
-          {{_ "organizations"}}<br>
+          {{__ "organizations"}}<br>
           {{#if hasPublishedCount (geoId 'organizations')}}
           {{getPublishedCount (geoId 'organizations')}}
           {{else}}
@@ -165,7 +165,7 @@
       </div>
       <div class="col">
         <a class="button button-block button-large button-event icon ion-calendar" href="{{pathFor 'listEvents'}}"><br>
-          {{_ "events"}}<br>
+          {{__ "events"}}<br>
           {{#if hasPublishedCount (geoId 'events')}}
           {{getPublishedCount (geoId 'events')}}
           {{else}}
@@ -177,7 +177,7 @@
     <div class="row">
       <div class="col">
         <a class="button button-block button-large button-project icon ion-lightbulb" href="{{pathFor 'listProjects'}}"><br>
-          {{_ "projects"}}<br>
+          {{__ "projects"}}<br>
           {{#if hasPublishedCount (geoId 'projects')}}
           {{getPublishedCount (geoId 'projects')}}
           {{else}}
@@ -187,7 +187,7 @@
       </div>
       <div class="col">
         <a class="button button-block button-large button-person icon ion-person" href="{{pathFor 'listCitoyens'}}"><br>
-          {{_ "persons"}}<br>
+          {{__ "persons"}}<br>
           {{#if hasPublishedCount (geoId 'citoyens')}}
           {{getPublishedCount (geoId 'citoyens')}}
           {{else}}
@@ -199,7 +199,7 @@
     <div class="row">
       <div class="col">
         <a class="button button-block button-large button-poi icon ion-location" href="{{pathFor 'listPoi'}}"><br>
-          {{_ "poi"}}<br>
+          {{__ "poi"}}<br>
           {{#if hasPublishedCount (geoId 'poi')}}
           {{getPublishedCount (geoId 'poi')}}
           {{else}}
@@ -209,7 +209,7 @@
       </div>
       <div class="col">
         <a class="button button-block button-large button-classified icon ion-speakerphone" href="{{pathFor 'listClassified'}}"><br>
-          {{_ "classified"}}<br>
+          {{__ "classified"}}<br>
           {{#if hasPublishedCount (geoId 'classified')}}
           {{getPublishedCount (geoId 'classified')}}
           {{else}}
@@ -237,7 +237,7 @@
       <div class="list list-inset">
       {{#transition in="slideInDown" out="slideOutUp"}}
         <div class="item item-positive item-divider animated in out">
-          <i class="icon fa fa-heart"></i> {{_ "highlight"}}
+          <i class="icon fa fa-heart"></i> {{__ "highlight"}}
         </div>
       {{#each item in listHighlight}}
        {{> scopeItemList item=item.parentHighlight}}
@@ -255,13 +255,13 @@
     <div class="content">
       <div class="list">
         <div class="item item-divider homestead">
-          <i class="icon fa fa-plus-circle"></i> {{_ "Add"}}
+          <i class="icon fa fa-plus-circle"></i> {{__ "Add"}}
         </div>
-        <a href="{{pathFor 'organizationsAdd' _id=scopeId scope=scope}}" class="item organization popover-backdrop"><i class="icon fa fa-users"></i> {{_ "a organization"}}</a>
-        <a href="{{pathFor 'projectsAdd' _id=scopeId scope=scope}}" class="item project popover-backdrop"><i class="icon fa fa-lightbulb-o"></i> {{_ "a project"}}</a>
-        <a href="{{pathFor 'eventsAdd' _id=scopeId scope=scope}}" class="item event popover-backdrop"><i class="icon fa fa-calendar"></i> {{_ "a event"}}</a>
-        <a href="{{pathFor 'poiAdd' _id=scopeId scope=scope}}" class="item poi popover-backdrop"><i class="icon fa fa-map-marker"></i> {{_ "a point of interest"}}</a>
-        <a href="{{pathFor 'classifiedAdd' _id=scopeId scope=scope}}" class="item classified popover-backdrop"><i class="icon fa fa-bullhorn"></i> {{_ "a classified"}}</a>
+        <a href="{{pathFor 'organizationsAdd' _id=scopeId scope=scope}}" class="item organization popover-backdrop"><i class="icon fa fa-users"></i> {{__ "a organization"}}</a>
+        <a href="{{pathFor 'projectsAdd' _id=scopeId scope=scope}}" class="item project popover-backdrop"><i class="icon fa fa-lightbulb-o"></i> {{__ "a project"}}</a>
+        <a href="{{pathFor 'eventsAdd' _id=scopeId scope=scope}}" class="item event popover-backdrop"><i class="icon fa fa-calendar"></i> {{__ "a event"}}</a>
+        <a href="{{pathFor 'poiAdd' _id=scopeId scope=scope}}" class="item poi popover-backdrop"><i class="icon fa fa-map-marker"></i> {{__ "a point of interest"}}</a>
+        <a href="{{pathFor 'classifiedAdd' _id=scopeId scope=scope}}" class="item classified popover-backdrop"><i class="icon fa fa-bullhorn"></i> {{__ "a classified"}}</a>
       </div>
     </div>
   {{/ionPopover}}

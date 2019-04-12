@@ -19,19 +19,31 @@
     "windowDev": {
     },
     "uglify": true,
-    "plugins": {
-        "meteor-desktop-splash-screen": {
-            "version": "0.4.3",
-            "imagePath": "splash.png",
-            "windowSettings": {
-                "width": 800,
-                "height": 600
-            }
-        },
-        "meteor-desktop-system-notifications": {
-        "version": "0.0.2"
-    }
-    },
+     "plugins": {
+         "meteor-desktop-splash-screen": {
+             "version": "0.4.3",
+             "imagePath": "splash.png",
+             "windowSettings": {
+                 "width": 800,
+                 "height": 600
+             },
+             "updateScreen": true,
+             "updateScreenSettings": {
+                 "imagePath": "splash.png",
+                 "windowSettings": {
+                     "width": 800,
+                     "height": 600
+                 },
+                 "clickThrough": false,
+                 "style": {
+                     "background-size": "auto"
+                 }
+             }
+         },
+         "meteor-desktop-system-notifications": {
+             "version": "0.0.2"
+         }
+     },
     "dependencies": {},
     "packageJsonFields": {
         "description": "communecter",
@@ -40,11 +52,22 @@
     },
     "builderOptions": {
         "win": {
-            "target": ["squirrel","nsis"]
+            "target": ["nsis"]
+        },
+        "nsis": {
+            "createDesktopShortcut": "always",
+            "oneClick": false
         },
         "squirrelWindows": {
             "iconUrl": "https://github.com/wojtkowiak/meteor-desktop/blob/beta/scaffold/assets/meteor.ico?raw=true",
-            "loadingGif": ".desktop/assets/loading.gif"
+            "loadingGif": ".desktop/assets/loading.gif",
+            "msi": true
+        },
+        "linux": {
+            "maintainer": "communecter",
+            "target": [
+                "AppImage", "snap"
+            ]
         },
         "icon": ".desktop/assets/icon.ico",
         "appId": "communecter.app",

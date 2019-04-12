@@ -1,7 +1,7 @@
 <template name="listPoi">
   {{> testgeo}}
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "poi"}} {{> cityTitle}}</h1>
+  <h1 class="title">{{__ "poi"}} {{> cityTitle}}</h1>
   {{/contentFor}}
   {{#contentFor "headerButtonLeft"}}
   <button class="button button-clear pull-left" data-ion-menu-toggle="left">
@@ -31,14 +31,14 @@
   <div class="list list-inset">
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input id="search" type="text" placeholder="{{_ "searchPlaceholder"}}" value="{{searchPoi}}">
+      <input id="search" type="text" placeholder="{{__ "searchPlaceholder"}}" value="{{searchPoi}}">
     </label>
   </div>
 
     <div class="list list-inset">
 
       <div class="item item-divider">
-        <i class="icon fa fa-map-marker"></i> {{_ "point of interest"}} <span class="badge badge-dark">{{countPoi}}</span>
+        <i class="icon fa fa-map-marker"></i> {{__ "point of interest"}} <span class="badge badge-dark">{{countPoi}}</span>
       </div>
       {{#if dataReady}}
       {{#transition in="zoomIn" out="bounceOut"}}
@@ -87,19 +87,19 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "poi"}}</h1>
+  <h1 class="title">{{__ "poi"}}</h1>
   {{/contentFor}}
 
   {{#ionView}}
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "Create a point of interest"}}
+      {{__ "Create a point of interest"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -107,7 +107,7 @@
     {{> poiFields}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "create"}}</button>
+        <button type="submit" class="button button-dark">{{__ "create"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -127,7 +127,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "poi"}}</h1>
+  <h1 class="title">{{__ "poi"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -135,12 +135,12 @@
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "Edit a point of interest"}}
+      {{__ "Edit a point of interest"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -148,7 +148,7 @@
     {{> poiFields update="1"}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+        <button type="submit" class="button button-dark">{{__ "edit"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -170,7 +170,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "poi"}}</h1>
+  <h1 class="title">{{__ "poi"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -178,12 +178,12 @@
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "Edit a point of interest"}}
+      {{__ "Edit a point of interest"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -196,7 +196,7 @@
     {{> poiFields block=block}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+        <button type="submit" class="button button-dark">{{__ "edit"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -223,8 +223,8 @@
   {{#if equals block 'preferences'}}
   <div class="list card">
   <div class="item item-body">
-    <strong>{{_ "Open Data"}}</strong>  : {{_ "Vous proposez vos données en accès libre, afin de contribuer au bien commun"}}<br>
-    <strong>{{_ "Open Edition"}}</strong>  : {{_ "Tous les utilisateurs ont la possibilité de participer / modifier les informations"}}
+    <strong>{{__ "Open Data"}}</strong>  : {{__ "Vous proposez vos données en accès libre, afin de contribuer au bien commun"}}<br>
+    <strong>{{__ "Open Edition"}}</strong>  : {{__ "Tous les utilisateurs ont la possibilité de participer / modifier les informations"}}
   </div>
   </div>
   {{> afQuickField name='preferences.isOpenData'}}
@@ -240,7 +240,7 @@
   {{> afQuickField name='city' options=optionsInsee value=city}}
   {{> afQuickField name='cityName' type="hidden" value=cityName}}
   {{else}}
-  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
+  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{__ "Error not postal code match"}}</div>
   {{/if}}
   {{/if}}
   {{> afQuickField name='streetAddress' autocomplete="off"}}
@@ -285,7 +285,7 @@
   {{> afQuickField name='city' options=optionsInsee value=city}}
   {{> afQuickField name='cityName' type="hidden" value=cityName}}
   {{else}}
-  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
+  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{__ "Error not postal code match"}}</div>
   {{/if}}
   {{/if}}
   {{> afQuickField name='streetAddress' autocomplete="off"}}

@@ -1,9 +1,9 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-
+import SimpleSchema from 'simpl-schema';
+import { Tracker } from 'meteor/tracker';
 // SimpleSchema.debug = true;
 
-export const Countries_SELECT = ['FR', 'GP', 'MQ', 'YT', 'NC', 'RE'];
-export const Countries_SELECT_LABEL = [{ label: 'France', value: 'FR' }, { label: 'Guadeloupe', value: 'GP' }, { label: 'Guyanne Française', value: 'GF' }, { label: 'Martinique', value: 'MQ' }, { label: 'Mayotte', value: 'YT' }, { label: 'Nouvelle-Calédonie', value: 'NC' }, { label: 'Réunion', value: 'RE' }, { label: 'St Pierre et Miquelon', value: 'PM' }];
+export const Countries_SELECT = ['FR', 'GP', 'MQ', 'YT', 'NC', 'RE', 'BE'];
+export const Countries_SELECT_LABEL = [{ label: 'France', value: 'FR' }, { label: 'Guadeloupe', value: 'GP' }, { label: 'Guyanne Française', value: 'GF' }, { label: 'Martinique', value: 'MQ' }, { label: 'Mayotte', value: 'YT' }, { label: 'Nouvelle-Calédonie', value: 'NC' }, { label: 'Réunion', value: 'RE' }, { label: 'St Pierre et Miquelon', value: 'PM' }, { label: 'Belgique', value: 'BE' }];
 
 export const roles_SELECT = ['admin', 'member', 'creator'];
 export const roles_SELECT_LABEL = [{ label: 'Administrateur', value: 'admin' }, { label: 'Membre', value: 'member' }, { label: 'Juste un citoyen qui veut faire connaître cette organisation', value: 'creator' }];
@@ -26,8 +26,11 @@ export const SchemasRolesRest = new SimpleSchema({
     allowedValues: ['events', 'projects', 'organizations'],
   },
   roles: {
-    type: [String],
+    type: Array,
     optional: true,
+  },
+  'roles.$': {
+    type: String,
     allowedValues: rolesPlusSelect,
   },
   childId: {
@@ -67,6 +70,7 @@ export const blockBaseSchema = new SimpleSchema({
 export const preferences = new SimpleSchema({
   isOpenData: {
     type: Boolean,
+    defaultValue: true,
     autoValue() {
       if (this.isSet) {
         // console.log(this.value);
@@ -78,6 +82,7 @@ export const preferences = new SimpleSchema({
   },
   isOpenEdition: {
     type: Boolean,
+    defaultValue: true,
     autoValue() {
       if (this.isSet) {
         // console.log(this.value);
@@ -109,25 +114,15 @@ export const baseSchema = new SimpleSchema({
     optional: true,
   },
   tags: {
-    type: [String],
+    type: Array,
     optional: true,
-    /* autoform: {
-  type: "selectize",
-  multiple: true,
-  selectizeOptions: {
-    persit:false,
-    create: function(input){
-      return {
-        value:input,
-        text:input
-      }
-    },
-
-  }
-} */
+  },
+  'tags.$': {
+    type: String,
   },
   preferences: {
     type: preferences,
+    defaultValue: {},
     optional: true,
   },
 });
@@ -143,7 +138,7 @@ export const geoSchema = new SimpleSchema({
   },
   postalCode: {
     type: String,
-    min: 5,
+    min: 3,
     max: 9,
   },
   city: {
@@ -181,12 +176,10 @@ export const geoSchema = new SimpleSchema({
   },
   geoPosLatitude: {
     type: Number,
-    decimal: true,
     optional: true,
   },
   geoPosLongitude: {
     type: Number,
-    decimal: true,
     optional: true,
   },
 });
@@ -194,11 +187,9 @@ export const geoSchema = new SimpleSchema({
 export const GeoCoordinates = new SimpleSchema({
   longitude: {
     type: Number,
-    decimal: true,
   },
   latitude: {
     type: Number,
-    decimal: true,
   },
 });
 
@@ -209,9 +200,11 @@ export const GeoPosition = new SimpleSchema({
     optional: true,
   },
   coordinates: {
-    type: [Number],
-    decimal: true,
+    type: Array,
     optional: true,
+  },
+  'coordinates.$': {
+    type: Number,
   },
 });
 

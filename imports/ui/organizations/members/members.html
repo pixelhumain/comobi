@@ -1,6 +1,6 @@
 <template name="listMembers">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "members"}}</h1>
+  <h1 class="title">{{__ "members"}}</h1>
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
@@ -17,7 +17,7 @@
   <div class="padding">
     <div class="list">
       <div class="item item-divider">
-        <i class="icon ion-ios-people"></i> {{_ "members"}} <span class="badge badge-dark">{{organizations.countMembers}}</span>
+        <i class="icon ion-ios-people"></i> {{__ "members"}} <span class="badge badge-dark">{{organizations.countMembers}}</span>
       </div>
       {{#transition in="zoomIn" out="bounceOut"}}
       {{#each organizations.listMembers}}
@@ -26,7 +26,7 @@
         <h2><a href="{{pathFor 'detailList' _id=_id._str scope='citoyens'}}" class="dark">{{name}}</a></h2>
         {{#if isFollowsMembers _id._str}}
         {{#if onlineMembers}}
-        <span class="badge badge-balanced">{{_ "online"}}</span>
+        <span class="badge badge-balanced">{{__ "online"}}</span>
         {{else}}
 
         {{/if}}

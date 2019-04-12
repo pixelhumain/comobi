@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { moment } from 'meteor/momentjs:moment';
 import { Router } from 'meteor/iron:router';
+import { Tracker } from 'meteor/tracker';
 
 // collection
 import { Citoyens } from './citoyens.js';
@@ -53,7 +54,11 @@ export const SchemasCommentsRest = new SimpleSchema({
     type: String,
   },
   mentions: {
-    type: [Object],
+    type: Array,
+    optional: true,
+  },
+  'mentions.$': {
+    type: Object,
     optional: true,
   },
   'mentions.$.id': {
@@ -80,6 +85,8 @@ export const SchemasCommentsRest = new SimpleSchema({
     type: String,
     optional: true,
   },
+}, {
+  tracker: Tracker,
 });
 
 export const SchemasCommentsEditRest = new SimpleSchema({
@@ -97,7 +104,11 @@ export const SchemasCommentsEditRest = new SimpleSchema({
     type: String,
   },
   mentions: {
-    type: [Object],
+    type: Array,
+    optional: true,
+  },
+  'mentions.$': {
+    type: Object,
     optional: true,
   },
   'mentions.$.id': {
@@ -124,6 +135,8 @@ export const SchemasCommentsEditRest = new SimpleSchema({
     type: String,
     optional: true,
   },
+}, {
+  tracker: Tracker,
 });
 
 Comments.helpers({

@@ -1,6 +1,6 @@
 <template name="directory">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "community"}}</h1>
+  <h1 class="title">{{__ "community"}}</h1>
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
@@ -27,7 +27,7 @@
 <template name="Directory_search">
   <label class="item item-input">
     <i class="icon ion-search placeholder-icon"></i>
-    <input id="search" type="text" placeholder="{{_ "Search..."}}" value="{{search}}">
+    <input id="search" type="text" placeholder="{{__ "Search..."}}" value="{{search}}">
   </label>
 </template>
 
@@ -109,7 +109,7 @@
 <template name="listDirectoryContributors">
   {{#if countContributors search}}
       <div class="item item-divider">
-        <i class="icon ion-ios-people"></i> {{_ "contributors"}} <span class="badge badge-dark">{{countContributors search}}</span>
+        <i class="icon ion-ios-people"></i> {{__ "contributors"}} <span class="badge badge-dark">{{countContributors search}}</span>
       </div>
       {{> Directory_list list=(listContributors search) isConnect="isFollowersMe" person=true scope="citoyens" scopeCible=scopeVar scopeId=_id._str isScopeAdmin=isAdmin}}
   {{/if}}
@@ -118,7 +118,7 @@
 <template name="listDirectoryFollows">
   {{#if countFollows search}}
       <div class="item item-divider">
-        <i class="icon ion-ios-people"></i> {{_ "follows"}} <span class="badge badge-dark">{{countFollows search}}</span>
+        <i class="icon ion-ios-people"></i> {{__ "follows"}} <span class="badge badge-dark">{{countFollows search}}</span>
       </div>
       {{> Directory_list list=(listFollows search) isConnect="isFollowersMe" person=true scope="citoyens"}}
   {{/if}}
@@ -127,7 +127,7 @@
 <template name="listDirectoryFollowers">
   {{#if countFollowers search}}
       <div class="item item-divider">
-        <i class="icon ion-ios-heart"></i> {{_ "subscribers"}} <span class="badge badge-dark">{{countFollowers search}}</span>
+        <i class="icon ion-ios-heart"></i> {{__ "subscribers"}} <span class="badge badge-dark">{{countFollowers search}}</span>
       </div>
       {{> Directory_list list=(listFollowers search) isConnect="isFollowersMe" person=true scope="citoyens"}}
   {{/if}}
@@ -136,7 +136,7 @@
 <template name="listDirectoryMemberOf">
   {{#if countMemberOf search ''}}
       <div class="item item-divider">
-        <i class="icon ion-ios-people"></i> {{_ "organizations"}} <span class="badge badge-dark">{{countMemberOf search selectorga}}</span>
+        <i class="icon ion-ios-people"></i> {{__ "organizations"}} <span class="badge badge-dark">{{countMemberOf search selectorga}}</span>
       </div>
       <div class="button-bar button-small">
       {{#each listOrganisationTypes}}
@@ -150,7 +150,7 @@
 <template name="listDirectoryMembers">
   {{#if countMembers search}}
       <div class="item item-divider">
-        <i class="icon ion-ios-people"></i> {{_ "members"}} <span class="badge badge-dark">{{countMembers search}}</span>
+        <i class="icon ion-ios-people"></i> {{__ "members"}} <span class="badge badge-dark">{{countMembers search}}</span>
       </div>
       {{> Directory_list list=(listMembers search) isConnect="isFollowersMe" person=true scope="citoyens" scopeCible=scopeVar scopeId=_id._str isScopeAdmin=isAdmin}}
   {{/if}}
@@ -159,7 +159,7 @@
 <template name="listDirectoryMembersOrganizations">
   {{#if countMembersOrganizations search ''}}
       <div class="item item-divider">
-        <i class="icon ion-ios-people"></i> {{_ "organizations"}} <span class="badge badge-dark">{{countMembersOrganizations search selectorga}}</span>
+        <i class="icon ion-ios-people"></i> {{__ "organizations"}} <span class="badge badge-dark">{{countMembersOrganizations search selectorga}}</span>
       </div>
       <div class="button-bar button-small">
       {{#each listOrganisationTypes}}
@@ -173,7 +173,7 @@
 <template name="listDirectoryProjects">
   {{#if countProjects search}}
       <div class="item item-divider">
-        <i class="icon fa fa-lightbulb-o"></i> {{_ "projects"}} <span class="badge badge-dark">{{countProjects search}}</span>
+        <i class="icon fa fa-lightbulb-o"></i> {{__ "projects"}} <span class="badge badge-dark">{{countProjects search}}</span>
       </div>
       {{> Directory_list list=(listProjects search) isConnect="isContributors" person=false scope="projects"}}
   {{/if}}
@@ -182,7 +182,7 @@
 <template name="listDirectoryEvents">
   {{#if countEvents search}}
       <div class="item item-divider">
-        <i class="icon ion-ios-people"></i> {{_ "events"}} <span class="badge badge-dark">{{countEvents search}}</span>
+        <i class="icon ion-ios-people"></i> {{__ "events"}} <span class="badge badge-dark">{{countEvents search}}</span>
       </div>
       {{> Directory_list list=(listEvents search) isConnect="isAttendees" person=false scope="events"}}
   {{/if}}

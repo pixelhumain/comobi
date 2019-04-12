@@ -1,6 +1,6 @@
 <template name="Page_invitations">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "invitations.invitation" count=2}}</h1>
+  <h1 class="title">{{__ "invitations.invitation" count=2}}</h1>
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
@@ -16,12 +16,12 @@
     {{#ionContent}}
       {{#ionList}}
       <div class="item item-divider">
-        <i class="icon ion-search"></i> {{_ "invitations.search"}}
+        <i class="icon ion-search"></i> {{__ "invitations.search"}}
       </div>
       <div class="list list-inset">
         <label class="item item-input">
           <i class="icon ion-search placeholder-icon"></i>
-          <input id="search" type="text" placeholder="{{_ "invitations.search_invitation_placeholder"}}" value="{{filter}}">
+          <input id="search" type="text" placeholder="{{__ "invitations.search_invitation_placeholder"}}" value="{{filter}}">
         </label>
       </div>
     {{> listInvitationsFollows citoyen=citoyen filter=filter scopeId=scopeId scopeVar=scopeVar }}
@@ -40,7 +40,7 @@
 
 <template name="searchGlobalInvitations">
       <div class="item item-divider">
-        <i class="icon ion-search"></i> {{_ "invitations.result_of_your_search"}}
+        <i class="icon ion-search"></i> {{__ "invitations.result_of_your_search"}}
         <span class="badge badge-dark">{{countSearchGlobal}}</span>
       </div>
   {{#each searchGlobal}}
@@ -60,12 +60,12 @@
 
   {{#if filter}}
   {{#ionItem}}
-  {{_ "invitations.no_results_were_found_for_your_search"}}
+  {{__ "invitations.no_results_were_found_for_your_search"}}
   {{/ionItem}}
   {{> formInvitations filter=filter}}
   {{else}}
     {{#ionItem}}
-  {{_ "invitations.enter_a_search_term"}}
+  {{__ "invitations.enter_a_search_term"}}
     {{/ionItem}}
   {{/if}}
 
@@ -77,7 +77,7 @@
 <template name="listInvitationsFollows">
   {{#if citoyen.countFollows filter}}
       <div class="item item-divider">
-        <i class="icon ion-ios-people"></i> {{_ "invitations.your_contacts"}} <span class="badge badge-dark">{{citoyen.countFollows filter}}</span>
+        <i class="icon ion-ios-people"></i> {{__ "invitations.your_contacts"}} <span class="badge badge-dark">{{citoyen.countFollows filter}}</span>
       </div>
       {{> Directory_list list=(citoyen.listFollows filter) isConnect="isInviting" person=true scope="citoyens" scopeId=scopeId scopeCible=scopeVar}}
   {{/if}}
@@ -86,7 +86,7 @@
 <template name="listInvitationsMemberOf">
   {{#if citoyen.countMemberOf filter ''}}
       <div class="item item-divider">
-        <i class="icon ion-ios-people"></i> {{_ "invitations.your_organizations"}} <span class="badge badge-dark">{{citoyen.countMemberOf filter ''}}</span>
+        <i class="icon ion-ios-people"></i> {{__ "invitations.your_organizations"}} <span class="badge badge-dark">{{citoyen.countMemberOf filter ''}}</span>
       </div>
       {{> Directory_list list=(citoyen.listMemberOf filter '') isConnect="isInviting" person=false scope="organizations" scopeId=scopeId scopeCible=scopeVar}}
   {{/if}}
@@ -94,11 +94,11 @@
 
 <template name="formInvitations">
     <div class="item item-divider">
-      {{_ "invitations.send_invite"}}
+      {{__ "invitations.send_invite"}}
     </div>
     {{#if error}}
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     {{/if}}
     {{#autoForm id="formInvitations" schema=SchemasInvitationsRest type="method" meteormethod="invitationScopeForm" template="ionic" class=""}}
@@ -111,7 +111,7 @@
     {{> afQuickField type="toggle" name='connectType' value='admin'}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "invitations.send"}}</button>
+        <button type="submit" class="button button-dark">{{__ "invitations.send"}}</button>
       </div>
     </div>
     {{/autoForm}}

@@ -1,6 +1,6 @@
 <template name="detailActions">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "dda.actions.action"}} : </h1>
+  <h1 class="title">{{__ "dda.actions.action"}} : </h1>
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
@@ -39,13 +39,13 @@
       {{> imgDoc profilThumbImageUrl=creatorProfile.profilThumbImageUrl resized="80x80"}}
       {{/if}}
       <h2>
-        {{_ 'author'}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="dark">{{creatorProfile.name}}</a>
+        {{__ 'author'}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="dark">{{creatorProfile.name}}</a>
       </h2>
     </div>
     {{> statusActions status=status}}
     <div class="item item-text-wrap">
-      <p>{{_ "dda.actions.actionstartenddate" start=formatStartDate  end=formatEndDate}},
-      {{_ "dda.actions.endofaction"}} <strong>{{livestamp endDate}}</strong></p>
+      <p>{{__ "dda.actions.actionstartenddate" start=formatStartDate  end=formatEndDate}},
+      {{__ "dda.actions.endofaction"}} <strong>{{livestamp endDate}}</strong></p>
     </div>
 
     <div class="item item-text-wrap">
@@ -72,15 +72,15 @@
 
   <div class="list padding">
     <div class="item item-divider">
-    <i class="fa fa-group"></i> {{_ "dda.actions.theytakeaction"}}
+    <i class="fa fa-group"></i> {{__ "dda.actions.theytakeaction"}}
     </div>
     {{#if isContributors}}
     <div class="item">
-      <span class="balanced"><i class="fa fa-check"></i> {{_ "dda.actions.youparticipatingaction"}}</span>
+      <span class="balanced"><i class="fa fa-check"></i> {{__ "dda.actions.youparticipatingaction"}}</span>
     </div>
       {{else}}
       <div class="button-bar bar-positive">
-        <button class="button button-small action-assignme-js"><i class="fa fa-handshake-o"></i> {{_ "dda.actions.wantparticipateaction"}}</button>
+        <button class="button button-small action-assignme-js"><i class="fa fa-handshake-o"></i> {{__ "dda.actions.wantparticipateaction"}}</button>
       </div>
       {{/if}}
 
@@ -95,7 +95,7 @@
     </div>
     {{else}}
     <div class="item">
-      {{_ "dda.actions.noparticipants"}}
+      {{__ "dda.actions.noparticipants"}}
     </div>
     {{/each}}
 
@@ -103,7 +103,7 @@
 
     <div class="list">
     <a href="{{pathFor 'actionsDetailComments' _id=parentId scope=parentType roomId=idParentRoom actionId=_id._str}}" class="item">
-      <i class="icon fa fa-comments"></i> {{_ "dda.actions.discussion"}} <span class="badge badge-balanced">{{commentsCount}}</span>
+      <i class="icon fa fa-comments"></i> {{__ "dda.actions.discussion"}} <span class="badge badge-balanced">{{commentsCount}}</span>
     </a>
     </div>
 
@@ -116,38 +116,38 @@
 {{#if isAdmin}}
 <div class="button-bar bar-positive">
   <a href="{{pathFor 'actionsEdit' _id=_id scope=scope roomId=roomId actionId=actionId}}" class="button button-small"><i class="icon fa fa-pencil"></i></a>
-  <button class="button button-small action-action-js" data-action="disabled"><i class="icon fa fa-times"></i> {{_ "dda.actions.buttons.disable"}}</button>
-  <button class="button button-small action-action-js" data-action="done"><i class="icon fa fa-trash"></i> {{_ "dda.actions.buttons.close"}}</button>
+  <button class="button button-small action-action-js" data-action="disabled"><i class="icon fa fa-times"></i> {{__ "dda.actions.buttons.disable"}}</button>
+  <button class="button button-small action-action-js" data-action="done"><i class="icon fa fa-trash"></i> {{__ "dda.actions.buttons.close"}}</button>
 </div>
 {{else if isCreator}}
 <div class="button-bar bar-positive">
   <a href="{{pathFor 'actionsEdit' _id=_id scope=scope roomId=roomId actionId=actionId}}" class="button button-small"><i class="icon fa fa-pencil"></i></a>
-  <button class="button button-small action-action-js" data-action="disabled"><i class="icon fa fa-times"></i> {{_ "dda.actions.buttons.disable"}}</button>
-  <button class="button button-small action-action-js" data-action="done"><i class="icon fa fa-trash"></i> {{_ "dda.actions.buttons.close"}}</button>
+  <button class="button button-small action-action-js" data-action="disabled"><i class="icon fa fa-times"></i> {{__ "dda.actions.buttons.disable"}}</button>
+  <button class="button button-small action-action-js" data-action="done"><i class="icon fa fa-trash"></i> {{__ "dda.actions.buttons.close"}}</button>
 </div>
 {{/if}}
 {{else if equals status 'disabled'}}
 {{#if isAdmin}}
 <div class="button-bar bar-positive">
   <a href="{{pathFor 'actionsEdit' _id=_id scope=scope roomId=roomId actionId=actionId}}" class="button button-small"><i class="icon fa fa-pencil"></i></a>
-  <button class="button button-small action-action-js" data-action="done"><i class="icon fa fa-trash"></i> {{_ "dda.actions.buttons.close my action"}}</button>
+  <button class="button button-small action-action-js" data-action="done"><i class="icon fa fa-trash"></i> {{__ "dda.actions.buttons.close my action"}}</button>
 </div>
 {{else if isCreator}}
 <div class="button-bar bar-positive">
   <a href="{{pathFor 'actionsEdit' _id=_id scope=scope roomId=roomId actionId=actionId}}" class="button button-small"><i class="icon fa fa-pencil"></i></a>
-  <button class="button button-small action-action-js" data-action="done"><i class="icon fa fa-trash"></i> {{_ "dda.actions.buttons.close"}}</button>
+  <button class="button button-small action-action-js" data-action="done"><i class="icon fa fa-trash"></i> {{__ "dda.actions.buttons.close"}}</button>
 </div>
 {{/if}}
 {{else if equals status 'done'}}
 {{#if isAdmin}}
 <div class="button-bar bar-positive">
   <a href="{{pathFor 'actionsEdit' _id=_id scope=scope roomId=roomId actionId=actionId}}" class="button button-small"><i class="icon fa fa-pencil"></i></a>
-  <button class="button button-small action-action-js" data-action="disabled"><i class="icon fa fa-times"></i> {{_ "dda.actions.buttons.disable"}}</button>
+  <button class="button button-small action-action-js" data-action="disabled"><i class="icon fa fa-times"></i> {{__ "dda.actions.buttons.disable"}}</button>
 </div>
 {{else if isCreator}}
 <div class="button-bar bar-positive">
   <a href="{{pathFor 'actionsEdit' _id=_id scope=scope roomId=roomId actionId=actionId}}" class="button button-small"><i class="icon fa fa-pencil"></i></a>
-  <button class="button button-small action-action-js" data-action="disabled"><i class="icon fa fa-times"></i> {{_ "dda.actions.buttons.disable"}}</button>
+  <button class="button button-small action-action-js" data-action="disabled"><i class="icon fa fa-times"></i> {{__ "dda.actions.buttons.disable"}}</button>
 </div>
 {{/if}}
 {{/if}}
@@ -156,15 +156,15 @@
 <template name="statusActions">
 {{#if equals status 'todo'}}
 <div class="item">
-  <strong>{{_ 'dda.actions.status.inprogress'}}</strong> > {{_ 'dda.actions.status.completed'}}
+  <strong>{{__ 'dda.actions.status.inprogress'}}</strong> > {{__ 'dda.actions.status.completed'}}
 </div>
 {{else if equals status 'disabled'}}
 <div class="item">
-  <strong>{{_ 'dda.actions.status.disabled'}}</strong> > {{_ 'dda.actions.status.completed'}}
+  <strong>{{__ 'dda.actions.status.disabled'}}</strong> > {{__ 'dda.actions.status.completed'}}
 </div>
 {{else if equals status 'done'}}
 <div class="item">
-  {{_ 'dda.actions.status.todo'}} > <strong>{{_ 'dda.actions.status.completed'}}</strong>
+  {{__ 'dda.actions.status.todo'}} > <strong>{{__ 'dda.actions.status.completed'}}</strong>
 </div>
 {{/if}}
 </template>
@@ -180,19 +180,19 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "actions"}}</h1>
+  <h1 class="title">{{__ "actions"}}</h1>
   {{/contentFor}}
 
   {{#ionView}}
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "creating a new action"}}
+      {{__ "creating a new action"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -200,7 +200,7 @@
     {{> actionsFields}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "create"}}</button>
+        <button type="submit" class="button button-dark">{{__ "create"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -220,7 +220,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "actions"}}</h1>
+  <h1 class="title">{{__ "actions"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -228,12 +228,12 @@
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "edit a action"}}
+      {{__ "edit a action"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -241,7 +241,7 @@
     {{> actionsFields}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+        <button type="submit" class="button button-dark">{{__ "edit"}}</button>
       </div>
     </div>
     {{/autoForm}}

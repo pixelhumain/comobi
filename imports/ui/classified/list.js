@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { Router } from 'meteor/iron:router';
 import { AutoForm } from 'meteor/aldeed:autoform';
 import { Mongo } from 'meteor/mongo';
@@ -215,7 +215,7 @@ Template.classifiedFields.helpers({
   optionsType (section) {
     if (section) {
       // console.log(section);
-      const typeArray = TAPi18n.__('schemas.classifiedrest.typeArray', { returnObjectTrees: true });
+      const typeArray = i18n.__('schemas.classifiedrest.typeArray', { returnObjectTrees: true });
       if (section === 'Emplois') {
         // console.log(typeArray);
         return typeArray.Emplois;
@@ -230,7 +230,7 @@ Template.classifiedFields.helpers({
   optionsSubtype (type) {
     if (type) {
       // console.log(type);
-      const subtype = TAPi18n.__('schemas.classifiedrest.subtypeArray', { returnObjectTrees: true });
+      const subtype = i18n.__('schemas.classifiedrest.subtypeArray', { returnObjectTrees: true });
       return subtype[type];
     } return false;
   },

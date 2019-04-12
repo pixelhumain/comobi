@@ -11,7 +11,7 @@
 
   {{#if equals scopeVar 'poi'}}
   {{#if type}}
-  <p>{{_ (typeI18n type)}}</p>
+  <p>{{__ (typeI18n type)}}</p>
   {{/if}}
   {{/if}}
 
@@ -30,21 +30,21 @@
   {{#if startDate}}
   <p>
     {{#if isStart}}
-    <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
+    <i class="icon ion-android-alarm-clock"></i> {{__ "start"}} : {{livestamp startDate}} <br>
     {{#if endDate}}
-    <i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>
-    <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
+    <i class="icon ion-android-alarm-clock"></i> {{__ "end"}} : {{livestamp endDate}} <br>
+    <i class="icon ion-android-time"></i> {{__ "duration"}} : {{diffInText startDate endDate}}<br>
     {{/if}}
     {{else}}
-    <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
+    <i class="icon ion-android-alarm-clock"></i> {{__ "start"}} : {{livestamp startDate}} <br>
     {{#if endDate}}
-    <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
+    <i class="icon ion-android-time"></i> {{__ "duration"}} : {{diffInText startDate endDate}}<br>
     {{/if}}
     {{/if}}
   </p>
   {{/if}}
   {{#if geo}}
-  <p><a class="positive" href="{{pathFor 'mapWith' _id=_id._str scope=scopeVar}}"><i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}} </a></p>
+  <p><a class="positive" href="{{pathFor 'mapWith' _id=_id._str scope=scopeVar}}"><i class="icon ion-ios-location"></i> {{__ "distance"}} : {{distance geo}} </a></p>
   {{/if}}
 </a>
 {{/with}}

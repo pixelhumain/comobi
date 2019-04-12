@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { Router } from 'meteor/iron:router';
 import { IonPopup } from 'meteor/meteoric:ionic';
 
@@ -15,8 +15,8 @@ Template.testgeo.onRendered(function() {
   const testgeo = () => {
     const geolocate = position.getGeolocate();
     if (!position.getGPSstart() && geolocate && !position.getReactivePosition()) {
-      IonPopup.confirm({ title: TAPi18n.__('Location'),
-        template: TAPi18n.__('Use the location of your profile'),
+      IonPopup.confirm({ title: i18n.__('Location'),
+        template: i18n.__('Use the location of your profile'),
         onOk() {
           if (Citoyens.findOne() && Citoyens.findOne().geo && Citoyens.findOne().geo.latitude) {
             position.setMockLocation(Citoyens.findOne().geo);
@@ -26,8 +26,8 @@ Template.testgeo.onRendered(function() {
         onCancel() {
           Router.go('changePosition');
         },
-        cancelText: TAPi18n.__('no'),
-        okText: TAPi18n.__('yes'),
+        cancelText: i18n.__('no'),
+        okText: i18n.__('yes'),
       });
     }
   };

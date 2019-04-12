@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { Router } from 'meteor/iron:router';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { $ } from 'meteor/jquery';
 import { IonPopup } from 'meteor/meteoric:ionic';
 
@@ -79,7 +79,7 @@ Template.notificationsList.events({
     Meteor.call('validateEntity', this.target.id, this.target.type, this.authorId(), 'citoyens', 'toBeValidated', function(err) {
       if (err) {
         if (err.reason) {
-          IonPopup.alert({ template: TAPi18n.__(err.reason) });
+          IonPopup.alert({ template: i18n.__(err.reason) });
         }
       } else {
         // console.log('yes validate');
@@ -92,7 +92,7 @@ Template.notificationsList.events({
     Meteor.call('disconnectEntity', this.target.id, this.target.type, undefined, this.authorId(), 'citoyens', function(err) {
       if (err) {
         if (err.reason) {
-          IonPopup.alert({ template: TAPi18n.__(err.reason) });
+          IonPopup.alert({ template: i18n.__(err.reason) });
         }
       } else {
         // console.log('no validate');

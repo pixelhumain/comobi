@@ -7,7 +7,7 @@ import { Counts } from 'meteor/tmeasday:publish-counts';
 import { Counter } from 'meteor/natestrauser:publish-performant-counts';
 import { MeteorCameraUI } from 'meteor/aboire:camera-ui';
 import { AutoForm } from 'meteor/aldeed:autoform';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Mongo } from 'meteor/mongo';
@@ -291,7 +291,7 @@ Template.scopeNotificationsTemplate.events({
     Meteor.call('validateEntity', scopeId, scope, this._id._str, this.scopeVar(), 'toBeValidated', function(err) {
       if (err) {
         if (err.reason) {
-          IonPopup.alert({ template: TAPi18n.__(err.reason) });
+          IonPopup.alert({ template: i18n.__(err.reason) });
         }
       } else {
         // console.log('yes validate');
@@ -305,7 +305,7 @@ Template.scopeNotificationsTemplate.events({
     Meteor.call('disconnectEntity', scopeId, scope, undefined, this._id._str, this.scopeVar(), function(err) {
       if (err) {
         if (err.reason) {
-          IonPopup.alert({ template: TAPi18n.__(err.reason) });
+          IonPopup.alert({ template: i18n.__(err.reason) });
         }
       } else {
         // console.log('no validate');
@@ -592,8 +592,8 @@ Template.newsList.events({
 
       const successCallback = (retour) => {
         const newsId = retour;
-        IonPopup.confirm({ title: TAPi18n.__('Photo'),
-          template: TAPi18n.__('Do you want to add another photo to this news'),
+        IonPopup.confirm({ title: i18n.__('Photo'),
+          template: i18n.__('Do you want to add another photo to this news'),
           onOk() {
             MeteorCameraUI.getPicture(options, function (error, data) {
               if (!error) {
@@ -611,8 +611,8 @@ Template.newsList.events({
           onCancel() {
             Router.go('newsList', { _id: self._id._str, scope });
           },
-          cancelText: TAPi18n.__('finish'),
-          okText: TAPi18n.__('other picture'),
+          cancelText: i18n.__('finish'),
+          okText: i18n.__('other picture'),
         });
       };
 
@@ -697,8 +697,8 @@ Template.newsList.events({
 
     function successCallback (retour) {
       const newsId = retour;
-      IonPopup.confirm({ title: TAPi18n.__('Photo'),
-        template: TAPi18n.__('Do you want to add another photo to this news'),
+      IonPopup.confirm({ title: i18n.__('Photo'),
+        template: i18n.__('Do you want to add another photo to this news'),
         onOk() {
           pageSession.set('newsId', newsId);
           instance.$('#file-upload-new').trigger('click');
@@ -706,8 +706,8 @@ Template.newsList.events({
         onCancel() {
           Router.go('newsList', { _id: self._id._str, scope });
         },
-        cancelText: TAPi18n.__('finish'),
-        okText: TAPi18n.__('other picture'),
+        cancelText: i18n.__('finish'),
+        okText: i18n.__('other picture'),
       });
     }
 
@@ -1021,8 +1021,8 @@ AutoForm.addHooks(['addNew', 'editNew'], {
 
         const successCallback = (retour) => {
           const newsId = retour;
-          IonPopup.confirm({ title: TAPi18n.__('Photo'),
-            template: TAPi18n.__('Do you want to add another photo to this news'),
+          IonPopup.confirm({ title: i18n.__('Photo'),
+            template: i18n.__('Do you want to add another photo to this news'),
             onOk() {
               MeteorCameraUI.getPicture(options, function (errorCamera, data) {
                 if (!errorCamera) {
@@ -1040,13 +1040,13 @@ AutoForm.addHooks(['addNew', 'editNew'], {
             onCancel() {
               Router.go('newsList', { _id: pageSession.get('scopeId'), scope: pageSession.get('scope') });
             },
-            cancelText: TAPi18n.__('finish'),
-            okText: TAPi18n.__('other picture'),
+            cancelText: i18n.__('finish'),
+            okText: i18n.__('other picture'),
           });
         };
 
-        IonPopup.confirm({ title: TAPi18n.__('Photo'),
-          template: TAPi18n.__('Voulez vous prendre une photo ?'),
+        IonPopup.confirm({ title: i18n.__('Photo'),
+          template: i18n.__('Voulez vous prendre une photo ?'),
           onOk() {
             MeteorCameraUI.getPicture(options, function (errorCamera, data) {
               if (!errorCamera) {
@@ -1064,8 +1064,8 @@ AutoForm.addHooks(['addNew', 'editNew'], {
           onCancel() {
 
           },
-          cancelText: TAPi18n.__('no'),
-          okText: TAPi18n.__('yes'),
+          cancelText: i18n.__('no'),
+          okText: i18n.__('yes'),
         });
 
         // Meteor.call('pushNewNewsAttendees',scopeId,selfresult);

@@ -11,7 +11,7 @@ const callPixelRest = (token, method, controller, action, post) => {
   const responsePost = HTTP.call(method, `${Meteor.settings.endpoint}/${controller}/${action}`, {
     headers: {
       'X-Auth-Token': token,
-      Origin: 'https://co-mobile.communecter.org',
+      // Origin: 'https://co-mobile.communecter.org',
     },
     params: post,
     npmRequestOptions: {

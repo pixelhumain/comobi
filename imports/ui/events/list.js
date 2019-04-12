@@ -312,9 +312,6 @@ Template.eventsBlockEdit.helpers({
         if (event.socialNetwork.skype) {
           eventEdit.skype = event.socialNetwork.skype;
         }
-        if (event.socialNetwork.googleplus) {
-          eventEdit.gpplus = event.socialNetwork.googleplus;
-        }
         if (event.socialNetwork.github) {
           eventEdit.github = event.socialNetwork.github;
         }

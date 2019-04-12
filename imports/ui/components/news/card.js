@@ -1,7 +1,7 @@
 import { Template } from 'meteor/templating';
 import { Router } from 'meteor/iron:router';
 import { Counts } from 'meteor/tmeasday:publish-counts';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { IonActionSheet } from 'meteor/meteoric:ionic';
 
 import './card.html';
@@ -23,15 +23,15 @@ Template.actionSheet.events({
     event.preventDefault();
     // info,description,contact
     IonActionSheet.show({
-      titleText: TAPi18n.__('Actions Citoyens'),
+      titleText: i18n.__('Actions Citoyens'),
       buttons: [
-        { text: `${TAPi18n.__('edit info')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit network')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit description')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit address')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit privacy settings')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit info')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit network')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit description')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit address')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit privacy settings')} <i class="icon ion-edit"></i>` },
       ],
-      cancelText: TAPi18n.__('cancel'),
+      cancelText: i18n.__('cancel'),
       cancel() {
         // console.log('Cancelled!');
       },
@@ -64,16 +64,16 @@ Template.actionSheet.events({
     event.preventDefault();
     // info,description,contact
     IonActionSheet.show({
-      titleText: TAPi18n.__('Actions Events'),
+      titleText: i18n.__('Actions Events'),
       buttons: [
-        { text: `${TAPi18n.__('edit info')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit network')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit description')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit address')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit dates')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit privacy settings')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit info')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit network')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit description')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit address')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit dates')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit privacy settings')} <i class="icon ion-edit"></i>` },
       ],
-      cancelText: TAPi18n.__('cancel'),
+      cancelText: i18n.__('cancel'),
       cancel() {
         // console.log('Cancelled!');
       },
@@ -110,15 +110,15 @@ Template.actionSheet.events({
     event.preventDefault();
     // info,description,contact
     IonActionSheet.show({
-      titleText: TAPi18n.__('Actions Organizations'),
+      titleText: i18n.__('Actions Organizations'),
       buttons: [
-        { text: `${TAPi18n.__('edit info')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit network')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit description')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit address')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit privacy settings')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit info')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit network')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit description')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit address')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit privacy settings')} <i class="icon ion-edit"></i>` },
       ],
-      cancelText: TAPi18n.__('cancel'),
+      cancelText: i18n.__('cancel'),
       cancel() {
         // console.log('Cancelled!');
       },
@@ -151,16 +151,16 @@ Template.actionSheet.events({
     event.preventDefault();
     // info,description,contact
     IonActionSheet.show({
-      titleText: TAPi18n.__('Actions Projects'),
+      titleText: i18n.__('Actions Projects'),
       buttons: [
-        { text: `${TAPi18n.__('edit info')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit network')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit description')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit address')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit dates')} <i class="icon ion-edit"></i>` },
-        { text: `${TAPi18n.__('edit privacy settings')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit info')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit network')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit description')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit address')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit dates')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit privacy settings')} <i class="icon ion-edit"></i>` },
       ],
-      cancelText: TAPi18n.__('cancel'),
+      cancelText: i18n.__('cancel'),
       cancel() {
         // console.log('Cancelled!');
       },
@@ -197,11 +197,11 @@ Template.actionSheet.events({
     event.preventDefault();
     // info,description,contact
     IonActionSheet.show({
-      titleText: TAPi18n.__('Actions Poi'),
+      titleText: i18n.__('Actions Poi'),
       buttons: [
-        { text: `${TAPi18n.__('edit info')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit info')} <i class="icon ion-edit"></i>` },
       ],
-      cancelText: TAPi18n.__('cancel'),
+      cancelText: i18n.__('cancel'),
       cancel() {
         // console.log('Cancelled!');
       },
@@ -218,11 +218,11 @@ Template.actionSheet.events({
     event.preventDefault();
     // info,description,contact
     IonActionSheet.show({
-      titleText: TAPi18n.__('Actions Classified'),
+      titleText: i18n.__('Actions Classified'),
       buttons: [
-        { text: `${TAPi18n.__('edit info')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit info')} <i class="icon ion-edit"></i>` },
       ],
-      cancelText: TAPi18n.__('cancel'),
+      cancelText: i18n.__('cancel'),
       cancel() {
         // console.log('Cancelled!');
       },

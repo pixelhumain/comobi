@@ -1,7 +1,7 @@
 <template name="listCitoyens">
   {{> testgeo}}
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "citoyens"}} {{> cityTitle}}</h1>
+  <h1 class="title">{{__ "citoyens"}} {{> cityTitle}}</h1>
   {{/contentFor}}
   {{#contentFor "headerButtonLeft"}}
   <button class="button button-clear pull-left" data-ion-menu-toggle="left">
@@ -31,14 +31,14 @@
   <div class="list list-inset">
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input id="search" type="text" placeholder="{{_ "searchPlaceholder"}}" value="{{searchCitoyens}}">
+      <input id="search" type="text" placeholder="{{__ "searchPlaceholder"}}" value="{{searchCitoyens}}">
     </label>
   </div>
 
     <div class="list list-inset">
 
       <div class="item item-divider">
-        <i class="ion-android-calendar"></i> {{_ "citoyens"}} <span class="badge badge-dark">{{countCitoyens}}</span>
+        <i class="ion-android-calendar"></i> {{__ "citoyens"}} <span class="badge badge-dark">{{countCitoyens}}</span>
       </div>
       {{#if dataReady}}
       {{#transition in="zoomIn" out="bounceOut"}}
@@ -82,7 +82,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "citoyens"}}</h1>
+  <h1 class="title">{{__ "citoyens"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -90,12 +90,12 @@
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "Edit a citoyen"}}
+      {{__ "Edit a citoyen"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -109,7 +109,7 @@
     {{> citoyensFields block=block}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+        <button type="submit" class="button button-dark">{{__ "edit"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -132,7 +132,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "citoyens"}}</h1>
+  <h1 class="title">{{__ "citoyens"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -140,12 +140,12 @@
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "Edit a citoyen"}}
+      {{__ "Edit a citoyen"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -153,7 +153,7 @@
     {{> citoyensFields update="1"}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+        <button type="submit" class="button button-dark">{{__ "edit"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -181,7 +181,6 @@
   {{> afQuickField name='telegram' label-type='placeholder' icon="fa fa-telegram"}}
   {{> afQuickField name='skype' type="url" label-type='placeholder' icon="fa fa-skype"}}
   {{> afQuickField name='github' type="url" label-type='placeholder' icon="fa fa-github"}}
-  {{> afQuickField name='gpplus' type="url" label-type='placeholder' icon="fa fa-google-plus"}}
   {{> afQuickField name='twitter' type="url" label-type='placeholder' icon="fa fa-twitter"}}
   {{> afQuickField name='facebook' type="url" label-type='placeholder' icon="fa fa-facebook"}}
   {{/if}}
@@ -194,10 +193,10 @@
   {{#if equals block 'preferences'}}
   <div class="list card">
   <div class="item item-body">
-<strong>{{_ "Public"}}</strong> : {{_ "Visible pour tout le monde"}}<br>
-<strong>{{_ "Privé"}}</strong>  : {{_ "Visible pour mes contacts seulement"}}<br>
-<strong>{{_ "Masqué"}}</strong>  : {{_ "Visible pour personne"}}<br>
-<strong>{{_ "Open Data"}}</strong>  : {{_ "Vous proposez vos données en accès libre, afin de contribuer au bien commun"}}
+<strong>{{__ "Public"}}</strong> : {{__ "Visible pour tout le monde"}}<br>
+<strong>{{__ "Privé"}}</strong>  : {{__ "Visible pour mes contacts seulement"}}<br>
+<strong>{{__ "Masqué"}}</strong>  : {{__ "Visible pour personne"}}<br>
+<strong>{{__ "Open Data"}}</strong>  : {{__ "Vous proposez vos données en accès libre, afin de contribuer au bien commun"}}
   </div>
 </div>
   {{> afQuickField type="select-radio" name='preferences.email'}}
@@ -217,7 +216,7 @@
   {{> afQuickField name='city' options=optionsInsee value=city}}
   {{> afQuickField name='cityName' type="hidden" value=cityName}}
   {{else}}
-  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
+  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{__ "Error not postal code match"}}</div>
   {{/if}}
   {{/if}}
   {{> afQuickField name='streetAddress' label-type='stacked' autocomplete="off"}}

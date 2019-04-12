@@ -19,11 +19,11 @@
         <div class="camera-actions">
           <div class="row">
             <div class="col text-left">
-              <button class="button button-clear button-light" data-action="retake-photo">{{_ "Retake"}}</button>
+              <button class="button button-clear button-light" data-action="retake-photo">{{__ "Retake"}}</button>
             </div>
             <div class="col text-center"></div>
             <div class="col text-right">
-              <button class="button button-outline button-energized" data-action="use-photo">{{_ "Use Photo"}}</button>
+              <button class="button button-outline button-energized" data-action="use-photo">{{__ "Use Photo"}}</button>
             </div>
           </div>
         </div>
@@ -32,14 +32,14 @@
 
         {{#if waitingForPermission}}
           <div class="camera-message">
-            <p>{{_ "Waiting for camera permissions"}}...</p>
+            <p>{{__ "Waiting for camera permissions"}}...</p>
           </div>
         {{/if}}
 
         <div class="camera-actions">
           <div class="row">
             <div class="col text-left">
-              <button class="button button-clear button-light" data-action="cancel">{{_ "Cancel"}}</button>
+              <button class="button button-clear button-light" data-action="cancel">{{__ "Cancel"}}</button>
             </div>
             <div class="col text-center">
               {{#unless waitingForPermission}}

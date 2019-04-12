@@ -18,7 +18,7 @@
       {{#if error}}
       <div class="card">
         <div class="item item-text-wrap animated shake homestead text-center">
-          {{_ error}}
+          {{__ error}}
         </div>
       </div>
       {{/if}}
@@ -27,19 +27,19 @@
           <span class="input-label">
             <i class="icon ion-email"></i>
           </span>
-          <input type="email" id="email" placeholder="{{_ "email"}}">
+          <input type="email" id="email" placeholder="{{__ "email"}}">
         </label>
         <label class="item item-input">
           <div class="input-label">
             <i class="icon ion-locked"></i>
           </div>
-          <input type="password" id="password" placeholder="{{_ "password"}}">
+          <input type="password" id="password" placeholder="{{__ "password"}}">
         </label>
       </div>
       <div class="animated fadeInUp padding">
-        <button type="submit" class="button button-block button-positive {{#if loadingLogging}}animated infinite jello{{/if}}">{{_ "loggin"}}</button>
+        <button type="submit" class="button button-block button-positive {{#if loadingLogging}}animated infinite jello{{/if}}">{{__ "loggin"}}</button>
       </div>
-      <div class="animated fadeInUp padding homestead text-center">{{_ "create an account"}} <a href="{{pathFor 'signin'}}" class="homestead dark">{{_ "signin"}}</a>.</div>
+      <div class="animated fadeInUp padding homestead text-center">{{__ "create an account"}} <a href="{{pathFor 'signin'}}" class="homestead dark">{{__ "signin"}}</a>.</div>
     </div>
   </form>
   {{/ionContent}}
@@ -66,7 +66,7 @@
       {{#if error}}
       <div class="card">
         <div class="item item-text-wrap animated shake homestead text-center">
-          {{_ error}}
+          {{__ error}}
         </div>
       </div>
       {{/if}}
@@ -75,37 +75,37 @@
           <div class="input-label">
             <i class="icon ion-person"></i>
           </div>
-          <input type="text" id="name" placeholder="{{_ "name"}}">
+          <input type="text" id="name" placeholder="{{__ "name"}}">
         </label>
         <label class="item item-input">
           <span class="input-label">
             <i class="icon ion-email"></i>
           </span>
-          <input type="email" id="email" placeholder="{{_ "email"}}">
+          <input type="email" id="email" placeholder="{{__ "email"}}">
         </label>
         <label class="item item-input">
           <div class="input-label">
             <i class="icon ion-person"></i>
           </div>
-          <input type="text" id="username" placeholder="{{_ "username"}}">
+          <input type="text" id="username" placeholder="{{__ "username"}}">
         </label>
         <label class="item item-input">
           <div class="input-label">
             <i class="icon ion-locked"></i>
           </div>
-          <input type="password" id="password" placeholder="{{_ "password"}}">
+          <input type="password" id="password" placeholder="{{__ "password"}}">
         </label>
         <label class="item item-input">
           <div class="input-label">
             <i class="icon ion-locked"></i>
           </div>
-          <input type="password" id="repassword" placeholder="{{_ "repassword"}}">
+          <input type="password" id="repassword" placeholder="{{__ "repassword"}}">
         </label>
         <label class="item item-input">
           <div class="input-label">
             <i class="icon ion-home"></i>
           </div>
-          <input type="text" id="codepostal" value="{{codepostal}}" placeholder="{{_ "postcode"}}">
+          <input type="text" id="codepostal" value="{{codepostal}}" placeholder="{{__ "postcode"}}">
         </label>
         {{#if city}}
         <label class="item item-input item-select">
@@ -120,13 +120,13 @@
         </label>
         {{/if}}
       </div>
-      {{#if city}}
+
       <div class="animated fadeInUp padding">
         <button type="submit" class="button button-block button-positive {{#if loadingLogging}}animated infinite jello{{/if}}">
-          {{_ "signin"}}</button>
+          {{__ "signin"}}</button>
       </div>
-      {{/if}}
-      <div class="animated fadeInUp padding homestead text-center">{{_ "already have an account"}} <a href="{{pathFor 'login'}}" class="homestead dark">{{_ "loggin"}}.</a></div>
+
+      <div class="animated fadeInUp padding homestead text-center">{{__ "already have an account"}} <a href="{{pathFor 'login'}}" class="homestead dark">{{__ "loggin"}}.</a></div>
     </div>
   </form>
 

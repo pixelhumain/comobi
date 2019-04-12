@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { moment } from 'meteor/momentjs:moment';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { _ } from 'meteor/underscore';
+import { Tracker } from 'meteor/tracker';
 
 // schemas
 import { baseSchema, blockBaseSchema } from './schema.js';
@@ -32,7 +33,90 @@ parentType:organizations
 key:proposal
 collection:proposals */
 
-export const SchemasProposalsRest = new SimpleSchema([baseSchema.pick(['description', 'tags', 'tags.$']), {
+export const SchemasProposalsRest = new SimpleSchema(baseSchema.pick('description', 'tags', 'tags.$'), {
+  tracker: Tracker,
+});
+SchemasProposalsRest.extend({
+  idParentRoom: {
+    type: String,
+  },
+  title: {
+    type: String,
+  },
+  arguments: {
+    type: String,
+    optional: true,
+  },
+  amendementActivated: {
+    type: Boolean,
+  },
+  amendementDateEnd: {
+    type: Date,
+    optional: true,
+    custom() {
+      if (this.field('amendementActivated').value === true && !this.isSet && (!this.operator || (this.value === null || this.value === ''))) {
+        return 'required';
+      }
+      // amendementDateEnd plus petit que voteDateEnd
+      const amendementDateEnd = moment(this.value).toDate();
+      const voteDateEnd = moment(this.field('voteDateEnd').value).toDate();
+      if (moment(voteDateEnd).isBefore(amendementDateEnd)) {
+        return 'maxDateAmendment';
+      }
+    },
+  },
+  voteActivated: {
+    type: Boolean,
+    defaultValue: true,
+  },
+  voteDateEnd: {
+    type: Date,
+    custom() {
+      // voteDateEnd plus grand que amendementDateEnd
+      if (this.field('amendementActivated').value === true && this.field('amendementDateEnd').value) {
+        const amendementDateEnd = moment(this.field('amendementDateEnd').value).toDate();
+        const voteDateEnd = moment(this.value).toDate();
+        if (moment(voteDateEnd).isBefore(amendementDateEnd)) {
+          return 'minDateVote';
+        }
+      }
+    },
+  },
+  majority: {
+    type: SimpleSchema.Integer,
+    defaultValue: 50,
+    min: 50,
+    max: 100,
+  },
+  voteAnonymous: {
+    type: Boolean,
+    defaultValue: true,
+  },
+  voteCanChange: {
+    type: Boolean,
+    defaultValue: true,
+  },
+  parentId: {
+    type: String,
+  },
+  parentType: {
+    type: String,
+    allowedValues: ['projects', 'organizations', 'events'],
+  },
+  status: {
+    type: String,
+    allowedValues: ['done', 'disabled', 'amendable', 'tovote'],
+  },
+  urls: {
+    type: Array,
+    optional: true,
+  },
+  'urls.$': {
+    type: String,
+  },
+});
+
+/* export const SchemasProposalsRest = new SimpleSchema([baseSchema.pick('description', 'tags', 'tags.$'), {
   idParentRoom: {
     type: String,
   },
@@ -79,7 +163,7 @@ export const SchemasProposalsRest = new SimpleSchema([baseSchema.pick(['descript
     },
   },
   majority: {
-    type: Number,
+    type: SimpleSchema.Integer,
     defaultValue: 50,
     min: 50,
     max: 100,
@@ -104,10 +188,13 @@ export const SchemasProposalsRest = new SimpleSchema([baseSchema.pick(['descript
     allowedValues: ['done', 'disabled', 'amendable', 'tovote'],
   },
   urls: {
-    type: [String],
+    type: Array,
     optional: true,
   },
-}]);
+  'urls.$': {
+    type: String,
+  },
+}]); */
 
 /* block:amendement
 typeElement:proposals
@@ -115,7 +202,7 @@ id:59d7450d40bb4e926fdcd10b
 txtAmdt:proposition amendement
 typeAmdt:add */
 
-export const BlockProposalsRest = new SimpleSchema([blockBaseSchema, {
+/* export const BlockProposalsRest = new SimpleSchema([blockBaseSchema, {
   id: {
     type: String,
   },
@@ -125,7 +212,21 @@ export const BlockProposalsRest = new SimpleSchema([blockBaseSchema, {
   typeAmdt: {
     type: String,
   },
-}]);
+}]); */
+export const BlockProposalsRest = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+SchemasProposalsRest.extend({
+  id: {
+    type: String,
+  },
+  txtAmdt: {
+    type: String,
+  },
+  typeAmdt: {
+    type: String,
+  },
+});
 
 if (Meteor.isClient) {
   import { Chronos } from './client/chronos.js';
@@ -219,11 +320,11 @@ Proposals.helpers({
     return Citoyens.findOne({
       _id: new Mongo.ObjectID(this.creator),
     }, {
-        fields: {
-          name: 1,
-          profilThumbImageUrl: 1,
-        },
-      });
+      fields: {
+        name: 1,
+        profilThumbImageUrl: 1,
+      },
+    });
   },
   isCreator() {
     return this.creator === Meteor.userId();
@@ -307,4 +408,4 @@ Proposals.helpers({
     }
     return 0;
   },
-})
+});

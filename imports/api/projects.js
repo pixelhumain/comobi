@@ -1,9 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { _ } from 'meteor/underscore';
 import { moment } from 'meteor/momentjs:moment';
 import { Router } from 'meteor/iron:router';
+import { Tracker } from 'meteor/tracker';
 
 // schemas
 import { baseSchema, blockBaseSchema, geoSchema, preferences } from './schema.js';
@@ -22,8 +23,11 @@ import { queryLink, arrayLinkParent, arrayOrganizerParent, isAdminArray, queryLi
 export const Projects = new Mongo.Collection('projects', { idGeneration: 'MONGO' });
 
 // SimpleSchema.debug = true;
-
-export const SchemasProjectsRest = new SimpleSchema([baseSchema, geoSchema, {
+export const SchemasProjectsRest = new SimpleSchema(baseSchema, {
+  tracker: Tracker,
+});
+SchemasProjectsRest.extend(geoSchema);
+SchemasProjectsRest.extend({
   avancement: {
     type: String,
     optional: true,
@@ -69,12 +73,71 @@ export const SchemasProjectsRest = new SimpleSchema([baseSchema, geoSchema, {
     type: Boolean,
     defaultValue: true,
   },
-}]);
+});
+
+/* export const SchemasProjectsRest = new SimpleSchema([baseSchema, geoSchema, {
+  avancement: {
+    type: String,
+    optional: true,
+  },
+  startDate: {
+    type: Date,
+    optional: true,
+  },
+  endDate: {
+    type: Date,
+    optional: true,
+  },
+  email: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Email,
+    optional: true,
+  },
+  fixe: {
+    type: String,
+    optional: true,
+  },
+  mobile: {
+    type: String,
+    optional: true,
+  },
+  fax: {
+    type: String,
+    optional: true,
+  },
+  parentType: {
+    type: String,
+    autoform: {
+      type: 'select',
+    },
+  },
+  parentId: {
+    type: String,
+    autoform: {
+      type: 'select',
+    },
+  },
+  public: {
+    type: Boolean,
+    defaultValue: true,
+  },
+}]); */
 
 export const BlockProjectsRest = {};
-BlockProjectsRest.descriptions = new SimpleSchema([blockBaseSchema, baseSchema.pick(['shortDescription', 'description', 'tags', 'tags.$'])]);
-BlockProjectsRest.info = new SimpleSchema([blockBaseSchema, baseSchema.pick(['name', 'url']), SchemasProjectsRest.pick(['avancement'])]);
-BlockProjectsRest.network = new SimpleSchema([blockBaseSchema, {
+// BlockProjectsRest.descriptions = new SimpleSchema([blockBaseSchema, baseSchema.pick('shortDescription', 'description', 'tags', 'tags.$)]');
+BlockProjectsRest.descriptions = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+BlockProjectsRest.descriptions.extend(baseSchema.pick('shortDescription', 'description', 'tags', 'tags.$'));
+
+// BlockProjectsRest.info = new SimpleSchema([blockBaseSchema, baseSchema.pick('name', 'url']), SchemasProjectsRest.pick(['avancement)]');
+BlockProjectsRest.info = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+BlockProjectsRest.info.extend(baseSchema.pick('name', 'url'));
+BlockProjectsRest.info.extend(SchemasProjectsRest.pick('avancement'));
+
+/* BlockProjectsRest.network = new SimpleSchema([blockBaseSchema, {
   github: {
     type: String,
     regEx: SimpleSchema.RegEx.Url,
@@ -105,15 +168,70 @@ BlockProjectsRest.network = new SimpleSchema([blockBaseSchema, {
     regEx: SimpleSchema.RegEx.Url,
     optional: true,
   },
-}]);
-BlockProjectsRest.when = new SimpleSchema([blockBaseSchema, SchemasProjectsRest.pick(['startDate', 'endDate'])]);
-BlockProjectsRest.locality = new SimpleSchema([blockBaseSchema, geoSchema]);
-BlockProjectsRest.preferences = new SimpleSchema([blockBaseSchema, {
+}]); */
+BlockProjectsRest.network = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+BlockProjectsRest.network.extend({
+  github: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Url,
+    optional: true,
+  },
+  instagram: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Url,
+    optional: true,
+  },
+  skype: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Url,
+    optional: true,
+  },
+  gpplus: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Url,
+    optional: true,
+  },
+  twitter: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Url,
+    optional: true,
+  },
+  facebook: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Url,
+    optional: true,
+  },
+});
+
+// BlockProjectsRest.when = new SimpleSchema([blockBaseSchema, SchemasProjectsRest.pick('startDate', 'endDate)]');
+BlockProjectsRest.when = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+BlockProjectsRest.when.extend(SchemasProjectsRest.pick('startDate', 'endDate'));
+
+// BlockProjectsRest.locality = new SimpleSchema([blockBaseSchema, geoSchema]);
+BlockProjectsRest.locality = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+BlockProjectsRest.locality.extend(geoSchema);
+
+/* BlockProjectsRest.preferences = new SimpleSchema([blockBaseSchema, {
   preferences: {
     type: preferences,
     optional: true,
   },
-}]);
+}]); */
+BlockProjectsRest.preferences = new SimpleSchema(blockBaseSchema, {
+  tracker: Tracker,
+});
+BlockProjectsRest.preferences.extend({
+  preferences: {
+    type: preferences,
+    optional: true,
+  },
+});
 
 if (Meteor.isClient) {
   window.Organizations = Organizations;

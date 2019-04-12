@@ -1,4 +1,6 @@
 {
+  "_locale": "fr",
+  "_namespace": "",
   "Close":"Fermer",
   "Add event":"Ajouter un évènement",
   "notifications":"Notifications",
@@ -174,8 +176,8 @@
       "poi": "un point d'intérêt"
     },
         "notification": {
-          "whoNumber": "et %s autres",
-          "whoNumber_plural": "et %s autres",
+          "whoNumber": "et __count__ autres",
+          "whoNumber_plural": "et __count__ autres",
           "who_is_following_where": "__who__ suit __where__",
           "who_are_following_where": "__who__ suivent __where__",
           "who_is_following_you": "__who__ vous suit",
@@ -731,7 +733,8 @@
           "YT":"Mayotte",
           "NC":"Nouvelle-Calédonie",
           "RE":"Réunion",
-          "PM":"St Pierre et Miquelon"
+          "PM":"St Pierre et Miquelon",
+          "BE": "Belgique"
         }
       },
       "postalCode":{
@@ -815,7 +818,8 @@
           "YT":"Mayotte",
           "NC":"Nouvelle-Calédonie",
           "RE":"Réunion",
-          "PM":"St Pierre et Miquelon"
+          "PM":"St Pierre et Miquelon",
+          "BE": "Belgique"
         }
       },
       "postalCode":{
@@ -892,7 +896,8 @@
           "YT":"Mayotte",
           "NC":"Nouvelle-Calédonie",
           "RE":"Réunion",
-          "PM":"St Pierre et Miquelon"
+          "PM":"St Pierre et Miquelon",
+          "BE": "Belgique"
         }
       },
       "postalCode":{
@@ -992,7 +997,8 @@
           "YT":"Mayotte",
           "NC":"Nouvelle-Calédonie",
           "RE":"Réunion",
-          "PM":"St Pierre et Miquelon"
+          "PM":"St Pierre et Miquelon",
+          "BE": "Belgique"
         }
       },
       "postalCode":{
@@ -1195,7 +1201,8 @@
           "YT":"Mayotte",
           "NC":"Nouvelle-Calédonie",
           "RE":"Réunion",
-          "PM":"St Pierre et Miquelon"
+          "PM":"St Pierre et Miquelon",
+          "BE": "Belgique"
         }
       },
       "postalCode":{
@@ -1484,7 +1491,8 @@
           "YT":"Mayotte",
           "NC":"Nouvelle-Calédonie",
           "RE":"Réunion",
-          "PM":"St Pierre et Miquelon"
+          "PM":"St Pierre et Miquelon",
+          "BE": "Belgique"
         }
       },
       "postalCode":{

@@ -1,6 +1,6 @@
 <template name="listeventSous">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "events"}}</h1>
+  <h1 class="title">{{__ "events"}}</h1>
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
@@ -17,7 +17,7 @@
     <div class="list list-inset">
 
       <div class="item item-divider">
-        <i class="ion-android-calendar"></i> {{_ "events"}} <span class="badge badge-dark">{{countEvents}}</span>
+        <i class="ion-android-calendar"></i> {{__ "events"}} <span class="badge badge-dark">{{countEvents}}</span>
       </div>
 
       {{#transition in="zoomIn" out="bounceOut"}}

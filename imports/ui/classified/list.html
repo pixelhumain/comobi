@@ -1,7 +1,7 @@
 <template name="listClassified">
   {{> testgeo}}
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "classified"}} {{> cityTitle}}</h1>
+  <h1 class="title">{{__ "classified"}} {{> cityTitle}}</h1>
   {{/contentFor}}
   {{#contentFor "headerButtonLeft"}}
   <button class="button button-clear pull-left" data-ion-menu-toggle="left">
@@ -31,14 +31,14 @@
   <div class="list list-inset">
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input id="search" type="text" placeholder="{{_ "searchPlaceholder"}}" value="{{searchClassified}}">
+      <input id="search" type="text" placeholder="{{__ "searchPlaceholder"}}" value="{{searchClassified}}">
     </label>
   </div>
 
     <div class="list list-inset">
 
       <div class="item item-divider">
-        <i class="ion-speakerphone"></i> {{_ "classified"}} <span class="badge badge-dark">{{countClassified}}</span>
+        <i class="ion-speakerphone"></i> {{__ "classified"}} <span class="badge badge-dark">{{countClassified}}</span>
       </div>
       {{#if dataReady}}
       {{#transition in="zoomIn" out="bounceOut"}}
@@ -87,19 +87,19 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "classified"}}</h1>
+  <h1 class="title">{{__ "classified"}}</h1>
   {{/contentFor}}
 
   {{#ionView}}
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "Create a classified"}}
+      {{__ "Create a classified"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -107,7 +107,7 @@
     {{> classifiedFields}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "create"}}</button>
+        <button type="submit" class="button button-dark">{{__ "create"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -127,7 +127,7 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "classified"}}</h1>
+  <h1 class="title">{{__ "classified"}}</h1>
   {{/contentFor}}
 
 {{#if dataReady}}
@@ -135,12 +135,12 @@
   {{#ionContent}}
   <div class="list" data-snap-ignore="true">
     <div class="item item-divider">
-      {{_ "Edit a classified"}}
+      {{__ "Edit a classified"}}
     </div>
     {{#if error}}
     <div class="card">
       <div class="item item-text-wrap animated shake homestead text-center">
-        {{_ error}}
+        {{__ error}}
       </div>
     </div>
     {{/if}}
@@ -148,7 +148,7 @@
     {{> classifiedFields update="1"}}
     <div class="item">
       <div class="button-bar">
-        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+        <button type="submit" class="button button-dark">{{__ "edit"}}</button>
       </div>
     </div>
     {{/autoForm}}
@@ -202,7 +202,7 @@
   {{> afQuickField name='city' options=optionsInsee value=city}}
   {{> afQuickField name='cityName' type="hidden" value=cityName}}
   {{else}}
-  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
+  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{__ "Error not postal code match"}}</div>
   {{/if}}
   {{/if}}
   {{> afQuickField name='streetAddress' autocomplete="off"}}

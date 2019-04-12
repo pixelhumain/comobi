@@ -4,7 +4,7 @@ import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Router } from 'meteor/iron:router';
 import { Mongo } from 'meteor/mongo';
-import { TAPi18n } from 'meteor/tap:i18n';
+import i18n from 'meteor/universe:i18n';
 import { AutoForm } from 'meteor/aldeed:autoform';
 import { IonActionSheet } from 'meteor/meteoric:ionic';
 
@@ -69,12 +69,12 @@ Template.newsDetailComments.events({
     const self = this;
     event.preventDefault();
     IonActionSheet.show({
-      titleText: TAPi18n.__('Actions Comment'),
+      titleText: i18n.__('Actions Comment'),
       buttons: [
-        { text: `${TAPi18n.__('edit')} <i class="icon ion-edit"></i>` },
+        { text: `${i18n.__('edit')} <i class="icon ion-edit"></i>` },
       ],
-      destructiveText: TAPi18n.__('delete'),
-      cancelText: TAPi18n.__('cancel'),
+      destructiveText: i18n.__('delete'),
+      cancelText: i18n.__('cancel'),
       cancel() {
         // console.log('Cancelled!');
       },

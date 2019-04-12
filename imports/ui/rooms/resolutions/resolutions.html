@@ -1,6 +1,6 @@
 <template name="detailResolutions">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "dda.resolution.resolution"}} : </h1>
+  <h1 class="title">{{__ "dda.resolution.resolution"}} : </h1>
   {{/contentFor}}
 
   {{#contentFor "headerButtonLeft"}}
@@ -37,7 +37,7 @@
       {{> imgDoc profilThumbImageUrl=creatorProfile.profilThumbImageUrl resized="80x80"}}
       {{/if}}
       <h2>
-        {{_ 'author'}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="dark">{{creatorProfile.name}}</a>
+        {{__ 'author'}} : <a href="{{pathFor 'detailList' _id=creatorProfile._id._str scope='citoyens'}}" class="dark">{{creatorProfile.name}}</a>
       </h2>
     </div>
 
@@ -45,22 +45,22 @@
       <p>{{description}}</p>
     </div>
     <div class="item item-divider">
-      {{_ 'dda.resolution.resolution'}}
+      {{__ 'dda.resolution.resolution'}}
     </div>
 {{#if equals status 'adopted'}}
 <div class="item item-text-wrap">
-  <p><i class="icon fa fa-bell"></i> {{{_ 'dda.resolution.adopted'}}}
-   {{_ 'dda.resolution.endofvote'}} <strong>{{livestamp voteDateEnd}}</strong>
+  <p><i class="icon fa fa-bell"></i> {{{__ 'dda.resolution.adopted'}}}
+   {{__ 'dda.resolution.endofvote'}} <strong>{{livestamp voteDateEnd}}</strong>
   </p>
 </div>
 {{else if equals status 'refused'}}
 <div class="item item-text-wrap">
-<p><i class="icon fa fa-bell"></i> {{{_ 'dda.resolution.refused'}}}
- {{_ 'dda.resolution.endofvote'}} <strong>{{livestamp voteDateEnd}}</strong>
+<p><i class="icon fa fa-bell"></i> {{{__ 'dda.resolution.refused'}}}
+ {{__ 'dda.resolution.endofvote'}} <strong>{{livestamp voteDateEnd}}</strong>
 </p>
 </div>
 {{/if}}
-<a href="{{pathFor 'proposalsDetail' _id=parentId scope=parentType roomId=idParentRoom proposalId=_id._str}}" class="item"><i class="fa fa-chevron-right"></i>  {{_ 'dda.resolution.showproposaldetail'}}</a>
+<a href="{{pathFor 'proposalsDetail' _id=parentId scope=parentType roomId=idParentRoom proposalId=_id._str}}" class="item"><i class="fa fa-chevron-right"></i>  {{__ 'dda.resolution.showproposaldetail'}}</a>
   </div>
 
 {{/with}}
