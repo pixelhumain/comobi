@@ -17,6 +17,7 @@ Package.onUse(function(api) {
   api.versionsFrom('METEOR@1.2');
 
   // api.addFiles("package-tap.i18n", ["client", "server"]);
+  api.use(['universe:i18n@1.20.1', 'universe:i18n-blaze@1.5.1'], ['client', 'server']);
 
   api.addFiles('camera.js');
 

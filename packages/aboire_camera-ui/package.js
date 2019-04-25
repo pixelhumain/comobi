@@ -16,6 +16,10 @@ Package.onUse(function (api) {
 
   api.export('MeteorCameraUI');
   // api.use(['tap:i18n@2.0.0'], ['client', 'server']);
+  api.use(['universe:i18n@1.20.1', 'universe:i18n-blaze@1.5.1'], ['client', 'server']);
+  api.use([
+    'tracker',
+  ], 'client');
   api.use(['templating']);
   api.use('meteoric:camera@1.0.3');
   api.addFiles('camera-ui.js');

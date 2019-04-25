@@ -1,6 +1,12 @@
 {
   "_namespace": "",
   "_locale": "en",
+  "Image Library": "Image Library",
+  "Take photo": "Take photo",
+  "Retake": "Retake",
+  "Use Photo": "Use Photo",
+  "Cancel": "Cancel",
+  "Waiting for camera permissions": "Waiting for camera permissions",
   "Close":"Close",
   "Add event":"Add event",
   "notifications":"Notifications",

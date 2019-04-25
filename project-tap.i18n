@@ -1,6 +1,0 @@
-// project-root/project-tap.i18n
-{
-    "supported_languages": ["en","fr"],
-    "cdn_path" : "i18n",
-    "preloaded_langs": ["en","fr"]
-}

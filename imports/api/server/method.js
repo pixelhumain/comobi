@@ -1199,10 +1199,10 @@ indexMax:20 */
     check(docNoClean.parentType, Match.Where(function (name) {
       return _.contains(['events', 'projects', 'organizations', 'citoyens'], name);
     }));
-    const doc = SchemasNewsRestBase[docNoClean.parentType].clean(docNoClean);
-    SchemasNewsRestBase[docNoClean.parentType].validate(doc);
+    // const doc = SchemasNewsRestBase[docNoClean.parentType].clean(docNoClean);
+    SchemasNewsRestBase[docNoClean.parentType].validate(docNoClean);
     // check(doc, SchemasNewsRestBase[doc.parentType]);
-
+    const doc = docNoClean;
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
