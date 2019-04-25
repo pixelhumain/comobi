@@ -1,3 +1,4 @@
+
 /**
  * Helper function for uploading base 64 image to server.
  * @summary Take JPEG image dataURI and return blob of the given content type

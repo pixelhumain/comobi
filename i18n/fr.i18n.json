@@ -1,6 +1,12 @@
 {
   "_locale": "fr",
   "_namespace": "",
+  "Take photo": "Prendre une photo",
+  "Image Library": "Bibliothèque d'images",
+  "Retake": "Reprendre",
+  "Use Photo": "utiliser",
+  "Cancel": "Annuler",
+  "Waiting for camera permissions": "En attente des autorisations de la caméra",
   "Close":"Fermer",
   "Add event":"Ajouter un évènement",
   "notifications":"Notifications",

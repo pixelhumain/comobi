@@ -49,9 +49,9 @@ if (Meteor.isDesktop) {
     options = options || {};
 
     var buttonTexts = {
-      takeImage: options.takeImage || __('Take photo'),
-      imageLibrary: options.imageLibrary || __('Image Library'),
-      cancel: options.cancel || __('Cancel')
+      takeImage: options.takeImage || i18n.__('Take photo'),
+      imageLibrary: options.imageLibrary || i18n.__('Image Library'),
+      cancel: options.cancel || i18n.__('Cancel')
     };
     return {
       'buttonLabels': [
